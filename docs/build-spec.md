@@ -183,7 +183,7 @@ Kubernetes version: pin to 1.34 or 1.35 (both in standard EKS support through th
 
 Requirements:
 - Browser-delivered terminal and kubeconfig, zero local setup (same promise as KCD Texas).
-- Up to 300 concurrent environments, prewarmed before 9:00 AM EDT, TTL of at least 6 hours.
+- Up to 300 concurrent environments, provisioned and warm before 9:00 AM EDT, torn down 2 hours after the session closes (session runs 9:00 AM to 1:00 PM EDT, so teardown is approximately 3:00 PM EDT). Environments do not persist for take-home; the repo is the take-home.
 - Each environment lands at `checkpoint/module-0-start`: cluster up, ArgoCD installed, repo cloned, nothing else synced. Attendees who follow along run the same numbered commands from `copy-paste-commands.md`.
 - Per the doctrine, if attendee environments fail at scale, the workshop proceeds untouched.
 
@@ -212,6 +212,18 @@ Layout per cluster: managed EKS control plane plus a node group of 2 to 3 T3 wor
 Not used: a dedicated non-burstable compute node per cluster (unnecessary for a short bursty demo and off the x86 T-series path), and per-cluster Karpenter mix-and-match (adds a controller to all 300 clusters and introduces 1 to 2 minutes of live node spin-up inside a timed beat).
 
 Validate at the Phase 3 gate: benchmark Qwen3-1.7B on t3.2xlarge CPU against the latency gate (first token within 10 seconds). If it misses, drop to Qwen3-0.6B. Right-size the node count during Phase 2.
+
+### 6.7 Demo agent model routing and credentials
+
+The kagent demo agent (B07) needs a model to call. Where it calls and with whose credentials is resolved as follows.
+
+Attendee clusters (all of them): the agent's kagent `ModelConfig` uses `provider: OpenAI` with `openAI.baseUrl: http://vllm.kserve.svc/v1`, pointing at the in-cluster vLLM that the workshop already serves. The model name must match vLLM's `--served-model-name` (set it to a clean string like `qwen3-1.7b`). vLLM runs without `--api-key` on the cluster network, so the kagent `apiKeySecret` fields carry a dummy value. Result: zero external API spend, zero external credentials, nothing to leak, and the same config across 300 identical clusters. This is also a faithful production pattern: self-hosted inference behind an OpenAI-compatible endpoint. Do not create per-cluster IAM users or per-cluster static-key secrets. That is secret sprawl with no real spend cap.
+
+Presenter cluster: demonstrate one real cloud route to teach credential handling and spend control, where the blast radius is one cluster. Two acceptable routes:
+- Amazon Bedrock via EKS Pod Identity: one IAM role, no static key, scoped by IAM to `bedrock:InvokeModel` on a single cheap model ID. Pair with an AWS Budget alert, and say plainly on screen that the budget is an alert, not a real-time cap (Bedrock billing data lags 8 to 24 hours), so the IAM model-id allowlist is the actual guardrail. This is honest, teachable governance.
+- Anthropic API behind a LiteLLM proxy: a dedicated Anthropic workspace with a Console monthly spend limit (a genuine hard stop, the API returns 429 when exceeded) plus a LiteLLM virtual key with `max_budget` for a second request-level cap. Pin and test a known-good LiteLLM version against a live budget-enforcement test; there are open budget-bypass bugs, so do not run latest unverified.
+
+Either presenter route teaches the lesson (workload identity or a secret-managed key, plus a real ceiling) without exposing attendee clusters to spend. See `docs/research-findings-june-2026.md` section 7 for the verified ModelConfig YAML and the spend-control detail.
 
 ---
 
@@ -395,9 +407,9 @@ These apply to README, docs, runbook prose, and any attendee-facing text. They a
 2. Provisioning platform: RESOLVED. Amazon EKS, one cluster per student, managed control plane plus a T3 node group.
 3. vLLM worker node: RESOLVED. Stay on T3 (t3.2xlarge), pre-warm the model, keep the pre-warmed-request fallback (sections 6.6 and 7.2). Benchmark at the Phase 3 gate.
 4. CPU model: defaulted to Qwen3-1.7B with Qwen3-0.6B backup. Confirm after the Phase 3 benchmark.
-5. Attendee cluster TTL and whether environments survive past the session for take-home exploration. OPEN.
-6. Depth of the Bedrock and GPU alternative-path docs (reference-level vs tested walkthrough). OPEN.
-7. Whether the kagent demo agent uses Michael's Anthropic API key directly or routes through a presenter-owned proxy with a spend cap. Recommend the spend cap regardless. OPEN.
+5. Attendee cluster TTL: RESOLVED. Warm before 9:00 AM EDT, torn down 2 hours after the session closes (approximately 3:00 PM EDT). No take-home persistence; the repo is the take-home (section 6.2).
+6. Alternative-path docs depth: RESOLVED. Reference-level. `docs/alternative-paths.md` gives accurate config snippets and official links for GPU serving and Amazon Bedrock, marked explicitly as not tested live. Upgrade a specific path to a tested walkthrough only on request.
+7. Demo agent model routing and credentials: RESOLVED. Attendee clusters route the kagent demo agent to the in-cluster vLLM (no external spend, no external credentials). The presenter cluster shows one real cloud route, scoped and capped (section 6.7).
 
 ---
 

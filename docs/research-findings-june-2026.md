@@ -214,7 +214,68 @@ Precedence broadest to most specific: managed policy, user (`~/.claude/CLAUDE.md
 
 ---
 
-## 7. Items to re-verify before the freeze (week of July 13)
+## 7. Demo agent model routing and credentials (verified June 2026)
+
+kagent ModelConfig (`kagent.dev/v1alpha2`) supports three relevant providers. The decision is in-cluster vLLM for attendee clusters, a real cloud route on the presenter cluster only.
+
+### In-cluster vLLM (attendee clusters, the default)
+```yaml
+apiVersion: kagent.dev/v1alpha2
+kind: ModelConfig
+metadata:
+  name: vllm-qwen
+  namespace: kagent
+spec:
+  provider: OpenAI
+  model: qwen3-1.7b            # must match vLLM --served-model-name
+  apiKeySecret: kagent-vllm    # required field; dummy value, vLLM has no --api-key
+  apiKeySecretKey: OPENAI_API_KEY
+  openAI:
+    baseUrl: "http://vllm.kserve.svc/v1"
+```
+vLLM exposes an OpenAI-compatible `/v1/chat/completions`. Set `--served-model-name qwen3-1.7b` so the client model string is clean. No external spend, no external credential.
+
+### Amazon Bedrock via Pod Identity (presenter cluster option)
+```yaml
+apiVersion: kagent.dev/v1alpha2
+kind: ModelConfig
+metadata:
+  name: bedrock-native
+  namespace: kagent
+spec:
+  provider: Bedrock
+  model: <cheap-bedrock-model-id>
+  bedrock:
+    region: us-east-1
+  deployment:
+    serviceAccountName: kagent-bedrock   # bound to an IAM role via Pod Identity, no static key
+```
+Scope the role to `bedrock:InvokeModel` and `bedrock:InvokeModelWithResponseStream` on specific cheap model ARNs only. AWS Budgets is a soft alert with an 8 to 24 hour data lag, not a real-time hard cap. The preventive IAM model-id allowlist is the actual spend control. Budget Actions can auto-attach a deny policy on threshold, but the lag means spend can accrue first.
+
+### Anthropic API direct, with hard caps (presenter cluster option)
+```yaml
+apiVersion: kagent.dev/v1alpha2
+kind: ModelConfig
+metadata:
+  name: claude-model-config
+  namespace: kagent
+spec:
+  provider: Anthropic
+  model: <current-claude-model-id>
+  apiKeySecret: kagent-anthropic
+  apiKeySecretKey: ANTHROPIC_API_KEY
+  anthropic: {}
+```
+Anthropic Console workspace monthly spend limits are a genuine hard stop (the API returns 429 when exceeded). The Usage and Cost Admin API is read-only reporting, not enforcement. For a per-key hard budget, front the key with a LiteLLM proxy virtual key carrying `max_budget` and `budget_duration`; exceeding it is a hard stop (`BudgetExceededError`). Pin and test a known-good LiteLLM version: there are open budget-enforcement bugs, so do not run latest unverified.
+
+### Recommendation
+- Attendee clusters: in-cluster vLLM only. No external credentials, scales to 300 with one config.
+- Presenter cluster: one real cloud route (Bedrock via Pod Identity, or Anthropic behind LiteLLM), scoped and capped, to teach the governance lesson where the blast radius is one cluster.
+- Do not create 300 IAM users or 300 static-key secrets. If attendee clusters ever need Bedrock, use one scoped IAM role reused across clusters via Pod Identity, never per-cluster users.
+
+Re-verify at the freeze: kagent v0.9.7 exact field names against the tagged API reference, whether kagent documents the Pod Identity association vs the IRSA annotation, the current Anthropic model id for the demo, and a LiteLLM version that passes a live budget-enforcement test.
+
+## 8. Items to re-verify before the freeze (week of July 13)
 
 - agentgateway exact Kubernetes CRD Kind names and apiVersions.
 - AWS Load Balancer Controller Pod Identity support on the 3.x chart line.
