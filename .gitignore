@@ -1,0 +1,15 @@
+# Claude Code audit logs (generated at runtime by .claude/hooks/audit.sh)
+.claude/audit/
+
+# Python
+__pycache__/
+*.pyc
+.pytest_cache/
+
+# Secrets and local env (never committed; the repo holds zero real credentials)
+.env
+*.env
+!.env.example
+
+# OS noise
+.DS_Store
