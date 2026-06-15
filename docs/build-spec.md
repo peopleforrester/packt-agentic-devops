@@ -1,6 +1,6 @@
 # Build Spec: Agentic DevOps with Claude (Packt, July 23, 2026)
 
-**Spec version:** 1.0
+**Spec version:** 1.1 (revised June 15, 2026: backbone resolved to Amazon EKS with one cluster per student, vcluster removed, versions pinned, ingress-nginx and MetalLB dropped, CNCF and CRD facts corrected against June 2026 research. See `docs/research-findings-june-2026.md`.)
 **Owner:** Michael Rishi Forrester
 **Executor:** Claude Code
 **Target repo:** `github.com/peopleforrester/agentic-devops-with-claude`
@@ -12,7 +12,7 @@
 
 This is the single source of truth for building the workshop. Claude Code: read this entire file before writing anything. Work phase by phase. Each phase ends with a verification gate. Do not start the next phase until the current gate passes. When this spec says STOP AND ASK, stop and ask Michael. Do not improvise around an open decision.
 
-Verify current Claude Code configuration capabilities (CLAUDE.md behavior, settings, permissions, hooks, subagents) against https://docs.claude.com/en/docs/claude-code/overview before generating any Claude Code config files. Do not rely on memory for product details.
+Verify current Claude Code configuration capabilities (CLAUDE.md behavior, settings, permissions, hooks, subagents) against the Claude Code docs at code.claude.com/docs/en (the old docs.claude.com/en/docs/claude-code path redirects there) before generating any Claude Code config files. The verified June 2026 schema is recorded in `docs/research-findings-june-2026.md` section 6. Do not rely on memory for product details.
 
 ---
 
@@ -127,8 +127,8 @@ Proposed canonical enumeration. The public copy says 33. The contract lists the 
 14. External Secrets Operator
 15. cert-manager
 16. Kyverno
-17. ingress-nginx
-18. MetalLB
+17. ingress-nginx (NOT VIABLE: end of life March 24, 2026, see count note below)
+18. MetalLB (NOT VIABLE on EKS: AWS owns the LB layer, see count note below)
 19. kube-prometheus-stack (umbrella)
 20. Prometheus
 21. Grafana
@@ -147,22 +147,43 @@ Proposed canonical enumeration. The public copy says 33. The contract lists the 
 32. KServe + vLLM
 33. llm-d
 
-Known tension to resolve, not paper over: items 19 through 22 overlap (kube-prometheus-stack ships Prometheus, Grafana, and AlertManager). Item 26 is a capability, not an installable. This enumeration makes the public number true but a pedantic attendee can poke at it. STOP AND ASK: present Michael this list plus one alternative enumeration that avoids the umbrella overlap (for example, splitting Loki and Tempo gateway components, or counting Grafana dashboards-as-code as a component) and get explicit sign-off on the canonical 33 before Phase 2. The number 33 appears in signed marketing copy; the list must survive a hostile count on a slide.
+Two forcing facts found during June 2026 research now drive the count, on top of the original overlap tension:
 
-CI check: a GitHub Action that fails if `components.yaml` has anything other than exactly 33 entries or if any entry lacks a pinned version.
+- ingress-nginx (item 17) reached end of life on March 24, 2026. The repo is read-only with no security patches, and the planned successor InGate was abandoned. It cannot ship as a live component.
+- MetalLB (item 18) is decorative on EKS. AWS owns the load balancer and VIP layer through the AWS Load Balancer Controller, so MetalLB is inert at best and conflicting at worst.
 
-Version pinning: do not invent versions. At build time, resolve the latest stable release of each chart and image, pin it, and record it in `versions.lock.md` with the resolution date. Re-resolve once during the week of July 13, then freeze. No version changes after the freeze.
+The EKS-native replacement for both is the AWS Load Balancer Controller (one component covering ingress and LB). The stack also needs the AWS EBS CSI driver for PersistentVolumes (Prometheus, Loki, Tempo, Grafana), which the original list omitted.
+
+The remaining original tension still stands: items 19 through 22 overlap (kube-prometheus-stack ships Prometheus, Grafana, and AlertManager), and item 26 is a capability, not an installable.
+
+STOP AND ASK, now sharper because signed marketing copy says 33. Three enumeration options for Michael's sign-off before Phase 2:
+
+- Option A, swap and keep 33: drop ingress-nginx and MetalLB, add AWS Load Balancer Controller and AWS EBS CSI driver. Count stays 33. Cost: two components shift from CNCF or vendor-neutral to AWS-specific, which slightly dents the "CNCF-native and vendor-neutral" framing.
+- Option B, vendor-neutral ingress: add AWS Load Balancer Controller (NLB only) and AWS EBS CSI driver, but route platform ingress through kgateway and Gateway API (kgateway is already item 27), preserving a CNCF-native ingress story. Count stays 33.
+- Option C, drop to 31 and revise the signed copy: remove ingress-nginx and MetalLB, add only the EBS CSI driver, accept a count of 31, and change the marketing number.
+
+The number 33 must survive a hostile count on a slide, and it must also survive a hostile question about why a dead project (ingress-nginx) is in the stack. Pick the enumeration that survives both.
+
+CI check: a GitHub Action that fails if `components.yaml` has anything other than the agreed count or if any entry lacks a pinned version.
+
+Version pinning: versions are resolved and recorded in `docs/research-findings-june-2026.md` as of June 15, 2026, and will seed `versions.lock.md`. Re-resolve once during the week of July 13, then freeze. No version changes after the freeze. Do not invent versions.
 
 ---
 
 ## 6. Infrastructure specification
 
+### 6.0 Platform decision (resolved)
+
+The backbone is Amazon EKS. One cluster per student, provisioned and provided live, up to 300 concurrent. The EKS control plane is managed by AWS. Each cluster runs a managed node group of T3 workers for the system and platform components. vcluster is not used. The provisioning automation in `scripts/provision/` targets EKS only.
+
+Kubernetes version: pin to 1.34 or 1.35 (both in standard EKS support through the workshop horizon; 1.33 exits standard support July 29, 2026). cert-manager 1.20 requires K8s 1.31 or newer, satisfied by either pin. See `docs/research-findings-june-2026.md` section 5 for the EKS provisioning detail (add-ons, Pod Identity, eksctl vs terraform-aws-eks).
+
 ### 6.1 Presenter sandbox (the cluster that matters)
 
-- One primary cluster, sized to run all 33 components plus a CPU-mode vLLM model with headroom. Working estimate: 4 nodes, 8 vCPU and 32 GB each. Validate during Phase 2 and right-size.
+- One primary EKS cluster, sized to run all components plus a CPU-mode vLLM model with headroom. See section 6.6 for node group sizing and the vLLM worker question.
 - One hot-spare cluster, pre-synced to `checkpoint/module-0-start`, promoted by a single script if the primary dies. The spare is non-negotiable. Four hours live with 300 people watching is exactly when a control plane decides to have a bad day.
 - Both clusters pre-pull every image in `components.yaml` via `mirror-images.sh` plus a DaemonSet pre-puller.
-- MetalLB note: MetalLB assumes an environment where you control L2 or BGP. If the sandbox runs on a cloud provider with native LoadBalancer support, MetalLB still installs and demos fine on a kind or k3s/VM-based cluster but is decorative on EKS or GKE. The provisioning decision (6.3) determines whether MetalLB is live or simulated. Flag the answer in `architecture.md` honestly.
+- Load balancing and ingress: on EKS the AWS Load Balancer Controller is the LB and ingress path. It provisions an NLB for Service type=LoadBalancer and an ALB for Ingress, and supports Gateway API. MetalLB is not used on EKS: AWS owns the LB and VIP layer, so MetalLB is decorative at best and conflicting at worst. ingress-nginx is not used either: it reached end of life on March 24, 2026, the repo is read-only, and its planned successor InGate was abandoned. State both facts plainly in `architecture.md`.
 
 ### 6.2 Attendee clusters
 
@@ -172,17 +193,11 @@ Requirements:
 - Each environment lands at `checkpoint/module-0-start`: cluster up, ArgoCD installed, repo cloned, nothing else synced. Attendees who follow along run the same numbered commands from `copy-paste-commands.md`.
 - Per the doctrine, if attendee environments fail at scale, the workshop proceeds untouched.
 
-### 6.3 OPEN DECISION: provisioning platform
+### 6.3 Provisioning platform (resolved: EKS)
 
-STOP AND ASK before building Phase 6. Candidates, with the evaluation you should run:
+Resolved. One EKS cluster per student. The provisioning automation builds and tears down identical EKS clusters at scale. Working tool choice: terraform-aws-eks v21.20.0 for a declarative, state-tracked fleet, or eksctl v0.226.0 for imperative spin-up and teardown driven by a templated cluster config. EKS Blueprints is patterns-only since v5 and is not a provisioning framework. Self-managed Karpenter is not used: for 300 fixed-shape, short-lived clusters it adds a per-cluster controller for no benefit. Managed node groups carry the node layout.
 
-| Option | Evaluate |
-|---|---|
-| vcluster on one large host cluster | Density and cost win. Test: does Backstage + the AI plane behave inside a vcluster? Test ArgoCD sync behavior. |
-| k3s on per-attendee VMs (Terraform + cloud-init) | Most realistic, most expensive. Get a cost model for 300 VMs for 6 hours. |
-| Hosted lab platform (Instruqt, iximiuz Labs, Killercoda) | Least build effort, per-seat pricing, possible resource caps that break the AI plane. Confirm Packt's platform constraints and whether Packt covers lab costs. |
-
-Decision criteria, in order: reliability at 300 concurrent, cost ceiling Michael sets, fidelity to the real architecture. Build the provisioning automation for the chosen option only.
+Use EKS Pod Identity, not IRSA, for the AWS Load Balancer Controller. IRSA needs one OIDC provider and a per-cluster trust policy, which is 300 of them. Pod Identity uses a generic reusable trust policy with a simple per-cluster association.
 
 ### 6.4 Registry and rate limits
 
@@ -191,6 +206,12 @@ Decision criteria, in order: reliability at 300 concurrent, cost ceiling Michael
 ### 6.5 GitHub OAuth at scale
 
 The Backstage GitHub OAuth integration works cleanly for the presenter. For 300 attendees it does not (each would need an OAuth app or membership in a demo org). Resolution: presenter cluster runs real GitHub OAuth; attendee clusters run Backstage guest auth with the OAuth wiring present in config but commented, with a doc note explaining the swap. This keeps the promise honest: the integration is demonstrated live, and attendees get the exact config to enable it at home.
+
+### 6.6 Node group sizing
+
+Working layout per cluster: managed EKS control plane plus a node group of 2 to 3 T3 workers (t3.xlarge or t3.2xlarge) for the system and platform components. T3 is appropriate for these: they are idle or spiky, not sustained.
+
+One open point, flagged because it directly affects the centerpiece. T3 instances are burstable. They earn CPU credits up to a baseline and throttle to that baseline under sustained load. A small model doing continuous CPU inference is exactly that sustained, CPU-bound load, which is the textbook anti-pattern for T3. On screen this risks the vLLM beat (B11) throttling mid-inference. The options are recorded in section 7.2 and resolved at the Phase 3 gate: a dedicated non-burstable worker for vLLM, the existing pre-warmed fallback on all-T3, or the smallest model on all-T3. Validate node sizing during Phase 2 and right-size.
 
 ---
 
@@ -219,14 +240,21 @@ Each module section below defines what gets built ahead of time, what happens li
 **Live beats:**
 - **B05:** kgateway installed via App-of-Apps extension; Gateway API resources reviewed by Claude Code on screen. Prompt P05.
 - **B06:** agentgateway deployed as the agentic data plane. Show the routing config that mediates LLM, MCP, and A2A traffic. mTLS and audit logging on by default.
-- **B07:** Claude Code writes a kagent Agent CRD live from a prompt describing the agent's job (suggested: a cluster-doctor agent that reads pod events and reports). The CRD commits to Git and reconciles through ArgoCD like everything else. This is the single most important beat of the workshop: an agent, declared as a Kubernetes resource, deployed by GitOps, written by an agent. Prompt P07 gets the most rehearsal time of any prompt.
+- **B07:** Claude Code writes a kagent Agent CRD live from a prompt describing the agent's job (suggested: a cluster-doctor agent that reads pod events and reports). The CRD commits to Git and reconciles through ArgoCD like everything else. This is the single most important beat of the workshop: an agent, declared as a Kubernetes resource, deployed by GitOps, written by an agent. Prompt P07 gets the most rehearsal time of any prompt. Get the CRD shape exactly right (verified June 2026, kagent v0.9.7): apiVersion `kagent.dev/v1alpha2` (not v1alpha1), the field is `systemMessage` (not `systemPrompt`), nested under `spec.type` and `spec.declarative`, with `runtime` python (Google ADK, the default since the AutoGen migration) and a `modelConfig` reference. Tools attach via `type: McpServer` with a `RemoteMCPServer` reference. Re-verify the CRD against the live kagent docs at the July freeze.
 - **B08:** The kagent agent calls an MCP server through agentgateway. The audit log entry appears on screen.
 - **B09:** Prompt injection demo. A scripted malicious prompt goes at the agent; LLM Guard intercepts and blocks. The blocked request appears in the audit log. The exact injection string lives in the repo as a test fixture so attendees can reproduce it. Expected result is deterministic; if LLM Guard config drifts, the reset script restores known-good config.
 - **B10:** The OTel trace from B08 lands in Tempo. Open the trace, walk the spans, show GenAI semantic convention attributes (model, token counts, tool calls). Pre-built Grafana dashboard for the AI plane loads.
 - **B11:** KServe + vLLM serves the CPU-mode model. One inference request, response on screen. Latency gate below.
 - **B12:** llm-d shown as the scheduling layer: where distributed inference sits in the topology. This beat is allowed to be architecture-on-screen rather than a deep demo; llm-d at CNCF Sandbox maturity gets honest framing, not inflated claims.
 
-**CPU model selection.** OPEN DECISION with a default: pick the smallest instruct model that produces a coherent on-screen answer in CPU mode. Candidates to benchmark in Phase 3: Qwen2.5-0.5B-Instruct, SmolLM2-360M-Instruct, TinyLlama-1.1B-Chat. Gate: first visible token within 10 seconds, full response within 30, on the sandbox node spec. If no candidate passes, the beat switches to a pre-warmed request pattern (request fired during the preceding beat, response revealed on cue) and the runbook says so. Do not let a 90-second CPU inference stall die on screen.
+**CPU model selection.** Default model of record: `Qwen/Qwen3-1.7B`, with `Qwen/Qwen3-0.6B` as the backup (same architecture and vLLM code path, one-line model-id swap, about 3x faster). These replace the spec's original trio (Qwen2.5-0.5B, SmolLM2-360M, TinyLlama-1.1B), all of which Qwen3 now outclasses. Disable thinking mode (`enable_thinking=false`) so CPU latency stays low and the output is direct chat. Serve via the prebuilt CPU image `vllm/vllm-openai-cpu:v0.23.0-x86_64` with `--device cpu --dtype bfloat16`, `VLLM_CPU_KVCACHE_SPACE` 8 to 16, and the `SYS_NICE` capability on the pod (thread binding is blocked by seccomp without it). Benchmark in Phase 3.
+
+Gate: first visible token within 10 seconds, full response within 30, on the chosen vLLM worker spec. The vLLM worker decision (section 6.6) feeds this gate directly. The three paths, resolved at the Phase 3 gate:
+- A dedicated non-burstable worker for vLLM (for example c6i or m6i, pinned via nodeSelector and taint), T3 for everything else. This is the path most likely to pass the latency gate live, because the inference node does not throttle.
+- All-T3 with the pre-warmed request pattern: the request is fired during the preceding beat and the response is revealed on cue. The runbook says so.
+- All-T3 with the smallest model (Qwen3-0.6B) served live, accepting modest latency.
+
+Do not let a slow CPU inference stall die on screen. The pre-warmed fallback exists for exactly this.
 
 **Module 2 bail-out order** (cut from the bottom if overrunning): B12 goes to recording first, then B10 dashboard walkthrough shortens to the single trace, then B05 compresses to applied-and-verified. B07, B08, B09 are never cut; they are the workshop.
 
@@ -303,7 +331,7 @@ Contents: repo map, the components.yaml contract, GitOps rules (all changes flow
 
 ### 10.3 Audit hook
 
-A hook that logs every Claude Code tool invocation (timestamp, tool, command summary) as structured JSON shipped to Loki with an agent identity label. This powers B17. Verify hook event names and payload shape against current Claude Code docs at build time.
+A hook that logs every Claude Code tool invocation (timestamp, tool, command summary) as structured JSON shipped to Loki with an agent identity label. This powers B17. Verified June 2026: register PreToolUse and PostToolUse command hooks. The stdin payload carries `session_id`, `hook_event_name`, `cwd`, `tool_name`, and `tool_input`; PostToolUse adds `tool_response` (the result field is `tool_response`, not `tool_output`). Current Claude Code docs are at code.claude.com/docs/en/hooks (the old docs.claude.com path redirects there). Re-verify event names and payload shape at the July freeze. See `docs/research-findings-june-2026.md` section 6 for the full schema.
 
 ### 10.4 Prompt library
 
@@ -351,7 +379,9 @@ These apply to README, docs, runbook prose, and any attendee-facing text. They a
 | CPU inference too slow on screen | Latency gate with pre-warmed fallback (7.2) |
 | Primary cluster failure mid-session | Hot spare plus promote script under 60 seconds (8.1) |
 | GitHub OAuth impossible at attendee scale | Guest auth on attendee clusters, real OAuth on presenter cluster (6.5) |
-| MetalLB irrelevant on managed cloud | Provisioning decision determines live vs documented; stated honestly in architecture.md (6.1) |
+| MetalLB irrelevant on EKS, ingress-nginx EOL | Resolved: AWS Load Balancer Controller is the LB and ingress path on EKS; both dropped, stated honestly in architecture.md (6.1) and reflected in the component count (section 5) |
+| LLM Guard dormant (no commits since Sept 2025, now owned by Palo Alto Networks) | Pin v0.3.16, vendor the known-good config, treat as a fixed dependency; the B09 injection block is deterministic and reset-restorable; flag the maturity honestly on screen |
+| OTel GenAI semantic conventions still Development grade | Present `gen_ai.*` attributes as current but unstable; note the dedicated semantic-conventions-genai repo and OTEL_SEMCONV_STABILITY_OPT_IN; do not claim stability |
 | Attendee platform outage | Doctrine constraint 1: presenter sandbox carries the session |
 | Component count challenged publicly | Canonical list signed off in Phase 1 (section 5) |
 | Claude Code does something unexpected live | Allowlist permissions, rehearsed prompts, B03 as the only sanctioned on-screen failure, bail-out rule in section 9 |
@@ -361,12 +391,13 @@ These apply to README, docs, runbook prose, and any attendee-facing text. They a
 
 ## 14. Open decisions requiring Michael (collect at Phase boundaries, not mid-phase)
 
-1. Canonical 33-component enumeration sign-off (Phase 1 gate).
-2. Attendee cluster provisioning platform and cost ceiling, including whether Packt shares lab costs (before Phase 6).
-3. CPU model choice after benchmarks, or approval of the pre-warmed fallback as the plan of record (Phase 3).
-4. Attendee cluster TTL and whether environments survive past the session for take-home exploration.
-5. Depth of the Bedrock and GPU alternative-path docs (reference-level vs tested walkthrough).
-6. Whether the kagent demo agent uses Michael's Anthropic API key directly or routes through a presenter-owned proxy with a spend cap. Recommend the spend cap regardless.
+1. Component enumeration sign-off, now sharpened by the ingress-nginx and MetalLB facts. Three options in section 5 (Phase 1 gate). OPEN.
+2. Provisioning platform: RESOLVED. Amazon EKS, one cluster per student, managed control plane plus a T3 node group.
+3. vLLM worker node: the centerpiece reliability decision. Dedicated non-burstable node, all-T3 with pre-warmed fallback, or all-T3 with the smallest model (sections 6.6 and 7.2). Decide at the Phase 3 gate. OPEN.
+4. CPU model: defaulted to Qwen3-1.7B with Qwen3-0.6B backup. Confirm after the Phase 3 benchmark.
+5. Attendee cluster TTL and whether environments survive past the session for take-home exploration. OPEN.
+6. Depth of the Bedrock and GPU alternative-path docs (reference-level vs tested walkthrough). OPEN.
+7. Whether the kagent demo agent uses Michael's Anthropic API key directly or routes through a presenter-owned proxy with a spend cap. Recommend the spend cap regardless. OPEN.
 
 ---
 
