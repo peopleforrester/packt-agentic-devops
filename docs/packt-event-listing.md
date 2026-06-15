@@ -70,7 +70,7 @@ Thirty-three components on a real Kubernetes cluster, GitOps-driven, observable,
 kgateway, agentgateway, and kagent compose with Backstage, ArgoCD, and Kyverno through the same GitOps path everything else uses. AI-native does not require platform replacement; it requires platform extension.
 
 **CNCF-native and vendor-neutral by default.**
-Most components are CNCF (kgateway, kagent, llm-d all Sandbox as of 2026; KServe Incubating; OpenTelemetry Graduated) or Linux Foundation (agentgateway, vLLM via PyTorch Foundation). The two exceptions (LLM Guard from Protect AI, OpenLLMetry from Traceloop) are MIT-licensed open source projects that emit OpenTelemetry GenAI semantic conventions and ride on top of the CNCF observability stack. No commercial licensing required.
+Most components are CNCF (kgateway, kagent, and llm-d are Sandbox as of 2026; KServe Incubating; OpenTelemetry Graduated) or Linux Foundation (agentgateway under the Agentic AI Foundation; vLLM under the PyTorch Foundation). The two exceptions are LLM Guard from Protect AI (MIT) and OpenLLMetry from Traceloop (Apache-2.0), open source projects that work with OpenTelemetry GenAI semantic conventions and ride on top of the CNCF observability stack. No commercial licensing required.
 
 **The AI plane is observable from day one.**
 Every agent call, every MCP invocation, every LLM request flows through OpenTelemetry with GenAI semantic conventions, landing in Tempo for traces and Grafana for dashboards using the same observability stack you already run.

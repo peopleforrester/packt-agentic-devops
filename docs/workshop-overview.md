@@ -50,7 +50,7 @@ Platform engineers, DevOps engineers, SREs, cloud engineers, architects, and tec
 
 **AI as part of the platform, not a bolt-on.** kgateway, agentgateway, and kagent compose with Backstage, ArgoCD, and Kyverno through the same GitOps path everything else uses. AI-native does not require platform replacement; it requires platform extension.
 
-**CNCF-native and vendor-neutral by default.** Most components are CNCF (kgateway, kagent, llm-d all Sandbox as of 2026; KServe Incubating; OpenTelemetry Graduated) or Linux Foundation (agentgateway, vLLM via PyTorch Foundation). The two exceptions (LLM Guard from Protect AI, OpenLLMetry from Traceloop) are MIT-licensed open source projects that emit OpenTelemetry GenAI semantic conventions and ride on top of the CNCF observability stack. No commercial licensing required.
+**CNCF-native and vendor-neutral by default.** Most components are CNCF (kgateway, kagent, and llm-d are Sandbox as of 2026; KServe Incubating; OpenTelemetry Graduated) or Linux Foundation (agentgateway under the Agentic AI Foundation; vLLM under the PyTorch Foundation). The two exceptions are LLM Guard from Protect AI (MIT) and OpenLLMetry from Traceloop (Apache-2.0), open source projects that work with OpenTelemetry GenAI semantic conventions and ride on top of the CNCF observability stack. No commercial licensing required.
 
 **Built for live virtual at scale.** Up to 300 attendees, one presenter, supported by a full companion GitHub repo with copy-paste commands, reset scripts, and recorded backups of every demo. The presenter provisions clusters for attendees, so nobody loses time on local setup. Watching has full value; following along is encouraged but never required.
 
