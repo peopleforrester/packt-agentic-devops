@@ -47,7 +47,7 @@ By the end of this build, the following exist and pass their gates:
 | ID | Deliverable | Phase |
 |---|---|---|
 | D1 | Companion repo `agentic-devops-with-claude`, public, MIT licensed | 1 |
-| D2 | `components.yaml` manifest, the single source of truth for the 33 components, with CI count check | 1 |
+| D2 | `components.yaml` manifest, the single source of truth for the components, with CI pinned-version check | 1 |
 | D3 | Foundation plane: App-of-Apps deploying all foundation components, sync-clean on a fresh cluster | 2 |
 | D4 | AI plane: seven components deployed via the same GitOps path, all demo beats working | 3 |
 | D5 | Self-service plane: Backstage scaffolder template for agent provisioning, ApplicationSet wiring, golden path end to end | 4 |
@@ -104,11 +104,11 @@ Naming: descriptive kebab-case everywhere. No UUIDs, no `final-v2` suffixes.
 
 ---
 
-## 5. Component manifest and the count discipline
+## 5. Component manifest
 
-`components.yaml` enumerates exactly 33 components, each with: name, plane (foundation, ai, self-service), upstream project URL, chart source, pinned version, namespace, and the module in which it appears live.
+`components.yaml` enumerates the components, each with: name, plane (foundation, ai, self-service), upstream project URL, chart source, pinned version, namespace, and the module in which it appears live. The goal is the right set of components for a real AI-native IDP, not a target number. The count is whatever the right set adds up to. Do not engineer the list to hit a specific number.
 
-Proposed canonical enumeration. The public copy says 33. The contract lists the foundation as 26 components, which only reconciles if Backstage subsystems count individually. Use this enumeration as the starting point:
+Enumeration starting point:
 
 **Foundation (26):**
 1. Backstage core
@@ -154,17 +154,11 @@ Two forcing facts found during June 2026 research now drive the count, on top of
 
 The EKS-native replacement for both is the AWS Load Balancer Controller (one component covering ingress and LB). The stack also needs the AWS EBS CSI driver for PersistentVolumes (Prometheus, Loki, Tempo, Grafana), which the original list omitted.
 
-The remaining original tension still stands: items 19 through 22 overlap (kube-prometheus-stack ships Prometheus, Grafana, and AlertManager), and item 26 is a capability, not an installable.
+Resolved: drop ingress-nginx and MetalLB. Add the AWS Load Balancer Controller as the EKS-native ingress and LB path, and the AWS EBS CSI driver for PersistentVolumes. Platform ingress can route through kgateway and Gateway API (kgateway is already in the AI plane) to keep a vendor-neutral ingress story on screen, with the AWS Load Balancer Controller provisioning the NLB in front. The exact list is a build detail, not a marketing number.
 
-STOP AND ASK, now sharper because signed marketing copy says 33. Three enumeration options for Michael's sign-off before Phase 2:
+The kube-prometheus-stack umbrella ships Prometheus, Grafana, and AlertManager, so counting those as separate line items is a presentation choice. List them in whatever way reads honestly; do not pad or trim to hit a number.
 
-- Option A, swap and keep 33: drop ingress-nginx and MetalLB, add AWS Load Balancer Controller and AWS EBS CSI driver. Count stays 33. Cost: two components shift from CNCF or vendor-neutral to AWS-specific, which slightly dents the "CNCF-native and vendor-neutral" framing.
-- Option B, vendor-neutral ingress: add AWS Load Balancer Controller (NLB only) and AWS EBS CSI driver, but route platform ingress through kgateway and Gateway API (kgateway is already item 27), preserving a CNCF-native ingress story. Count stays 33.
-- Option C, drop to 31 and revise the signed copy: remove ingress-nginx and MetalLB, add only the EBS CSI driver, accept a count of 31, and change the marketing number.
-
-The number 33 must survive a hostile count on a slide, and it must also survive a hostile question about why a dead project (ingress-nginx) is in the stack. Pick the enumeration that survives both.
-
-CI check: a GitHub Action that fails if `components.yaml` has anything other than the agreed count or if any entry lacks a pinned version.
+CI check: a GitHub Action that fails if any `components.yaml` entry lacks a pinned version. No count assertion.
 
 Version pinning: versions are resolved and recorded in `docs/research-findings-june-2026.md` as of June 15, 2026, and will seed `versions.lock.md`. Re-resolve once during the week of July 13, then freeze. No version changes after the freeze. Do not invent versions.
 
@@ -207,11 +201,17 @@ Use EKS Pod Identity, not IRSA, for the AWS Load Balancer Controller. IRSA needs
 
 The Backstage GitHub OAuth integration works cleanly for the presenter. For 300 attendees it does not (each would need an OAuth app or membership in a demo org). Resolution: presenter cluster runs real GitHub OAuth; attendee clusters run Backstage guest auth with the OAuth wiring present in config but commented, with a doc note explaining the swap. This keeps the promise honest: the integration is demonstrated live, and attendees get the exact config to enable it at home.
 
-### 6.6 Node group sizing
+### 6.6 Node group sizing (resolved: T3)
 
-Working layout per cluster: managed EKS control plane plus a node group of 2 to 3 T3 workers (t3.xlarge or t3.2xlarge) for the system and platform components. T3 is appropriate for these: they are idle or spiky, not sustained.
+Layout per cluster: managed EKS control plane plus a node group of 2 to 3 T3 workers (t3.xlarge or t3.2xlarge), with the vLLM workload landing on a t3.2xlarge. T3 stays for the whole cluster. The reasons:
 
-One open point, flagged because it directly affects the centerpiece. T3 instances are burstable. They earn CPU credits up to a baseline and throttle to that baseline under sustained load. A small model doing continuous CPU inference is exactly that sustained, CPU-bound load, which is the textbook anti-pattern for T3. On screen this risks the vLLM beat (B11) throttling mid-inference. The options are recorded in section 7.2 and resolved at the Phase 3 gate: a dedicated non-burstable worker for vLLM, the existing pre-warmed fallback on all-T3, or the smallest model on all-T3. Validate node sizing during Phase 2 and right-size.
+- T3 is the last Intel (x86) instance in the burstable T family. t3a is AMD, and t4g moves to ARM Graviton. The vLLM CPU image is x86 (`vllm-openai-cpu:...-x86_64`) and ARM CPU inference is less mature, so staying on T3 keeps the inference path on well-supported x86.
+- The burstable-throttling concern does not bite this workload in practice. T3 throttles to baseline only after CPU credits are exhausted under sustained load. The inference beat is short and bursty (a small model answering one or a few prompts), and T3 Unlimited is the default, so the node keeps bursting through the demo. This is a bursty demo, not a sustained inference server.
+- The cold-start risk is handled by pre-warming the model (weights loaded into vLLM before the beat) plus the pre-warmed-request fallback in section 7.2.
+
+Not used: a dedicated non-burstable compute node per cluster (unnecessary for a short bursty demo and off the x86 T-series path), and per-cluster Karpenter mix-and-match (adds a controller to all 300 clusters and introduces 1 to 2 minutes of live node spin-up inside a timed beat).
+
+Validate at the Phase 3 gate: benchmark Qwen3-1.7B on t3.2xlarge CPU against the latency gate (first token within 10 seconds). If it misses, drop to Qwen3-0.6B. Right-size the node count during Phase 2.
 
 ---
 
@@ -249,10 +249,10 @@ Each module section below defines what gets built ahead of time, what happens li
 
 **CPU model selection.** Default model of record: `Qwen/Qwen3-1.7B`, with `Qwen/Qwen3-0.6B` as the backup (same architecture and vLLM code path, one-line model-id swap, about 3x faster). These replace the spec's original trio (Qwen2.5-0.5B, SmolLM2-360M, TinyLlama-1.1B), all of which Qwen3 now outclasses. Disable thinking mode (`enable_thinking=false`) so CPU latency stays low and the output is direct chat. Serve via the prebuilt CPU image `vllm/vllm-openai-cpu:v0.23.0-x86_64` with `--device cpu --dtype bfloat16`, `VLLM_CPU_KVCACHE_SPACE` 8 to 16, and the `SYS_NICE` capability on the pod (thread binding is blocked by seccomp without it). Benchmark in Phase 3.
 
-Gate: first visible token within 10 seconds, full response within 30, on the chosen vLLM worker spec. The vLLM worker decision (section 6.6) feeds this gate directly. The three paths, resolved at the Phase 3 gate:
-- A dedicated non-burstable worker for vLLM (for example c6i or m6i, pinned via nodeSelector and taint), T3 for everything else. This is the path most likely to pass the latency gate live, because the inference node does not throttle.
-- All-T3 with the pre-warmed request pattern: the request is fired during the preceding beat and the response is revealed on cue. The runbook says so.
-- All-T3 with the smallest model (Qwen3-0.6B) served live, accepting modest latency.
+Gate: first visible token within 10 seconds, full response within 30, on t3.2xlarge (the resolved node, section 6.6). The plan, in order of safety:
+- Serve Qwen3-1.7B live on t3.2xlarge with the model pre-warmed (weights loaded before the beat). This is the target.
+- If the Phase 3 benchmark misses the gate, drop to Qwen3-0.6B served live.
+- Safety net regardless: the pre-warmed request pattern, where the request is fired during the preceding beat and the response is revealed on cue. The runbook says so.
 
 Do not let a slow CPU inference stall die on screen. The pre-warmed fallback exists for exactly this.
 
@@ -344,7 +344,7 @@ A hook that logs every Claude Code tool invocation (timestamp, tool, command sum
 | Phase | Work | Gate |
 |---|---|---|
 | 0 | Environment verification: provision dev cluster, verify Claude Code config against docs, confirm tool versions | Dev cluster up, docs checked, versions recorded |
-| 1 | Repo skeleton, components.yaml, CI count check, vendored charts, versions.lock.md | CI green, 33 entries, Michael sign-off on canonical list |
+| 1 | Repo skeleton, components.yaml, CI pinned-version check, vendored charts, versions.lock.md | CI green, every entry pinned, Michael sign-off on the component list |
 | 2 | Foundation plane | Fresh cluster to foundation-green under 12 min, three runs |
 | 3 | AI plane, model benchmark, all Module 2 beats working | Module 2 sequence under 55 min, twice; model latency gate decided |
 | 4 | Self-service plane | Golden path under 6 min, three runs |
@@ -383,7 +383,7 @@ These apply to README, docs, runbook prose, and any attendee-facing text. They a
 | LLM Guard dormant (no commits since Sept 2025, now owned by Palo Alto Networks) | Pin v0.3.16, vendor the known-good config, treat as a fixed dependency; the B09 injection block is deterministic and reset-restorable; flag the maturity honestly on screen |
 | OTel GenAI semantic conventions still Development grade | Present `gen_ai.*` attributes as current but unstable; note the dedicated semantic-conventions-genai repo and OTEL_SEMCONV_STABILITY_OPT_IN; do not claim stability |
 | Attendee platform outage | Doctrine constraint 1: presenter sandbox carries the session |
-| Component count challenged publicly | Canonical list signed off in Phase 1 (section 5) |
+| Stack composition challenged publicly | Every component is a real, current, maintained IDP component with a pinned version and an honest maturity label; no dead projects in the live stack (section 5) |
 | Claude Code does something unexpected live | Allowlist permissions, rehearsed prompts, B03 as the only sanctioned on-screen failure, bail-out rule in section 9 |
 | Anthropic API outage during delivery | Backup recordings cover every Claude-dependent beat; runbook includes a degraded-mode path where Modules continue from recordings with live cluster verification between them |
 
@@ -391,9 +391,9 @@ These apply to README, docs, runbook prose, and any attendee-facing text. They a
 
 ## 14. Open decisions requiring Michael (collect at Phase boundaries, not mid-phase)
 
-1. Component enumeration sign-off, now sharpened by the ingress-nginx and MetalLB facts. Three options in section 5 (Phase 1 gate). OPEN.
+1. Component list: RESOLVED in approach. Build the right IDP component set, drop ingress-nginx and MetalLB, add the AWS Load Balancer Controller and AWS EBS CSI driver. The count is not a constraint. Michael reviews the final list at the Phase 1 gate.
 2. Provisioning platform: RESOLVED. Amazon EKS, one cluster per student, managed control plane plus a T3 node group.
-3. vLLM worker node: the centerpiece reliability decision. Dedicated non-burstable node, all-T3 with pre-warmed fallback, or all-T3 with the smallest model (sections 6.6 and 7.2). Decide at the Phase 3 gate. OPEN.
+3. vLLM worker node: RESOLVED. Stay on T3 (t3.2xlarge), pre-warm the model, keep the pre-warmed-request fallback (sections 6.6 and 7.2). Benchmark at the Phase 3 gate.
 4. CPU model: defaulted to Qwen3-1.7B with Qwen3-0.6B backup. Confirm after the Phase 3 benchmark.
 5. Attendee cluster TTL and whether environments survive past the session for take-home exploration. OPEN.
 6. Depth of the Bedrock and GPU alternative-path docs (reference-level vs tested walkthrough). OPEN.
