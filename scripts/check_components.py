@@ -44,6 +44,11 @@ def validate(data: dict) -> list[str]:
         if component.get("install_method") in HELM_METHODS and not component.get("chart_version"):
             errors.append(f"{name}: helm install without a pinned chart_version")
 
+        for item in component.get("bundled") or []:
+            item_name = item.get("name") or "<unnamed>"
+            if not item.get("version"):
+                errors.append(f"{name}: bundled {item_name} missing version")
+
     return errors
 
 

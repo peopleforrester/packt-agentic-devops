@@ -36,3 +36,21 @@ def test_helm_without_chart_version_is_reported():
 
 def test_empty_manifest_is_reported():
     assert validate({"components": []}) == ["components.yaml has no components"]
+
+
+def test_bundled_without_version_is_reported():
+    data = {
+        "components": [
+            {
+                "name": "umbrella",
+                "plane": "foundation",
+                "install_method": "helm",
+                "chart_version": "1.0",
+                "app_version": "1.0",
+                "bundled": [{"name": "sub-a", "version": "2.0"}, {"name": "sub-b"}],
+            }
+        ]
+    }
+    errors = validate(data)
+    assert any("bundled sub-b missing version" in e for e in errors)
+    assert not any("sub-a" in e for e in errors)
