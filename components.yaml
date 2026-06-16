@@ -16,6 +16,10 @@
 #   namespace      target namespace
 #   module         workshop module the component appears in
 #   notes          honest maturity and integration notes
+#   bundled        optional. When one install delivers several distinct
+#                  capabilities (an umbrella chart, a portal with plugins),
+#                  list them here, each with name and version, so the contents
+#                  stay queryable instead of buried in notes.
 
 metadata:
   resolved_on: "2026-06-15"
@@ -37,11 +41,21 @@ components:
     namespace: backstage
     module: 1
     notes: >
-      Includes TechDocs, software catalog, scaffolder, GitHub OAuth, and the ArgoCD
-      plugin as Backstage config and plugins, not separate installs. Build a custom
-      image; the chart's built-in image is demo-only. New Frontend System is the
-      default in 2026. Scaffolder templates use scaffolder.backstage.io/v1beta3 with
-      Nunjucks. ArgoCD plugin: @roadiehq/backstage-plugin-argo-cd 2.12.5 / backend 4.8.0.
+      One Backstage install (one custom image) delivering the capabilities in
+      bundled below. Build a custom image; the chart's built-in image is demo-only.
+      New Frontend System is the default in 2026. Scaffolder templates use
+      scaffolder.backstage.io/v1beta3 with Nunjucks.
+    bundled:
+      - name: backstage-techdocs
+        version: "1.51.2"
+      - name: backstage-software-catalog
+        version: "1.51.2"
+      - name: backstage-scaffolder
+        version: "1.51.2"
+      - name: backstage-github-oauth
+        version: "1.51.2"
+      - name: backstage-argocd-plugin
+        version: "2.12.5"   # @roadiehq/backstage-plugin-argo-cd; backend 4.8.0
 
   # --- Foundation: GitOps and the Argo stack ---
   - name: argo-cd
@@ -215,8 +229,19 @@ components:
     namespace: observability
     module: 1
     notes: >
-      Umbrella. Bundles Prometheus v3.12.0, Grafana 12.4.5, Alertmanager v0.33.0,
-      node-exporter, kube-state-metrics. Needs K8s >= 1.25.
+      Umbrella chart, one Helm release delivering the capabilities in bundled below.
+      Needs K8s >= 1.25.
+    bundled:
+      - name: prometheus
+        version: "v3.12.0"
+      - name: grafana
+        version: "13.0.2"   # grafana subchart 12.4.5
+      - name: alertmanager
+        version: "v0.33.0"
+      - name: kube-state-metrics
+        version: "7.4.1"
+      - name: prometheus-node-exporter
+        version: "4.55.0"
 
   - name: loki
     plane: foundation
