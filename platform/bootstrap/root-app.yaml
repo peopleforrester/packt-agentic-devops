@@ -1,0 +1,30 @@
+# Production App-of-Apps. Points ArgoCD at platform/foundation in this repo and
+# recurses for the per-component Application manifests.
+#
+# This needs the repo to be reachable by ArgoCD over Git. Set repoURL to the Git
+# remote once one exists. Until then, use the dev path in bootstrap/README.md
+# (apply the per-component Applications directly; each is Helm-sourced).
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: platform-foundation
+  namespace: argocd
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  project: default
+  source:
+    repoURL: REPLACE_WITH_GIT_REMOTE
+    targetRevision: main
+    path: platform/foundation
+    directory:
+      recurse: true
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: argocd
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - ServerSideApply=true

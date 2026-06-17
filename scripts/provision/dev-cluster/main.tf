@@ -1,0 +1,126 @@
+# ABOUTME: Terraform for a lean, ephemeral dev EKS cluster used to validate the
+# ABOUTME: Phase 2 foundation plane. Provision, validate, then destroy.
+
+terraform {
+  required_version = ">= 1.10"
+  required_providers {
+    aws = {
+      source  = "hashicorp/aws"
+      version = "~> 6.0"
+    }
+  }
+}
+
+provider "aws" {
+  region  = var.region
+  profile = var.profile
+  default_tags {
+    tags = {
+      Project   = "agentic-devops-with-claude"
+      Purpose   = "phase-2-dev-validation"
+      ManagedBy = "terraform"
+      Ephemeral = "true"
+    }
+  }
+}
+
+variable "region" {
+  type    = string
+  default = "us-west-2"
+}
+
+variable "profile" {
+  type    = string
+  default = "accen-dev"
+}
+
+variable "name" {
+  type    = string
+  default = "adwc-dev"
+}
+
+variable "kubernetes_version" {
+  type    = string
+  default = "1.34"
+}
+
+data "aws_availability_zones" "available" {
+  filter {
+    name   = "opt-in-status"
+    values = ["opt-in-not-required"]
+  }
+}
+
+locals {
+  azs = slice(data.aws_availability_zones.available.names, 0, 2)
+}
+
+module "vpc" {
+  source  = "terraform-aws-modules/vpc/aws"
+  version = "~> 5.0"
+
+  name = "${var.name}-vpc"
+  cidr = "10.0.0.0/16"
+
+  azs             = local.azs
+  private_subnets = ["10.0.1.0/24", "10.0.2.0/24"]
+  public_subnets  = ["10.0.101.0/24", "10.0.102.0/24"]
+
+  # Lean: one NAT gateway shared across AZs, not one per AZ.
+  enable_nat_gateway = true
+  single_nat_gateway = true
+
+  # Tags the AWS Load Balancer Controller and EKS expect for subnet discovery.
+  public_subnet_tags = {
+    "kubernetes.io/role/elb" = "1"
+  }
+  private_subnet_tags = {
+    "kubernetes.io/role/internal-elb" = "1"
+  }
+}
+
+module "eks" {
+  source  = "terraform-aws-modules/eks/aws"
+  version = "~> 21.0"
+
+  name               = var.name
+  kubernetes_version = var.kubernetes_version
+
+  # Reachable from this workstation for bootstrap and validation. Ephemeral cluster.
+  endpoint_public_access = true
+
+  # nwuser (the Terraform principal) gets cluster admin via an access entry.
+  enable_cluster_creator_admin_permissions = true
+
+  vpc_id     = module.vpc.vpc_id
+  subnet_ids = module.vpc.private_subnets
+
+  addons = {
+    coredns    = {}
+    kube-proxy = {}
+    vpc-cni    = {}
+  }
+
+  eks_managed_node_groups = {
+    default = {
+      ami_type       = "AL2023_x86_64_STANDARD"
+      instance_types = ["t3.large"]
+      min_size       = 2
+      max_size       = 3
+      desired_size   = 2
+      disk_size      = 30
+    }
+  }
+}
+
+output "cluster_name" {
+  value = module.eks.cluster_name
+}
+
+output "region" {
+  value = var.region
+}
+
+output "update_kubeconfig" {
+  value = "aws eks update-kubeconfig --name ${module.eks.cluster_name} --region ${var.region} --profile ${var.profile}"
+}

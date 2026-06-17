@@ -13,3 +13,13 @@ __pycache__/
 
 # OS noise
 .DS_Store
+
+# Terraform (state can hold sensitive values; the dev cluster is ephemeral)
+.terraform/
+*.tfstate
+*.tfstate.*
+*.tfplan
+crash.log
+crash.*.log
+*.tfvars
+!*.tfvars.example
