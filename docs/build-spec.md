@@ -170,7 +170,7 @@ Version pinning: versions are resolved and recorded in `docs/research-findings-j
 
 The backbone is Amazon EKS. One cluster per student, provisioned and provided live, up to 300 concurrent. The EKS control plane is managed by AWS. Each cluster runs a managed node group of T3 workers for the system and platform components. vcluster is not used. The provisioning automation in `scripts/provision/` targets EKS only.
 
-Kubernetes version: pin to 1.34 or 1.35 (both in standard EKS support through the workshop horizon; 1.33 exits standard support July 29, 2026). cert-manager 1.20 requires K8s 1.31 or newer, satisfied by either pin. See `docs/research-findings-june-2026.md` section 5 for the EKS provisioning detail (add-ons, Pod Identity, eksctl vs terraform-aws-eks).
+Kubernetes version: pin to 1.35 or 1.36 (both in standard EKS support through the workshop horizon; 1.33 exits standard support July 29, 2026). cert-manager 1.20 requires K8s 1.31 or newer, satisfied by either pin. See `docs/research-findings-june-2026.md` section 5 for the EKS provisioning detail (add-ons, Pod Identity, eksctl vs terraform-aws-eks).
 
 ### 6.1 Presenter sandbox (the cluster that matters)
 

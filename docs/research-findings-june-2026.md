@@ -14,7 +14,7 @@ Maturity claims are stated at the tier the project actually holds. Sandbox is ca
 - Control plane: managed by AWS (not a node you provision).
 - Worker nodes: a T3 node group, 2 to 3 workers, vLLM included (t3.2xlarge). Resolved to stay on T3, see the resolution note in section 5.
 - vcluster: not used. Removed from the spec.
-- Kubernetes version: pin to 1.34 or 1.35 (see section 5).
+- Kubernetes version: pin to 1.35 or 1.36 (see section 5).
 
 ---
 
@@ -143,7 +143,7 @@ Argo CD shards by cluster, not by app. With about 33 apps on one EKS cluster, al
 
 vLLM node resolution: research found that T3 burstable throttles under sustained CPU inference and recommended a non-burstable c6i or m6i node. The decision was to stay on T3, for these reasons: T3 is the last Intel x86 instance in the burstable family (t3a is AMD, t4g is ARM Graviton), and the vLLM CPU image is x86-only with immature ARM support, so T3 keeps inference on the supported path; the inference beat is short and bursty rather than a sustained server, and T3 Unlimited (the default) keeps bursting through it; cold-start is handled by pre-warming the model plus the pre-warmed-request fallback. A dedicated compute node and per-cluster Karpenter were both rejected (unnecessary for a bursty demo, and Karpenter adds a controller to 300 clusters plus live node spin-up latency). Benchmark Qwen3-1.7B on t3.2xlarge at the Phase 3 gate; drop to Qwen3-0.6B if it misses. The research finding stands for a sustained-inference production deployment; this is a demo, so it does not apply.
 
-- Supported K8s versions in June 2026: 1.36, 1.35, 1.34, 1.33. 1.33 exits standard support July 29, 2026. Pin to 1.34 or 1.35.
+- Supported K8s versions in June 2026: 1.36, 1.35, 1.34, 1.33. 1.33 exits standard support July 29, 2026. Pin to 1.35 or 1.36.
 - EKS Auto Mode (GA Dec 2024) manages compute and bundles VPC CNI, CoreDNS, kube-proxy, EBS CSI, and the AWS Load Balancer Controller. It eliminates most per-cluster wiring but hides the LB controller and CSI driver from the GitOps story, which works against the teaching narrative. Michael's stated direction (managed control plane plus a T3 worker group) implies traditional managed node groups, which is also the higher-fidelity choice for a GitOps workshop. Recorded as the working plan; Auto Mode noted as an alternative.
 - Add-ons as EKS managed add-ons: VPC CNI, CoreDNS, kube-proxy, EBS CSI driver.
 - Use EKS Pod Identity (not IRSA) for the AWS Load Balancer Controller. IRSA needs one OIDC provider and a trust policy per cluster, which is 300 of them. Pod Identity uses a generic reusable trust policy.

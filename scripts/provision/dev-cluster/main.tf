@@ -41,7 +41,8 @@ variable "name" {
 
 variable "kubernetes_version" {
   type    = string
-  default = "1.34"
+  # EKS standard support (June 2026): 1.36, 1.35, 1.34. 1.33 exits July 29, 2026.
+  default = "1.35"
 }
 
 data "aws_availability_zones" "available" {
@@ -96,9 +97,17 @@ module "eks" {
   subnet_ids = module.vpc.private_subnets
 
   addons = {
-    coredns    = {}
-    kube-proxy = {}
-    vpc-cni    = {}
+    # vpc-cni and kube-proxy must exist before nodes join. Without before_compute
+    # the node group is created first, nodes boot with no CNI, stay NotReady, and
+    # the group fails with NodeCreationFailure: Unhealthy nodes.
+    vpc-cni = {
+      before_compute = true
+    }
+    kube-proxy = {
+      before_compute = true
+    }
+    # coredns runs on the nodes, so it installs after the node group exists.
+    coredns = {}
   }
 
   eks_managed_node_groups = {
