@@ -46,6 +46,16 @@ Students bring their own paid agentic coding CLI plan, Claude Code or an equival
 
 The AI-plane Kyverno policies are defined in audit mode in Phase 4, as the AI gateway plane lands, so kagent and agentgateway are governed from birth. Phase 8 flips them from audit to enforce and runs the live denial demo. Governance precedes the workload. (June 19, 2026)
 
+## D13. Accepted agentic CLIs; the two LLM roles are distinct
+
+The prerequisite CLI is Claude Code (primary) or an equivalent that runs headless in the remote shell with a governed approval gate: OpenAI Codex CLI, opencode, Codename Goose, or Cursor CLI. Do not list Google Gemini CLI or Amazon Q Developer CLI: both are being sunset within weeks of the workshop (Gemini CLI personal plans cut off June 18, 2026; Amazon Q signups closed May 15, 2026).
+
+Two LLM roles, not to be confused: the agentic CLI is the builder and runs on the student's own paid plan (their model, their external spend, by design). The model the deployed platform agents call is the small in-cluster vLLM, with no external spend and no external credentials. There is no contradiction: the no-external-spend rule applies to the deployed demo agent, not to the student's build CLI. (June 19, 2026)
+
+## D14. OPEN: per-agent attribution is clean only on Claude Code and Codex
+
+The B17 per-agent attribution beat relies on PreToolUse/PostToolUse hooks shipping to Loki. Of the accepted CLIs, only Claude Code and Codex give a clean lifecycle audit trail. Decision needed: either narrow the accepted CLI list to Claude Code and Codex, or frame B17 as a Claude-Code-specific demo with a documented fallback (git history plus shell session logging) for students on other CLIs. OPEN, for Michael. (June 19, 2026)
+
 ## D12. Tempo over Jaeger; KEDA is not Karpenter
 
 Tracing backend is Grafana Tempo, not Jaeger, to keep traces, logs, metrics, and dashboards under one Grafana pane. Jaeger is documented as an alternative path. KEDA (event-driven pod autoscaling) is a platform capability students learn; it is not a Karpenter substitute. Node provisioning is the fixed managed node group, and self-managed Karpenter is not used (see D9). (June 19, 2026)

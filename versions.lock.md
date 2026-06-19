@@ -51,6 +51,16 @@ Full sources and gotchas are in `docs/research-findings-june-2026.md`. This file
 | Karpenter (reference only, not self-managed here) | v1.13.0 |
 | ingress2gateway (migration reference) | 1.0 |
 
+## Agent protocols and CLI tooling
+
+| Piece | Version | Notes |
+|---|---|---|
+| MCP spec | 2025-11-25 | Stable revision. stdio and Streamable HTTP transports; HTTP+SSE deprecated. |
+| MCP demo server | mcp/everything | Streamable HTTP reference server for the agent-calls-MCP beat; mirror to GHCR. |
+| KMCP | v0.3.0 | kagent MCP server platform; bundled with kagent 0.7+ (kmcp.enabled). MCPServer is v1alpha1, RemoteMCPServer is v1alpha2. |
+| A2A | v1.0.0 | Linux Foundation Agent2Agent project; agentgateway mediates via an a2a route policy. |
+| Claude Code | v2.1.183 | The presenter's build agent. Governed via managed-settings; audit hook ships tool invocations to Loki (B17). |
+
 ## Not used (and why)
 
 - ingress-nginx: end of life March 24, 2026. Replaced by AWS Load Balancer Controller.
