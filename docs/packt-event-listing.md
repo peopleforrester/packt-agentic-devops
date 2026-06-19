@@ -85,7 +85,7 @@ The build-along is supported by a full companion GitHub repo with copy-paste com
 
 ## Prerequisites
 
-- A Claude Code subscription (attendees bring their own)
+- An agentic coding CLI you bring: Claude Code is recommended, and free open-source alternatives (opencode, Goose) also work, so a paid plan is not required
 - Cluster access is provided; no local Kubernetes setup required
 - A modern web browser (cluster access is delivered via browser)
 - Working familiarity with Kubernetes, Helm, and GitOps (Argo CD or Flux experience helpful)
