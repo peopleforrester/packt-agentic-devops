@@ -10,7 +10,7 @@
 
 ## What this is
 
-One idea sits behind the whole session: AI-native is platform extension, not replacement. The AI plane composes with your cloud-native stack through the same GitOps path everything else uses, and an agent can do the platform engineering work itself, governed, not unleashed. You watch it happen on a real cluster, and you take the platform home.
+One idea sits behind the whole session: AI-native is platform extension, not replacement. The AI plane composes with your cloud-native stack through the same GitOps path everything else uses, and an agent can do the platform engineering work itself, governed, not unleashed. You build it on a real cluster with an agent driving, phase by phase, and you take the platform home.
 
 Tools don't transform organizations. People do. These four hours are built for the people who will run this platform after the session ends.
 
@@ -33,14 +33,17 @@ Platform engineers, DevOps engineers, SREs, cloud engineers, architects, and tec
 
 ## How you'll participate
 
-Pick your level. Every one of them has full value, and nothing depends on your machine: every outcome the workshop promises is achieved on the presenter's cluster, so following along is a bonus, never a requirement.
+You build the platform. At the start you get a bare Kubernetes cluster and its credentials, nothing installed. Your own agentic CLI ingests the workshop spec and builds the platform with you, phase by phase, on your cluster: it installs ArgoCD, brings up the foundation, adds the AI plane, and wires the self-service layer, writing tests and confirming as it goes. The spec forces a stop at the end of each phase, so the room moves together. You build a phase, the presenter walks through what just happened and what comes next, then everyone starts the next phase.
 
-- **Watch.** Follow the live build and the reasoning behind each decision, with zero setup. You leave understanding the architecture, the GitOps patterns, and the governance model, because you saw them built, and debugged, in real time.
-- **Follow along.** We provide a cluster in your browser, no local install. At each module you run the same numbered, idempotent commands the build uses, and build your own copy in parallel. Fall behind, and a single jump-in block at each module boundary brings you current in one step.
-- **Take it home.** Everything is in the companion GitHub repo: every manifest, Helm chart, ArgoCD App, Backstage template, and the exact Claude Code prompts, plus reset scripts and recordings of each demo. Re-run the whole build at your own pace afterward.
-- **Engage.** Ask questions throughout. Watch a deliberate failure get diagnosed and healed, and watch policy block a bad change live. Close by committing to one specific change you will make in your own platform within 30 days.
+By the end you have built the platform yourself, not watched someone else build it.
+
+**What you bring:** a paid agentic coding CLI plan (Claude Code or an equivalent) that can run inside the cluster environment, and a modern browser. The cluster is provided.
+
+**If your build hits trouble:** the presenter's reference cluster and the recorded backups are the safety net. Watch the beat, pick up the known-good state at the next phase boundary, and keep going. Falling behind never strands you, and you take the full repo home to re-run at your own pace.
 
 ## Agenda
+
+In each module you run your agent through that part of the build on your own cluster. The presenter builds in parallel and narrates at each stop.
 
 | Time (EDT) | Module | What happens |
 |---|---|---|
