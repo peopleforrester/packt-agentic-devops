@@ -41,3 +41,11 @@ Michael provisions all 300 clusters, including the t3.2xlarge sizing and the per
 ## D10. Prerequisite: bring your own agentic CLI
 
 Students bring their own paid agentic coding CLI plan, Claude Code or an equivalent. The workshop does not provide it. The tool must be able to register and run inside the remote cluster system the student is given. (June 19, 2026)
+
+## D11. AI-plane policies precede the AI plane
+
+The AI-plane Kyverno policies are defined in audit mode in Phase 4, as the AI gateway plane lands, so kagent and agentgateway are governed from birth. Phase 8 flips them from audit to enforce and runs the live denial demo. Governance precedes the workload. (June 19, 2026)
+
+## D12. Tempo over Jaeger; KEDA is not Karpenter
+
+Tracing backend is Grafana Tempo, not Jaeger, to keep traces, logs, metrics, and dashboards under one Grafana pane. Jaeger is documented as an alternative path. KEDA (event-driven pod autoscaling) is a platform capability students learn; it is not a Karpenter substitute. Node provisioning is the fixed managed node group, and self-managed Karpenter is not used (see D9). (June 19, 2026)
