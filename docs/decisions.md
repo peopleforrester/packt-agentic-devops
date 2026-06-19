@@ -48,13 +48,24 @@ The AI-plane Kyverno policies are defined in audit mode in Phase 4, as the AI ga
 
 ## D13. Accepted agentic CLIs; the two LLM roles are distinct
 
-The prerequisite CLI is Claude Code (primary) or an equivalent that runs headless in the remote shell with a governed approval gate: OpenAI Codex CLI, opencode, Codename Goose, or Cursor CLI. Do not list Google Gemini CLI or Amazon Q Developer CLI: both are being sunset within weeks of the workshop (Gemini CLI personal plans cut off June 18, 2026; Amazon Q signups closed May 15, 2026).
+Per-vendor spikes (June 19, 2026) verified which CLIs actually work for the workshop (headless in the remote shell, governed gate, lifecycle hooks for audit). Working set:
 
-Two LLM roles, not to be confused: the agentic CLI is the builder and runs on the student's own paid plan (their model, their external spend, by design). The model the deployed platform agents call is the small in-cluster vLLM, with no external spend and no external credentials. There is no contradiction: the no-external-spend rule applies to the deployed demo agent, not to the student's build CLI. (June 19, 2026)
+- Claude Code (primary): paid plan, OpenAI-compatible base URL works, PreToolUse/PostToolUse hooks.
+- OpenAI Codex CLI: paid, GA hooks.
+- GitHub Copilot CLI (the new agentic `copilot`, GA Feb 2026): paid Copilot tier, governed default, preToolUse/postToolUse hooks. Not the old suggest-only `gh copilot`.
+- Google Antigravity CLI (GA May 2026): free Individual preview, governed via Terminal Execution Policy Off, Inspect hooks. This is Google's successor; Gemini CLI itself goes dark for free/Pro/Ultra plans June 18, 2026.
+- Amazon Kiro CLI 2.0 (GA April 2026): free tier includes the CLI, governed via `--trust-tools`, pre/post hooks. This is AWS's successor; Amazon Q Developer CLI signups are blocked from May 15, 2026.
+- opencode (MIT, free): BYO-key, points at the in-cluster vLLM directly, governed and audited via the `tool.execute.before/after` plugin (native interactive ask hangs headless).
+- Goose (Apache-2.0, free): BYO-key, points at the in-cluster vLLM, governed and audited via the PreToolUse/PostToolUse hooks engine (not GOOSE_MODE).
+- Cursor CLI: works headless with hook-based governance, but locked to Cursor's hosted models (no in-cluster vLLM) and beta safeguards. Weakest fit.
 
-## D14. OPEN: per-agent attribution is clean only on Claude Code and Codex
+Name the dead products explicitly so students do not bring them: Gemini CLI (use Antigravity), Amazon Q Developer CLI (use Kiro). Free and open-source options for students without a paid plan: opencode and Goose, both vLLM-ready.
 
-The B17 per-agent attribution beat relies on PreToolUse/PostToolUse hooks shipping to Loki. Of the accepted CLIs, only Claude Code and Codex give a clean lifecycle audit trail. Decision needed: either narrow the accepted CLI list to Claude Code and Codex, or frame B17 as a Claude-Code-specific demo with a documented fallback (git history plus shell session logging) for students on other CLIs. OPEN, for Michael. (June 19, 2026)
+Two LLM roles, not to be confused: the agentic CLI is the builder and runs on the student's own model (their plan, their spend, by design, or the in-cluster vLLM if they use opencode/Goose). The model the deployed platform agents call is the small in-cluster vLLM, with no external spend. The no-external-spend rule applies to the deployed demo agent, not to the student's build CLI. (June 19, 2026)
+
+## D14. RESOLVED: per-agent attribution works across the modern agentic CLIs
+
+The earlier claim that the B17 attribution beat works cleanly only on Claude Code and Codex was wrong, corrected by the per-vendor spikes. Every CLI in the D13 working set now ships lifecycle hooks suitable for a per-action audit trail: Claude Code (PreToolUse/PostToolUse), Codex (GA hooks), GitHub Copilot CLI (preToolUse/postToolUse), Antigravity (Inspect hooks), Kiro (pre/post hooks), opencode (tool.execute.before/after), Goose (PreToolUse/PostToolUse engine), Cursor (six CLI events as of April 2026). The config differs per CLI, but each can ship a structured line per tool invocation to Loki. B17 is achievable across the accepted set; the presenter demonstrates it on Claude Code, and the repo can document the hook config for the others. No narrowing needed. (June 19, 2026)
 
 ## D12. Tempo over Jaeger; KEDA is not Karpenter
 
