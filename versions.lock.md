@@ -23,8 +23,8 @@ Full sources and gotchas are in `docs/research-findings-june-2026.md`. This file
 | Prometheus | v3.12.0 | (bundled) | n/a | n/a |
 | Grafana | 13.0.2 | grafana | 12.4.5 | grafana-community.github.io/helm-charts |
 | Alertmanager | v0.33.0 | (bundled) | n/a | n/a |
-| Loki | 3.7.2 | loki | 17.4.1 | grafana-community.github.io/helm-charts |
-| Tempo | 2.10.7 | tempo-distributed | 2.25.2 | grafana-community.github.io/helm-charts |
+| Loki | 3.7.2 | loki | 17.4.7 | grafana-community.github.io/helm-charts |
+| Tempo | 2.10.7 | tempo-distributed | 2.25.4 | grafana-community.github.io/helm-charts |
 | OTel Collector | 0.153.0 | opentelemetry-collector | 0.158.1 | open-telemetry.github.io/opentelemetry-helm-charts |
 | OTel Operator | 0.153.0 | opentelemetry-operator | 0.115.0 | open-telemetry.github.io/opentelemetry-helm-charts |
 | Gateway API | v1.5.1 | n/a (kubectl) | n/a | n/a |
