@@ -37,7 +37,7 @@ You build the platform. At the start you get a bare Kubernetes cluster and its c
 
 By the end you have built the platform yourself, not watched someone else build it.
 
-**What you bring:** an agentic coding CLI that runs in the browser terminal, and a modern browser. Claude Code is recommended; equivalents work, and free open-source options (opencode, Goose) mean a paid plan is not required. The cluster is provided.
+**What you bring:** a Claude Code subscription and a modern browser. Other agentic coding CLIs may work, but the workshop is tested only with Claude Code. The cluster is provided.
 
 **If your build hits trouble:** the presenter's reference cluster and the recorded backups are the safety net. Watch the beat, pick up the known-good state at the next phase boundary, and keep going. Falling behind never strands you, and you take the full repo home to re-run at your own pace.
 
