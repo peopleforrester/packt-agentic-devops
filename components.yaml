@@ -249,7 +249,7 @@ components:
     install_method: helm
     chart_repo: https://grafana-community.github.io/helm-charts
     chart_name: loki
-    chart_version: "17.4.1"
+    chart_version: "17.4.7"
     app_version: "3.7.2"
     namespace: observability
     module: 1
@@ -264,7 +264,7 @@ components:
     install_method: helm
     chart_repo: https://grafana-community.github.io/helm-charts
     chart_name: tempo-distributed
-    chart_version: "2.25.2"
+    chart_version: "2.25.4"
     app_version: "2.10.7"
     namespace: observability
     module: 1
