@@ -8,6 +8,12 @@
 - **Delivered by:** Packt
 - **Instructor:** Michael Rishi Forrester
 
+## What this is
+
+One idea sits behind the whole session: AI-native is platform extension, not replacement. The AI plane composes with your cloud-native stack through the same GitOps path everything else uses, and an agent can do the platform engineering work itself, governed, not unleashed. You watch it happen on a real cluster, and you take the platform home.
+
+Tools don't transform organizations. People do. These four hours are built for the people who will run this platform after the session ends.
+
 ## Summary
 
 Over four hours, Claude Code builds an AI-native Internal Developer Platform on a real Kubernetes cluster, live, in front of you. You watch an agent do real platform engineering work: scaffolding Helm values, writing ArgoCD App-of-Apps wiring, defining kagent Agent CRDs, generating Backstage scaffolder templates, and resolving sync issues. By the end you have a working 33-component AI-native IDP you can take home: a cloud-native foundation (Backstage, the Argo stack, the OpenTelemetry observability plane, policy and secrets tooling) plus the AI plane that makes it AI-native (kgateway, agentgateway, kagent, LLM Guard, OpenLLMetry, KServe with vLLM, llm-d).
@@ -25,6 +31,15 @@ Platform engineers, DevOps engineers, SREs, cloud engineers, architects, and tec
 - Working familiarity with Kubernetes, Helm, and GitOps (Argo CD or Flux experience helps)
 - No prior Backstage experience required
 
+## How you'll participate
+
+Pick your level. Every one of them has full value, and nothing depends on your machine: every outcome the workshop promises is achieved on the presenter's cluster, so following along is a bonus, never a requirement.
+
+- **Watch.** Follow the live build and the reasoning behind each decision, with zero setup. You leave understanding the architecture, the GitOps patterns, and the governance model, because you saw them built, and debugged, in real time.
+- **Follow along.** We provide a cluster in your browser, no local install. At each module you run the same numbered, idempotent commands the build uses, and build your own copy in parallel. Fall behind, and a single jump-in block at each module boundary brings you current in one step.
+- **Take it home.** Everything is in the companion GitHub repo: every manifest, Helm chart, ArgoCD App, Backstage template, and the exact Claude Code prompts, plus reset scripts and recordings of each demo. Re-run the whole build at your own pace afterward.
+- **Engage.** Ask questions throughout. Watch a deliberate failure get diagnosed and healed, and watch policy block a bad change live. Close by committing to one specific change you will make in your own platform within 30 days.
+
 ## Agenda
 
 | Time (EDT) | Module | What happens |
@@ -39,6 +54,8 @@ Platform engineers, DevOps engineers, SREs, cloud engineers, architects, and tec
 | 12:35 to 1:00 | Wrap: governance, observability, commitment | Kyverno policies enforce AI-plane invariants. Per-agent attribution in Loki shows every action, including Claude Code's own. Each attendee commits to one specific change for their own platform. Final Q&A. |
 
 ## What you will walk away with
+
+This is the promise. By 1:00 PM EDT you have a working platform, not a slide deck:
 
 - A working 33-component AI-native IDP, GitOps-driven, deployed during the session
 - A companion GitHub repo with every manifest, Helm chart, ArgoCD App, Backstage template, and Claude Code prompt used in the workshop
