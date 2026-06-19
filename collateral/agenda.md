@@ -35,7 +35,7 @@ Platform engineers, DevOps engineers, SREs, cloud engineers, architects, and tec
 
 You build the platform. At the start you get a bare Kubernetes cluster and its credentials, nothing installed. Your own agentic CLI ingests the workshop spec and builds the platform with you, phase by phase, on your cluster: it installs ArgoCD, brings up the foundation, adds the AI plane, and wires the self-service layer, writing tests and confirming as it goes. The spec forces a stop at the end of each phase, so the room moves together. You build a phase, the presenter walks through what just happened and what comes next, then everyone starts the next phase.
 
-By the end you have built the platform yourself, not watched someone else build it.
+By the end you have built the platform yourself, hands-on. Prefer to watch, or fall behind at some point? That has full value too: every outcome is achieved on the presenter's cluster, following along is encouraged but never required, and you take the platform home either way.
 
 **What you bring:** a Claude Code subscription and a modern browser. Other agentic coding CLIs may work, but the workshop is tested only with Claude Code. The cluster is provided.
 
