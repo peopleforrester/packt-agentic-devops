@@ -30,7 +30,7 @@ The predecessor (27 components, KCD Texas, May 15, 2026) proved the format. This
 
 These override everything else in this spec. If a design choice conflicts with one of these, the design choice loses.
 
-1. **No activity is load-bearing on attendee machines.** Every outcome the workshop promises is achieved on the presenter's pre-staged sandbox. Attendee clusters are a bonus, never a dependency.
+1. **Students build on their own clusters; that is the workshop.** Each attendee builds the platform on their own provided cluster with their own agentic CLI, driven by the spec. The presenter's pre-staged sandbox is the guaranteed reference and the recorded backups are the safety net, so a broken or slow attendee build never breaks the session: the attendee watches the beat, picks up the known-good state at the next phase boundary, and keeps going. The reliability guarantee lives on the presenter side; the hands-on build is the attendee experience.
 2. **Every live demo beat has three layers of safety:** a checkpoint to reset to, a reset script that runs in under 5 minutes, and a recorded backup video of the exact beat.
 3. **Nothing is built from source live.** Backstage, custom images, anything with a long build: pre-built, pre-pushed, pre-pulled.
 4. **Nothing waits on the network live.** All images pre-pulled to node caches or served from a mirror registry. All Helm charts vendored into the repo.
@@ -184,7 +184,7 @@ Kubernetes version: pin to 1.35 or 1.36 (both in standard EKS support through th
 Requirements:
 - Browser-delivered terminal and kubeconfig, zero local setup (same promise as KCD Texas).
 - Up to 300 concurrent environments, provisioned and warm before 9:00 AM EDT, torn down 2 hours after the session closes (session runs 9:00 AM to 1:00 PM EDT, so teardown is approximately 3:00 PM EDT). Environments do not persist for take-home; the repo is the take-home.
-- Each environment lands at `checkpoint/module-0-start`: cluster up, ArgoCD installed, repo cloned, nothing else synced. Attendees who follow along run the same numbered commands from `copy-paste-commands.md`.
+- Each environment is a bare cluster: up, with credentials handed to the attendee, and nothing else. ArgoCD is not installed and the repo is not cloned. The attendee's own agentic CLI, driven by the spec, installs ArgoCD, clones the repo, and builds every phase. Precedent: at KCD Texas the full build took about 20 minutes from a bare cluster.
 - Per the doctrine, if attendee environments fail at scale, the workshop proceeds untouched.
 
 ### 6.3 Provisioning platform (resolved: EKS)
@@ -233,7 +233,7 @@ Each module section below defines what gets built ahead of time, what happens li
 
 ### 7.1 Module 1: Cloud-native foundation (0:15 to 1:15)
 
-**Pre-staged:** Everything in `platform/foundation/` exists in the repo before the workshop. The cluster sits at `checkpoint/module-0-start` (ArgoCD only).
+**Pre-staged:** Everything in `platform/foundation/` exists in the repo before the workshop. The cluster starts bare, mirroring the attendee start state. ArgoCD and the foundation are built live during the module.
 
 **Live beats:**
 - **B01:** Claude Code reads `components.yaml` and explains the App-of-Apps structure it is about to apply. Prompt P01.
