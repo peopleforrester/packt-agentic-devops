@@ -105,7 +105,7 @@ Total: 220 minutes of content, 30 minutes of breaks.
 
 ## Prerequisites
 
-- An agentic coding CLI you bring: Claude Code is recommended, and free open-source alternatives (opencode, Goose) also work, so a paid plan is not required
+- A Claude Code subscription (attendees bring their own). Other agentic coding CLIs may work, but the workshop is tested only with Claude Code
 - Cluster access is provided by the presenter; no local Kubernetes setup required
 - A modern web browser (cluster access is delivered via browser, same as the KCD Texas format)
 
