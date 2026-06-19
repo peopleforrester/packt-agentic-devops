@@ -54,4 +54,4 @@ Each phase has a detailed file in `spec/phases/phase-N-*.md` with its goal, outp
 
 ## Status
 
-The phase breakdown above is proposed and awaiting sign-off. Phase 0 is written as the pattern. Phases 1 through 8 are detailed once the breakdown is approved.
+The nine-phase breakdown is approved (decisions D8). Phases 0 through 8 are written in `spec/phases/`, each with goal, outputs, test criteria, completion promise, pinned versions, and a forced stop. Versions match `components.yaml` and `versions.lock.md` as of the June 19, 2026 spike sweep. Re-pin at the July freeze.
