@@ -2,7 +2,7 @@
 
 **Goal:** kagent running, a demo Agent declared and reconciled by GitOps, calling an MCP server through agentgateway, with LLM Guard blocking a prompt-injection attempt and OpenLLMetry wired.
 
-**Inputs:** Phase 4 complete (gateways up, AI policies in audit). The MCP demo server deployed.
+**Inputs:** Phase 4 complete (gateways up, AI policies in audit). The MCP demo server deployed: the MCP everything server over Streamable HTTP (image `mcp/everything`, mirrored to GHCR), behind a Service and routed through agentgateway.
 
 **Outputs:**
 - kagent (v0.9.9) installed from its OCI charts (kagent-crds then kagent) into the kagent namespace
@@ -24,5 +24,6 @@
 - LLM Guard is effectively frozen (0.3.16, no releases since mid-2025 post-acquisition); pin it, vendor the config, mirror the multi-GB image to GHCR and pre-pull. The injection block is deterministic and reset-restorable.
 - OpenLLMetry is Apache-2.0 (not MIT); it emits GenAI conventions that are Development grade. Set `OTEL_SEMCONV_STABILITY_OPT_IN=gen_ai_latest_experimental`.
 - This is the most-rehearsed beat. The agent calls only the in-cluster vLLM.
+- MCP wiring: the agent references the MCP server via `spec.tools[]` `type: McpServer` with `mcpServer.kind: RemoteMCPServer` (`kagent.dev/v1alpha2`, points at the agentgateway URL, `protocol: STREAMABLE_HTTP`, path `/mcp`). Note the kmcp split: a server kmcp deploys in-cluster is `MCPServer` (`kagent.dev/v1alpha1`); a server reached by URL is `RemoteMCPServer` (`kagent.dev/v1alpha2`). The agentgateway-in-front URL mapping is the thinnest-documented area; validate it live before the demo. MCP spec revision is 2025-11-25; do not use the deprecated HTTP+SSE transport.
 
 **Stop here.** Output the completion promise and wait. The presenter walks the audit log: the MCP call, then the blocked injection.
