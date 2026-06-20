@@ -11,8 +11,9 @@ spec:
   project: default
   source:
     repoURL: https://kyverno.github.io/kyverno
+    # Chart version, not the app version. Chart 3.8.1 ships Kyverno app v1.18.1.
     chart: kyverno
-    targetRevision: 1.18.1
+    targetRevision: 3.8.1
   destination:
     server: https://kubernetes.default.svc
     namespace: kyverno

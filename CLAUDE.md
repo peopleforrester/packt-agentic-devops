@@ -21,6 +21,7 @@ A GitOps-driven, AI-native Internal Developer Platform. ArgoCD reconciles everyt
 
 ## GitOps rules
 
+- Cluster context safety (this machine is shared, other systems use kubectl): every kubectl/helm command sets an explicit `KUBECONFIG` (a dedicated throwaway file) and `AWS_PROFILE` inline, never a global export. Never write to `~/.kube/config`: pull creds with `aws eks update-kubeconfig --kubeconfig /tmp/<cluster>.kubeconfig`. Verify `kubectl config current-context` matches the cluster you provisioned before any mutating command. Only touch clusters you created this session.
 - All cluster changes flow through Git. ArgoCD applies them.
 - Never run mutating `kubectl` directly against the cluster, except for the bootstrap (installing ArgoCD) and the scripted Kyverno denial demo (B16).
 - Bootstrap and ApplicationSet CRDs require server-side apply: use `kubectl apply --server-side --force-conflicts`. The ApplicationSet and Argo Workflows CRDs exceed the client-side apply annotation limit.

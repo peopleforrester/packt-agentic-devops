@@ -28,8 +28,12 @@ spec:
             memory_limiter:
               check_interval: 1s
               limit_percentage: 80
+            # The eks detector hard-fails at startup ("node name is empty") because it
+            # needs node_from_env_var pointed at the node-name env. The kubernetesAttributes
+            # preset already supplies k8s.* attributes, so ec2 (host/cloud metadata via
+            # IMDS) plus env is enough. Dropping eks avoids the CrashLoopBackOff.
             resourcedetection:
-              detectors: [env, eks, ec2]
+              detectors: [env, ec2]
           exporters:
             otlp/tempo:
               endpoint: tempo.observability.svc:4317

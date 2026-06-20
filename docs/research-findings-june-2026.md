@@ -76,8 +76,8 @@ OpenTelemetry GenAI semantic conventions: status is Development, not stable. The
 
 | Component | App version | Chart | Chart version | Repo | Notes |
 |---|---|---|---|---|---|
-| Kyverno | v1.18.1 | kyverno | 1.18.1 | kyverno.github.io/kyverno | CNCF Graduated (March 2026). CEL-based policy types (`ValidatingPolicy`, `MutatingPolicy`, etc.) reached GA in 1.17. Legacy JMESPath `ClusterPolicy` deprecated, removal planned v1.20. |
-| Sealed Secrets | 0.36.0 | sealed-secrets | 2.18.3 | bitnami-labs.github.io/sealed-secrets | Use the project's own repo, not bitnami/charts. |
+| Kyverno | v1.18.1 | kyverno | 3.8.1 | kyverno.github.io/kyverno | CNCF Graduated (March 2026). Chart 3.8.1 ships app v1.18.1 (chart and app versions differ). CEL-based policy types (`ValidatingPolicy`, `MutatingPolicy`, etc.) reached GA in 1.17. Legacy JMESPath `ClusterPolicy` deprecated, removal planned v1.20; `validationFailureAction` moved to rule-level `validate.failureAction`. |
+| Sealed Secrets | 0.38.1 | sealed-secrets | 2.19.0 | bitnami.github.io/sealed-secrets | Chart moved off bitnami-labs.github.io (retired in Bitnami's 2025 catalog sunset, now 404) to the project's own GitHub Pages. Not bitnami/charts, not docker.io OCI. Set fullnameOverride=sealed-secrets-controller. |
 | External Secrets Operator | v2.6.0 | external-secrets | 2.6.0 | charts.external-secrets.io | CNCF Sandbox. v1beta1 API retired; use `external-secrets.io/v1`. Stored v1beta1 objects auto-convert to v1, which causes Argo CD drift unless manifests are migrated. |
 | cert-manager | v1.20.2 | cert-manager | v1.20.2 | OCI `oci://quay.io/jetstack/charts/cert-manager` | CNCF Graduated. v1.20 dropped K8s < 1.31. |
 | KEDA | 2.20.1 | keda | 2.20.1 | kedacore.github.io/charts | CNCF Graduated. |

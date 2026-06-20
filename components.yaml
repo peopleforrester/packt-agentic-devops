@@ -113,13 +113,17 @@ components:
     plane: foundation
     project_url: https://github.com/bitnami-labs/sealed-secrets
     install_method: helm
-    chart_repo: https://bitnami-labs.github.io/sealed-secrets
+    chart_repo: https://bitnami.github.io/sealed-secrets
     chart_name: sealed-secrets
     chart_version: "2.19.0"
     app_version: "0.38.1"
     namespace: kube-system
     module: 1
-    notes: Use the project's own repo, not bitnami/charts.
+    notes: >
+      Chart hosting moved from bitnami-labs.github.io (retired in Bitnami's 2025 catalog
+      sunset, now 404) to the project's own GitHub Pages at bitnami.github.io. Not
+      bitnami/charts, not docker.io OCI. Set fullnameOverride=sealed-secrets-controller
+      for kubeseal CLI compatibility.
 
   - name: external-secrets
     plane: foundation
