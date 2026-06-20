@@ -263,12 +263,15 @@ components:
     project_url: https://grafana.com/oss/tempo
     install_method: helm
     chart_repo: https://grafana-community.github.io/helm-charts
-    chart_name: tempo-distributed
-    chart_version: "2.25.4"
+    chart_name: tempo
+    chart_version: "2.2.3"
     app_version: "2.10.7"
     namespace: observability
     module: 1
-    notes: Default Tempo port is 3200, not 3100. Lands the AI-plane traces (B10).
+    notes: >
+      Single-binary tempo chart, lighter than tempo-distributed for a per-student
+      demo cluster (tempo-distributed 2.25.4 is the production alternative).
+      Default Tempo port is 3200, not 3100. Lands the AI-plane traces (B10).
 
   - name: opentelemetry-collector
     plane: foundation

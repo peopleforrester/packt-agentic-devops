@@ -1,0 +1,54 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: backstage
+  namespace: argocd
+  annotations:
+    # Wave 4: last. Backstage is the front door; it sits on top of the
+    # foundation and shows live ArgoCD and Kubernetes state.
+    argocd.argoproj.io/sync-wave: "4"
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  project: default
+  source:
+    repoURL: https://backstage.github.io/charts
+    chart: backstage
+    targetRevision: 2.8.2
+    helm:
+      valuesObject:
+        backstage:
+          # Pre-built custom image, never built from source live. Mirror to the
+          # workshop GHCR namespace. The chart's built-in image is demo-only and
+          # carries no plugins; the real app must be a custom image.
+          image:
+            registry: ghcr.io
+            repository: REPLACE_WITH_GHCR_NAMESPACE/backstage
+            tag: REPLACE_WITH_PINNED_TAG
+        # Bundled PostgreSQL for the demo. Production backs the catalog with RDS.
+        postgresql:
+          enabled: true
+          auth:
+            existingSecret: backstage-postgresql
+        service:
+          type: ClusterIP
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: backstage
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
+      - ServerSideApply=true
+    retry:
+      limit: 5
+      backoff:
+        duration: 5s
+        factor: 2
+        maxDuration: 3m
+# Built with the new backend system and the New Frontend System (default since
+# v1.49.0). Scaffolder templates use scaffolder.backstage.io/v1beta3 (Nunjucks).
+# Presenter cluster runs real GitHub OAuth; attendee clusters run guest auth with
+# the OAuth wiring present but commented (see build-spec 6.5).
