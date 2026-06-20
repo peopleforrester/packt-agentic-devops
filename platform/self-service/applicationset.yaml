@@ -1,0 +1,42 @@
+# ABOUTME: ApplicationSet that deploys every generated agent-service. The SCM generator
+# ABOUTME: finds repos in the workshop GitHub org that carry a manifests/ directory.
+#
+# Publish target dependency: this assumes the golden-path template publishes to a GitHub
+# org (REPLACE_GITHUB_ORG). If attendees use an in-cluster Gitea instead, swap the
+# scmProvider generator for a git generator pointed at that host. A repo credential
+# Secret for the org must exist in the argocd namespace.
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: agent-services
+  namespace: argocd
+spec:
+  goTemplate: true
+  goTemplateOptions:
+    - missingkey=error
+  generators:
+    - scmProvider:
+        github:
+          organization: REPLACE_GITHUB_ORG
+        filters:
+          - pathsExist:
+              - manifests
+  template:
+    metadata:
+      name: "agent-{{ .repository }}"
+    spec:
+      project: default
+      source:
+        repoURL: "{{ .url }}"
+        targetRevision: "{{ .branch }}"
+        path: manifests
+      destination:
+        server: https://kubernetes.default.svc
+        namespace: kagent
+      syncPolicy:
+        automated:
+          prune: true
+          selfHeal: true
+        syncOptions:
+          - CreateNamespace=true
+          - ServerSideApply=true
