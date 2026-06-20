@@ -1,0 +1,37 @@
+# ABOUTME: Gateway API standard-channel CRDs, the prerequisite for kgateway and
+# ABOUTME: agentgateway. Applied from the upstream release with server-side apply.
+#
+# One owner for the Gateway API CRDs: this Application, not a controller's bundled
+# copy. kgateway and agentgateway consume gateway.networking.k8s.io/v1 (GA).
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: gateway-api-crds
+  namespace: argocd
+  annotations:
+    argocd.argoproj.io/sync-wave: "0"
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/kubernetes-sigs/gateway-api
+    targetRevision: v1.5.1
+    path: config/crd/standard
+  destination:
+    server: https://kubernetes.default.svc
+    # CRDs are cluster-scoped; this namespace is only the ArgoCD tracking default.
+    namespace: kube-system
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    retry:
+      limit: 5
+      backoff:
+        duration: 10s
+        factor: 2
+        maxDuration: 3m
+    syncOptions:
+      # The Gateway API CRDs exceed the client-side apply annotation limit.
+      - ServerSideApply=true

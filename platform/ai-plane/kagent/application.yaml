@@ -1,0 +1,37 @@
+# ABOUTME: The kagent controller. Reconciles Agent, ModelConfig, and Team CRDs.
+# ABOUTME: Model routing is defined per-agent by a ModelConfig, not here.
+#
+# The controller installs with no external model credentials. The demo agent's
+# ModelConfig points at the in-cluster vLLM OpenAI-compatible endpoint, so there is
+# no external API spend on attendee clusters (build-spec 6.7).
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: kagent
+  namespace: argocd
+  annotations:
+    argocd.argoproj.io/sync-wave: "3"
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  project: default
+  source:
+    repoURL: ghcr.io/kagent-dev/kagent/helm
+    chart: kagent
+    targetRevision: "0.9.9"
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: kagent
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    retry:
+      limit: 5
+      backoff:
+        duration: 10s
+        factor: 2
+        maxDuration: 3m
+    syncOptions:
+      - CreateNamespace=true
+      - ServerSideApply=true

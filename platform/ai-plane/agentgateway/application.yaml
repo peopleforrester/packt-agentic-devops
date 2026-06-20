@@ -1,0 +1,44 @@
+# ABOUTME: The agentgateway controller. Mediates LLM, MCP, and A2A traffic.
+# ABOUTME: mTLS and audit logging are enabled through chart values.
+#
+# The exact values keys for mTLS and audit logging must be confirmed against the
+# agentgateway chart for v1.3.0 before the version freeze (components.yaml flags
+# this). Left as a documented valuesObject so the intent is explicit and reviewable.
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: agentgateway
+  namespace: argocd
+  annotations:
+    argocd.argoproj.io/sync-wave: "2"
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  project: default
+  source:
+    repoURL: cr.agentgateway.dev/charts
+    chart: agentgateway
+    targetRevision: v1.3.0
+    # helm:
+    #   valuesObject:
+    #     # CONFIRM keys against the v1.3.0 chart before freeze.
+    #     mtls:
+    #       enabled: true
+    #     audit:
+    #       enabled: true
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: agentgateway
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    retry:
+      limit: 5
+      backoff:
+        duration: 10s
+        factor: 2
+        maxDuration: 3m
+    syncOptions:
+      - CreateNamespace=true
+      - ServerSideApply=true

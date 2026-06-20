@@ -1,0 +1,42 @@
+# ABOUTME: The KServe controller in RawDeployment mode (no Knative, no Istio).
+# ABOUTME: Serves the vLLM InferenceService. Installed after kserve-crd.
+#
+# RawDeployment mode runs InferenceServices as plain Deployments behind the AWS LB
+# Controller, avoiding the Knative and Istio dependency that Serverless mode needs.
+# Confirm the deploymentMode values key against the kserve-resources v0.19.0 chart.
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: kserve
+  namespace: argocd
+  annotations:
+    argocd.argoproj.io/sync-wave: "2"
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  project: default
+  source:
+    repoURL: ghcr.io/kserve/charts
+    chart: kserve-resources
+    targetRevision: v0.19.0
+    helm:
+      valuesObject:
+        kserve:
+          controller:
+            deploymentMode: RawDeployment
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: kserve
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    retry:
+      limit: 5
+      backoff:
+        duration: 10s
+        factor: 2
+        maxDuration: 3m
+    syncOptions:
+      - CreateNamespace=true
+      - ServerSideApply=true

@@ -1,0 +1,55 @@
+# ABOUTME: The demo kagent Agent and its ModelConfig, routed at the in-cluster vLLM.
+# ABOUTME: No external LLM spend or credentials on attendee clusters (build-spec 6.7).
+#
+# Confirm the kagent ModelConfig and Agent v1alpha2 field names against the 0.9.9
+# chart before the freeze. Known-correct facts: apiVersion kagent.dev/v1alpha2; the
+# Agent field is systemMessage, nested under spec.type and spec.declarative; agents
+# run on Google ADK. The ModelConfig points at the OpenAI-compatible vLLM endpoint.
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: vllm-openai-key
+  namespace: kagent
+  labels:
+    app.kubernetes.io/part-of: agentic-platform
+type: Opaque
+stringData:
+  # vLLM does not check the key, but the OpenAI client requires a non-empty value.
+  # This is a placeholder, not a real credential.
+  OPENAI_API_KEY: "sk-local-vllm-not-a-real-key"
+---
+apiVersion: kagent.dev/v1alpha2
+kind: ModelConfig
+metadata:
+  name: vllm-qwen3
+  namespace: kagent
+  labels:
+    app.kubernetes.io/part-of: agentic-platform
+spec:
+  provider: OpenAI
+  model: qwen3-1.7b
+  apiKeySecretRef: vllm-openai-key
+  apiKeySecretKey: OPENAI_API_KEY
+  openAI:
+    # RawDeployment exposes the predictor as <name>-predictor on port 80 -> 8000.
+    baseUrl: http://qwen3-predictor.kserve.svc.cluster.local/v1
+---
+apiVersion: kagent.dev/v1alpha2
+kind: Agent
+metadata:
+  name: platform-helper
+  namespace: kagent
+  labels:
+    app.kubernetes.io/part-of: agentic-platform
+  annotations:
+    # Satisfies ai-require-llm-guard-reference. agentgateway applies the guardrail.
+    agentic-platform.io/llm-guard-policy: default-injection-scan
+spec:
+  type: Declarative
+  declarative:
+    modelConfig: vllm-qwen3
+    systemMessage: >-
+      You are the platform helper for an agentic Internal Developer Platform built on
+      Kubernetes. Answer questions about the platform's components and golden paths.
+      Keep answers short and concrete. If you do not know, say so.
