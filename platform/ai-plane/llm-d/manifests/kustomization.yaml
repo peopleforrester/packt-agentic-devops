@@ -1,0 +1,11 @@
+# ABOUTME: llm-d distributed-inference scheduling layer, installed via Kustomize.
+# ABOUTME: Shown as architecture (B12), not a deep runtime demo. Pre-1.0, not production.
+#
+# llm-d is CNCF Sandbox (March 2026), backed by Red Hat, Google, IBM, CoreWeave, and
+# NVIDIA. Confirm the exact upstream kustomize ref for v0.7.0 before the freeze; the
+# remote base path below is the documented release layout and must be verified.
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+namespace: llm-d
+resources:
+  - https://github.com/llm-d/llm-d/deploy?ref=v0.7.0

@@ -19,6 +19,10 @@ spec:
     path: platform/foundation
     directory:
       recurse: true
+      # Pick up only the per-component Application manifests. Raw manifests under
+      # each component's manifests/ subdir are owned by that component's own
+      # Application, not applied directly by this root app.
+      include: "*/application.yaml"
   destination:
     server: https://kubernetes.default.svc
     namespace: argocd

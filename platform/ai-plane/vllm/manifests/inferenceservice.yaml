@@ -1,0 +1,65 @@
+# ABOUTME: vLLM serving Qwen3-1.7B on CPU as a KServe InferenceService.
+# ABOUTME: RawDeployment mode turns this into a Deployment plus Service in kserve.
+#
+# OpenAI-compatible endpoint at :8000/v1. The demo agent's ModelConfig points here,
+# so attendee clusters spend nothing on external LLM APIs (build-spec 6.7). Image is
+# the mirrored CPU build of vllm/vllm-openai-cpu:v0.23.0-x86_64. Sized for the
+# t3.2xlarge worker; the lean 2x t3.large validation cluster does not run this.
+apiVersion: serving.kserve.io/v1beta1
+kind: InferenceService
+metadata:
+  name: qwen3
+  namespace: kserve
+  labels:
+    app: vllm-qwen3
+    version: "0.23.0"
+    app.kubernetes.io/part-of: agentic-platform
+  annotations:
+    serving.kserve.io/deploymentMode: RawDeployment
+spec:
+  predictor:
+    containers:
+      - name: kserve-container
+        image: ghcr.io/REPLACE_GHCR_ORG/vllm-openai-cpu:v0.23.0-x86_64
+        imagePullPolicy: IfNotPresent
+        args:
+          - "--model=Qwen/Qwen3-1.7B"
+          - "--served-model-name=qwen3-1.7b"
+          - "--device=cpu"
+          - "--dtype=bfloat16"
+          - "--max-model-len=8192"
+          - "--port=8000"
+        env:
+          - name: VLLM_CPU_KVCACHE_SPACE
+            value: "12"
+        ports:
+          - name: http
+            containerPort: 8000
+            protocol: TCP
+        resources:
+          requests:
+            cpu: "4"
+            memory: "12Gi"
+          limits:
+            cpu: "6"
+            memory: "16Gi"
+        readinessProbe:
+          httpGet:
+            path: /health
+            port: http
+          initialDelaySeconds: 60
+          periodSeconds: 15
+          failureThreshold: 20
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: http
+          initialDelaySeconds: 120
+          periodSeconds: 30
+        securityContext:
+          # vLLM CPU needs SYS_NICE for thread affinity; drop everything else.
+          runAsNonRoot: true
+          allowPrivilegeEscalation: false
+          capabilities:
+            drop: ["ALL"]
+            add: ["SYS_NICE"]

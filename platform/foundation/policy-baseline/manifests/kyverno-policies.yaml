@@ -1,0 +1,216 @@
+# ABOUTME: Kyverno baseline ClusterPolicies for tenant workload namespaces.
+# ABOUTME: Scoped by the agentic-platform.io/policy=enforce namespace label.
+#
+# These use rule-level validate.failureAction (Kyverno 1.13+). The spec-level
+# validationFailureAction field is deprecated and removed in a future release.
+# Scope is a namespaceSelector, not a hardcoded namespace name, so the same
+# baseline covers every namespace that opts in by carrying the label.
+---
+apiVersion: kyverno.io/v1
+kind: ClusterPolicy
+metadata:
+  name: require-resource-limits
+  annotations:
+    policies.kyverno.io/title: Require Resource Limits
+    policies.kyverno.io/category: Best Practices
+    policies.kyverno.io/severity: medium
+    policies.kyverno.io/description: >-
+      Require CPU and memory limits on all containers in policy-enrolled namespaces.
+spec:
+  background: true
+  rules:
+    - name: require-limits
+      match:
+        any:
+          - resources:
+              kinds:
+                - Pod
+              namespaceSelector:
+                matchLabels:
+                  agentic-platform.io/policy: enforce
+      validate:
+        failureAction: Enforce
+        message: "CPU and memory limits are required for all containers."
+        pattern:
+          spec:
+            containers:
+              - resources:
+                  limits:
+                    memory: "?*"
+                    cpu: "?*"
+---
+apiVersion: kyverno.io/v1
+kind: ClusterPolicy
+metadata:
+  name: restrict-image-registries
+  annotations:
+    policies.kyverno.io/title: Restrict Image Registries
+    policies.kyverno.io/category: Security
+    policies.kyverno.io/severity: high
+    policies.kyverno.io/description: >-
+      Only allow images from trusted registries in policy-enrolled namespaces.
+spec:
+  background: true
+  rules:
+    - name: validate-registries
+      match:
+        any:
+          - resources:
+              kinds:
+                - Pod
+              namespaceSelector:
+                matchLabels:
+                  agentic-platform.io/policy: enforce
+      validate:
+        failureAction: Enforce
+        message: >-
+          Images must come from allowed registries:
+          ghcr.io, registry.k8s.io, docker.io/library, or ECR.
+        pattern:
+          spec:
+            containers:
+              - image: "ghcr.io/* | registry.k8s.io/* | docker.io/library/* | *.dkr.ecr.*.amazonaws.com/*"
+---
+apiVersion: kyverno.io/v1
+kind: ClusterPolicy
+metadata:
+  name: disallow-privileged
+  annotations:
+    policies.kyverno.io/title: Disallow Privileged Containers
+    policies.kyverno.io/category: Pod Security
+    policies.kyverno.io/severity: high
+    policies.kyverno.io/description: >-
+      Disallow privileged containers in policy-enrolled namespaces.
+spec:
+  background: true
+  rules:
+    - name: disallow-privileged-containers
+      match:
+        any:
+          - resources:
+              kinds:
+                - Pod
+              namespaceSelector:
+                matchLabels:
+                  agentic-platform.io/policy: enforce
+      validate:
+        failureAction: Enforce
+        message: "Privileged containers are not allowed."
+        pattern:
+          spec:
+            containers:
+              - =(securityContext):
+                  =(privileged): false
+            =(initContainers):
+              - =(securityContext):
+                  =(privileged): false
+---
+apiVersion: kyverno.io/v1
+kind: ClusterPolicy
+metadata:
+  name: require-probes
+  annotations:
+    policies.kyverno.io/title: Require Probes
+    policies.kyverno.io/category: Best Practices
+    policies.kyverno.io/severity: medium
+    policies.kyverno.io/description: >-
+      Require readiness and liveness probes in policy-enrolled namespaces.
+spec:
+  background: true
+  rules:
+    - name: require-readiness-probe
+      match:
+        any:
+          - resources:
+              kinds:
+                - Pod
+              namespaceSelector:
+                matchLabels:
+                  agentic-platform.io/policy: enforce
+      validate:
+        failureAction: Enforce
+        message: "A readinessProbe is required for all containers."
+        pattern:
+          spec:
+            containers:
+              - readinessProbe: {}
+    - name: require-liveness-probe
+      match:
+        any:
+          - resources:
+              kinds:
+                - Pod
+              namespaceSelector:
+                matchLabels:
+                  agentic-platform.io/policy: enforce
+      validate:
+        failureAction: Enforce
+        message: "A livenessProbe is required for all containers."
+        pattern:
+          spec:
+            containers:
+              - livenessProbe: {}
+---
+apiVersion: kyverno.io/v1
+kind: ClusterPolicy
+metadata:
+  name: require-labels
+  annotations:
+    policies.kyverno.io/title: Require Labels
+    policies.kyverno.io/category: Best Practices
+    policies.kyverno.io/severity: medium
+    policies.kyverno.io/description: >-
+      Require app and version labels on pods in policy-enrolled namespaces.
+spec:
+  background: true
+  rules:
+    - name: require-app-and-version-labels
+      match:
+        any:
+          - resources:
+              kinds:
+                - Pod
+              namespaceSelector:
+                matchLabels:
+                  agentic-platform.io/policy: enforce
+      validate:
+        failureAction: Enforce
+        message: "The labels 'app' and 'version' are required on pods."
+        pattern:
+          metadata:
+            labels:
+              app: "?*"
+              version: "?*"
+---
+apiVersion: kyverno.io/v1
+kind: ClusterPolicy
+metadata:
+  name: require-networkpolicy
+  annotations:
+    policies.kyverno.io/title: Require NetworkPolicy
+    policies.kyverno.io/category: Networking
+    policies.kyverno.io/severity: medium
+    policies.kyverno.io/description: >-
+      Audit whether deployments in policy-enrolled namespaces declare an app label
+      that a NetworkPolicy can select.
+spec:
+  background: true
+  rules:
+    - name: require-netpol-selectable-label
+      match:
+        any:
+          - resources:
+              kinds:
+                - Deployment
+              namespaceSelector:
+                matchLabels:
+                  agentic-platform.io/policy: enforce
+      validate:
+        failureAction: Audit
+        message: "Deployments should carry an 'app' label so a NetworkPolicy can select them."
+        pattern:
+          spec:
+            template:
+              metadata:
+                labels:
+                  app: "?*"
