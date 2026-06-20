@@ -18,6 +18,13 @@ spec:
     helm:
       valuesObject:
         clusterName: REPLACE_WITH_CLUSTER_NAME
+        # Disable the cluster-wide Service mutating webhook. By default the controller
+        # registers mservice.elbv2.k8s.aws with failurePolicy=Fail on ALL Services, so
+        # whenever the controller is unhealthy (no IAM, mid-rollout, scaled to zero)
+        # every Service creation across the cluster is blocked. The workshop routes
+        # through Ingress and Gateway API, not legacy type=LoadBalancer annotations, so
+        # this webhook is not needed. Validation caught it cascading into kyverno-svc.
+        enableServiceMutatorWebhook: false
         serviceAccount:
           create: true
           name: aws-load-balancer-controller

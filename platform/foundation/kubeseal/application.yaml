@@ -1,3 +1,10 @@
+# ABOUTME: Sealed Secrets controller (the kubeseal backend). Encrypts Secrets so they
+# ABOUTME: can live in Git. Installed into kube-system, wave 1.
+#
+# Source note: the chart moved from bitnami-labs.github.io (retired in Bitnami's 2025
+# catalog sunset, now a hard 404) to the project's own GitHub Pages at
+# bitnami.github.io/sealed-secrets. fullnameOverride matches the kubeseal CLI's default
+# controller-name expectation, per the project README.
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
@@ -10,9 +17,12 @@ metadata:
 spec:
   project: default
   source:
-    repoURL: https://bitnami-labs.github.io/sealed-secrets
+    repoURL: https://bitnami.github.io/sealed-secrets
     chart: sealed-secrets
-    targetRevision: 2.18.3
+    targetRevision: 2.19.0
+    helm:
+      valuesObject:
+        fullnameOverride: sealed-secrets-controller
   destination:
     server: https://kubernetes.default.svc
     namespace: kube-system
@@ -21,4 +31,5 @@ spec:
       prune: true
       selfHeal: true
     syncOptions:
+      - CreateNamespace=true
       - ServerSideApply=true
