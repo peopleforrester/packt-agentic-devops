@@ -109,21 +109,22 @@ components:
     notes: Dashboard supports Gateway API HTTPRoute.
 
   # --- Foundation: secrets, policy, scaling ---
-  - name: sealed-secrets
+  - name: openbao
     plane: foundation
-    project_url: https://github.com/bitnami-labs/sealed-secrets
+    project_url: https://openbao.org
     install_method: helm
-    chart_repo: https://bitnami.github.io/sealed-secrets
-    chart_name: sealed-secrets
-    chart_version: "2.19.0"
-    app_version: "0.38.1"
-    namespace: kube-system
+    chart_repo: https://openbao.github.io/openbao-helm
+    chart_name: openbao
+    chart_version: "0.28.4"
+    app_version: "v2.5.5"
+    namespace: openbao
     module: 1
     notes: >
-      Chart hosting moved from bitnami-labs.github.io (retired in Bitnami's 2025 catalog
-      sunset, now 404) to the project's own GitHub Pages at bitnami.github.io. Not
-      bitnami/charts, not docker.io OCI. Set fullnameOverride=sealed-secrets-controller
-      for kubeseal CLI compatibility.
+      Linux Foundation, MPL-2.0 fork of HashiCorp Vault (Vault relicensed to BUSL in
+      2023, no longer OSS). In-cluster secret backend that ESO pulls from over the
+      Vault-compatible API. Dev mode for the workshop: one unsealed in-memory pod, fixed
+      root token, KV v2 at secret/, agent injector off. Not production. The
+      ClusterSecretStore (vault provider) and a seed Job live in openbao-config.
 
   - name: external-secrets
     plane: foundation

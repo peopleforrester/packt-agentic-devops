@@ -11,7 +11,7 @@ Full sources and gotchas are in `docs/research-findings-june-2026.md`. This file
 | Argo Workflows | v4.0.6 | argo-workflows | 1.0.16 | argoproj.github.io/argo-helm |
 | Argo Events | v1.9.10 | argo-events | 2.4.22 | argoproj.github.io/argo-helm |
 | Argo Rollouts | v1.9.0 | argo-rollouts | 2.41.0 | argoproj.github.io/argo-helm |
-| Sealed Secrets | 0.38.1 | sealed-secrets | 2.19.0 | bitnami.github.io/sealed-secrets |
+| OpenBao | v2.5.5 | openbao | 0.28.4 | openbao.github.io/openbao-helm |
 | External Secrets Operator | v2.6.0 | external-secrets | 2.6.0 | charts.external-secrets.io |
 | cert-manager | v1.20.2 | cert-manager | v1.20.2 | oci://quay.io/jetstack/charts |
 | Kyverno | v1.18.1 | kyverno | 3.8.1 | kyverno.github.io/kyverno |

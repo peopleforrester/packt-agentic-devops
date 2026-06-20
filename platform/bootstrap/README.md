@@ -34,7 +34,7 @@ ArgoCD then syncs each component from its pinned Helm chart. Sync waves order th
 ## Sync waves
 
 - Wave 0: cert-manager (issues webhook certs others depend on).
-- Wave 1: secrets and policy tooling (sealed-secrets, external-secrets, kyverno).
+- Wave 1: secrets and policy tooling (external-secrets, openbao, kyverno).
 - Wave 2: scaling and delivery extensions (keda, argo-rollouts), then observability.
 - Later waves: Backstage last.
 
