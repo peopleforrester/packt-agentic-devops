@@ -1,0 +1,44 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: aws-load-balancer-controller
+  namespace: argocd
+  annotations:
+    # Wave 0: the ingress and LB path on EKS. Replaces ingress-nginx (EOL) and
+    # MetalLB (decorative on EKS).
+    argocd.argoproj.io/sync-wave: "0"
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  project: default
+  source:
+    repoURL: https://aws.github.io/eks-charts
+    chart: aws-load-balancer-controller
+    targetRevision: 3.4.0
+    helm:
+      valuesObject:
+        clusterName: REPLACE_WITH_CLUSTER_NAME
+        serviceAccount:
+          create: true
+          name: aws-load-balancer-controller
+          # Pod Identity supplies credentials via an association created at
+          # provisioning (one reusable scoped role across the fleet). Do NOT
+          # annotate the SA with a role ARN; that is the IRSA path.
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: kube-system
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - ServerSideApply=true
+    retry:
+      limit: 5
+      backoff:
+        duration: 5s
+        factor: 2
+        maxDuration: 3m
+# CRDs ship with helm install but not helm upgrade; manage the CRDs as a
+# separate pinned step on upgrades. Provisioning creates the Pod Identity
+# association binding this SA to a role scoped to the LB controller policy.
