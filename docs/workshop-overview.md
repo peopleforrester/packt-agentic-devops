@@ -60,7 +60,7 @@ Platform engineers, DevOps engineers, SREs, cloud engineers, architects, and tec
 
 Twenty-six components are the cloud-native foundation built in Module 1 and Module 3, deployed via a single ArgoCD App-of-Apps:
 
-Backstage (with TechDocs, software catalog, and scaffolder), GitHub OAuth integration, ArgoCD plugin for Backstage, ArgoCD, Argo Workflows, Argo Events, Argo Rollouts, Sealed Secrets, Score, KEDA, External Secrets Operator, cert-manager, Kyverno, ingress-nginx, MetalLB, Prometheus, kube-prometheus-stack, Grafana, Loki, Tempo, OpenTelemetry Collector, AlertManager, plus self-service Backstage scaffolder templates and ArgoCD ApplicationSets written live during Module 3.
+Backstage (with TechDocs, software catalog, and scaffolder), GitHub OAuth integration, ArgoCD plugin for Backstage, ArgoCD, Argo Workflows, Argo Events, Argo Rollouts, OpenBao, Score, KEDA, External Secrets Operator, cert-manager, Kyverno, ingress-nginx, MetalLB, Prometheus, kube-prometheus-stack, Grafana, Loki, Tempo, OpenTelemetry Collector, AlertManager, plus self-service Backstage scaffolder templates and ArgoCD ApplicationSets written live during Module 3.
 
 Seven components are the AI-plane additions built in Module 2:
 

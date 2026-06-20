@@ -21,7 +21,7 @@ These bind your agent for the whole build.
 3. **Everything after the bootstrap flows through Git and ArgoCD.** The only direct installs are ArgoCD itself (the bootstrap) and the one scripted policy-denial demo. Use server-side apply for CRDs (`kubectl apply --server-side --force-conflicts`); the ApplicationSet and Argo Workflows CRDs exceed the client-side apply annotation limit.
 4. **Pin every version.** Use the versions in `components.yaml` and `versions.lock.md`. Do not invent versions or use what your training data remembers.
 5. **Two model roles, do not confuse them.** Your agentic CLI is the builder doing platform engineering. The model the deployed platform agents call is the small in-cluster vLLM served in Phase 6, over an OpenAI-compatible endpoint. There is no external LLM in the platform and no external API spend.
-6. **No secrets in Git.** Sealed Secrets and External Secrets Operator handle the in-cluster story.
+6. **No secrets in Git.** OpenBao (dev mode) and External Secrets Operator handle the in-cluster story.
 
 ## Completion gate per phase
 
@@ -34,7 +34,7 @@ The build maps to the four-hour run of show: an opening, three modules, and a wr
 | Phase | Name | Module | What it delivers |
 |---|---|---|---|
 | 0 | Preflight | Opening | Confirm the bare cluster, credentials, agent registration, and tooling. Read this spec and `components.yaml`. Install nothing. |
-| 1 | GitOps bootstrap and core foundation | Module 1 | Install ArgoCD (server-side), clone and point at the repo, then the App-of-Apps brings up cert-manager, Sealed Secrets, External Secrets Operator, and Kyverno. |
+| 1 | GitOps bootstrap and core foundation | Module 1 | Install ArgoCD (server-side), clone and point at the repo, then the App-of-Apps brings up cert-manager, OpenBao, External Secrets Operator, and Kyverno. |
 | 2 | Observability plane | Module 1 | kube-prometheus-stack, Loki, Tempo, the OpenTelemetry Collector and Operator. |
 | 3 | Developer portal | Module 1 | Backstage (catalog, TechDocs, scaffolder, ArgoCD plugin), KEDA, and the Argo extensions (Workflows, Events, Rollouts). End of Module 1: a working IDP. |
 | 4 | AI gateway plane | Module 2 | Gateway API CRDs, kgateway, agentgateway with mTLS and audit logging. The AI-plane Kyverno policies are defined here in audit mode, so the AI plane is governed from birth. |

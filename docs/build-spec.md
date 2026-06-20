@@ -34,7 +34,7 @@ These override everything else in this spec. If a design choice conflicts with o
 2. **Every live demo beat has three layers of safety:** a checkpoint to reset to, a reset script that runs in under 5 minutes, and a recorded backup video of the exact beat.
 3. **Nothing is built from source live.** Backstage, custom images, anything with a long build: pre-built, pre-pushed, pre-pulled.
 4. **Nothing waits on the network live.** All images pre-pulled to node caches or served from a mirror registry. All Helm charts vendored into the repo.
-5. **No secrets on screen, ever.** Presenter API keys live in environment variables loaded before OBS starts. The repo contains zero real credentials. Sealed Secrets and External Secrets Operator handle the in-cluster story.
+5. **No secrets on screen, ever.** Presenter API keys live in environment variables loaded before OBS starts. The repo contains zero real credentials. OpenBao (dev mode) and External Secrets Operator handle the in-cluster story.
 6. **Claude Code runs governed, not unleashed.** Explicit permission allowlists in project settings. Never `--dangerously-skip-permissions` on screen. This is a teaching beat, not just hygiene: the workshop about agent governance demonstrates agent governance on its own agent.
 7. **Every timing block has a bail-out point.** If a beat overruns its budget, the runbook says exactly what gets cut and what gets played from recording.
 
@@ -121,7 +121,7 @@ Enumeration starting point:
 8. Argo Workflows
 9. Argo Events
 10. Argo Rollouts
-11. Sealed Secrets
+11. OpenBao
 12. Score
 13. KEDA
 14. External Secrets Operator

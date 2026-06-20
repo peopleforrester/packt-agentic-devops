@@ -30,7 +30,7 @@ A GitOps-driven, AI-native Internal Developer Platform. ArgoCD reconciles everyt
 ## Naming and namespaces
 
 - Descriptive kebab-case everywhere. No UUIDs, no `final-v2` suffixes. No `improved`, `new`, or `enhanced` in names.
-- One namespace per logical area: `argocd`, `backstage`, `observability`, `cert-manager`, `kyverno`, `external-secrets`, `kgateway-system`, `agentgateway`, `kagent`, `kserve`.
+- One namespace per logical area: `argocd`, `backstage`, `observability`, `cert-manager`, `kyverno`, `external-secrets`, `openbao`, `kgateway-system`, `agentgateway`, `kagent`, `kserve`.
 - Checkpoints are annotated git tags: `checkpoint/module-0-start`, `checkpoint/module-1-end`, `checkpoint/module-2-end`, `checkpoint/module-3-end`. Reset scripts target these tags.
 
 ## Platform facts that are easy to get wrong (verified June 2026)
@@ -52,4 +52,4 @@ A GitOps-driven, AI-native Internal Developer Platform. ArgoCD reconciles everyt
 
 ## Secrets
 
-The repo contains zero real credentials. Presenter keys live in environment variables loaded before OBS starts. Sealed Secrets and External Secrets Operator handle the in-cluster story. No manifest references docker.io directly: images are mirrored to a GHCR namespace.
+The repo contains zero real credentials. Presenter keys live in environment variables loaded before OBS starts. OpenBao (the LF/MPL-2.0 Vault fork, dev mode) is the in-cluster secret backend and External Secrets Operator pulls from it over the Vault-compatible API. Sealed Secrets was dropped (redundant with ESO, and Bitnami retired its chart repo). No manifest references docker.io directly: images are mirrored to a GHCR namespace.
