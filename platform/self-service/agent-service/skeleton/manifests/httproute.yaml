@@ -1,0 +1,21 @@
+# Generated route. Traffic to the agent goes through agentgateway, which applies mTLS,
+# audit logging, and the LLM Guard guardrail before it reaches the agent.
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  name: ${{ values.name }}
+  namespace: kagent
+  labels:
+    app.kubernetes.io/part-of: agentic-platform
+spec:
+  parentRefs:
+    - name: agentgateway
+      namespace: agentgateway
+  rules:
+    - matches:
+        - path:
+            type: PathPrefix
+            value: /agents/${{ values.name }}
+      backendRefs:
+        - name: ${{ values.name }}
+          port: 80
