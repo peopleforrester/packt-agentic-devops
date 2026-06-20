@@ -1,6 +1,6 @@
 # Preflight Checklist
 
-The 7:30 AM EDT event-day ritual. Built in Phase 6. Pairs with `scripts/preflight.sh`.
+The 9:30 AM EDT event-day ritual. Built in Phase 6. Pairs with `scripts/preflight.sh`.
 
 - [ ] Primary EKS cluster healthy
 - [ ] Hot-spare cluster healthy and synced to `checkpoint/module-0-start`

@@ -6,7 +6,7 @@ A hands-on workshop focused on building AI-powered DevOps agents using Anthropic
 By Packt Publishing Limited
 
 Online event
-Thursday, July 23, 2026 • 9:00 AM - 1:00 PM EDT
+Thursday, July 23, 2026 • 11:00 AM - 3:00 PM EDT
 
 ---
 
@@ -96,4 +96,4 @@ No prior Backstage experience required.
 
 ## About the instructor
 
-**Michael Rishi Forrester** is AI Workforce Transformation Lead at Accenture LearnVantage and founder of The Performant Professionals. He has 25+ years in operations and DevOps, holds CKA, CKAD, and CKS certifications along with ~10 AWS certifications, and delivered the 27-component predecessor of this workshop at KCD Texas, May 15, 2026, where it was the third-most-requested submission of the conference. He spoke at KubeCon EU Amsterdam in March 2026 (two sessions, one co-delivered with Mumshad Mannambeth), devopsdays Atlanta, SREday Austin, LLMday Austin, and KCD Texas, and is a confirmed speaker at Agentic Engineering Days Zurich in November 2026. He is an independent practitioner with no Anthropic affiliation; the content is vendor-neutral by design.
+Michael Forrester is a student, explorer, and educator at the boundary between humanity and technology. Over 25+ years he's gone from CTO to IC across operations, AI, cloud, and platform engineering, including time at AWS, ThoughtWorks, Red Hat, and Honeywell. His training has reached over a million engineers. He speaks at KubeCon and CNCF on Claude Code, MCP, and AI safety for platform engineers. Tools don't transform organizations. People do.

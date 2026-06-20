@@ -14,7 +14,7 @@ This is for platform engineers, DevOps engineers, and SREs who will be on the ho
 
 Clusters are provided. Watching has full value; following along is encouraged.
 
-Live with Packt, July 23, 9:00 AM EDT. Register: [LINK]
+Live with Packt, July 23, 11:00 AM EDT. Register: [LINK]
 
 #PlatformEngineering #DevOps #Kubernetes #InternalDeveloperPlatform #AINative #ArgoCD #Backstage #CNCF #ClaudeCode
 
@@ -31,4 +31,4 @@ Watch Claude Code build a 33-component AI-native Internal Developer Platform on 
 
 ## Registration call to action
 
-Live virtual workshop with Packt. Thursday, July 23, 2026, 9:00 AM to 1:00 PM EDT. Register: [LINK]
+Live virtual workshop with Packt. Thursday, July 23, 2026, 11:00 AM to 3:00 PM EDT. Register: [LINK]

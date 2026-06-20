@@ -20,7 +20,7 @@ External commitments to Packt and the internal build milestones, with absolute d
 | Slide deck due to Packt | 2026-07-15 | Packt email |
 | All Phase gates green | 2026-07-16 | build-spec header |
 | Final rehearsal | 2026-07-20 or 2026-07-21 | build-spec header |
-| Workshop delivery | 2026-07-23, 9:00 AM EDT | build-spec, event listing |
+| Workshop delivery | 2026-07-23, 11:00 AM EDT | build-spec, event listing |
 
 ## Nearest actions
 

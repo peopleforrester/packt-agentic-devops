@@ -4,7 +4,7 @@
 A 4-hour hands-on workshop for Packt Publishing.
 
 - **Presenter:** Michael Rishi Forrester
-- **Date:** Thursday, July 23, 2026, 9:00 AM EDT
+- **Date:** Thursday, July 23, 2026, 11:00 AM EDT
 - **Duration:** 4 hours
 - **Format:** Live virtual, hands-on build-along
 - **Audience size:** Up to 300 attendees
@@ -115,22 +115,14 @@ No prior Backstage experience required. Working familiarity with Kubernetes and 
 
 ## About the presenter
 
-**Michael Rishi Forrester**, AI Workforce Transformation Lead at Accenture LearnVantage; Founder, The Performant Professionals.
-
-- 25+ years in operations and DevOps
-- CKA, CKAD, CKS certified; ~10 AWS certifications
-- Delivered the 27-component predecessor of this workshop at KCD Texas, May 15, 2026 (third-most-requested submission of the conference)
-- KubeCon EU Amsterdam, March 2026: two talks, one co-delivered with Mumshad Mannambeth
-- Speaker at devopsdays Atlanta, SREday Austin, LLMday Austin, KCD Texas
-- Confirmed speaker at Agentic Engineering Days Zurich (November 2026)
-- Independent practitioner with no Anthropic affiliation; content is vendor-neutral by design
+Michael Forrester is a student, explorer, and educator at the boundary between humanity and technology. Over 25+ years he's gone from CTO to IC across operations, AI, cloud, and platform engineering, including time at AWS, ThoughtWorks, Red Hat, and Honeywell. His training has reached over a million engineers. He speaks at KubeCon and CNCF on Claude Code, MCP, and AI safety for platform engineers. Tools don't transform organizations. People do.
 
 ---
 
 ## Logistics
 
 - **Date:** Thursday, July 23, 2026
-- **Time:** 9:00 AM EDT, 4 hours
+- **Time:** 11:00 AM EDT, 4 hours
 - **Format:** Live virtual, Packt platform
 - **Recording:** yes, distributed to attendees
 - **Companion repo:** `agentic-devops-with-claude`, open-source under speaker's GitHub
