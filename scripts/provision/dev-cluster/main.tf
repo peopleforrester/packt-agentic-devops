@@ -40,7 +40,7 @@ variable "name" {
 }
 
 variable "kubernetes_version" {
-  type    = string
+  type = string
   # EKS standard support (June 2026): 1.36, 1.35, 1.34. 1.33 exits July 29, 2026.
   default = "1.35"
 }
@@ -93,6 +93,9 @@ module "eks" {
   # nwuser (the Terraform principal) gets cluster admin via an access entry.
   enable_cluster_creator_admin_permissions = true
 
+  # IRSA: the EBS CSI driver assumes an OIDC-backed role to provision volumes.
+  enable_irsa = true
+
   vpc_id     = module.vpc.vpc_id
   subnet_ids = module.vpc.private_subnets
 
@@ -108,6 +111,13 @@ module "eks" {
     }
     # coredns runs on the nodes, so it installs after the node group exists.
     coredns = {}
+    # Pod Identity agent, plus the EBS CSI driver with an IRSA role. EKS ships no
+    # default StorageClass since 1.30; without this driver and the gp3 class,
+    # observability PVCs (Prometheus, Loki) hang Pending.
+    eks-pod-identity-agent = {}
+    aws-ebs-csi-driver = {
+      service_account_role_arn = module.ebs_csi_irsa.iam_role_arn
+    }
   }
 
   eks_managed_node_groups = {
@@ -118,6 +128,21 @@ module "eks" {
       max_size       = 3
       desired_size   = 2
       disk_size      = 30
+    }
+  }
+}
+
+module "ebs_csi_irsa" {
+  source  = "terraform-aws-modules/iam/aws//modules/iam-role-for-service-accounts-eks"
+  version = "~> 5.0"
+
+  role_name             = "${var.name}-ebs-csi"
+  attach_ebs_csi_policy = true
+
+  oidc_providers = {
+    main = {
+      provider_arn               = module.eks.oidc_provider_arn
+      namespace_service_accounts = ["kube-system:ebs-csi-controller-sa"]
     }
   }
 }

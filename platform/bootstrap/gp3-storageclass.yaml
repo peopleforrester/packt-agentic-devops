@@ -1,0 +1,15 @@
+# Default gp3 StorageClass. EKS ships no default StorageClass since 1.30, so
+# PVCs with no storageClassName (Prometheus, Loki, Tempo, Backstage) hang
+# Pending without this. Applied at bootstrap, after the EBS CSI driver addon.
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: gp3
+  annotations:
+    storageclass.kubernetes.io/is-default-class: "true"
+provisioner: ebs.csi.aws.com
+volumeBindingMode: WaitForFirstConsumer
+allowVolumeExpansion: true
+parameters:
+  type: gp3
+  encrypted: "true"
