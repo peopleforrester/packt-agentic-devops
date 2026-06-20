@@ -23,7 +23,7 @@ A clear call to action to register is required. Below is the script, plus on-scr
 - Open: "AGENTIC DEVOPS WITH CLAUDE"
 - Mid: "33-component AI-native IDP. Built live. 4 hours."
 - Mid: "Backstage, ArgoCD, kagent, KServe, vLLM, and more"
-- Close: "July 23, 2026, 9:00 AM EDT, Packt" and "REGISTER NOW"
+- Close: "July 23, 2026, 11:00 AM EDT, Packt" and "REGISTER NOW"
 
 ## Shot notes
 

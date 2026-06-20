@@ -4,7 +4,7 @@
 **Owner:** Michael Rishi Forrester
 **Executor:** Claude Code
 **Target repo:** `github.com/peopleforrester/agentic-devops-with-claude`
-**Hard deadline:** All Phase gates green by July 16, 2026. Final rehearsal July 20 or 21. Delivery July 23, 9:00 AM EDT.
+**Hard deadline:** All Phase gates green by July 16, 2026. Final rehearsal July 20 or 21. Delivery July 23, 11:00 AM EDT.
 
 ---
 
@@ -183,7 +183,7 @@ Kubernetes version: pin to 1.35 or 1.36 (both in standard EKS support through th
 
 Requirements:
 - Browser-delivered terminal and kubeconfig, zero local setup (same promise as KCD Texas).
-- Up to 300 concurrent environments, provisioned and warm before 9:00 AM EDT, torn down 2 hours after the session closes (session runs 9:00 AM to 1:00 PM EDT, so teardown is approximately 3:00 PM EDT). Environments do not persist for take-home; the repo is the take-home.
+- Up to 300 concurrent environments, provisioned and warm before 11:00 AM EDT, torn down 2 hours after the session closes (session runs 11:00 AM to 3:00 PM EDT, so teardown is approximately 5:00 PM EDT). Environments do not persist for take-home; the repo is the take-home.
 - Each environment is a bare cluster: up, with credentials handed to the attendee, and nothing else. ArgoCD is not installed and the repo is not cloned. The attendee's own agentic CLI, driven by the spec, installs ArgoCD, clones the repo, and builds every phase. Precedent: at KCD Texas the full build took about 20 minutes from a bare cluster.
 - Per the doctrine, if attendee environments fail at scale, the workshop proceeds untouched.
 
@@ -316,7 +316,7 @@ The attendee catch-up artifact. Rules:
 
 ### 8.3 Preflight and smoke test
 
-- `preflight.sh` runs at 7:30 AM EDT on event day: both clusters healthy, all images cached, all checkpoints reachable, ArgoCD green at `module-0-start`, model server warm, OBS scenes listed (manual check item), API key env vars present (checks existence, never prints values), backup video files present at expected paths.
+- `preflight.sh` runs at 9:30 AM EDT on event day: both clusters healthy, all images cached, all checkpoints reachable, ArgoCD green at `module-0-start`, model server warm, OBS scenes listed (manual check item), API key env vars present (checks existence, never prints values), backup video files present at expected paths.
 - `smoke-test.sh` validates the full final state: 33 components healthy, one golden-path run, one guarded inference, one Kyverno denial, one Tempo trace query. This is also the gate script for rehearsals.
 
 ### 8.4 Backup video checklist
@@ -407,7 +407,7 @@ These apply to README, docs, runbook prose, and any attendee-facing text. They a
 2. Provisioning platform: RESOLVED. Amazon EKS, one cluster per student, managed control plane plus a T3 node group.
 3. vLLM worker node: RESOLVED. Stay on T3 (t3.2xlarge), pre-warm the model, keep the pre-warmed-request fallback (sections 6.6 and 7.2). Benchmark at the Phase 3 gate.
 4. CPU model: defaulted to Qwen3-1.7B with Qwen3-0.6B backup. Confirm after the Phase 3 benchmark.
-5. Attendee cluster TTL: RESOLVED. Warm before 9:00 AM EDT, torn down 2 hours after the session closes (approximately 3:00 PM EDT). No take-home persistence; the repo is the take-home (section 6.2).
+5. Attendee cluster TTL: RESOLVED. Warm before 11:00 AM EDT, torn down 2 hours after the session closes (approximately 5:00 PM EDT). No take-home persistence; the repo is the take-home (section 6.2).
 6. Alternative-path docs depth: RESOLVED. Reference-level. `docs/alternative-paths.md` gives accurate config snippets and official links for GPU serving and Amazon Bedrock, marked explicitly as not tested live. Upgrade a specific path to a tested walkthrough only on request.
 7. Demo agent model routing and credentials: RESOLVED. Attendee clusters route the kagent demo agent to the in-cluster vLLM (no external spend, no external credentials). The presenter cluster shows one real cloud route, scoped and capped (section 6.7).
 
@@ -417,7 +417,7 @@ These apply to README, docs, runbook prose, and any attendee-facing text. They a
 
 - All Phase gates green and reported.
 - `smoke-test.sh` green on the primary and the hot spare on July 22.
-- `preflight.sh` documented as the 7:30 AM event-day ritual.
+- `preflight.sh` documented as the 9:30 AM event-day ritual.
 - Repo public, README finished, license applied, no secrets in history (verified with a scanner).
 - Backup video checklist fully checked.
 - Two rehearsal reports on file, the second one boring.

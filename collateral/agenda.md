@@ -4,7 +4,7 @@
 
 - **Format:** Live virtual, hands-on build-along
 - **Date:** Thursday, July 23, 2026
-- **Time:** 9:00 AM to 1:00 PM EDT (4 hours)
+- **Time:** 11:00 AM to 3:00 PM EDT (4 hours)
 - **Delivered by:** Packt
 - **Instructor:** Michael Rishi Forrester
 
@@ -47,18 +47,18 @@ In each module you run your agent through that part of the build on your own clu
 
 | Time (EDT) | Module | What happens |
 |---|---|---|
-| 9:00 to 9:15 | Opening and ground rules | The frame is set: Claude Code is the agent doing the platform work today, governed, not unleashed. |
-| 9:15 to 10:15 | Module 1: Cloud-native foundation | Claude Code applies one ArgoCD App-of-Apps and the foundation reconciles live. Backstage, the Argo stack, the observability plane, policy and secrets tooling. By the end, a working IDP. |
-| 10:15 to 10:25 | Break | |
-| 10:25 to 11:35 | Module 2: The AI plane (the centerpiece) | Claude Code adds the seven AI components. A kagent Agent CRD is written and deployed by GitOps. The agent calls an MCP server through agentgateway. LLM Guard blocks a prompt-injection attempt. An OpenTelemetry trace lands in Tempo. KServe with vLLM serves a small model. |
-| 11:35 to 11:45 | Break | |
-| 11:45 to 12:25 | Module 3: Self-service for your team | Claude Code writes a Backstage scaffolder template and an ArgoCD ApplicationSet. A developer requests a new agent service through the portal and the golden path fires end to end. |
-| 12:25 to 12:35 | Break | |
-| 12:35 to 1:00 | Wrap: governance, observability, commitment | Kyverno policies enforce AI-plane invariants. Per-agent attribution in Loki shows every action, including Claude Code's own. Each attendee commits to one specific change for their own platform. Final Q&A. |
+| 11:00 to 11:15 | Opening and ground rules | The frame is set: Claude Code is the agent doing the platform work today, governed, not unleashed. |
+| 11:15 to 12:15 | Module 1: Cloud-native foundation | Claude Code applies one ArgoCD App-of-Apps and the foundation reconciles live. Backstage, the Argo stack, the observability plane, policy and secrets tooling. By the end, a working IDP. |
+| 12:15 to 12:25 | Break | |
+| 12:25 to 1:35 | Module 2: The AI plane (the centerpiece) | Claude Code adds the seven AI components. A kagent Agent CRD is written and deployed by GitOps. The agent calls an MCP server through agentgateway. LLM Guard blocks a prompt-injection attempt. An OpenTelemetry trace lands in Tempo. KServe with vLLM serves a small model. |
+| 1:35 to 1:45 | Break | |
+| 1:45 to 2:25 | Module 3: Self-service for your team | Claude Code writes a Backstage scaffolder template and an ArgoCD ApplicationSet. A developer requests a new agent service through the portal and the golden path fires end to end. |
+| 2:25 to 2:35 | Break | |
+| 2:35 to 3:00 | Wrap: governance, observability, commitment | Kyverno policies enforce AI-plane invariants. Per-agent attribution in Loki shows every action, including Claude Code's own. Each attendee commits to one specific change for their own platform. Final Q&A. |
 
 ## What you will walk away with
 
-This is the promise. By 1:00 PM EDT you have a working platform, not a slide deck:
+This is the promise. By 3:00 PM EDT you have a working platform, not a slide deck:
 
 - A working 33-component AI-native IDP, GitOps-driven, deployed during the session
 - A companion GitHub repo with every manifest, Helm chart, ArgoCD App, Backstage template, and Claude Code prompt used in the workshop
@@ -74,4 +74,4 @@ Claude Code builds the platform. Not a slide deck about adding AI to platforms, 
 
 ## Instructor
 
-**Michael Rishi Forrester**, AI Workforce Transformation Lead at Accenture LearnVantage and founder of The Performant Professionals. 25 plus years in operations and DevOps. CKA, CKAD, and CKS certified, with roughly ten AWS certifications. He delivered the 27-component predecessor of this workshop at KCD Texas in May 2026, the third-most-requested submission of the conference, and spoke at KubeCon EU Amsterdam in March 2026. He is an independent practitioner with no Anthropic affiliation; the content is vendor-neutral by design.
+Michael Forrester is a student, explorer, and educator at the boundary between humanity and technology. Over 25+ years he's gone from CTO to IC across operations, AI, cloud, and platform engineering, including time at AWS, ThoughtWorks, Red Hat, and Honeywell. His training has reached over a million engineers. He speaks at KubeCon and CNCF on Claude Code, MCP, and AI safety for platform engineers. Tools don't transform organizations. People do.

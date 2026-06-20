@@ -16,7 +16,7 @@ The in-cluster model runs on t3.2xlarge with the model pre-warmed and a pre-warm
 
 ## D4. Attendee cluster TTL
 
-Warm before 9:00 AM EDT, torn down about 2 hours after close. No take-home persistence; the repo is the take-home. (June 17, 2026)
+Warm before 11:00 AM EDT, torn down about 2 hours after close. No take-home persistence; the repo is the take-home. (June 17, 2026)
 
 ## D5. Demo agent model routing
 
