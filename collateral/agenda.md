@@ -43,18 +43,16 @@ By the end you have built the platform yourself, hands-on. Prefer to watch, or f
 
 ## Agenda
 
-In each module you run your agent through that part of the build on your own cluster. The presenter builds in parallel and narrates at each stop.
+Each block, your agent does the work below on your own cluster. The presenter builds in parallel and narrates at each stop.
 
-| Time (EDT) | Module | What happens |
+| Time (EDT) | Block | What you'll do |
 |---|---|---|
-| 11:00 to 11:15 | Opening and ground rules | The frame is set: Claude Code is the agent doing the platform work today, governed, not unleashed. |
-| 11:15 to 12:15 | Module 1: Cloud-native foundation | Claude Code applies one ArgoCD App-of-Apps and the foundation reconciles live. Backstage, the Argo stack, the observability plane, policy and secrets tooling. By the end, a working IDP. |
-| 12:15 to 12:25 | Break | |
-| 12:25 to 1:35 | Module 2: The AI plane (the centerpiece) | Claude Code adds the seven AI components. A kagent Agent CRD is written and deployed by GitOps. The agent calls an MCP server through agentgateway. LLM Guard blocks a prompt-injection attempt. An OpenTelemetry trace lands in Tempo. KServe with vLLM serves a small model. |
-| 1:35 to 1:45 | Break | |
-| 1:45 to 2:25 | Module 3: Self-service for your team | Claude Code writes a Backstage scaffolder template and an ArgoCD ApplicationSet. A developer requests a new agent service through the portal and the golden path fires end to end. |
-| 2:25 to 2:35 | Break | |
-| 2:35 to 3:00 | Wrap: governance, observability, commitment | Kyverno policies enforce AI-plane invariants. Per-agent attribution in Loki shows every action, including Claude Code's own. Each attendee commits to one specific change for their own platform. Final Q&A. |
+| 11:00 to 11:15 | Get set up | Claim your cluster, point Claude Code at the workshop spec, and confirm you're build-ready. Ground rule: the agent is governed by the spec, and you're driving. |
+| 11:15 to 12:30 | Module 1 — Build the cloud-native foundation | Bootstrap ArgoCD, then let one App-of-Apps reconcile the whole baseline: cert-manager, Sealed Secrets, External Secrets, Kyverno, the Prometheus, Grafana, Loki, and Tempo observability stack, and Backstage. Watch the sync waves cascade. You finish with a working IDP: portal, GitOps, full observability. |
+| 12:30 to 12:45 | Break | A real one, 15 minutes. Stretch, refill, come back for the AI plane. |
+| 12:45 to 2:00 | Module 2 — Make it AI-native | Layer on the AI plane: kgateway and agentgateway for agent traffic, kagent to run agents as Kubernetes CRDs, KServe and vLLM serving a model in-cluster. Declare an agent in YAML, ship it by GitOps, watch it call an MCP tool through agentgateway, and watch LLM Guard block a live prompt-injection. Every call is traced end to end in Tempo. |
+| 2:00 to 2:40 | Module 3 — Ship a self-service golden path | Build a Backstage template that provisions a fully governed agent service. Fill the form, and watch the chain fire: repo created, ApplicationSet picks it up, ArgoCD syncs, the agent runs, the first trace lands. Form to running agent in minutes. |
+| 2:40 to 3:00 | Wrap — Govern, attribute, commit | Flip Kyverno from audit to enforce and watch it reject a non-compliant agent on the spot. Pull up per-agent attribution in Loki: every action tied to an identity, including the agent that built the platform. Leave with the patterns, the repo, and one change you'll make at home within 30 days. |
 
 ## What you will walk away with
 
