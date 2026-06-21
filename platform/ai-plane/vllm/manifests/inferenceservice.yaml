@@ -52,9 +52,9 @@ spec:
             memory: "10Gi"
           limits:
             cpu: "6"
-            # 16Gi (was 10): the model load plus the memory-heavy warmup peaked above 10Gi
-            # and the kernel OOMKilled the pod (validated live). Leaves room on the 32GB
-            # student node for the rest of the platform.
+            # 16Gi = measured peak (12.52 GiB, cgroup memory.peak on a t3.2xlarge with
+            # KVCACHE 2) plus ~3.5 GiB headroom. The pod OOMKilled at the old 10Gi limit.
+            # Leaves room on the 32GB student node for the rest of the platform.
             memory: "16Gi"
         # The model takes many minutes to load (much longer if not pre-baked). A
         # startupProbe gives it a wide window so the livenessProbe does not kill the pod
