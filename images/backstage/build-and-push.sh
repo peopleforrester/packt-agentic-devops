@@ -39,7 +39,10 @@ scaffold() {
         return
     fi
     log "scaffolding Backstage app (create-app ${CREATE_APP_VERSION})"
-    npx "@backstage/create-app@${CREATE_APP_VERSION}" --path "${APP_DIR}" --skip-install
+    # create-app has no --name flag; the name only comes from an interactive prompt, so
+    # feed it on stdin (no TTY in a scripted/background run).
+    printf 'backstage\n' | npx "@backstage/create-app@${CREATE_APP_VERSION}" \
+        --path "${APP_DIR}" --skip-install
 }
 
 add_plugins() {
