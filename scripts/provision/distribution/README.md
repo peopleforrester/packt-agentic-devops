@@ -25,6 +25,14 @@ clusters, and their credentials become the rows of `pool.csv` that this app hand
 - `test_app.py` — the test suite.
 - `Procfile` / `railway.json` — deploy config (it ran on Railway for KCD).
 
+## Hosting
+
+Deploys on Railway with a custom domain under **ai-enhanced-devops.com** (a subdomain such
+as `lab.ai-enhanced-devops.com`), set as the Railway custom domain at deploy time. Do NOT
+use agenticburn.com — that is a different workshop. The confirmation email already sends
+from `workshop@ai-enhanced-devops.com`. (Note: ai-enhanced-devops.com autorenew is off,
+expires 2027-04-18 — valid through the July 2026 event.)
+
 ## Config (environment)
 
 - `POOL_CSV` (default `./pool.csv`), `DATABASE_PATH` (default `./pool.db`)
