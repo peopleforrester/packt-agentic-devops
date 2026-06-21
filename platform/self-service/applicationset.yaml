@@ -1,10 +1,9 @@
 # ABOUTME: ApplicationSet that deploys every generated agent-service. The SCM generator
-# ABOUTME: finds repos in the workshop GitHub org that carry a manifests/ directory.
+# ABOUTME: finds repos in the in-cluster Gitea org that carry a manifests/ directory.
 #
-# Publish target dependency: this assumes the golden-path template publishes to a GitHub
-# org (REPLACE_GITHUB_ORG). If attendees use an in-cluster Gitea instead, swap the
-# scmProvider generator for a git generator pointed at that host. A repo credential
-# Secret for the org must exist in the argocd namespace.
+# The golden-path template publishes generated repos to in-cluster Gitea. The api URL is
+# the Gitea service; owner is the org the template publishes under. tokenRef points at a
+# Secret in the argocd namespace holding a Gitea API token.
 apiVersion: argoproj.io/v1alpha1
 kind: ApplicationSet
 metadata:
@@ -16,8 +15,13 @@ spec:
     - missingkey=error
   generators:
     - scmProvider:
-        github:
-          organization: REPLACE_GITHUB_ORG
+        gitea:
+          owner: REPLACE_GITEA_ORG
+          api: http://gitea-http.gitea.svc:3000
+          allBranches: false
+          tokenRef:
+            secretName: gitea-scm-token
+            key: token
         filters:
           - pathsExist:
               - manifests
