@@ -70,3 +70,9 @@ The earlier claim that the B17 attribution beat works cleanly only on Claude Cod
 ## D12. Tempo over Jaeger; KEDA is not Karpenter
 
 Tracing backend is Grafana Tempo, not Jaeger, to keep traces, logs, metrics, and dashboards under one Grafana pane. Jaeger is documented as an alternative path. KEDA (event-driven pod autoscaling) is a platform capability students learn; it is not a Karpenter substitute. Node provisioning is the fixed managed node group, and self-managed Karpenter is not used (see D9). (June 19, 2026)
+
+## D15. RESOLVED: fleet provisioning is a shared lab VPC plus a per-cluster module
+
+The student cluster shape is resolved by the end-to-end validation: one t3.2xlarge with VPC CNI prefix delegation and an explicit maxPods=110. Prefix delegation is required (the full platform needs ~75 pods; the default t3.2xlarge caps at 58), and it consumes ~112 IPs per node, which drives the network design.
+
+The fleet is one shared lab VPC, not one VPC per cluster. A single `/16` with `/18` private subnets and one shared NAT gateway holds roughly 60 concurrent single-node clusters with headroom, instead of 60 VPCs and 60 NAT gateways. This is a lab network: isolation between students is in-cluster (NetworkPolicy), not at the VPC; we do not build production multi-tenancy. Provisioning is split into `scripts/provision/lab-vpc/` (applied once), a parameterized `scripts/provision/cluster/` module that takes `vpc_id` and `private_subnet_ids` (the validated shape, no VPC of its own), and `scripts/provision/fleet/fleet.sh`, which stamps out N clusters each with its own state file, concurrency-capped and parallel. Per-cluster state keeps the blast radius at one student. EKS owns the control-plane log group (`create_cloudwatch_log_group = false`) so reused names reprovision idempotently. Every resource is tagged `Workshop=packt` plus `Student=<name>`. The design ceiling is ~60 concurrent; for more, widen the subnets to `/17`. (June 21, 2026)
