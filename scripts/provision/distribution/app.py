@@ -1,5 +1,5 @@
-# ABOUTME: Flask app that distributes pre-provisioned EKS cluster credentials to KCD Texas 2026
-# ABOUTME: workshop attendees. Idempotent claim by email; optional Resend email delivery.
+# ABOUTME: Flask app that distributes pre-provisioned EKS cluster credentials to the Packt
+# ABOUTME: Agentic DevOps with Claude workshop attendees. Idempotent claim by email; Resend optional.
 
 import csv
 import json
@@ -16,9 +16,9 @@ from flask import Flask, abort, g, redirect, render_template, request, url_for
 EMAIL_RE = re.compile(r"^[A-Za-z0-9._%+\-]+@[A-Za-z0-9.\-]+\.[A-Za-z]{2,}$")
 
 RESEND_ENDPOINT = "https://api.resend.com/emails"
-RESEND_FROM = "KCD Texas Workshop <workshop@ai-enhanced-devops.com>"
-RESEND_SUBJECT_EKS = "KCD Texas Workshop — Your EKS Cluster Credentials"
-RESEND_SUBJECT_BROWSER = "KCD Texas Workshop — Your KodeKloud Lab Info"
+RESEND_FROM = "Agentic DevOps with Claude <workshop@ai-enhanced-devops.com>"
+RESEND_SUBJECT_EKS = "Agentic DevOps with Claude — Your EKS Cluster Credentials"
+RESEND_SUBJECT_BROWSER = "Agentic DevOps with Claude — Your Lab Info"
 RESEND_TIMEOUT_SECONDS = 5
 
 KODEKLOUD_COURSE_URL = "https://learn.kodekloud.com/user/courses/the-90-minutes-idp"
@@ -37,9 +37,9 @@ def _build_commands_block(cluster_name, region):
     return (
         f"aws configure                                  # paste keys above; region {region}\n"
         f"aws eks update-kubeconfig --name {cluster_name} --region {region}\n"
-        "kubectl get nodes                              # expect 3 Ready  (EKS)\n"
-        "git clone https://github.com/peopleforrester/KCD_Texas_2026_Workshop.git\n"
-        "cd KCD_Texas_2026_Workshop\n"
+        "kubectl get nodes                              # expect 1 Ready  (single t3.2xlarge)\n"
+        "git clone https://github.com/peopleforrester/packt-agentic-devops.git\n"
+        "cd packt-agentic-devops\n"
         "claude"
     )
 
@@ -53,7 +53,7 @@ def _build_email_text(cluster_name, region, access_key, secret_key, root_url):
     cmds = _build_commands_block(cluster_name, region)
     return (
         f"{bar}\n"
-        "KCD Texas 2026 -- Your Cluster Credentials\n"
+        "Agentic DevOps with Claude -- Your Cluster Credentials\n"
         f"{bar}\n\n"
         f"Cluster: {cluster_name}\n"
         f"Region:  {region}\n\n"
@@ -69,11 +69,11 @@ def _build_email_text(cluster_name, region, access_key, secret_key, root_url):
         "Setup commands\n"
         f"{rule}\n"
         f"{cmds}\n\n"
-        "When Claude starts, paste the prompt at the top of spec/BUILD-SPEC.md\n"
-        "(the \"How Claude executes this spec\" block). Claude creates the\n"
-        "workshop namespaces during Phase 2 -- do not pre-create anything.\n\n"
-        "If `kubectl get nodes` shows fewer than 3 Ready nodes, raise your hand\n"
-        "during the setup window for a spare cluster.\n\n"
+        "When Claude starts, point it at spec/WORKSHOP-SPEC.md and follow the\n"
+        "phased build. Claude creates the platform namespaces as it builds --\n"
+        "do not pre-create anything.\n\n"
+        "If `kubectl get nodes` shows no Ready node, raise your hand during the\n"
+        "setup window for a spare cluster.\n\n"
         f"Lost this email? Re-enter your email at {root_url} to redisplay your\n"
         "credentials.\n"
     )
@@ -98,7 +98,7 @@ def _build_email_html(cluster_name, region, access_key, secret_key, root_url):
     <tr><td align="center" style="padding:24px 12px;">
       <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="max-width:640px;background:#FFFFFF;border-radius:10px;border:1px solid #e2e4ee;">
         <tr><td style="background:#1E2761;color:#FFFFFF;padding:18px 24px;border-radius:10px 10px 0 0;border-bottom:3px solid #FF6B35;">
-          <div style="font-size:12px;letter-spacing:.08em;text-transform:uppercase;opacity:.75;">KCD Texas 2026</div>
+          <div style="font-size:12px;letter-spacing:.08em;text-transform:uppercase;opacity:.75;">Agentic DevOps with Claude</div>
           <div style="font-size:20px;font-weight:700;margin-top:2px;">Your Cluster Credentials</div>
         </td></tr>
         <tr><td style="padding:24px;">
@@ -120,11 +120,11 @@ def _build_email_html(cluster_name, region, access_key, secret_key, root_url):
           <pre style="{mono_block}">{cmds}</pre>
 
           <div style="margin-top:22px;padding:12px 14px;border-left:3px solid #FF6B35;background:#FFF5EE;color:#1E2761;font-size:14px;font-style:italic;border-radius:0 6px 6px 0;">
-            <strong style="font-style:normal;">When Claude starts,</strong> paste the prompt at the top of <code style="font-style:normal;font-family:Consolas,monospace;">spec/BUILD-SPEC.md</code> (the &ldquo;How Claude executes this spec&rdquo; block). Claude creates the workshop namespaces during Phase 2 &mdash; do not pre-create anything.
+            <strong style="font-style:normal;">When Claude starts,</strong> point it at <code style="font-style:normal;font-family:Consolas,monospace;">spec/WORKSHOP-SPEC.md</code> and follow the phased build. Claude creates the platform namespaces as it builds &mdash; do not pre-create anything.
           </div>
 
           <p style="margin:18px 0 0;color:#4A4A4A;font-size:13px;">
-            If <code style="font-family:Consolas,monospace;">kubectl get nodes</code> shows fewer than 3 Ready nodes, raise your hand during the setup window for a spare cluster.
+            If <code style="font-family:Consolas,monospace;">kubectl get nodes</code> shows no Ready node, raise your hand during the setup window for a spare cluster.
           </p>
         </td></tr>
         <tr><td style="padding:14px 24px 22px;border-top:1px solid #e2e4ee;color:#888888;font-size:12px;text-align:center;font-style:italic;">
@@ -142,7 +142,7 @@ def _build_browser_email_text(root_url, kodekloud_url):
     rule = "-" * 56
     return (
         f"{bar}\n"
-        "KCD Texas 2026 -- Browser Path (KodeKloud)\n"
+        "Agentic DevOps with Claude -- Browser Path (KodeKloud)\n"
         f"{bar}\n\n"
         "You're registered for the browser path. KodeKloud provides your\n"
         "cluster directly -- no AWS credentials are needed.\n\n"
@@ -155,10 +155,10 @@ def _build_browser_email_text(root_url, kodekloud_url):
         f"{rule}\n"
         "curl -fsSL https://claude.ai/install.sh | bash    # install Claude in this shell first\n"
         "kubectl get nodes        # expect 2 Ready  (KodeKloud)\n"
-        "git clone https://github.com/peopleforrester/KCD_Texas_2026_Workshop.git\n"
-        "cd KCD_Texas_2026_Workshop\n"
+        "git clone https://github.com/peopleforrester/packt-agentic-devops.git\n"
+        "cd packt-agentic-devops\n"
         "claude\n\n"
-        "When Claude starts, paste the prompt at the top of spec/BUILD-SPEC.md.\n"
+        "When Claude starts, paste the prompt at the top of spec/WORKSHOP-SPEC.md.\n"
         "Claude detects you're on KodeKloud (kubeadm) and adapts Phases 1, 3,\n"
         "and 7 automatically.\n\n"
         f"Lost this email? Re-enter your email at {root_url}/browser to redisplay\n"
@@ -180,7 +180,7 @@ def _build_browser_email_html(root_url, kodekloud_url):
     <tr><td align="center" style="padding:24px 12px;">
       <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="max-width:640px;background:#FFFFFF;border-radius:10px;border:1px solid #e2e4ee;">
         <tr><td style="background:#1E2761;color:#FFFFFF;padding:18px 24px;border-radius:10px 10px 0 0;border-bottom:3px solid #FF6B35;">
-          <div style="font-size:12px;letter-spacing:.08em;text-transform:uppercase;opacity:.75;">KCD Texas 2026</div>
+          <div style="font-size:12px;letter-spacing:.08em;text-transform:uppercase;opacity:.75;">Agentic DevOps with Claude</div>
           <div style="font-size:20px;font-weight:700;margin-top:2px;">Browser path (KodeKloud)</div>
         </td></tr>
         <tr><td style="padding:24px;">
@@ -193,12 +193,12 @@ def _build_browser_email_html(root_url, kodekloud_url):
           <div style="{label_style}">Once you&rsquo;re in the KodeKloud browser shell</div>
           <pre style="{mono_block}">curl -fsSL https://claude.ai/install.sh | bash    # install Claude in this shell first
 kubectl get nodes        # expect 2 Ready  (KodeKloud)
-git clone https://github.com/peopleforrester/KCD_Texas_2026_Workshop.git
-cd KCD_Texas_2026_Workshop
+git clone https://github.com/peopleforrester/packt-agentic-devops.git
+cd packt-agentic-devops
 claude</pre>
 
           <div style="margin-top:22px;padding:12px 14px;border-left:3px solid #FF6B35;background:#FFF5EE;color:#1E2761;font-size:14px;font-style:italic;border-radius:0 6px 6px 0;">
-            <strong style="font-style:normal;">When Claude starts,</strong> paste the prompt at the top of <code style="font-style:normal;font-family:Consolas,monospace;">spec/BUILD-SPEC.md</code>. Claude detects you&rsquo;re on KodeKloud (kubeadm) and adapts Phases 1, 3, and 7 automatically.
+            <strong style="font-style:normal;">When Claude starts,</strong> paste the prompt at the top of <code style="font-style:normal;font-family:Consolas,monospace;">spec/WORKSHOP-SPEC.md</code>. Claude detects you&rsquo;re on KodeKloud (kubeadm) and adapts Phases 1, 3, and 7 automatically.
           </div>
         </td></tr>
         <tr><td style="padding:14px 24px 22px;border-top:1px solid #e2e4ee;color:#888888;font-size:12px;text-align:center;font-style:italic;">
