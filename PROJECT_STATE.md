@@ -61,7 +61,31 @@ TAG=$(AWS_PROFILE=accen-dev aws eks describe-cluster --name adwc-dev --region us
       its mandatory 30-day PendingDeletion window (auto-deletes 2026-07-21, free).
       NOTHING LIVE, NOTHING BILLABLE.
 
-## No active operation. No cluster running.
+## Prefix-delegation re-validation: PASSED and torn down (2026-06-21). No cluster running.
+
+Teardown verified independently: destroy 61 resources, TF state 0, no clusters, no running
+instances, both nodes terminated, NAT/subnet/volumes deleted, log group deleted. Only the
+2 KMS keys remain in their mandatory PendingDeletion window (auto-delete 2026-07-21, $0).
+ZERO LIVE, ZERO BILLABLE.
+
+RESULT: node reported **110 allocatable pods** (up from 58). Full platform applied:
+**0 scheduling failures, 0 "Too many pods"** — the 15 pods that were Pending before all
+scheduled. Prefix delegation + maxPods=110 is confirmed; the student cluster stays a
+single t3.2xlarge. Also committed the log-group idempotency fix (create_cloudwatch_log_
+group=false) after hitting the orphan collision live.
+
+### NEW finding to fix in the kagent component
+kagent's chart deploys built-in agents (cilium, istio, helm, k8s, kgateway, argo-rollouts
+agents) that all require a `kagent-openai` Secret (`OPENAI_API_KEY`). The workshop uses
+in-cluster vLLM, not OpenAI, so they CreateContainerConfigError. Fix in
+platform/ai-plane/kagent/application.yaml: disable the built-in agents via chart values
+(workshop only needs the custom demo agent), or seed a kagent-openai Secret pointed at
+vLLM with a dummy key. Verify with helm show values kagent for the disable flag.
+
+### Teardown note
+With create_cloudwatch_log_group=false, destroy may leave /aws/eks/adwc-dev/cluster
+behind. Verify after destroy and delete it if present:
+  aws logs delete-log-group --region us-west-2 --log-group-name /aws/eks/adwc-dev/cluster
 
 ### Open follow-up for the next session
 - Re-validate with prefix delegation: provision once more (now 1x t3.2xlarge + prefix
