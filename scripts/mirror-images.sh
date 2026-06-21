@@ -60,11 +60,12 @@ images_from_chart() {
     else
         args+=("${chart}" --repo "${repo}")
     fi
-    # A chart that will not render is a hard error: we cannot mirror unknown images.
+    # Some charts (e.g. backstage, which we replace with a custom image anyway) will not
+    # render without required values. Warn and skip rather than abort the whole mirror.
     if ! helm "${args[@]}" 2>/dev/null | grep -oE 'image:[[:space:]]*"?[^"[:space:]]+' \
         | sed -E 's/image:[[:space:]]*"?//'; then
-        log "ERROR: failed to render chart ${chart} (${repo} ${version})"
-        return 1
+        log "  WARN: could not render ${chart} (${repo} ${version}); skipping its images"
+        return 0
     fi
 }
 
@@ -96,7 +97,7 @@ main() {
 
     log "Collecting images from charts and manifests..."
     local tmp; tmp="$(mktemp)"
-    trap 'rm -f "${tmp}"' EXIT
+    trap 'rm -f "${tmp:-}"' EXIT
 
     images_from_manifests >>"${tmp}"
     local repo chart version method
