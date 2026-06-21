@@ -17,7 +17,7 @@ spec:
   transportType: stdio
   stdioTransport: {}
   deployment:
-    image: ghcr.io/REPLACE_GHCR_ORG/mcp-server-everything:latest
+    image: ghcr.io/peopleforrester/mcp-server-everything:latest
     cmd: mcp-server-everything
     args: ["stdio"]
     port: 3000

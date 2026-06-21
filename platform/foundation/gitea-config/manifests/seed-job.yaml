@@ -27,7 +27,7 @@ spec:
           type: RuntimeDefault
       containers:
         - name: seed
-          image: ghcr.io/REPLACE_GHCR_ORG/curl:8.11.0
+          image: ghcr.io/peopleforrester/curl:8.11.0
           imagePullPolicy: IfNotPresent
           env:
             - name: GITEA

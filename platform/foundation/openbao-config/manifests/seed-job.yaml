@@ -25,7 +25,7 @@ spec:
       containers:
         - name: seed
           # Mirrored OpenBao image (the bao CLI). No docker.io references in manifests.
-          image: ghcr.io/REPLACE_GHCR_ORG/openbao:2.5.5
+          image: ghcr.io/peopleforrester/openbao:2.5.5
           imagePullPolicy: IfNotPresent
           command: ["/bin/sh", "-c"]
           args:
