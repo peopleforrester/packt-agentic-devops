@@ -17,9 +17,10 @@ spec:
   transportType: stdio
   stdioTransport: {}
   deployment:
+    # Official mcp/everything image, mirrored to GHCR. Its entrypoint runs
+    # `node dist/index.js`, which defaults to the stdio transport, so KMCP uses the image
+    # default and no cmd/args override is needed.
     image: ghcr.io/peopleforrester/mcp-server-everything:latest
-    cmd: mcp-server-everything
-    args: ["stdio"]
     port: 3000
     resources:
       requests:
