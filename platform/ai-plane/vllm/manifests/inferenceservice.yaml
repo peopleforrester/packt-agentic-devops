@@ -48,6 +48,15 @@ spec:
           limits:
             cpu: "6"
             memory: "10Gi"
+        # The model takes many minutes to load (much longer if not pre-baked). A
+        # startupProbe gives it a wide window so the livenessProbe does not kill the pod
+        # mid-load. 90 x 20s = 30 min; shrink once the model is pre-baked into the image.
+        startupProbe:
+          httpGet:
+            path: /health
+            port: http
+          periodSeconds: 20
+          failureThreshold: 90
         readinessProbe:
           httpGet:
             path: /health
@@ -68,3 +77,14 @@ spec:
           capabilities:
             drop: ["ALL"]
             add: ["SYS_NICE"]
+        volumeMounts:
+          - name: dshm
+            mountPath: /dev/shm
+    # vLLM multiprocessing (EngineCore + Worker) needs a large /dev/shm; the 64Mi container
+    # default makes it stall on "No available shared memory broadcast block" and crashloop.
+    # Validated live: without this the pod restarts repeatedly and never serves.
+    volumes:
+      - name: dshm
+        emptyDir:
+          medium: Memory
+          sizeLimit: 4Gi

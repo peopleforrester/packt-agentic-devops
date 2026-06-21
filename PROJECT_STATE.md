@@ -61,7 +61,13 @@ TAG=$(AWS_PROFILE=accen-dev aws eks describe-cluster --name adwc-dev --region us
       its mandatory 30-day PendingDeletion window (auto-deletes 2026-07-21, free).
       NOTHING LIVE, NOTHING BILLABLE.
 
-## Prefix-delegation re-validation: PASSED and torn down (2026-06-21). No cluster running.
+## ACTIVE: vLLM serving test cluster (adwc-dev, 1x t3.2xlarge). If this session resets, TEAR DOWN.
+Teardown: `cd scripts/provision/dev-cluster && AWS_PROFILE=accen-dev terraform destroy -auto-approve`
+then verify zero packt resources. Findings so far: vllm-openai-cpu rejects --device=cpu
+(fixed); HF model download is slow unauthenticated (needs pre-bake/cache); latency
+measurement in progress.
+
+## Prefix-delegation re-validation: PASSED and torn down (2026-06-21).
 
 Teardown verified independently: destroy 61 resources, TF state 0, no clusters, no running
 instances, both nodes terminated, NAT/subnet/volumes deleted, log group deleted. Only the
