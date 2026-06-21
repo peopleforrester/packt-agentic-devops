@@ -1,5 +1,5 @@
-# ABOUTME: Terraform for a lean, ephemeral dev EKS cluster used to validate the
-# ABOUTME: Phase 2 foundation plane. Provision, validate, then destroy.
+# ABOUTME: Terraform for an ephemeral EKS cluster shaped exactly like a student cluster
+# ABOUTME: (1x t3.2xlarge) for the end-to-end validation. Provision, validate, destroy.
 
 terraform {
   required_version = ">= 1.10"
@@ -125,13 +125,18 @@ module "eks" {
   }
 
   eks_managed_node_groups = {
+    # One t3.2xlarge: the exact per-student shape (build-spec 6.6). Single node so the
+    # validation mirrors what a student runs, never a roomier cluster (that is a false
+    # pass). t3.2xlarge is the T3 ceiling and the only T3 size that fits CPU vLLM.
+    # x86 AMI because the vLLM image is vllm-openai-cpu:*-x86_64. Larger root disk for
+    # the vLLM image plus model weights and container layers.
     default = {
       ami_type       = "AL2023_x86_64_STANDARD"
-      instance_types = ["t3.large"]
-      min_size       = 2
-      max_size       = 3
-      desired_size   = 2
-      disk_size      = 30
+      instance_types = ["t3.2xlarge"]
+      min_size       = 1
+      max_size       = 1
+      desired_size   = 1
+      disk_size      = 80
     }
   }
 }
