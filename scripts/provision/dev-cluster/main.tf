@@ -14,10 +14,14 @@ terraform {
 provider "aws" {
   region  = var.region
   profile = var.profile
+  # Every taggable resource gets Workshop=packt so it is unmistakable in the shared
+  # account (another project, watchitburn, uses the same account). Filter or clean up by
+  # this tag, never by guessing.
   default_tags {
     tags = {
-      Project   = "agentic-devops-with-claude"
-      Purpose   = "phase-2-dev-validation"
+      Workshop  = "packt"
+      Project   = "packt-agentic-devops"
+      Purpose   = "agentic-devops-validation"
       ManagedBy = "terraform"
       Ephemeral = "true"
     }
@@ -147,8 +151,26 @@ module "ebs_csi_irsa" {
   }
 }
 
+# Tracking beyond the state file: a tag-based Resource Group so the AWS console lists
+# every Workshop=packt resource live, independent of who ran Terraform. Clean up the
+# whole footprint by filtering on this group / tag.
+resource "aws_resourcegroups_group" "packt" {
+  name        = "packt-agentic-devops"
+  description = "All resources for the Packt Agentic DevOps workshop (tag Workshop=packt)."
+  resource_query {
+    query = jsonencode({
+      ResourceTypeFilters = ["AWS::AllSupported"]
+      TagFilters          = [{ Key = "Workshop", Values = ["packt"] }]
+    })
+  }
+}
+
 output "cluster_name" {
   value = module.eks.cluster_name
+}
+
+output "resource_group" {
+  value = aws_resourcegroups_group.packt.name
 }
 
 output "region" {
