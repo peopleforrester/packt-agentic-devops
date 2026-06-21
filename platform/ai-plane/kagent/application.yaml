@@ -4,6 +4,13 @@
 # The controller installs with no external model credentials. The demo agent's
 # ModelConfig points at the in-cluster vLLM OpenAI-compatible endpoint, so there is
 # no external API spend on attendee clusters (build-spec 6.7).
+#
+# The chart's built-in agents (k8s, istio, cilium, helm, etc.) default to the OpenAI
+# provider and require a kagent-openai Secret; on a vLLM-only platform they
+# CreateContainerConfigError. The chart's openAI provider has no baseURL override, so
+# they cannot be pointed at the in-cluster vLLM through values. Disable them; the custom
+# demo agent (its own ModelConfig -> vLLM) is the one the workshop drives. This also
+# frees ~11 pods.
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
@@ -19,6 +26,19 @@ spec:
     repoURL: ghcr.io/kagent-dev/kagent/helm
     chart: kagent
     targetRevision: "0.9.9"
+    helm:
+      valuesObject:
+        k8s-agent: { enabled: false }
+        kgateway-agent: { enabled: false }
+        istio-agent: { enabled: false }
+        promql-agent: { enabled: false }
+        observability-agent: { enabled: false }
+        argo-rollouts-agent: { enabled: false }
+        helm-agent: { enabled: false }
+        cilium-policy-agent: { enabled: false }
+        cilium-manager-agent: { enabled: false }
+        cilium-debug-agent: { enabled: false }
+        querydoc: { enabled: false }
   destination:
     server: https://kubernetes.default.svc
     namespace: kagent
