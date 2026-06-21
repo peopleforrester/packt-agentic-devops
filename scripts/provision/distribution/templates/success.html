@@ -2,7 +2,7 @@
 
 {% block title %}Cluster Assigned — {{ cluster_name }}{% endblock %}
 {% block page_title %}Cluster Assigned{% endblock %}
-{% block meta_description %}Your KCD Texas 2026 workshop cluster credentials.{% endblock %}
+{% block meta_description %}Your Agentic DevOps with Claude workshop cluster credentials.{% endblock %}
 
 {% block main %}
   <section class="card" style="margin-bottom:24px;">
@@ -28,20 +28,20 @@
   <h2 style="margin-top:28px;">Setup commands</h2>
   <pre class="codeblock" id="cmds"><button type="button" class="copy-btn" onclick="copyText('cmds', this, 'setup commands')" aria-label="Copy setup commands">copy</button>aws configure                                  # paste keys above; region {{ region }}
 aws eks update-kubeconfig --name {{ cluster_name }} --region {{ region }}
-kubectl get nodes                              # expect 3 Ready  (EKS)
-git clone https://github.com/peopleforrester/KCD_Texas_2026_Workshop.git
-cd KCD_Texas_2026_Workshop
+kubectl get nodes                              # expect 1 Ready  (single t3.2xlarge)
+git clone https://github.com/peopleforrester/packt-agentic-devops.git
+cd packt-agentic-devops
 claude</pre>
 
   <div class="callout">
     <strong style="font-style:normal;color:var(--navy);">When Claude starts,</strong>
-    paste the prompt at the top of <code style="font-style:normal;">spec/BUILD-SPEC.md</code>
-    (the &ldquo;How Claude executes this spec&rdquo; block). Claude creates the workshop namespaces
-    during Phase 2 &mdash; do not pre-create anything.
+    point it at <code style="font-style:normal;">spec/WORKSHOP-SPEC.md</code> and follow the
+    phased build. Claude creates the platform namespaces as it builds
+    &mdash; do not pre-create anything.
   </div>
 
   <p style="color:var(--mid-gray);font-size:13px;margin-top:24px;">
-    If <code>kubectl get nodes</code> shows fewer than 3 Ready nodes, raise your hand during
+    If <code>kubectl get nodes</code> shows no Ready node, raise your hand during
     the setup window for a spare cluster.
   </p>
 

@@ -1,12 +1,12 @@
 {% extends "_base.html" %}
 
-{% block title %}KCD Texas 2026 — Claim Your Cluster{% endblock %}
+{% block title %}Agentic DevOps with Claude — Claim Your Cluster{% endblock %}
 {% block page_title %}Claim Your Cluster{% endblock %}
-{% block meta_description %}Enter your email to claim a pre-provisioned EKS cluster for The 90-Minute IDP workshop at KCD Texas 2026 — sponsored by Accenture.{% endblock %}
+{% block meta_description %}Enter your email to claim a pre-provisioned EKS cluster for the Agentic DevOps with Claude workshop.{% endblock %}
 
 {% block hero %}
   <section class="hero">
-    <h1>The 90-Minute IDP</h1>
+    <h1>Agentic DevOps with Claude</h1>
   </section>
 {% endblock %}
 
@@ -29,12 +29,6 @@
     .sponsor-strip img { height: 24px; width: auto; display: inline-block; }
     @media (max-width: 640px) { main.page { padding: 16px; } }
   </style>
-
-  <div class="sponsor-strip" role="img" aria-label="Sponsored by Accenture">
-    <span aria-hidden="true">Sponsored by</span>
-    <img src="{{ url_for('static', filename='img/accenture-logo.svg') }}" alt=""
-         onerror="this.outerHTML='<span style=&quot;color:#A100FF;font-weight:700;text-transform:none;letter-spacing:0;&quot;>accenture &gt;</span>';">
-  </div>
 
   <h1>Claim your workshop cluster</h1>
   <p id="form-help">

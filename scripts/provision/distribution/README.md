@@ -41,7 +41,12 @@ uv run python -m flask --app app run    # or: uv run python app.py
 ## Customization status (KCD -> Packt)
 
 Pulled in PII-free: the KCD attendee emails (`data/`) and claims DB (`pool.db`) were NOT
-copied. Still to rebrand for Packt (a string/content pass, ~37 refs in `app.py` and ~36
-across templates): the KCD Texas / KodeKloud / Accenture branding and copy, the sender
-email (`workshop@ai-enhanced-devops.com`), and the setup commands shown on the success
-page (point them at this platform's spec and the student's claimed cluster).
+copied. Rebranded to Packt: all KCD Texas / Accenture branding removed, the workshop name
+is "Agentic DevOps with Claude", the setup commands point at `packt-agentic-devops` and
+`spec/WORKSHOP-SPEC.md`, and the node-count copy is corrected to a single node (`expect 1
+Ready`, this platform runs one t3.2xlarge per student). Tests updated and green.
+
+Remaining cleanup: the KodeKloud "browser path" (`/browser`, `/browser-claim`,
+`browser*.html`, the admin browser stats) is dead code for Packt. It is off-menu (a
+student never reaches it) and rebranded, but should be removed entirely since Packt issues
+EKS clusters only. The sender email (`workshop@ai-enhanced-devops.com`) is configurable.

@@ -1,4 +1,4 @@
-# ABOUTME: Pytest suite for the KCD Texas 2026 credential distribution app.
+# ABOUTME: Pytest suite for the Agentic DevOps with Claude credential distribution app.
 # ABOUTME: Covers picker, browser path, EKS path (incl. back-compat /claim), admin, healthz.
 
 import csv
@@ -107,13 +107,10 @@ def test_admin_auth(client):
 
 def test_root_is_the_eks_form(client):
     # The picker page was merged into the form. `/` should serve the form
-    # itself — Accenture sponsor strip + email input + submit button — with
-    # zero intermediate clicks.
+    # itself — email input + submit button — with zero intermediate clicks.
     res = client.get("/")
     assert res.status_code == 200
     body = res.get_data(as_text=True)
-    assert "Accenture" in body
-    assert "accenture-logo.svg" in body
     assert 'name="email"' in body                     # form input present
     assert 'action="/eks-claim"' in body              # posts directly to claim endpoint
     assert "Claim my cluster" in body                 # CTA copy
@@ -144,7 +141,7 @@ def test_browser_claim_happy_path(client):
     assert "Open KodeKloud course" in body
     assert "learn.kodekloud.com/user/courses/the-90-minutes-idp" in body
     assert "kubectl get nodes" in body
-    assert "git clone https://github.com/peopleforrester/KCD_Texas_2026_Workshop.git" in body
+    assert "git clone https://github.com/peopleforrester/packt-agentic-devops.git" in body
 
 
 def test_browser_reclaim_is_idempotent(client):
