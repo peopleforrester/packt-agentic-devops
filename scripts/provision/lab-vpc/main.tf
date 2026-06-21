@@ -69,6 +69,10 @@ module "vpc" {
   single_nat_gateway = true
 
   # Subnet discovery tags so every cluster's AWS Load Balancer Controller finds them.
+  # Role tags are deliberately the ONLY discovery tags here: in a shared VPC the
+  # controller discovers subnets by role, so all clusters use the same subnets. A
+  # per-cluster kubernetes.io/cluster/<name> ownership tag is neither required (EKS
+  # relaxed that) nor correct on a shared subnet, so it is intentionally absent.
   public_subnet_tags = {
     "kubernetes.io/role/elb" = "1"
   }

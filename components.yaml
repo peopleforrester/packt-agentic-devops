@@ -419,8 +419,9 @@ components:
     notes: >
       PyTorch Foundation (Linux Foundation). Apache-2.0. CPU image
       vllm/vllm-openai-cpu:v0.23.0-x86_64. Serves Qwen3-1.7B (backup Qwen3-0.6B) on the
-      t3.2xlarge worker. Flags --device cpu --dtype bfloat16, VLLM_CPU_KVCACHE_SPACE 8-16,
-      SYS_NICE capability. Set --served-model-name qwen3-1.7b. Served via KServe.
+      single t3.2xlarge node. Flags --device cpu --dtype bfloat16, VLLM_CPU_KVCACHE_SPACE 4
+      (resolved for single-node fit; was 8-16), SYS_NICE capability. Set --served-model-name
+      qwen3-1.7b. Served via KServe.
 
   - name: llm-d
     plane: ai
@@ -436,6 +437,22 @@ components:
       CNCF Sandbox since March 2026. Kustomize install. Backed by Red Hat, Google, IBM,
       CoreWeave, NVIDIA. Pre-1.0, not production-ready. Shown as the distributed-inference
       scheduling layer (B12), architecture on screen rather than a deep demo.
+
+  - name: mcp-server
+    plane: ai
+    project_url: https://modelcontextprotocol.io
+    install_method: kubectl
+    chart_repo: null
+    chart_name: null
+    chart_version: null
+    app_version: "everything-2025-11-25"
+    namespace: kagent
+    module: 2
+    notes: >
+      The canonical MCP "everything" reference server, run as a KMCP MCPServer
+      (kagent.dev/v1alpha1). KMCP (the MCP controller) and kagent-tools ship inside the
+      kagent chart, so there is no separate install. Gives the demo agent an MCP target to
+      reach through agentgateway (phase 5). Prebuilt mirrored image, no npx at runtime.
 
   # --- Self-service ---
   - name: gitea

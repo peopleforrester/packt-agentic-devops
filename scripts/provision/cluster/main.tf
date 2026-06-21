@@ -140,6 +140,26 @@ module "ebs_csi_irsa" {
   }
 }
 
+# Pod Identity for the AWS Load Balancer Controller (build-spec: Pod Identity, not IRSA,
+# so the fleet uses a reusable role + a per-cluster association instead of 300 OIDC trust
+# policies). Without this the controller is Degraded and no ingress/LB reconciles. The
+# Helm chart creates the aws-load-balancer-controller SA in kube-system; this binds it.
+module "aws_lb_controller_pod_identity" {
+  source  = "terraform-aws-modules/eks-pod-identity/aws"
+  version = "~> 1.0"
+
+  name                            = "${var.name}-aws-lbc"
+  attach_aws_lb_controller_policy = true
+
+  associations = {
+    main = {
+      cluster_name    = module.eks.cluster_name
+      namespace       = "kube-system"
+      service_account = "aws-load-balancer-controller"
+    }
+  }
+}
+
 output "cluster_name" {
   value = module.eks.cluster_name
 }

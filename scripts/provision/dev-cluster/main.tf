@@ -189,6 +189,26 @@ module "ebs_csi_irsa" {
   }
 }
 
+# Pod Identity for the AWS Load Balancer Controller (build-spec: Pod Identity, not IRSA).
+# Without this the controller is Degraded and no ingress/LB reconciles. The Helm chart
+# creates the aws-load-balancer-controller SA in kube-system; this binds it to a role
+# carrying the LB controller policy.
+module "aws_lb_controller_pod_identity" {
+  source  = "terraform-aws-modules/eks-pod-identity/aws"
+  version = "~> 1.0"
+
+  name                            = "${var.name}-aws-lbc"
+  attach_aws_lb_controller_policy = true
+
+  associations = {
+    main = {
+      cluster_name    = module.eks.cluster_name
+      namespace       = "kube-system"
+      service_account = "aws-load-balancer-controller"
+    }
+  }
+}
+
 # Tracking beyond the state file: a tag-based Resource Group so the AWS console lists
 # every Workshop=packt resource live, independent of who ran Terraform. Clean up the
 # whole footprint by filtering on this group / tag.

@@ -3,8 +3,12 @@
 #
 # OpenAI-compatible endpoint at :8000/v1. The demo agent's ModelConfig points here,
 # so attendee clusters spend nothing on external LLM APIs (build-spec 6.7). Image is
-# the mirrored CPU build of vllm/vllm-openai-cpu:v0.23.0-x86_64. Sized for the
-# t3.2xlarge worker; the lean 2x t3.large validation cluster does not run this.
+# the mirrored CPU build of vllm/vllm-openai-cpu:v0.23.0-x86_64.
+#
+# KVCACHE_SPACE resolved to 4 (RESOLVES the phase-6 "2 to 4" vs components.yaml "8 to 16"
+# conflict). On the single t3.2xlarge student node vLLM shares 32GB with the whole
+# platform; 4 keeps the model (~3.4GB bf16) plus KV cache plus overhead near 8GB, which
+# fits with headroom. Raise only if the node is shown to have room and throughput is short.
 apiVersion: serving.kserve.io/v1beta1
 kind: InferenceService
 metadata:
@@ -31,7 +35,7 @@ spec:
           - "--port=8000"
         env:
           - name: VLLM_CPU_KVCACHE_SPACE
-            value: "12"
+            value: "4"
         ports:
           - name: http
             containerPort: 8000
@@ -39,10 +43,10 @@ spec:
         resources:
           requests:
             cpu: "4"
-            memory: "12Gi"
+            memory: "8Gi"
           limits:
             cpu: "6"
-            memory: "16Gi"
+            memory: "10Gi"
         readinessProbe:
           httpGet:
             path: /health

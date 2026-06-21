@@ -1,0 +1,36 @@
+# ABOUTME: A demo MCP server (the canonical "everything" reference server) managed by
+# ABOUTME: KMCP, so the demo agent has an MCP target to reach through agentgateway.
+#
+# KMCP (the MCP controller) and kagent-tools ship inside the kagent chart, so the
+# MCPServer CRD (kagent.dev/v1alpha1) and controller already exist. This is the demo
+# server it manages. Image is a prebuilt, mirrored MCP everything server (no npx-at-runtime
+# so nothing waits on the network live). Confirm the KMCP transport/deployment fields and
+# the exact everything-server image against the pinned KMCP version before the freeze.
+apiVersion: kagent.dev/v1alpha1
+kind: MCPServer
+metadata:
+  name: everything
+  namespace: kagent
+  labels:
+    app.kubernetes.io/part-of: agentic-platform
+spec:
+  transportType: stdio
+  stdioTransport: {}
+  deployment:
+    image: ghcr.io/REPLACE_GHCR_ORG/mcp-server-everything:latest
+    cmd: mcp-server-everything
+    args: ["stdio"]
+    port: 3000
+    resources:
+      requests:
+        cpu: "50m"
+        memory: "64Mi"
+      limits:
+        cpu: "250m"
+        memory: "256Mi"
+    securityContext:
+      runAsNonRoot: true
+      allowPrivilegeEscalation: false
+      readOnlyRootFilesystem: true
+      capabilities:
+        drop: ["ALL"]
