@@ -100,6 +100,12 @@ module "eks" {
   # IRSA: the EBS CSI driver assumes an OIDC-backed role to provision volumes.
   enable_irsa = true
 
+  # Do not let the module manage the control-plane CloudWatch log group. EKS auto-creates
+  # /aws/eks/<name>/cluster, and it survives destroy, so a module-managed group collides
+  # with "already exists" on any re-provision that reuses the cluster name. Letting EKS
+  # own it makes provision idempotent across destroy/apply cycles.
+  create_cloudwatch_log_group = false
+
   vpc_id     = module.vpc.vpc_id
   subnet_ids = module.vpc.private_subnets
 
