@@ -7,6 +7,7 @@ Full sources and gotchas are in `docs/research-findings-june-2026.md`. This file
 | Component | App version | Chart | Chart version | Chart repo |
 |---|---|---|---|---|
 | Backstage | 1.51.2 | backstage | 2.8.2 | backstage.github.io/charts |
+| Gitea | 1.26.1 | gitea | 12.6.0 | dl.gitea.com/charts |
 | Argo CD | v3.4.4 | argo-cd | 9.5.22 | argoproj.github.io/argo-helm |
 | Argo Workflows | v4.0.6 | argo-workflows | 1.0.16 | argoproj.github.io/argo-helm |
 | Argo Events | v1.9.10 | argo-events | 2.4.22 | argoproj.github.io/argo-helm |

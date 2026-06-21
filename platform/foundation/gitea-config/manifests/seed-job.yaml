@@ -1,0 +1,92 @@
+# ABOUTME: Seeds Gitea for self-service: creates the agents org and an API token, then
+# ABOUTME: writes that token as gitea-scm-token in argocd for the ApplicationSet.
+#
+# Integration glue against the live Gitea API. The exact API responses should be
+# smoke-tested on a real cluster before the freeze. Admin creds match the chart's dev
+# admin (ephemeral workshop, not a real credential).
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: gitea-seed
+  namespace: gitea
+  labels:
+    app.kubernetes.io/part-of: agentic-platform
+spec:
+  backoffLimit: 30
+  template:
+    metadata:
+      labels:
+        app: gitea-seed
+        version: "1.26.1"
+    spec:
+      restartPolicy: OnFailure
+      serviceAccountName: gitea-seed
+      securityContext:
+        runAsNonRoot: true
+        seccompProfile:
+          type: RuntimeDefault
+      containers:
+        - name: seed
+          image: ghcr.io/REPLACE_GHCR_ORG/curl:8.11.0
+          imagePullPolicy: IfNotPresent
+          env:
+            - name: GITEA
+              value: "http://gitea-http.gitea.svc:3000"
+            - name: ADMIN_USER
+              value: "gitea_admin"
+            - name: ADMIN_PASS
+              value: "workshop-dev-only"
+            - name: ORG
+              value: "agents"
+            - name: TOKEN_NAME
+              value: "scm-automation"
+          command: ["/bin/sh", "-c"]
+          args:
+            - |
+              set -eu
+              auth="-u ${ADMIN_USER}:${ADMIN_PASS}"
+
+              echo "waiting for Gitea API..."
+              until curl -fsS "${GITEA}/api/v1/version" >/dev/null 2>&1; do sleep 3; done
+
+              echo "ensuring org ${ORG} exists"
+              curl -sS ${auth} -X POST "${GITEA}/api/v1/orgs" \
+                -H 'Content-Type: application/json' \
+                -d "{\"username\":\"${ORG}\"}" -o /dev/null -w '%{http_code}\n' || true
+
+              echo "rotating token ${TOKEN_NAME}"
+              curl -sS ${auth} -X DELETE \
+                "${GITEA}/api/v1/users/${ADMIN_USER}/tokens/${TOKEN_NAME}" \
+                -o /dev/null -w '%{http_code}\n' || true
+              resp="$(curl -fsS ${auth} -X POST \
+                "${GITEA}/api/v1/users/${ADMIN_USER}/tokens" \
+                -H 'Content-Type: application/json' \
+                -d "{\"name\":\"${TOKEN_NAME}\",\"scopes\":[\"write:organization\",\"write:repository\",\"read:repository\",\"read:user\"]}")"
+              sha1="$(printf '%s' "${resp}" | grep -o '"sha1":"[^"]*"' | sed 's/.*"sha1":"//;s/"//')"
+              [ -n "${sha1}" ] || { echo "ERROR: no token returned" >&2; exit 1; }
+
+              echo "writing gitea-scm-token into argocd"
+              api="https://kubernetes.default.svc"
+              ka="$(cat /var/run/secrets/kubernetes.io/serviceaccount/token)"
+              ca="/var/run/secrets/kubernetes.io/serviceaccount/ca.crt"
+              curl -sS --cacert "${ca}" -H "Authorization: Bearer ${ka}" -X DELETE \
+                "${api}/api/v1/namespaces/argocd/secrets/gitea-scm-token" \
+                -o /dev/null -w '%{http_code}\n' || true
+              curl -fsS --cacert "${ca}" -H "Authorization: Bearer ${ka}" \
+                -H 'Content-Type: application/json' -X POST \
+                "${api}/api/v1/namespaces/argocd/secrets" \
+                -d "{\"apiVersion\":\"v1\",\"kind\":\"Secret\",\"metadata\":{\"name\":\"gitea-scm-token\"},\"stringData\":{\"token\":\"${sha1}\"}}" \
+                -o /dev/null -w '%{http_code}\n'
+              echo "seed complete"
+          resources:
+            requests:
+              cpu: "50m"
+              memory: "64Mi"
+            limits:
+              cpu: "200m"
+              memory: "128Mi"
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities:
+              drop: ["ALL"]

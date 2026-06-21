@@ -438,6 +438,22 @@ components:
       scheduling layer (B12), architecture on screen rather than a deep demo.
 
   # --- Self-service ---
+  - name: gitea
+    plane: self-service
+    project_url: https://gitea.com
+    install_method: helm
+    chart_repo: https://dl.gitea.com/charts/
+    chart_name: gitea
+    chart_version: "12.6.0"
+    app_version: "1.26.1"
+    namespace: gitea
+    module: 1
+    notes: >
+      In-cluster Git host the golden path publishes to and the ApplicationSet reads. Lean
+      dev config: SQLite, single replica, HA Postgres and Valkey deps off. Built in Module
+      1 so it is ready for the Module 3 self-service flow. A seed Job creates the org and
+      an API token (gitea-scm-token in argocd) for the ApplicationSet and Backstage.
+
   - name: self-service-templates
     plane: self-service
     project_url: https://backstage.io/docs/features/software-templates
