@@ -1,0 +1,10 @@
+# NEVER commit the live pool (real AWS credentials) or the claims DB (attendee PII).
+pool.csv
+pool.db
+*.db
+data/
+# Python runtime artifacts.
+.venv/
+__pycache__/
+.pytest_cache/
+*.pyc
