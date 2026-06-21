@@ -107,8 +107,20 @@ module "eks" {
     # vpc-cni and kube-proxy must exist before nodes join. Without before_compute
     # the node group is created first, nodes boot with no CNI, stay NotReady, and
     # the group fails with NodeCreationFailure: Unhealthy nodes.
+    # Prefix delegation is the reason the whole platform fits on one t3.2xlarge. The
+    # default VPC CNI allocates one IP per ENI slot, capping t3.2xlarge at 58 pods; the
+    # full platform (kagent alone runs ~8 agents) needs ~75 and the extras go Pending.
+    # Prefix delegation assigns /28 prefixes, raising the ceiling to ~110. Set before
+    # compute so the node calculates the higher max-pods at boot. Pairs with the node
+    # group cloudinit maxPods below.
     vpc-cni = {
       before_compute = true
+      configuration_values = jsonencode({
+        env = {
+          ENABLE_PREFIX_DELEGATION = "true"
+          WARM_PREFIX_TARGET       = "1"
+        }
+      })
     }
     kube-proxy = {
       before_compute = true
@@ -137,6 +149,21 @@ module "eks" {
       max_size       = 1
       desired_size   = 1
       disk_size      = 80
+      # AL2023 nodeadm sets max-pods from a static per-instance map that ignores prefix
+      # delegation, so raise it explicitly to the prefix-delegation value for t3.2xlarge
+      # (110). Without this the node still caps at 58 even with prefix delegation on.
+      # Verify the node reports ~110 allocatable pods on the next provision.
+      cloudinit_pre_nodeadm = [{
+        content_type = "application/node.eks.aws"
+        content      = <<-EOT
+          apiVersion: node.eks.aws/v1alpha1
+          kind: NodeConfig
+          spec:
+            kubelet:
+              config:
+                maxPods: 110
+        EOT
+      }]
     }
   }
 }
@@ -160,8 +187,9 @@ module "ebs_csi_irsa" {
 # every Workshop=packt resource live, independent of who ran Terraform. Clean up the
 # whole footprint by filtering on this group / tag.
 resource "aws_resourcegroups_group" "packt" {
-  name        = "packt-agentic-devops"
-  description = "All resources for the Packt Agentic DevOps workshop (tag Workshop=packt)."
+  name = "packt-agentic-devops"
+  # AWS allows only [\sa-zA-Z0-9_.-] here: no parentheses, no equals sign.
+  description = "All resources for the Packt Agentic DevOps workshop. Tag Workshop is packt."
   resource_query {
     query = jsonencode({
       ResourceTypeFilters = ["AWS::AllSupported"]
