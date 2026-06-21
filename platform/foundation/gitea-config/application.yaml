@@ -1,0 +1,34 @@
+# ABOUTME: ArgoCD Application for the Gitea seed: RBAC plus the org/token Job.
+# ABOUTME: Syncs after Gitea is up (wave 3). Needs the Git remote to sync through ArgoCD.
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: gitea-config
+  namespace: argocd
+  annotations:
+    argocd.argoproj.io/sync-wave: "3"
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  project: default
+  source:
+    repoURL: REPLACE_WITH_GIT_REMOTE
+    targetRevision: main
+    path: platform/foundation/gitea-config/manifests
+    directory:
+      recurse: true
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: gitea
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    retry:
+      limit: 5
+      backoff:
+        duration: 10s
+        factor: 2
+        maxDuration: 3m
+    syncOptions:
+      - ServerSideApply=true
