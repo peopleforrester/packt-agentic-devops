@@ -24,7 +24,9 @@ spec:
   predictor:
     containers:
       - name: kserve-container
-        image: ghcr.io/peopleforrester/vllm-openai-cpu:v0.23.0-x86_64
+        # Qwen3-baked image (vllm-openai-cpu + Qwen3-1.7B weights, HF_HUB_OFFLINE). Loads
+        # from disk, no HuggingFace download at runtime. Built by images/vllm-qwen3.
+        image: ghcr.io/peopleforrester/vllm-qwen3:v0.23.0-qwen3-1.7b
         imagePullPolicy: IfNotPresent
         # The vllm-openai-cpu image is inherently CPU; v0.23 `vllm serve` rejects
         # --device=cpu (validated live). Do not add it back.

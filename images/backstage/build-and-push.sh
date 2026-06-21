@@ -3,6 +3,9 @@
 # ABOUTME: builds the backend bundle, and pushes the image to GHCR.
 set -euo pipefail
 
+# The scaffold pins yarn 4 via Corepack; let it download non-interactively.
+export COREPACK_ENABLE_DOWNLOAD_PROMPT=0
+
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 readonly SCRIPT_DIR
 
