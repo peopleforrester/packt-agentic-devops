@@ -26,10 +26,11 @@ spec:
       - name: kserve-container
         image: ghcr.io/peopleforrester/vllm-openai-cpu:v0.23.0-x86_64
         imagePullPolicy: IfNotPresent
+        # The vllm-openai-cpu image is inherently CPU; v0.23 `vllm serve` rejects
+        # --device=cpu (validated live). Do not add it back.
         args:
           - "--model=Qwen/Qwen3-1.7B"
           - "--served-model-name=qwen3-1.7b"
-          - "--device=cpu"
           - "--dtype=bfloat16"
           - "--max-model-len=8192"
           - "--port=8000"
