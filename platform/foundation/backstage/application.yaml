@@ -23,7 +23,7 @@ spec:
           # carries no plugins; the real app must be a custom image.
           image:
             registry: ghcr.io
-            repository: REPLACE_WITH_GHCR_NAMESPACE/backstage
+            repository: ghcr.io/peopleforrester/backstage
             tag: REPLACE_WITH_PINNED_TAG
         # Bundled PostgreSQL for the demo. Production backs the catalog with RDS.
         postgresql:

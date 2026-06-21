@@ -31,7 +31,7 @@ spec:
           type: RuntimeDefault
       containers:
         - name: llm-guard
-          image: ghcr.io/REPLACE_GHCR_ORG/llm-guard-api:0.3.16
+          image: ghcr.io/peopleforrester/llm-guard-api:0.3.16
           imagePullPolicy: IfNotPresent
           ports:
             - name: http
