@@ -66,8 +66,11 @@ spec:
           type: string
           ui:field: RepoUrlPicker
           ui:options:
+            # In-cluster Gitea. Backstage app-config must declare an integrations.gitea
+            # entry for this host with a token. Set the host to the Gitea service or its
+            # ingress (for example gitea.platform.local).
             allowedHosts:
-              - github.com
+              - REPLACE_GITEA_HOST
   steps:
     - id: fetch
       name: Fetch skeleton
@@ -81,13 +84,14 @@ spec:
           systemMessage: ${{ parameters.systemMessage }}
           modelConfig: ${{ parameters.modelConfig }}
     - id: publish
-      name: Publish to GitHub
-      action: publish:github
+      name: Publish to Gitea
+      # Requires @backstage/plugin-scaffolder-backend-module-gitea in the Backstage image
+      # and an integrations.gitea entry in app-config.
+      action: publish:gitea
       input:
         repoUrl: ${{ parameters.repoUrl }}
         description: "Agent service ${{ parameters.name }}"
         defaultBranch: main
-        repoVisibility: private
     - id: register
       name: Register in catalog
       action: catalog:register
