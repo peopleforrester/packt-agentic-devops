@@ -13,12 +13,18 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
       python3 g++ build-essential libsqlite3-dev ca-certificates \
     && rm -rf /var/lib/apt/lists/*
 
+# Yarn 4 config and the pinned release binary. The scaffold sets yarnPath to this binary,
+# but the slim image's built-in yarn is 1.22 and ignores yarnPath, so copy both and invoke
+# the pinned yarn 4 directly for the production install.
+COPY .yarnrc.yml ./
+COPY .yarn/releases ./.yarn/releases
+
 # Skeleton: package.json files and yarn config, so the production install can resolve.
 COPY yarn.lock package.json packages/backend/dist/skeleton.tar.gz ./
 RUN tar xzf skeleton.tar.gz && rm skeleton.tar.gz
 
 RUN --mount=type=cache,target=/home/node/.cache/yarn \
-    yarn workspaces focus --all --production
+    node .yarn/releases/yarn-4.13.0.cjs workspaces focus --all --production
 
 # The built backend bundle plus the config files.
 COPY packages/backend/dist/bundle.tar.gz app-config.yaml app-config.production.yaml ./
