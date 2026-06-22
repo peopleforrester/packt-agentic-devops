@@ -34,6 +34,16 @@ require_tools() {
         command -v "${t}" >/dev/null 2>&1 || { log "missing tool: ${t}"; missing=1; }
     done
     [[ "${missing}" -eq 0 ]] || exit 1
+
+    # The scaffolder dep isolated-vm fails to compile on Node 25+. Build under Node 24.
+    local node_major
+    node_major="$(node -p 'process.versions.node.split(".")[0]')"
+    if [[ "${node_major}" -ge 25 ]]; then
+        log "node ${node_major} is too new: isolated-vm (scaffolder backend) fails to build."
+        log "Build under Node 24, e.g.:"
+        log "  PATH=\"\$(brew --prefix node@24)/bin:\${PATH}\" ${0##*/}"
+        exit 1
+    fi
 }
 
 scaffold() {
