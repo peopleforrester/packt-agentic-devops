@@ -16,11 +16,23 @@ helm install argo-cd argo-cd \
 
 The chart and ArgoCD CRDs install cleanly client-side at this size. For the ApplicationSet and Argo Workflows CRDs later, use server-side apply.
 
-## 2. Apply the foundation Applications
+## 2. Apply the plane App-of-Apps (one per module)
+
+The platform is a plane-of-apps: one App-of-Apps per plane, applied at the start of its
+module, so each module shows GitOps doing the work.
+
+- `root-app.yaml` (`platform-foundation`): the foundation plane, applied in Module 1.
+- `ai-plane-app.yaml` (`platform-ai-plane`): the AI plane, applied in Module 2.
+- `self-service-app.yaml` (`platform-self-service`): the self-service ApplicationSet, applied in Module 3.
+
+Each points ArgoCD at its plane directory and recurses for the per-component Application
+manifests. All require the repo reachable by ArgoCD over Git (the `repoURL`, set to the
+public repo). Until the repo is public, use the dev path below.
 
 Two paths.
 
-Production path (App-of-Apps from Git): apply `root-app.yaml`. It points ArgoCD at `platform/foundation` in this repo and recurses for the per-component Application manifests. This requires the repo to be reachable by ArgoCD over Git (a remote). Until a remote exists, use the dev path.
+Production path (App-of-Apps from Git): apply the plane app for the module, e.g.
+`kubectl apply -n argocd -f platform/bootstrap/root-app.yaml` for Module 1.
 
 Dev validation path (no Git remote needed): the per-component Applications under `platform/foundation/<name>/application.yaml` are Helm-sourced, so each pulls its chart straight from the upstream Helm repo. Apply them directly into the `argocd` namespace:
 

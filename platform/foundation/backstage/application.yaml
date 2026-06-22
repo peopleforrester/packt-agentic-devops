@@ -24,7 +24,7 @@ spec:
           image:
             registry: ghcr.io
             repository: ghcr.io/peopleforrester/backstage
-            tag: REPLACE_WITH_PINNED_TAG
+            tag: 2026-07-23
         # Bundled PostgreSQL for the demo. Production backs the catalog with RDS.
         postgresql:
           enabled: true
