@@ -12,7 +12,7 @@ metadata:
 spec:
   project: default
   source:
-    repoURL: REPLACE_WITH_GIT_REMOTE
+    repoURL: https://github.com/peopleforrester/packt-agentic-devops.git
     targetRevision: main
     path: platform/foundation/gitea-config/manifests
     directory:
