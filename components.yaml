@@ -2,7 +2,7 @@
 # Single source of truth for the platform component set.
 # Every entry carries a pinned version. CI fails if any entry lacks one.
 # Versions resolved June 15, 2026. Re-resolve the week of July 13, then freeze.
-# See docs/research-findings-june-2026.md for sources and gotchas.
+# See internal/research-findings-june-2026.md for sources and gotchas.
 #
 # Schema per component:
 #   name           kebab-case identifier

@@ -24,13 +24,13 @@ moves. Re-verify the kagent CRD shape against the pinned chart at the July freez
 
 ### P01 (B01) — Read the component manifest and explain the build
 **Prompt:**
-> Read `components.yaml` and `platform/bootstrap/root-app.yaml`. In a few sentences, explain
+> Read `components.yaml` and `platform/0-bootstrap/root-app.yaml`. In a few sentences, explain
 > how the App-of-Apps pattern is going to deploy this platform: what the root Application
 > points at, how the per-component Applications are discovered, and how sync waves order the
 > rollout. Do not apply anything yet.
 
 **Expected behavior:** Reads both files, explains that `platform-foundation` points ArgoCD at
-`platform/foundation` and recurses for `*/application.yaml`, that each component Application is
+`platform/1-foundation` and recurses for `*/application.yaml`, that each component Application is
 Helm- or manifest-sourced with a pinned version, and that sync-wave annotations order the
 rollout (cert-manager first, Backstage last). Read-only, no tool that mutates the cluster.
 **Known failure modes:** Claude offers to apply immediately. It pads the explanation past the
@@ -40,11 +40,11 @@ cut it off and move to P02.
 
 ### P02 (B02) — Apply the foundation App-of-Apps
 **Prompt:**
-> Apply the foundation App-of-Apps at `platform/bootstrap/root-app.yaml` into the `argocd`
+> Apply the foundation App-of-Apps at `platform/0-bootstrap/root-app.yaml` into the `argocd`
 > namespace. This is the bootstrap exception to the GitOps rule. Then watch the ArgoCD UI as
 > the sync waves cascade and tell me when the foundation plane is all green.
 
-**Expected behavior:** Runs `kubectl apply -n argocd -f platform/bootstrap/root-app.yaml`
+**Expected behavior:** Runs `kubectl apply -n argocd -f platform/0-bootstrap/root-app.yaml`
 (approval prompt appears and is approved on screen), then watches sync status. ArgoCD UI is
 the visual centerpiece; waves cascade cert-manager -> secrets/policy -> observability ->
 Argo extensions -> Backstage.
@@ -76,7 +76,7 @@ script restores the known-good seeded fault.
 
 ### P05 (B05) — Apply the AI plane and review the gateway
 **Prompt:**
-> Apply the AI-plane App-of-Apps at `platform/bootstrap/ai-plane-app.yaml`. Once kgateway is
+> Apply the AI-plane App-of-Apps at `platform/0-bootstrap/ai-plane-app.yaml`. Once kgateway is
 > Healthy, show me the Gateway API resources it created and explain what the Gateway and
 > GatewayClass represent here.
 
@@ -106,7 +106,7 @@ sibling, not kgateway's data plane). It overclaims maturity.
 > platform's components and golden paths, keeps answers short and concrete, and says so when
 > it does not know. Route it at the in-cluster vLLM through a ModelConfig, not any external
 > provider. Put it in the `kagent` namespace, commit it under
-> `platform/ai-plane/demo-agent/manifests/`, and let ArgoCD reconcile it.
+> `platform/2-ai-plane/demo-agent/manifests/`, and let ArgoCD reconcile it.
 
 **Expected behavior:** Produces the Agent plus its ModelConfig (and the dummy key Secret) with
 the exact known-good shape:
@@ -123,7 +123,7 @@ declared as a Kubernetes resource, deployed by GitOps, written by an agent.
 `spec.declarative`; a real external provider instead of the vLLM ModelConfig; baseUrl pointed
 at the wrong Service name.
 **Recovery move:** The known-good artifact already lives at
-`platform/ai-plane/demo-agent/manifests/demo-agent.yaml`. If Claude drifts on the CRD shape,
+`platform/2-ai-plane/demo-agent/manifests/demo-agent.yaml`. If Claude drifts on the CRD shape,
 the prompt is tightened in rehearsal until the output matches; worst case, reveal the
 committed file. This prompt gets the most rehearsal of any.
 
@@ -189,21 +189,21 @@ sits in the topology, honest Sandbox framing. First to go to recording if Module
 > Write a Backstage scaffolder template for an `agent-service`. The form takes an agent name,
 > purpose, model route, and the MCP tools it is allowed. On submit it generates a repo
 > containing a kagent Agent CRD, an agentgateway route, an LLM Guard policy reference, and
-> OTel instrumentation defaults. Commit it under `platform/self-service/agent-service/`.
+> OTel instrumentation defaults. Commit it under `platform/3-self-service/agent-service/`.
 
 **Expected behavior:** Completes the template skeleton: parameters for name/purpose/model/tools,
 `fetch:template` over the skeleton, output including `catalog-info.yaml` and the agent
 manifests. Commits to Git.
 **Known failure modes:** Legacy scaffolder action names. Hardcodes choices the form should
 parameterize. Skeleton placeholders (Gitea host/org) left literal.
-**Recovery move:** The skeleton exists at `platform/self-service/agent-service/`; Claude
+**Recovery move:** The skeleton exists at `platform/3-self-service/agent-service/`; Claude
 completes and wires it. Gitea host/org are templated and filled at provision time.
 
 ### P14 (B14) — Write the ApplicationSet
 **Prompt:**
 > Write the ApplicationSet that watches the in-cluster Gitea for repos generated by this
 > template and auto-creates an ArgoCD Application for each. Commit it at
-> `platform/self-service/applicationset.yaml`.
+> `platform/3-self-service/applicationset.yaml`.
 
 **Expected behavior:** Produces a Git-generator (or SCM-provider) ApplicationSet pointed at the
 in-cluster Gitea org, templating one Application per generated repo.

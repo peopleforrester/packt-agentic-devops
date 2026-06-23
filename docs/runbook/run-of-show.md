@@ -39,7 +39,7 @@ Michael says:
 ## Module 1: cloud-native foundation (0:15 to 1:15)
 
 ### B01 · 0:15 · budget 6 min · prompt P01
-- On screen: editor with `components.yaml` and `platform/bootstrap/root-app.yaml`.
+- On screen: editor with `components.yaml` and `platform/0-bootstrap/root-app.yaml`.
 - Michael says: this manifest is the single source of truth; watch the agent read it and explain the plan before touching anything.
 - Agent: reads both files, explains the App-of-Apps and sync waves. Read-only.
 - Success signal: a short, correct explanation of root app to per-component apps to sync waves.
@@ -95,7 +95,7 @@ Michael says:
 - Agent: writes the `platform-helper` Agent plus ModelConfig (v1alpha2, `systemMessage` under `spec.declarative`, routed at the in-cluster vLLM), commits, reconciles.
 - Success signal: the Agent reaches Ready and is reconciled by ArgoCD, not applied by hand.
 - Bail-out: not cut. If the CRD shape drifts, tighten to the rehearsed prompt; worst case reveal the committed `demo-agent.yaml`.
-- Recovery: the known-good artifact exists at `platform/ai-plane/demo-agent/manifests/demo-agent.yaml`.
+- Recovery: the known-good artifact exists at `platform/2-ai-plane/demo-agent/manifests/demo-agent.yaml`.
 
 ### B08 · 1:53 · budget 6 min · prompt P08 · NEVER CUT
 - On screen: the agent calling the MCP server through agentgateway; the audit log entry.
@@ -144,7 +144,7 @@ Michael says:
 - On screen: the agent completing the `agent-service` scaffolder template.
 - Michael says: now the platform builds platforms; a form that generates a governed agent repo.
 - Agent: completes the template (form params, fetch:template, catalog-info plus agent manifests), commits.
-- Success signal: a valid template committed under `platform/self-service/agent-service/`.
+- Success signal: a valid template committed under `platform/3-self-service/agent-service/`.
 - Bail-out (past 18 min): reveal the completed template, narrate the parameters.
 - Recovery: the skeleton exists; Gitea host/org are templated and filled at provision time.
 
@@ -152,7 +152,7 @@ Michael says:
 - On screen: the agent writing the ApplicationSet that watches Gitea for generated repos.
 - Michael says: this is what auto-creates an ArgoCD Application per generated agent repo.
 - Agent: writes the ApplicationSet pointed at the in-cluster Gitea org, commits.
-- Success signal: ApplicationSet committed at `platform/self-service/applicationset.yaml`.
+- Success signal: ApplicationSet committed at `platform/3-self-service/applicationset.yaml`.
 - Bail-out (past 12 min): reveal the committed ApplicationSet.
 - Recovery: apply server-side; confirm the Gitea URL.
 

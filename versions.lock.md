@@ -2,7 +2,7 @@
 
 Pinned chart and image versions for the platform. Resolved June 15, 2026. Re-resolve once the week of July 13, 2026, then freeze. No version changes after the freeze.
 
-Full sources and gotchas are in `docs/research-findings-june-2026.md`. This file is the quick lookup; `components.yaml` is the machine-readable source of truth.
+Full sources and gotchas are in `internal/research-findings-june-2026.md`. This file is the quick lookup; `components.yaml` is the machine-readable source of truth.
 
 | Component | App version | Chart | Chart version | Chart repo |
 |---|---|---|---|---|
