@@ -18,6 +18,7 @@ The whole platform is GitOps. ArgoCD reconciles every component from Git. The on
 
 You build on your own provided cluster with your own agentic CLI, driven by the same spec the presenter uses. If your build breaks or runs slow, you rejoin at the next phase boundary; the reference build on screen always carries the session.
 
+- The spec your agent builds from: `spec/WORKSHOP-SPEC.md`.
 - New here or arrived late: `copy-paste-commands.md` is the catch-up path. Run a module's block and you are current.
 - What you need before you start: `docs/prerequisites.md`.
 - If you fall behind: `docs/catch-up-guide.md`.
@@ -28,15 +29,19 @@ The building agent (Claude Code or an equivalent) runs on your own plan. The age
 
 ## Repo map
 
-- `components.yaml`: the pinned component set, the single source of truth.
-- `versions.lock.md`: the quick version lookup.
-- `platform/bootstrap/`: ArgoCD install and the per-plane App-of-Apps (one per module).
-- `platform/foundation/`, `platform/ai-plane/`, `platform/self-service/`: one directory per component.
+The `platform/` directories are numbered in build order, one per module. Each has its own README.
+
+- `spec/`: the attendee-facing spec your agent builds from, and the per-phase breakdown.
+- `components.yaml`: the pinned component set, the single source of truth. `versions.lock.md` is the quick lookup.
+- `platform/0-bootstrap/`: ArgoCD install and the per-plane App-of-Apps (one applied per module).
+- `platform/1-foundation/`: Module 1, the cloud-native foundation.
+- `platform/2-ai-plane/`: Module 2, the AI plane.
+- `platform/3-self-service/`: Module 3, the self-service golden path.
 - `charts-vendor/`: vendored Helm charts, so nothing waits on the network live.
 - `prompts/prompt-library.md`: every live prompt, rehearsed verbatim.
-- `docs/runbook/`: the run of show, preflight checklist, and failure recovery.
-- `docs/build-spec.md` and `docs/research-findings-june-2026.md`: the full plan and the verified versions behind the design.
+- `docs/`: attendee docs (prerequisites, architecture, catch-up) and the `runbook/`.
 - `scripts/`: provisioning, mirroring, reset, preflight, and smoke-test automation.
+- `internal/`: presenter and build-process material. Not needed to use the platform.
 
 ## Honest framing
 

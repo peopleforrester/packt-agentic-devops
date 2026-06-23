@@ -84,7 +84,7 @@ group=false) after hitting the orphan collision live.
 kagent's chart deploys built-in agents (cilium, istio, helm, k8s, kgateway, argo-rollouts
 agents) that all require a `kagent-openai` Secret (`OPENAI_API_KEY`). The workshop uses
 in-cluster vLLM, not OpenAI, so they CreateContainerConfigError. Fix in
-platform/ai-plane/kagent/application.yaml: disable the built-in agents via chart values
+platform/2-ai-plane/kagent/application.yaml: disable the built-in agents via chart values
 (workshop only needs the custom demo agent), or seed a kagent-openai Secret pointed at
 vLLM with a dummy key. Verify with helm show values kagent for the disable flag.
 

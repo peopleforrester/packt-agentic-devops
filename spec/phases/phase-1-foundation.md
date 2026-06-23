@@ -6,7 +6,7 @@
 
 **Outputs:**
 - ArgoCD installed via server-side apply (the one allowed direct install), pinned to chart 9.5.22 (app v3.4.4)
-- The root App-of-Apps applied, reconciling `platform/foundation/`
+- The root App-of-Apps applied, reconciling `platform/1-foundation/`
 - cert-manager (v1.20.2), OpenBao (dev mode, app v2.5.5, chart 0.28.4), External Secrets Operator (v2.6.0, chart 2.6.0), Kyverno (chart 3.8.1, app v1.18.1) synced and healthy
 - The ESO ClusterSecretStore (vault provider) wired to OpenBao, a seed Job, and a demo ExternalSecret (openbao-config)
 - A gp3 StorageClass marked default (the cluster ships none)

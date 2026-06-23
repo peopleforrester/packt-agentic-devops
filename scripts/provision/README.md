@@ -35,7 +35,7 @@ event lifecycle in order.
 GHCR_ORG=peopleforrester ../mirror-images.sh        # 2. copy images to GHCR
 GHCR_ORG=peopleforrester TAG=2026-07-23 \
   ../../images/backstage/build-and-push.sh          # 3. build + push Backstage
-# 4. (MCP "everything" image: build + push, see platform/ai-plane/mcp-server)
+# 4. (MCP "everything" image: build + push, see platform/2-ai-plane/mcp-server)
 ```
 
 ### B. Stand up the fleet (event-day setup)

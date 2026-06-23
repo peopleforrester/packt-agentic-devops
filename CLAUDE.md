@@ -1,6 +1,6 @@
 # CLAUDE.md
 
-Project memory for the Agentic DevOps with Claude workshop repo. This is the platform Claude Code builds live on Amazon EKS during the Packt workshop on July 23, 2026. Read `docs/build-spec.md` for the full build spec and `docs/research-findings-june-2026.md` for verified versions.
+Project memory for the Agentic DevOps with Claude workshop repo. This is the platform Claude Code builds live on Amazon EKS during the Packt workshop on July 23, 2026. Read `internal/build-spec.md` for the full build spec and `internal/research-findings-june-2026.md` for verified versions.
 
 ## What this repo is
 
@@ -10,10 +10,10 @@ A GitOps-driven, AI-native Internal Developer Platform. ArgoCD reconciles everyt
 
 - `components.yaml` is the single source of truth for the component set. Every entry carries a pinned version. CI fails if any entry is unpinned.
 - `versions.lock.md` records the pinned chart and image versions with the resolution date.
-- `platform/bootstrap/` holds the ArgoCD install and the root App-of-Apps.
-- `platform/foundation/` holds one directory per foundation component.
-- `platform/ai-plane/` holds one directory per AI-plane component.
-- `platform/self-service/` holds Backstage templates and ApplicationSets.
+- `platform/0-bootstrap/` holds the ArgoCD install and the root App-of-Apps.
+- `platform/1-foundation/` holds one directory per foundation component.
+- `platform/2-ai-plane/` holds one directory per AI-plane component.
+- `platform/3-self-service/` holds Backstage templates and ApplicationSets.
 - `charts-vendor/` holds vendored Helm charts. Nothing waits on the network live.
 - `scripts/` holds provisioning, reset, preflight, smoke-test, and image-mirror scripts.
 - `prompts/prompt-library.md` holds every live prompt, rehearsed verbatim.
@@ -38,7 +38,7 @@ A GitOps-driven, AI-native Internal Developer Platform. ArgoCD reconciles everyt
 - ingress-nginx is end of life and MetalLB is decorative on EKS. The ingress and LB path is the AWS Load Balancer Controller. Storage is the AWS EBS CSI driver.
 - The kagent Agent CRD is `kagent.dev/v1alpha2`. The field is `systemMessage`, nested under `spec.type` and `spec.declarative`. Agents run on Google ADK. Do not write v1alpha1 or `systemPrompt`.
 - agentgateway is a Linux Foundation (Agentic AI Foundation) project, not CNCF. It is a sibling of kgateway, not its data plane.
-- The demo agent on attendee clusters routes to the in-cluster vLLM via an OpenAI-compatible endpoint. No external API spend, no external credentials. See `docs/build-spec.md` section 6.7.
+- The demo agent on attendee clusters routes to the in-cluster vLLM via an OpenAI-compatible endpoint. No external API spend, no external credentials. See `internal/build-spec.md` section 6.7.
 - OpenTelemetry GenAI semantic conventions are Development grade. Present `gen_ai.*` attributes as current but unstable.
 
 ## Writing standards for any doc generated here

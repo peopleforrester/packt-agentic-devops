@@ -35,7 +35,7 @@ kubectl -n argocd rollout status deploy/argo-cd-argocd-server --timeout=300s
 Apply the foundation App-of-Apps and wait for the plane to go Healthy.
 
 ```bash
-kubectl apply -n argocd -f platform/bootstrap/root-app.yaml
+kubectl apply -n argocd -f platform/0-bootstrap/root-app.yaml
 
 # Wait for the foundation plane (cert-manager first, Backstage last)
 kubectl -n argocd wait --for=jsonpath='{.status.health.status}'=Healthy \
@@ -53,7 +53,7 @@ kubectl get svc -n backstage
 Apply the AI-plane App-of-Apps. CRDs land first via server-side apply, then the controllers and workloads.
 
 ```bash
-kubectl apply -n argocd -f platform/bootstrap/ai-plane-app.yaml
+kubectl apply -n argocd -f platform/0-bootstrap/ai-plane-app.yaml
 
 kubectl -n argocd wait --for=jsonpath='{.status.health.status}'=Healthy \
   application/platform-ai-plane --timeout=1200s
@@ -71,7 +71,7 @@ kubectl get inferenceservice -n kserve
 Apply the self-service App-of-Apps. It syncs the ApplicationSet that watches the in-cluster Gitea for scaffolder-generated agent repos.
 
 ```bash
-kubectl apply -n argocd -f platform/bootstrap/self-service-app.yaml
+kubectl apply -n argocd -f platform/0-bootstrap/self-service-app.yaml
 
 kubectl -n argocd wait --for=jsonpath='{.status.health.status}'=Healthy \
   application/platform-self-service --timeout=300s

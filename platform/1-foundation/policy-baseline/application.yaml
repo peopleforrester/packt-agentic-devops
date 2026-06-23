@@ -1,0 +1,39 @@
+# ABOUTME: ArgoCD Application for the tenant policy baseline (Kyverno, NetworkPolicy,
+# ABOUTME: RBAC, ESO store). Syncs after Kyverno's CRDs are established (wave 6).
+#
+# Raw manifests live under manifests/. Needs the Git remote set on repoURL to sync
+# through ArgoCD. Until a remote exists, apply manifests/ directly with kubectl
+# (see platform/0-bootstrap/README.md). Helm-sourced components do not need the remote.
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: policy-baseline
+  namespace: argocd
+  annotations:
+    argocd.argoproj.io/sync-wave: "6"
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/peopleforrester/packt-agentic-devops.git
+    targetRevision: main
+    path: platform/1-foundation/policy-baseline/manifests
+    directory:
+      recurse: true
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: default
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    retry:
+      limit: 5
+      backoff:
+        duration: 10s
+        factor: 2
+        maxDuration: 3m
+    syncOptions:
+      - CreateNamespace=true
+      - ServerSideApply=true
