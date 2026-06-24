@@ -1,6 +1,6 @@
 # Prerequisites
 
-Attendee-facing. Finalized in Phase 6.
+What to bring before the workshop.
 
 ## Required: a Claude Code subscription
 

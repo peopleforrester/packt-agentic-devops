@@ -1,6 +1,6 @@
 # Architecture
 
-The diagram source (Excalidraw export) and the full prose are written as the platform takes shape. This file records the architectural decisions that are already settled, stated honestly.
+This file records the settled architectural decisions, stated honestly. The diagram source is an Excalidraw export kept alongside this file.
 
 ## Platform
 
@@ -26,7 +26,7 @@ ArgoCD shards by cluster, not by app. With this component count on one cluster, 
 
 ## Demo agent model routing
 
-Attendee clusters route the kagent demo agent to the in-cluster vLLM over an OpenAI-compatible endpoint: no external API spend, no external credentials. The presenter cluster shows one real cloud route (Bedrock via Pod Identity, or Anthropic behind a LiteLLM proxy), scoped and capped. See `build-spec.md` section 6.7.
+Attendee clusters route the kagent demo agent to the in-cluster vLLM over an OpenAI-compatible endpoint: no external API spend, no external credentials. The presenter cluster shows one real cloud route (Bedrock via Pod Identity, or Anthropic behind a LiteLLM proxy), scoped and capped. See `../internal/build-spec.md` section 6.7.
 
 ## Observability and the AI plane
 

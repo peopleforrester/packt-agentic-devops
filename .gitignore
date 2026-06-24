@@ -23,3 +23,4 @@ crash.log
 crash.*.log
 *.tfvars
 !*.tfvars.example
+PROJECT_STATE.md
