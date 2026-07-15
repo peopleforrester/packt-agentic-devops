@@ -18,8 +18,9 @@ usage() {
 Usage: KUBECONFIG_FILE=<path> EXPECTED_CONTEXT=<substr> ${0##*/} <checkpoint-tag>
 
 Re-points the root App-of-Apps ('${ROOT_APP}') at the given checkpoint tag and triggers
-a sync with prune, so resources added after the checkpoint are removed and the platform
-returns to that module boundary.
+a sync with prune, so the foundation reconciles to that pinned known-good revision and any
+cluster drift is removed. The checkpoint tags are immutable good revisions, not partial
+module snapshots, so this recovers a broken or drifted foundation to a verified state.
 
   checkpoint-tag   e.g. checkpoint/module-1-end
 

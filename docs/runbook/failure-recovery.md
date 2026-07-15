@@ -10,7 +10,7 @@ What to do when a beat goes wrong on screen.
 
 ## Recovery paths (the three moves)
 
-- **Reset to a checkpoint:** `scripts/reset/reset-to-checkpoint.sh <tag>` re-points the App-of-Apps to the tag, force-syncs with prune, verifies app health. Under 5 minutes.
+- **Reset to a checkpoint:** `scripts/reset/reset-to-checkpoint.sh <tag>` re-points the App-of-Apps to the tag, force-syncs with prune, verifies app health. Under 5 minutes. The checkpoint tags are immutable known-good revisions of the frozen platform, so a reset recovers a broken or drifted foundation to a verified state rather than stripping a later module.
 - **Promote the hot spare:** `promote-spare.sh` swaps the presenter kubeconfig and Backstage URL to the pre-synced spare, under 60 seconds. This is the move for a dead control plane.
 - **Continue from recordings:** when the agent or the API is unavailable, play the beat recording and verify the live cluster between modules.
 
