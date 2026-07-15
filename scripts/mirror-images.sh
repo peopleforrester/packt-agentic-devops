@@ -3,6 +3,11 @@
 # ABOUTME: no manifest pulls docker.io directly and 300 clusters avoid Docker Hub limits.
 set -euo pipefail
 
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+REPO_ROOT="$(cd "${SCRIPT_DIR}/.." && pwd)"
+readonly SCRIPT_DIR REPO_ROOT
+readonly IMAGE_MAP="${REPO_ROOT}/image-map.tsv"
+
 GHCR_ORG="${GHCR_ORG:-}"
 DRY_RUN=0
 
@@ -41,6 +46,10 @@ main() {
 
     local total="${#SOURCES[@]}" i=0 failed=0 src name dst
     log "Mirroring ${total} images to ghcr.io/${GHCR_ORG} (dry-run=${DRY_RUN})"
+    # Truncate the map on a real run only. preflight.sh check_mirror reads this file
+    # (column 2 = GHCR dst) and verifies each dst resolves; a dry run pushes nothing,
+    # so it must not leave a map that falsely claims images are mirrored.
+    [[ "${DRY_RUN}" -eq 1 ]] || : >"${IMAGE_MAP}"
     for entry in "${SOURCES[@]}"; do
         read -r src name <<<"${entry}"
         dst="ghcr.io/${GHCR_ORG}/${name}"
@@ -51,12 +60,14 @@ main() {
         fi
         if crane copy "${src}" "${dst}" >&2; then
             log "  ok"
+            printf '%s\t%s\n' "${src}" "${dst}" >>"${IMAGE_MAP}"
         else
             log "  FAILED: ${src}"
             failed=$((failed + 1))
         fi
     done
     log "Done. ${total} attempted, ${failed} failed."
+    [[ "${DRY_RUN}" -eq 1 ]] || log "Wrote image map: ${IMAGE_MAP}"
     [[ "${failed}" -eq 0 ]] || exit 1
 }
 
