@@ -4,7 +4,7 @@ This file records the settled architectural decisions, stated honestly. The diag
 
 ## Platform
 
-Amazon EKS, one cluster per student, managed control plane plus a T3 managed node group (2 to 3 t3.xlarge or t3.2xlarge workers). Kubernetes 1.34 or 1.35. vcluster is not used.
+Amazon EKS, one cluster per student, managed control plane plus a T3 managed node group (2 to 3 t3.xlarge or t3.2xlarge workers). Kubernetes 1.35 or 1.36. vcluster is not used.
 
 ## Load balancing and ingress
 
