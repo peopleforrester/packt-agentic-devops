@@ -75,7 +75,8 @@ def _build_email_text(cluster_name, region, access_key, secret_key, root_url):
         "If `kubectl get nodes` shows no Ready node, raise your hand during the\n"
         "setup window for a spare cluster.\n\n"
         f"Lost this email? Re-enter your email at {root_url} to redisplay your\n"
-        "credentials.\n"
+        "credentials.\n\n"
+        "Sponsored by Packt Publishing.\n"
     )
 
 
@@ -86,27 +87,27 @@ def _build_email_html(cluster_name, region, access_key, secret_key, root_url):
     # web / Apple Mail selects exactly that value.
     cmds = _build_commands_block(cluster_name, region)
     mono_block = (
-        "margin:6px 0 0; padding:12px 14px; background:#101A42; color:#FFFFFF;"
+        "margin:6px 0 0; padding:12px 14px; background:#0D0D0D; color:#FFFFFF;"
         " font-family:Consolas,\"SFMono-Regular\",Menlo,monospace; font-size:13px;"
         " border-radius:6px; white-space:pre; overflow-x:auto; line-height:1.55;"
     )
-    label_style = "margin-top:18px; font-size:13px; color:#1E2761; font-weight:600; letter-spacing:.02em;"
+    label_style = "margin-top:18px; font-size:13px; color:#191919; font-weight:600; letter-spacing:.02em;"
     return f"""<!doctype html>
 <html>
-<body style="margin:0;padding:0;background:#FDF6EE;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;color:#4A4A4A;line-height:1.5;">
-  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background:#FDF6EE;">
+<body style="margin:0;padding:0;background:#F5F5F4;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;color:#333333;line-height:1.5;">
+  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background:#F5F5F4;">
     <tr><td align="center" style="padding:24px 12px;">
       <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="max-width:640px;background:#FFFFFF;border-radius:10px;border:1px solid #e2e4ee;">
-        <tr><td style="background:#1E2761;color:#FFFFFF;padding:18px 24px;border-radius:10px 10px 0 0;border-bottom:3px solid #FF6B35;">
+        <tr><td style="background:#191919;color:#FFFFFF;padding:18px 24px;border-radius:10px 10px 0 0;border-bottom:3px solid #FA7040;">
           <div style="font-size:12px;letter-spacing:.08em;text-transform:uppercase;opacity:.75;">Agentic DevOps with Claude</div>
           <div style="font-size:20px;font-weight:700;margin-top:2px;">Your Cluster Credentials</div>
         </td></tr>
         <tr><td style="padding:24px;">
-          <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background:#CADCFC;border-radius:8px;">
+          <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background:#EDF0F2;border-radius:8px;">
             <tr><td style="padding:16px 18px;">
-              <div style="font-size:11px;color:#1E2761;letter-spacing:.08em;text-transform:uppercase;opacity:.75;font-weight:700;">Your cluster</div>
-              <div style="font-size:22px;color:#1E2761;font-weight:700;margin-top:4px;">{cluster_name}</div>
-              <div style="font-size:14px;color:#1E2761;margin-top:4px;">Region: <strong>{region}</strong></div>
+              <div style="font-size:11px;color:#191919;letter-spacing:.08em;text-transform:uppercase;opacity:.75;font-weight:700;">Your cluster</div>
+              <div style="font-size:22px;color:#191919;font-weight:700;margin-top:4px;">{cluster_name}</div>
+              <div style="font-size:14px;color:#191919;margin-top:4px;">Region: <strong>{region}</strong></div>
             </td></tr>
           </table>
 
@@ -119,16 +120,17 @@ def _build_email_html(cluster_name, region, access_key, secret_key, root_url):
           <div style="{label_style}">Setup commands</div>
           <pre style="{mono_block}">{cmds}</pre>
 
-          <div style="margin-top:22px;padding:12px 14px;border-left:3px solid #FF6B35;background:#FFF5EE;color:#1E2761;font-size:14px;font-style:italic;border-radius:0 6px 6px 0;">
+          <div style="margin-top:22px;padding:12px 14px;border-left:3px solid #FA7040;background:#FEF1EA;color:#191919;font-size:14px;font-style:italic;border-radius:0 6px 6px 0;">
             <strong style="font-style:normal;">When Claude starts,</strong> point it at <code style="font-style:normal;font-family:Consolas,monospace;">spec/WORKSHOP-SPEC.md</code> and follow the phased build. Claude creates the platform namespaces as it builds &mdash; do not pre-create anything.
           </div>
 
-          <p style="margin:18px 0 0;color:#4A4A4A;font-size:13px;">
+          <p style="margin:18px 0 0;color:#333333;font-size:13px;">
             If <code style="font-family:Consolas,monospace;">kubectl get nodes</code> shows no Ready node, raise your hand during the setup window for a spare cluster.
           </p>
         </td></tr>
-        <tr><td style="padding:14px 24px 22px;border-top:1px solid #e2e4ee;color:#888888;font-size:12px;text-align:center;font-style:italic;">
-          Lost this email? Re-enter your email at <a href="{root_url}" style="color:#FF6B35;text-decoration:none;">the homepage</a> to redisplay your credentials.
+        <tr><td style="padding:14px 24px 22px;border-top:1px solid #e2e4ee;color:#6B6B6B;font-size:12px;text-align:center;font-style:italic;">
+          Lost this email? Re-enter your email at <a href="{root_url}" style="color:#FA7040;text-decoration:none;">the homepage</a> to redisplay your credentials.
+          <div style="margin-top:8px;font-style:normal;color:#6B6B6B;">Sponsored by <strong style="color:#191919;">Packt Publishing</strong></div>
         </td></tr>
       </table>
     </td></tr>
@@ -162,33 +164,34 @@ def _build_browser_email_text(root_url, kodekloud_url):
         "Claude detects you're on KodeKloud (kubeadm) and adapts Phases 1, 3,\n"
         "and 7 automatically.\n\n"
         f"Lost this email? Re-enter your email at {root_url}/browser to redisplay\n"
-        "your registration.\n"
+        "your registration.\n\n"
+        "Sponsored by Packt Publishing.\n"
     )
 
 
 def _build_browser_email_html(root_url, kodekloud_url):
     mono_block = (
-        "margin:6px 0 0; padding:12px 14px; background:#101A42; color:#FFFFFF;"
+        "margin:6px 0 0; padding:12px 14px; background:#0D0D0D; color:#FFFFFF;"
         " font-family:Consolas,\"SFMono-Regular\",Menlo,monospace; font-size:13px;"
         " border-radius:6px; white-space:pre; overflow-x:auto; line-height:1.55;"
     )
-    label_style = "margin-top:18px; font-size:13px; color:#1E2761; font-weight:600; letter-spacing:.02em;"
+    label_style = "margin-top:18px; font-size:13px; color:#191919; font-weight:600; letter-spacing:.02em;"
     return f"""<!doctype html>
 <html>
-<body style="margin:0;padding:0;background:#FDF6EE;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;color:#4A4A4A;line-height:1.5;">
-  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background:#FDF6EE;">
+<body style="margin:0;padding:0;background:#F5F5F4;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;color:#333333;line-height:1.5;">
+  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background:#F5F5F4;">
     <tr><td align="center" style="padding:24px 12px;">
       <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="max-width:640px;background:#FFFFFF;border-radius:10px;border:1px solid #e2e4ee;">
-        <tr><td style="background:#1E2761;color:#FFFFFF;padding:18px 24px;border-radius:10px 10px 0 0;border-bottom:3px solid #FF6B35;">
+        <tr><td style="background:#191919;color:#FFFFFF;padding:18px 24px;border-radius:10px 10px 0 0;border-bottom:3px solid #FA7040;">
           <div style="font-size:12px;letter-spacing:.08em;text-transform:uppercase;opacity:.75;">Agentic DevOps with Claude</div>
           <div style="font-size:20px;font-weight:700;margin-top:2px;">Browser path (KodeKloud)</div>
         </td></tr>
         <tr><td style="padding:24px;">
-          <p style="margin:0 0 18px;font-size:15px;color:#4A4A4A;">
+          <p style="margin:0 0 18px;font-size:15px;color:#333333;">
             You&rsquo;re registered for the browser path. KodeKloud provides your cluster directly &mdash; no AWS credentials needed.
           </p>
 
-          <a href="{kodekloud_url}" style="display:inline-block;background:#FF6B35;color:#FFFFFF;text-decoration:none;font-weight:700;font-size:15px;padding:12px 22px;border-radius:6px;">Open KodeKloud course &rarr;</a>
+          <a href="{kodekloud_url}" style="display:inline-block;background:#FA7040;color:#FFFFFF;text-decoration:none;font-weight:700;font-size:15px;padding:12px 22px;border-radius:6px;">Open KodeKloud course &rarr;</a>
 
           <div style="{label_style}">Once you&rsquo;re in the KodeKloud browser shell</div>
           <pre style="{mono_block}">curl -fsSL https://claude.ai/install.sh | bash    # install Claude in this shell first
@@ -197,12 +200,13 @@ git clone https://github.com/peopleforrester/packt-agentic-devops.git
 cd packt-agentic-devops
 claude</pre>
 
-          <div style="margin-top:22px;padding:12px 14px;border-left:3px solid #FF6B35;background:#FFF5EE;color:#1E2761;font-size:14px;font-style:italic;border-radius:0 6px 6px 0;">
+          <div style="margin-top:22px;padding:12px 14px;border-left:3px solid #FA7040;background:#FEF1EA;color:#191919;font-size:14px;font-style:italic;border-radius:0 6px 6px 0;">
             <strong style="font-style:normal;">When Claude starts,</strong> paste the prompt at the top of <code style="font-style:normal;font-family:Consolas,monospace;">spec/WORKSHOP-SPEC.md</code>. Claude detects you&rsquo;re on KodeKloud (kubeadm) and adapts Phases 1, 3, and 7 automatically.
           </div>
         </td></tr>
-        <tr><td style="padding:14px 24px 22px;border-top:1px solid #e2e4ee;color:#888888;font-size:12px;text-align:center;font-style:italic;">
-          Lost this email? Re-enter your email at <a href="{root_url}/browser" style="color:#FF6B35;text-decoration:none;">the browser-path form</a> to redisplay your registration.
+        <tr><td style="padding:14px 24px 22px;border-top:1px solid #e2e4ee;color:#6B6B6B;font-size:12px;text-align:center;font-style:italic;">
+          Lost this email? Re-enter your email at <a href="{root_url}/browser" style="color:#FA7040;text-decoration:none;">the browser-path form</a> to redisplay your registration.
+          <div style="margin-top:8px;font-style:normal;color:#6B6B6B;">Sponsored by <strong style="color:#191919;">Packt Publishing</strong></div>
         </td></tr>
       </table>
     </td></tr>

@@ -8,18 +8,19 @@
   <meta property="og:title" content="{% block og_title %}{{ self.title() }}{% endblock %}">
   <meta property="og:description" content="{{ self.meta_description() }}">
   <meta property="og:type" content="website">
-  <meta property="og:image" content="{{ url_for('static', filename='img/kcd-texas-logo.png', _external=True) }}">
   <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='img/favicon.ico') }}">
   <style>
     :root {
-      --navy:       #1E2761;
-      --dark-navy:  #101A42;
-      --light-blue: #CADCFC;
-      --accent:     #FF6B35;
-      --mid-gray:   #4A4A4A;
-      --light-gray: #6B6B6B;    /* bumped from #888 to satisfy WCAG AA on white (5.1:1) */
+      /* Packt Publishing brand palette (official PML speaker deck, 2025). Token
+         names are kept from the prior theme; only the values changed to Packt's. */
+      --navy:       #191919;  /* Packt ink: dark header/footer field and heading text */
+      --dark-navy:  #0D0D0D;  /* deep ink: code-block background */
+      --light-blue: #EDF0F2;  /* Packt light surface: cards, hero, footer tint */
+      --accent:     #FA7040;  /* Packt primary orange */
+      --mid-gray:   #333333;  /* Packt secondary text */
+      --light-gray: #6B6B6B;  /* muted text; WCAG AA on white (5.1:1) */
       --white:      #FFFFFF;
-      --bg-cream:   #FDF6EE;
+      --bg-cream:   #F5F5F4;  /* Packt off-white surface */
     }
     *, *::before, *::after { box-sizing: border-box; }
     html, body { margin: 0; padding: 0; }
@@ -89,25 +90,18 @@
       font-weight: 700;
       letter-spacing: 0.01em;
     }
-    header.site .logo {
-      height: 50px;
-      width: auto;
-      display: block;
-    }
-    header.site .logo.missing {
-      display: inline-block;
+    header.site .sponsor {
+      font-size: 13px;
+      font-weight: 400;
       color: var(--white);
-      font-weight: 700;
-      font-size: 14px;
-      line-height: 50px;
+      opacity: 0.85;
+      white-space: nowrap;
     }
+    header.site .sponsor strong { font-weight: 700; }
 
-    /* Hero. Light skyline background; navy text. */
+    /* Hero. Flat Packt surface; ink text. */
     section.hero {
       background-color: var(--light-blue);
-      background-image: url("{{ url_for('static', filename='img/hero-bg-dark.png') }}");
-      background-size: cover;
-      background-position: center;
       color: var(--navy);
       text-align: center;
       padding: 22px 24px;
@@ -170,7 +164,7 @@
       transition: background-color 0.15s ease-in-out;
       text-decoration: none;
     }
-    .btn:hover, .btn:focus { background: #e95a26; }
+    .btn:hover, .btn:focus { background: #E85F2E; }
     .btn[disabled] { opacity: 0.65; cursor: progress; }
 
     /* Cards */
@@ -260,7 +254,7 @@
       padding: 8px 12px;
       color: var(--navy);
       font-style: italic;
-      background: rgba(202,220,252,0.35);
+      background: rgba(237,240,242,0.6);
       border-radius: 0 6px 6px 0;
       margin: 20px 0;
     }
@@ -280,7 +274,7 @@
     .field:focus { border-color: var(--navy); }
 
     .error {
-      background: #ffe5d6;
+      background: #FDE7DE;
       border: 1px solid var(--accent);
       color: #8a3210;
       padding: 10px 14px;
@@ -293,11 +287,7 @@
     footer.site {
       position: relative;
       background-color: var(--light-blue);
-      background-image: url("{{ url_for('static', filename='img/skyline-footer.png') }}");
-      background-repeat: no-repeat;
-      background-position: bottom center;
-      background-size: cover;
-      min-height: 140px;
+      min-height: 120px;
       padding: 20px 24px 24px;
       text-align: center;
       color: var(--mid-gray);
@@ -309,6 +299,12 @@
       font-style: italic;
       margin-top: 6px;
     }
+    footer.site .sponsor-credit {
+      margin-top: 8px;
+      font-size: 12px;
+      color: var(--mid-gray);
+    }
+    footer.site .sponsor-credit strong { color: var(--navy); font-weight: 700; }
 
     /* Tables (admin) */
     table.admin {
@@ -354,7 +350,7 @@
     /* Mobile */
     @media (max-width: 640px) {
       header.site { height: 64px; padding: 0 16px; }
-      header.site .logo { height: 38px; }
+      header.site .sponsor { font-size: 11px; }
       header.site .title { font-size: 16px; }
       section.hero { padding: 16px 16px; max-height: 100px; }
       section.hero h1 { font-size: 20px; }
@@ -391,8 +387,7 @@
   <a href="#main-content" class="skip-link">Skip to main content</a>
   <header class="site">
     <div class="title">{% block page_title %}Agentic DevOps with Claude{% endblock %}</div>
-    <img class="logo" src="{{ url_for('static', filename='img/kcd-texas-logo.png') }}" alt="Agentic DevOps with Claude"
-         onerror="this.outerHTML='<span class=&quot;logo missing&quot;>Agentic DevOps with Claude</span>';">
+    <div class="sponsor">Sponsored by <strong>Packt&nbsp;Publishing</strong></div>
   </header>
 
   {% block hero %}{% endblock %}
@@ -402,7 +397,8 @@
   </main>
 
   <footer class="site">
-    <div>Agentic DevOps with Claude &bull; Agentic DevOps with Claude Workshop</div>
+    <div>Agentic DevOps with Claude Workshop</div>
+    <div class="sponsor-credit">Sponsored by <strong>Packt Publishing</strong></div>
     {% block footer_hint %}{% endblock %}
   </footer>
 
