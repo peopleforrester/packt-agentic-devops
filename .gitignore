@@ -24,3 +24,6 @@ crash.*.log
 *.tfvars
 !*.tfvars.example
 PROJECT_STATE.md
+
+# Packt-proprietary brand source deck: reference only, kept local, never committed.
+internal/brand/*.pptx
