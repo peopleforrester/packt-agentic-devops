@@ -299,12 +299,25 @@
       font-style: italic;
       margin-top: 6px;
     }
-    footer.site .sponsor-credit {
-      margin-top: 8px;
+    /* Sponsor logo strip. Sits on the light footer surface so the dark
+       Packt mark and black Accenture wordmark both read clearly (the header
+       field is dark ink, where they would not). */
+    footer.site .sponsors {
+      margin-top: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 18px;
+    }
+    footer.site .sponsors .sponsors-label {
       font-size: 12px;
+      font-weight: 600;
       color: var(--mid-gray);
     }
-    footer.site .sponsor-credit strong { color: var(--navy); font-weight: 700; }
+    footer.site .sponsors img { width: auto; display: block; }
+    footer.site .sponsors .logo-packt { height: 26px; }
+    footer.site .sponsors .logo-accenture { height: 20px; }
 
     /* Tables (admin) */
     table.admin {
@@ -358,6 +371,9 @@
       main.page { padding: 24px 16px; }
       main.page h1 { font-size: 22px; }
       .stats { grid-template-columns: 1fr; }
+      footer.site .sponsors { gap: 12px; }
+      footer.site .sponsors .logo-packt { height: 22px; }
+      footer.site .sponsors .logo-accenture { height: 17px; }
     }
 
     /* Sub-480px: stack the credential rows so the long access/secret keys
@@ -398,7 +414,11 @@
 
   <footer class="site">
     <div>Agentic DevOps with Claude Workshop</div>
-    <div class="sponsor-credit">Sponsored by <strong>Packt Publishing</strong></div>
+    <div class="sponsors">
+      <span class="sponsors-label">Sponsored by</span>
+      <img class="logo-packt" src="{{ url_for('static', filename='img/packt-logo.svg') }}" alt="Packt Publishing">
+      <img class="logo-accenture" src="{{ url_for('static', filename='img/accenture-logo.svg') }}" alt="Accenture">
+    </div>
     {% block footer_hint %}{% endblock %}
   </footer>
 
