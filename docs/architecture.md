@@ -18,6 +18,10 @@ ingress-nginx is not used. It reached end of life on March 24, 2026, the repo is
 
 The AWS EBS CSI driver provides PersistentVolumes for Prometheus, Loki, Tempo, and Grafana.
 
+## Workload identity (IAM)
+
+Every in-cluster workload that needs AWS permissions authenticates with EKS Pod Identity, not IRSA. This covers the AWS Load Balancer Controller and the EBS CSI driver. Pod Identity is the AWS-suggested default over IRSA as of July 2026, and at fleet scale it replaces 300 per-cluster OIDC trust policies with one reusable role plus a simple per-cluster association. The cluster sets `enable_irsa = false`, so no OIDC provider is created. The LB controller (a Helm chart deployed by ArgoCD) uses a standalone Pod Identity association; the EBS CSI driver (an EKS add-on) wires its association through the add-on's `pod_identity_association` so EKS owns the ordering. The Pod Identity agent add-on is installed on every cluster.
+
 ## GitOps and sync waves
 
 ArgoCD reconciles everything from Git. Sync waves order the foundation so dependencies do not race: cert-manager and the AWS controllers first, then ingress and secrets tooling, then observability, then the Argo extensions, then Backstage last.
