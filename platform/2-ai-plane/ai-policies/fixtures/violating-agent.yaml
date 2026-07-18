@@ -1,0 +1,23 @@
+# ABOUTME: B16/P16 primary fixture. A kagent Agent with NO llm-guard-policy annotation.
+# ABOUTME: Trips ai-require-llm-guard-reference. In enforce mode Kyverno denies it.
+#
+# This is the fixture the denial demo applies on screen. It is a byte-for-byte copy of
+# the demo-agent's Agent minus the agentic-platform.io/llm-guard-policy annotation, so
+# the only reason it is denied is the missing guardrail reference. It lives in fixtures/
+# (not manifests/) so ArgoCD never syncs it; it exists only to be applied by hand and
+# rejected.
+apiVersion: kagent.dev/v1alpha2
+kind: Agent
+metadata:
+  name: unguarded-agent
+  namespace: kagent
+  labels:
+    app.kubernetes.io/part-of: agentic-platform
+    fixture: violating
+spec:
+  type: Declarative
+  declarative:
+    modelConfig: vllm-qwen3
+    systemMessage: >-
+      A deliberately unguarded agent used only to demonstrate policy enforcement.
+      It has no LLM Guard reference, so the platform should refuse to admit it.
