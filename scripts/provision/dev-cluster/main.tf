@@ -97,8 +97,10 @@ module "eks" {
   # nwuser (the Terraform principal) gets cluster admin via an access entry.
   enable_cluster_creator_admin_permissions = true
 
-  # IRSA: the EBS CSI driver assumes an OIDC-backed role to provision volumes.
-  enable_irsa = true
+  # Pod Identity is the AWS-suggested default over IRSA; every workload here (EBS CSI, LB
+  # controller) uses it, so no OIDC provider is created. Mirrors the fleet cluster module
+  # so this throwaway validates the exact identity model students get (decision D16).
+  enable_irsa = false
 
   # Do not let the module manage the control-plane CloudWatch log group. EKS auto-creates
   # /aws/eks/<name>/cluster, and it survives destroy, so a module-managed group collides
@@ -133,12 +135,17 @@ module "eks" {
     }
     # coredns runs on the nodes, so it installs after the node group exists.
     coredns = {}
-    # Pod Identity agent, plus the EBS CSI driver with an IRSA role. EKS ships no
-    # default StorageClass since 1.30; without this driver and the gp3 class,
+    # Pod Identity agent, plus the EBS CSI driver on a Pod Identity association. EKS ships
+    # no default StorageClass since 1.30; without this driver and the gp3 class,
     # observability PVCs (Prometheus, Loki) hang Pending.
     eks-pod-identity-agent = {}
     aws-ebs-csi-driver = {
-      service_account_role_arn = module.ebs_csi_irsa.iam_role_arn
+      # Pod Identity association wired into the addon so EKS creates it as part of the addon
+      # lifecycle. Ordering-safe: no window where the controller starts without credentials.
+      pod_identity_association = [{
+        role_arn        = module.ebs_csi_pod_identity.iam_role_arn
+        service_account = "ebs-csi-controller-sa"
+      }]
     }
   }
 
@@ -174,19 +181,18 @@ module "eks" {
   }
 }
 
-module "ebs_csi_irsa" {
-  source  = "terraform-aws-modules/iam/aws//modules/iam-role-for-service-accounts-eks"
-  version = "~> 5.0"
+# Pod Identity role + policy for the EBS CSI driver (AWS-suggested default over IRSA as of
+# 2026-07; EBS CSI supports Pod Identity). Role and policy only: associations stays empty
+# because the addon block above creates the association via pod_identity_association, which
+# keeps EKS in charge of the ordering.
+module "ebs_csi_pod_identity" {
+  source  = "terraform-aws-modules/eks-pod-identity/aws"
+  version = "~> 1.0"
 
-  role_name             = "${var.name}-ebs-csi"
-  attach_ebs_csi_policy = true
+  name                      = "${var.name}-ebs-csi"
+  attach_aws_ebs_csi_policy = true
 
-  oidc_providers = {
-    main = {
-      provider_arn               = module.eks.oidc_provider_arn
-      namespace_service_accounts = ["kube-system:ebs-csi-controller-sa"]
-    }
-  }
+  associations = {}
 }
 
 # Pod Identity for the AWS Load Balancer Controller (build-spec: Pod Identity, not IRSA).
