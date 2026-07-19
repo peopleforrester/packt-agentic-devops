@@ -42,6 +42,15 @@ spec:
           # raised memory limit together.
           - name: VLLM_CPU_KVCACHE_SPACE
             value: "2"
+          # The base vllm-openai-cpu image runs as root and has no home for uid 1001, so
+          # point HOME at a writable dir. vLLM writes its compile and KV caches under HOME.
+          - name: HOME
+            value: /tmp
+          # uid 1001 has no /etc/passwd entry, so torch's getpass.getuser() would crash on
+          # pwd.getpwuid(). Python checks the USER env var first, so setting it avoids the
+          # lookup entirely (the standard arbitrary-UID container pattern).
+          - name: USER
+            value: vllm
         ports:
           - name: http
             containerPort: 8000
@@ -79,8 +88,11 @@ spec:
           initialDelaySeconds: 120
           periodSeconds: 30
         securityContext:
-          # vLLM CPU needs SYS_NICE for thread affinity; drop everything else.
+          # vLLM CPU needs SYS_NICE for thread affinity; drop everything else. The base
+          # image declares a non-numeric root USER, so pin an explicit numeric UID: kubelet
+          # can then verify non-root, and the container runs as 1001 instead of root.
           runAsNonRoot: true
+          runAsUser: 1001
           allowPrivilegeEscalation: false
           capabilities:
             drop: ["ALL"]

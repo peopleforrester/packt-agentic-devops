@@ -56,6 +56,11 @@ spec:
             initialDelaySeconds: 30
             periodSeconds: 20
           securityContext:
+            # The image declares a non-numeric USER "user" (uid 1000), which fails
+            # kubelet's runAsNonRoot check. Pin the matching numeric UID so the container
+            # runs as the user that owns /home/user and the baked scanner model cache.
+            runAsNonRoot: true
+            runAsUser: 1000
             allowPrivilegeEscalation: false
             readOnlyRootFilesystem: true
             capabilities:
