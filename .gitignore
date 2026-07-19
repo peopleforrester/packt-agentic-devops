@@ -25,5 +25,8 @@ crash.*.log
 !*.tfvars.example
 PROJECT_STATE.md
 
-# Packt-proprietary brand source deck: reference only, kept local, never committed.
-internal/brand/*.pptx
+# Internal-only material: build spec, decisions log, research findings, brand
+# assets, prds. Kept local for authoring, never committed to the public repo.
+# History was scrubbed of these paths when the repo was made public.
+internal/
+prds/
