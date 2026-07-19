@@ -36,6 +36,13 @@ spec:
           - "--dtype=bfloat16"
           - "--max-model-len=8192"
           - "--port=8000"
+          # kagent agents run on Google ADK, which attaches function-calling and sends
+          # tool_choice=auto on every request. vLLM rejects that unless tool calling is
+          # enabled, so the agent 400s ('"auto" tool choice requires --enable-auto-tool-choice
+          # and --tool-call-parser to be set') without these two flags. Qwen3's chat template
+          # is Hermes-style, so the hermes parser is the correct one (verified vs vLLM docs).
+          - "--enable-auto-tool-choice"
+          - "--tool-call-parser=hermes"
         env:
           # KVCACHE 2 GiB (was 4): model ~4 GiB + KV cache + a memory-heavy warmup run
           # OOMKilled the pod at the old 10Gi limit (validated live). Keep this and the
