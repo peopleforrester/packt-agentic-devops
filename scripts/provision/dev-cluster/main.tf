@@ -153,15 +153,36 @@ module "eks" {
     # One t3.2xlarge: the exact per-student shape (build-spec 6.6). Single node so the
     # validation mirrors what a student runs, never a roomier cluster (that is a false
     # pass). t3.2xlarge is the T3 ceiling and the only T3 size that fits CPU vLLM.
-    # x86 AMI because the vLLM image is vllm-openai-cpu:*-x86_64. Larger root disk for
-    # the vLLM image plus model weights and container layers.
+    # x86 AMI because the vLLM image is vllm-openai-cpu:*-x86_64.
+    #
+    # Root disk sized to measured need. The full platform pulls ~30 GB of container images
+    # (the baked vLLM image dominates) and writes only a few hundred MB to pod layers, for
+    # ~35 GB used. 50 GB keeps imagefs usage at ~69%, below kubelet's 85% image-GC high
+    # threshold (so the baked vLLM image is never garbage-collected mid-workshop) and well
+    # above the 10% hard-eviction floor. 40 GB would sit at 86%, above the GC threshold; 80+
+    # is unjustified over-provisioning.
+    #
+    # disk_size is deliberately NOT set: terraform-aws-modules/eks manages a launch template
+    # for this node group, and disk_size is silently ignored when a launch template exists
+    # (a bare disk_size left the root volume at the AMI default 20 GB). block_device_mappings
+    # is the launch-template path that actually sizes the root volume. Do not re-add disk_size.
     default = {
       ami_type       = "AL2023_x86_64_STANDARD"
       instance_types = ["t3.2xlarge"]
       min_size       = 1
       max_size       = 1
       desired_size   = 1
-      disk_size      = 80
+      block_device_mappings = {
+        xvda = {
+          device_name = "/dev/xvda"
+          ebs = {
+            volume_size           = 50
+            volume_type           = "gp3"
+            encrypted             = true
+            delete_on_termination = true
+          }
+        }
+      }
       # AL2023 nodeadm sets max-pods from a static per-instance map that ignores prefix
       # delegation, so raise it explicitly to the prefix-delegation value for t3.2xlarge
       # (110). Without this the node still caps at 58 even with prefix delegation on.

@@ -29,7 +29,7 @@ metadata:
 spec:
   provider: OpenAI
   model: qwen3-1.7b
-  apiKeySecretRef: vllm-openai-key
+  apiKeySecret: vllm-openai-key
   apiKeySecretKey: OPENAI_API_KEY
   openAI:
     # RawDeployment exposes the predictor as <name>-predictor on port 80 -> 8000.
