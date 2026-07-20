@@ -70,6 +70,10 @@ spec:
           image: ghcr.io/peopleforrester/packt-agentic-devops:web-terminal
           imagePullPolicy: Always # mutable tag; always re-pull so a rebuild lands on pod restart
           ports: [{ name: ttyd, containerPort: 7681 }]
+          # The kube-context name the Starship prompt shows. Set it to the real cluster so the prompt reads
+          # the truth (e.g. adwc-dev), not a placeholder. Per-cluster value in the fleet; the demo cluster here.
+          env:
+            - { name: CLUSTER_NAME, value: workshop-cluster }
           # The student's own AWS keys, mounted as the DEFAULT profile inside the VTT so `aws` works with
           # no flags. Created per-cluster outside git; optional so a cluster without it still runs.
           envFrom:
