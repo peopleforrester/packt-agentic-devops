@@ -30,15 +30,20 @@ RUN set -eux; \
       | tar -xz -C /usr/local/bin k9s; \
     curl -fsSL -o /usr/local/bin/yq "https://github.com/mikefarah/yq/releases/latest/download/yq_linux_${GOARCH}"; \
     chmod +x /usr/local/bin/yq; \
-    kubectl version --client; aws --version; helm version --short; eksctl version; yq --version
+    curl -fsSL https://starship.rs/install.sh | sh -s -- --yes --bin-dir /usr/local/bin; \
+    kubectl version --client; aws --version; helm version --short; eksctl version; yq --version; starship --version
 
 # The scoped student user. Numeric uid 1000 so the pod securityContext can verify runAsNonRoot.
 RUN useradd -m -u 1000 -s /bin/bash student \
- && mkdir -p /home/student/.kube /home/student/.aws \
+ && mkdir -p /home/student/.kube /home/student/.aws /home/student/.config \
  && chown -R student:student /home/student
 
+# Starship prompt config, baked in so the shell comes up pretty on first connect.
+COPY starship.toml /home/student/.config/starship.toml
+
 COPY entrypoint.sh /entrypoint.sh
-RUN chmod +x /entrypoint.sh
+RUN chmod +x /entrypoint.sh \
+ && chown student:student /home/student/.config/starship.toml
 
 USER student
 WORKDIR /home/student

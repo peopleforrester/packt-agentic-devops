@@ -1,0 +1,53 @@
+# ABOUTME: Starship prompt for the workshop VTT. Two-line prompt surfacing the context a student
+# ABOUTME: needs at a glance: cluster + namespace (kubectl), AWS profile/region, git, dir, clock.
+# Symbols are plain Unicode/emoji that render in xterm.js without a Nerd Font.
+
+"$schema" = 'https://starship.rs/config-schema.json'
+
+format = """
+[╭─](bold #FA7040) $directory$git_branch$git_status$kubernetes$aws$cmd_duration
+[╰─](bold #FA7040) $character"""
+
+add_newline = true
+
+[character]
+success_symbol = "[❯](bold #FA7040)"
+error_symbol = "[❯](bold red)"
+vimcmd_symbol = "[❮](bold #FA7040)"
+
+[directory]
+style = "bold #FA7040"
+truncation_length = 4
+truncate_to_repo = true
+read_only = " 🔒"
+
+[git_branch]
+symbol = "🌿 "
+style = "bold purple"
+
+[git_status]
+style = "bold yellow"
+format = '([$all_status$ahead_behind]($style) )'
+
+[kubernetes]
+disabled = false
+symbol = "☸ "
+format = '[$symbol$context]($style)[ ⎈ $namespace](bold #326CE5) '
+style = "bold #326CE5"
+
+[aws]
+disabled = false
+symbol = "☁️ "
+format = '[$symbol($profile )(- $region )]($style)'
+style = "bold #FF9900"
+
+[cmd_duration]
+min_time = 500
+format = '[⏱ $duration]($style) '
+style = "dimmed yellow"
+
+[time]
+disabled = true
+
+[hostname]
+disabled = true
