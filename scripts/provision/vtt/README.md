@@ -22,22 +22,15 @@ The browser terminal a student lands in from the credential-claim email. A two-p
   Starship, tmux, Claude Code, the workshop repo pre-cloned) and published to
   `ghcr.io/peopleforrester/packt-agentic-devops:web-terminal` (public).
 
-## Session persistence (belongs in every cluster build)
+## Session persistence
 
-A student refreshing the browser must not lose their work. Two levels, two mechanisms:
-
-- **Refresh / reconnect (common): tmux.** ttyd runs with `-a` and launches `vtt-shell`, which attaches a
-  named tmux session (`?arg=<name>` per tab, default `main`). A refresh or dropped connection
-  re-attaches to the same running session (the live `claude`, scrollback, cwd) instead of a fresh shell.
-  No storage required.
-- **Pod / node restart (rare): a 1Gi PVC on `~/.claude`.** A live process cannot survive a reboot, but
-  the PVC keeps the Claude Code login and conversation history, so the student is not logged out and can
-  `claude --continue` to resume. Deployment strategy is `Recreate` (the PVC is ReadWriteOnce) and
-  `fsGroup: 1000` makes the volume writable by the student user. Needs a default StorageClass (the EBS
-  CSI `gp3` default on EKS).
-
-Both are part of the standard per-student cluster build, not demo-only. Each attendee cluster provisions
-the VTT with tmux persistence and its own 1Gi `student-claude` PVC.
+- **Login + conversation across a pod restart: a 1Gi PVC on `~/.claude`.** The PVC keeps the Claude Code
+  login and conversation history, so a pod restart does not log the student out and `claude --continue`
+  resumes the conversation. Deployment strategy is `Recreate` (the PVC is ReadWriteOnce) and `fsGroup:
+  1000` makes the volume writable by the student user. Needs a default StorageClass (the EBS CSI `gp3`
+  default on EKS).
+- **Browser refresh** starts a fresh shell (ttyd spawns a new process per connection). A tmux-based
+  re-attach layer was tried and removed; if session-survives-refresh is wanted later, that is where it goes.
 
 ## Fleet notes (300 clusters)
 
