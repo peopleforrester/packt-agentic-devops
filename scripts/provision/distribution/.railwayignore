@@ -1,0 +1,11 @@
+# railway up is run with --no-gitignore so the gitignored pool.csv (live, holds
+# the unauthenticated terminal URL / attendee keys) reaches the deploy. This file
+# is then the only ignore list, so it must exclude everything we do NOT want
+# shipped: the local virtualenv, caches, and any local pool.db (a stale db makes
+# the app skip seeding pool.csv on boot).
+.venv/
+__pycache__/
+.pytest_cache/
+*.db
+*.pyc
+data/
