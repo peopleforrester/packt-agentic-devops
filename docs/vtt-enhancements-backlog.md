@@ -14,7 +14,17 @@ Play, clickable phase pips, keyboard arrows, `?phase=` deep link.
 platform UIs with namespace and the phase each comes online. Tapping a card prints that component's address
 on the student's own cluster into the terminal (postMessage bridge to the lab; clipboard fallback standalone).
 
+### 3. Session persistence (tmux + PVC) — DONE
+tmux keeps the shell alive across a browser refresh (ttyd `-a` + `vtt-shell` per-session attach); a 1Gi
+`~/.claude` PVC keeps login + conversation history across a pod restart. See `scripts/provision/vtt/README.md`.
+
 ## Still open (v2 ideas)
+
+- **"+" dropdown future tools.** The add-menu already lists them disabled: **VS Code** (code-server),
+  **Jupyter**, and a **Browser IDE**. Each is a real build: a service in the pod (or namespace) plus an
+  nginx-proxied tab, with the same per-session persistence model as the terminals.
+- **Fleet image distribution.** Mirror the VTT image in-region for 300 clusters: an ECR pull-through
+  cache, or a shared Harbor (CNCF) proxy-cache; pin by digest. Avoids GHCR burst latency at scale.
 
 - **Live phase sync.** Drive the Blueprint and Endpoints current-phase from the student's real progress
   (which phase Claude has completed) rather than a manual stepper. Could key off a marker the phase tests
