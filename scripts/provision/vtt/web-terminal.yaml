@@ -82,7 +82,9 @@ spec:
       # runAsNonRoot at the pod; each container pins its own numeric uid below (ttyd 1000 = the image's
       # `student` user; nginx 101 = the nginx-unprivileged user). Numeric uids let admission verify non-root.
       # fsGroup 1000 makes the mounted claude-home volume group-owned and writable by the student user.
-      securityContext: { runAsNonRoot: true, runAsGroup: 1000, fsGroup: 1000, seccompProfile: { type: RuntimeDefault } }
+      # No pod-level runAsUser/runAsGroup: each container sets its own uid/gid, and a pod-level runAsGroup
+      # without a runAsUser makes runc reject the sandbox ("group specified without user").
+      securityContext: { runAsNonRoot: true, fsGroup: 1000, seccompProfile: { type: RuntimeDefault } }
       containers:
         - name: ttyd
           image: ghcr.io/peopleforrester/packt-agentic-devops:web-terminal
