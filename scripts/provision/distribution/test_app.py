@@ -16,6 +16,27 @@ def _write_pool_csv(path, rows):
             writer.writerow(row)
 
 
+def _write_pool_csv_with_terminal(path, rows):
+    # Five-column pool: the optional terminal_url wires a cluster to its VTT.
+    with open(path, "w", newline="", encoding="utf-8") as fh:
+        writer = csv.writer(fh)
+        writer.writerow(["name", "access_key", "secret_key", "region", "terminal_url"])
+        for row in rows:
+            writer.writerow(row)
+
+
+def _make_client(tmp_path, monkeypatch, csv_path):
+    monkeypatch.setenv("ADMIN_TOKEN", "test-admin-token")
+    monkeypatch.delenv("RESEND_API_KEY", raising=False)
+    flask_app = app_module.create_app(
+        database_path=str(tmp_path / "pool.db"),
+        pool_csv=str(csv_path),
+        resend_api_key="",
+    )
+    flask_app.config["TESTING"] = True
+    return flask_app.test_client()
+
+
 @pytest.fixture
 def client(tmp_path, monkeypatch):
     db_path = tmp_path / "pool.db"
@@ -167,3 +188,59 @@ def test_cross_path_note_appears(client):
     eks_res = client.post("/eks-claim", data={"email": "ed@example.com"})
     eks_body = eks_res.get_data(as_text=True)
     assert "browser (KodeKloud)" in eks_body
+
+
+# ---------- VTT terminal_url wiring -------------------------------------------
+
+def test_claim_with_terminal_url_shows_terminal_link(tmp_path, monkeypatch):
+    # A cluster with a terminal_url leads the success page with the VTT link
+    # while still handing over the AWS keys for anyone who wants the local path.
+    csv_path = tmp_path / "pool.csv"
+    _write_pool_csv_with_terminal(
+        csv_path,
+        [
+            ("adwc-dev", "AKIATESTKEY01", "secret01", "us-west-2",
+             "http://example-elb.us-west-2.elb.amazonaws.com/terminal/"),
+        ],
+    )
+    client = _make_client(tmp_path, monkeypatch, csv_path)
+    res = client.post("/eks-claim", data={"email": "alice@example.com"})
+    assert res.status_code == 200
+    body = res.get_data(as_text=True)
+    assert "http://example-elb.us-west-2.elb.amazonaws.com/terminal/" in body
+    assert "adwc-dev" in body
+    # Keys still available for the local path.
+    assert "AKIATESTKEY01" in body
+
+
+def test_terminal_only_cluster_needs_no_keys(tmp_path, monkeypatch):
+    # A VTT-only cluster (empty AWS keys) claims cleanly: the terminal link is
+    # the whole path, and no local aws-configure commands are shown.
+    csv_path = tmp_path / "pool.csv"
+    _write_pool_csv_with_terminal(
+        csv_path,
+        [
+            ("adwc-dev", "", "", "us-west-2",
+             "http://example-elb.us-west-2.elb.amazonaws.com/terminal/"),
+        ],
+    )
+    client = _make_client(tmp_path, monkeypatch, csv_path)
+    res = client.post("/eks-claim", data={"email": "bob@example.com"})
+    assert res.status_code == 200
+    body = res.get_data(as_text=True)
+    assert "http://example-elb.us-west-2.elb.amazonaws.com/terminal/" in body
+    # No local-path setup command when there are no keys to configure.
+    assert "aws eks update-kubeconfig" not in body
+
+
+def test_pool_without_terminal_url_is_unchanged(tmp_path, monkeypatch):
+    # Backward compatibility: a four-column pool (no terminal_url) still renders
+    # the keys-and-commands page exactly as before.
+    csv_path = tmp_path / "pool.csv"
+    _write_pool_csv(csv_path, [("test-cluster-01", "AKIATESTKEY01", "secret01", "us-west-2")])
+    client = _make_client(tmp_path, monkeypatch, csv_path)
+    res = client.post("/eks-claim", data={"email": "carol@example.com"})
+    assert res.status_code == 200
+    body = res.get_data(as_text=True)
+    assert "aws eks update-kubeconfig --name test-cluster-01" in body
+    assert "/terminal/" not in body

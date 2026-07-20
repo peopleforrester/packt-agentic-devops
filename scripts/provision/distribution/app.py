@@ -18,6 +18,7 @@ EMAIL_RE = re.compile(r"^[A-Za-z0-9._%+\-]+@[A-Za-z0-9.\-]+\.[A-Za-z]{2,}$")
 RESEND_ENDPOINT = "https://api.resend.com/emails"
 RESEND_FROM = "Agentic DevOps with Claude <workshop@ai-enhanced-devops.com>"
 RESEND_SUBJECT_EKS = "Agentic DevOps with Claude — Your EKS Cluster Credentials"
+RESEND_SUBJECT_TERMINAL = "Agentic DevOps with Claude — Your Lab Terminal"
 RESEND_SUBJECT_BROWSER = "Agentic DevOps with Claude — Your Lab Info"
 RESEND_TIMEOUT_SECONDS = 5
 
@@ -130,6 +131,116 @@ def _build_email_html(cluster_name, region, access_key, secret_key, root_url):
         </td></tr>
         <tr><td style="padding:14px 24px 22px;border-top:1px solid #e2e4ee;color:#6B6B6B;font-size:12px;text-align:center;font-style:italic;">
           Lost this email? Re-enter your email at <a href="{root_url}" style="color:#FA7040;text-decoration:none;">the homepage</a> to redisplay your credentials.
+          <div style="margin-top:8px;font-style:normal;color:#6B6B6B;">Sponsored by <strong style="color:#191919;">Packt Publishing</strong></div>
+        </td></tr>
+      </table>
+    </td></tr>
+  </table>
+</body>
+</html>"""
+
+
+def _build_terminal_email_text(cluster_name, region, terminal_url, access_key, secret_key, root_url):
+    # The VTT path: the student opens a browser terminal that is already signed
+    # in to their cluster, so kubectl and Claude Code just work. AWS keys are
+    # included below only when the cluster carries them, for anyone who prefers
+    # to drive the cluster from their own machine.
+    bar = "=" * 56
+    rule = "-" * 56
+    parts = [
+        f"{bar}\n",
+        "Agentic DevOps with Claude -- Your Lab Terminal\n",
+        f"{bar}\n\n",
+        f"Cluster: {cluster_name}\n",
+        f"Region:  {region}\n\n",
+        f"{rule}\n",
+        "Open your terminal\n",
+        f"{rule}\n",
+        f"{terminal_url}\n\n",
+        "Your browser terminal is already signed in to your cluster. kubectl is\n",
+        "wired, Claude Code is installed, and the workshop repo is cloned at\n",
+        "~/workshop. Open the link above, then run:\n\n",
+        "  claude\n\n",
+        "When Claude starts, point it at spec/WORKSHOP-SPEC.md and follow the\n",
+        "phased build. Claude creates the platform namespaces as it builds --\n",
+        "do not pre-create anything.\n\n",
+    ]
+    if access_key and secret_key:
+        cmds = _build_commands_block(cluster_name, region)
+        parts += [
+            f"{rule}\n",
+            "Prefer your own machine? AWS access key\n",
+            f"{rule}\n",
+            f"{access_key}\n\n",
+            f"{rule}\n",
+            "AWS secret key\n",
+            f"{rule}\n",
+            f"{secret_key}\n\n",
+            f"{rule}\n",
+            "Local setup commands\n",
+            f"{rule}\n",
+            f"{cmds}\n\n",
+        ]
+    parts += [
+        f"Lost this email? Re-enter your email at {root_url} to redisplay your\n",
+        "terminal link.\n\n",
+        "Sponsored by Packt Publishing.\n",
+    ]
+    return "".join(parts)
+
+
+def _build_terminal_email_html(cluster_name, region, terminal_url, access_key, secret_key, root_url):
+    mono_block = (
+        "margin:6px 0 0; padding:12px 14px; background:#0D0D0D; color:#FFFFFF;"
+        " font-family:Consolas,\"SFMono-Regular\",Menlo,monospace; font-size:13px;"
+        " border-radius:6px; white-space:pre; overflow-x:auto; line-height:1.55;"
+    )
+    label_style = "margin-top:18px; font-size:13px; color:#191919; font-weight:600; letter-spacing:.02em;"
+    keys_section = ""
+    if access_key and secret_key:
+        cmds = _build_commands_block(cluster_name, region)
+        keys_section = f"""
+          <div style="{label_style}">Prefer your own machine? AWS access key</div>
+          <pre style="{mono_block}">{access_key}</pre>
+
+          <div style="{label_style}">AWS secret key</div>
+          <pre style="{mono_block}">{secret_key}</pre>
+
+          <div style="{label_style}">Local setup commands</div>
+          <pre style="{mono_block}">{cmds}</pre>
+"""
+    return f"""<!doctype html>
+<html>
+<body style="margin:0;padding:0;background:#F5F5F4;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;color:#333333;line-height:1.5;">
+  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background:#F5F5F4;">
+    <tr><td align="center" style="padding:24px 12px;">
+      <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="max-width:640px;background:#FFFFFF;border-radius:10px;border:1px solid #e2e4ee;">
+        <tr><td style="background:#191919;color:#FFFFFF;padding:18px 24px;border-radius:10px 10px 0 0;border-bottom:3px solid #FA7040;">
+          <div style="font-size:12px;letter-spacing:.08em;text-transform:uppercase;opacity:.75;">Agentic DevOps with Claude</div>
+          <div style="font-size:20px;font-weight:700;margin-top:2px;">Your Lab Terminal</div>
+        </td></tr>
+        <tr><td style="padding:24px;">
+          <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background:#EDF0F2;border-radius:8px;">
+            <tr><td style="padding:16px 18px;">
+              <div style="font-size:11px;color:#191919;letter-spacing:.08em;text-transform:uppercase;opacity:.75;font-weight:700;">Your cluster</div>
+              <div style="font-size:22px;color:#191919;font-weight:700;margin-top:4px;">{cluster_name}</div>
+              <div style="font-size:14px;color:#191919;margin-top:4px;">Region: <strong>{region}</strong></div>
+            </td></tr>
+          </table>
+
+          <a href="{terminal_url}" style="display:inline-block;margin-top:20px;background:#FA7040;color:#FFFFFF;text-decoration:none;font-weight:700;font-size:15px;padding:12px 22px;border-radius:6px;">Open your terminal &rarr;</a>
+
+          <p style="margin:18px 0 0;color:#333333;font-size:14px;">
+            Your browser terminal is already signed in to your cluster. kubectl is wired, Claude Code is installed, and the workshop repo is cloned at <code style="font-family:Consolas,monospace;">~/workshop</code>. Open it, then run <code style="font-family:Consolas,monospace;">claude</code>.
+          </p>
+
+          <div style="margin-top:22px;padding:12px 14px;border-left:3px solid #FA7040;background:#FEF1EA;color:#191919;font-size:14px;font-style:italic;border-radius:0 6px 6px 0;">
+            <strong style="font-style:normal;">When Claude starts,</strong> point it at <code style="font-style:normal;font-family:Consolas,monospace;">spec/WORKSHOP-SPEC.md</code> and follow the phased build. Claude creates the platform namespaces as it builds &mdash; do not pre-create anything.
+          </div>
+{keys_section}
+        </td></tr>
+        <tr><td style="padding:14px 24px 22px;border-top:1px solid #e2e4ee;color:#6B6B6B;font-size:12px;text-align:center;font-style:italic;">
+          Lost this email? Re-enter your email at <a href="{root_url}" style="color:#FA7040;text-decoration:none;">the homepage</a> to redisplay your terminal link.
           <div style="margin-top:8px;font-style:normal;color:#6B6B6B;">Sponsored by <strong style="color:#191919;">Packt Publishing</strong></div>
         </td></tr>
       </table>
@@ -286,21 +397,24 @@ def create_app(database_path=None, pool_csv=None, resend_api_key=None, eks_pool_
         conn.execute(
             """
             CREATE TABLE IF NOT EXISTS clusters (
-                id          INTEGER PRIMARY KEY,
-                name        TEXT UNIQUE NOT NULL,
-                access_key  TEXT NOT NULL,
-                secret_key  TEXT NOT NULL,
-                region      TEXT NOT NULL,
-                claimed_by  TEXT,
-                claimed_at  TEXT,
-                email_sent  INTEGER NOT NULL DEFAULT 0
+                id            INTEGER PRIMARY KEY,
+                name          TEXT UNIQUE NOT NULL,
+                access_key    TEXT NOT NULL DEFAULT '',
+                secret_key    TEXT NOT NULL DEFAULT '',
+                region        TEXT NOT NULL,
+                terminal_url  TEXT NOT NULL DEFAULT '',
+                claimed_by    TEXT,
+                claimed_at    TEXT,
+                email_sent    INTEGER NOT NULL DEFAULT 0
             )
             """
         )
-        # In case the table existed from an earlier schema without email_sent.
+        # In case the table existed from an earlier schema without these columns.
         cols = {r[1] for r in conn.execute("PRAGMA table_info(clusters)").fetchall()}
         if "email_sent" not in cols:
             conn.execute("ALTER TABLE clusters ADD COLUMN email_sent INTEGER NOT NULL DEFAULT 0")
+        if "terminal_url" not in cols:
+            conn.execute("ALTER TABLE clusters ADD COLUMN terminal_url TEXT NOT NULL DEFAULT ''")
         conn.execute(
             """
             CREATE TABLE IF NOT EXISTS browser_claims (
@@ -316,19 +430,33 @@ def create_app(database_path=None, pool_csv=None, resend_api_key=None, eks_pool_
             return 0
         with open(csv_path, newline="", encoding="utf-8") as fh:
             reader = csv.DictReader(fh)
+            # terminal_url is optional: a four-column pool (name, access_key,
+            # secret_key, region) still seeds, with an empty terminal_url.
             rows = [
-                (r["name"].strip(), r["access_key"].strip(), r["secret_key"].strip(), r["region"].strip())
+                (
+                    r["name"].strip(),
+                    (r.get("access_key") or "").strip(),
+                    (r.get("secret_key") or "").strip(),
+                    (r.get("region") or "").strip(),
+                    (r.get("terminal_url") or "").strip(),
+                )
                 for r in reader
                 if r.get("name")
             ]
         limit = app.config.get("EKS_POOL_LIMIT")
         rows_to_seed = rows[:limit] if limit else rows
         inserted = 0
-        for name, access_key, secret_key, region in rows_to_seed:
+        for name, access_key, secret_key, region, terminal_url in rows_to_seed:
+            if not access_key and not terminal_url:
+                # A row must offer at least one path in: AWS keys (local) or a
+                # terminal URL (VTT). One with neither is unusable; skip it loudly.
+                print(f"[startup] pool row '{name}' has no keys and no terminal_url; skipped", flush=True)
+                continue
             try:
                 conn.execute(
-                    "INSERT INTO clusters (name, access_key, secret_key, region) VALUES (?, ?, ?, ?)",
-                    (name, access_key, secret_key, region),
+                    "INSERT INTO clusters (name, access_key, secret_key, region, terminal_url) "
+                    "VALUES (?, ?, ?, ?, ?)",
+                    (name, access_key, secret_key, region, terminal_url),
                 )
                 inserted += 1
             except sqlite3.IntegrityError:
@@ -437,7 +565,7 @@ def create_app(database_path=None, pool_csv=None, resend_api_key=None, eks_pool_
         try:
             conn.execute("BEGIN IMMEDIATE")
             existing = conn.execute(
-                "SELECT id, name, access_key, secret_key, region, email_sent "
+                "SELECT id, name, access_key, secret_key, region, terminal_url, email_sent "
                 "FROM clusters WHERE claimed_by = ? LIMIT 1",
                 (email,),
             ).fetchone()
@@ -446,7 +574,7 @@ def create_app(database_path=None, pool_csv=None, resend_api_key=None, eks_pool_
                 cluster = existing
             else:
                 row = conn.execute(
-                    "SELECT id, name, access_key, secret_key, region "
+                    "SELECT id, name, access_key, secret_key, region, terminal_url "
                     "FROM clusters WHERE claimed_by IS NULL ORDER BY id LIMIT 1"
                 ).fetchone()
                 if row is None:
@@ -475,17 +603,30 @@ def create_app(database_path=None, pool_csv=None, resend_api_key=None, eks_pool_
         # the SQLite write lock during a network call. Failures are logged but
         # never block the in-browser display, and re-claims by the same email
         # never trigger a second send.
+        terminal_url = cluster["terminal_url"] if "terminal_url" in cluster.keys() else ""
         if is_new_claim and app.config["RESEND_API_KEY"]:
             root = request.url_root.rstrip("/")
-            text = _build_email_text(
-                cluster["name"], cluster["region"],
-                cluster["access_key"], cluster["secret_key"], root,
-            )
-            html = _build_email_html(
-                cluster["name"], cluster["region"],
-                cluster["access_key"], cluster["secret_key"], root,
-            )
-            if _send_resend_email(app.config["RESEND_API_KEY"], email, RESEND_SUBJECT_EKS, text, html):
+            if terminal_url:
+                subject = RESEND_SUBJECT_TERMINAL
+                text = _build_terminal_email_text(
+                    cluster["name"], cluster["region"], terminal_url,
+                    cluster["access_key"], cluster["secret_key"], root,
+                )
+                html = _build_terminal_email_html(
+                    cluster["name"], cluster["region"], terminal_url,
+                    cluster["access_key"], cluster["secret_key"], root,
+                )
+            else:
+                subject = RESEND_SUBJECT_EKS
+                text = _build_email_text(
+                    cluster["name"], cluster["region"],
+                    cluster["access_key"], cluster["secret_key"], root,
+                )
+                html = _build_email_html(
+                    cluster["name"], cluster["region"],
+                    cluster["access_key"], cluster["secret_key"], root,
+                )
+            if _send_resend_email(app.config["RESEND_API_KEY"], email, subject, text, html):
                 conn.execute("UPDATE clusters SET email_sent = 1 WHERE id = ?", (cluster["id"],))
 
         # Cross-path note: did this email also do a browser claim?
@@ -500,6 +641,7 @@ def create_app(database_path=None, pool_csv=None, resend_api_key=None, eks_pool_
             region=cluster["region"],
             access_key=cluster["access_key"],
             secret_key=cluster["secret_key"],
+            terminal_url=terminal_url,
             root_url=request.url_root.rstrip("/"),
             other_path=({"label": "browser (KodeKloud)", "at": browser_row["claimed_at"]} if browser_row else None),
         )
