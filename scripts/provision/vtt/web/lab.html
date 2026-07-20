@@ -61,6 +61,15 @@
   .tadd{font:inherit;font-size:16px;font-weight:800;color:#aeb4c8;background:transparent;border:0;cursor:pointer;padding:2px 10px}
   .tadd:hover{color:#fff}
   .ttab.maptab{color:#f0c9b4} .ttab.maptab.active{background:var(--term);color:var(--accent)}
+  .tadd-wrap{position:relative;display:inline-block}
+  .addmenu{position:absolute;top:100%;left:0;margin-top:4px;background:#1a1e2b;border:1px solid #2b3040;border-radius:8px;padding:5px;min-width:184px;box-shadow:0 8px 24px rgba(0,0,0,.4);display:none;z-index:40}
+  .addmenu.open{display:block}
+  .ami{display:flex;align-items:center;gap:8px;width:100%;text-align:left;font:inherit;font-size:13px;font-weight:600;color:#e6e1f0;background:transparent;border:0;border-radius:6px;padding:8px 10px;cursor:pointer}
+  .ami:hover{background:#262b3a}
+  .ami.soon{color:#8a90a0;cursor:default}
+  .ami.soon:hover{background:transparent}
+  .ami span{margin-left:auto;font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.4px;color:#6b7180;background:#0f1117;border-radius:999px;padding:2px 7px}
+  .ami-sep{height:1px;background:#2b3040;margin:4px 2px}
   .termpanes{flex:1;min-height:0;position:relative}
   .tpane{position:absolute;inset:0;width:100%;height:100%;border:0;display:none}
   .tpane.active{display:block}
@@ -208,7 +217,16 @@
         <button class="ttab maptab" data-i="map" onclick="showTerm('map')">🗺 Blueprint</button>
         <button class="ttab maptab" data-i="links" onclick="showTerm('links')">🔗 Endpoints</button>
         <button class="ttab active" data-i="0" onclick="showTerm(0)">Terminal 1</button>
-        <button class="tadd" onclick="addTerm()" title="New terminal">+</button>
+        <div class="tadd-wrap">
+          <button class="tadd" onclick="toggleAddMenu(event)" title="Add" aria-haspopup="true">＋</button>
+          <div class="addmenu" id="addmenu">
+            <button class="ami" onclick="addTerm(); closeAddMenu()">🖥️ New terminal</button>
+            <div class="ami-sep"></div>
+            <button class="ami soon" disabled>🧩 VS Code <span>soon</span></button>
+            <button class="ami soon" disabled>📓 Jupyter <span>soon</span></button>
+            <button class="ami soon" disabled>🌐 Browser IDE <span>soon</span></button>
+          </div>
+        </div>
       </div>
       <div class="termpanes" id="termpanes">
         <iframe class="tpane mappane" data-i="map" src="/diagram" title="Architecture blueprint"></iframe>
@@ -297,7 +315,12 @@
       chev.textContent=o?'▾':'▸';
     });
   });
-  // Multi-terminal tabs (Katacoda/KodeKloud style). Each pane is its own ttyd session.
+  // The "+" add-menu (New terminal now; VS Code / Jupyter / Browser IDE are future entries).
+  function toggleAddMenu(ev){ ev.stopPropagation(); document.getElementById('addmenu').classList.toggle('open'); }
+  function closeAddMenu(){ var m=document.getElementById('addmenu'); if(m) m.classList.remove('open'); }
+  document.addEventListener('click', closeAddMenu);
+
+  // Multi-terminal tabs (Katacoda/KodeKloud style). Each pane is its own persistent tmux session.
   var termN=1;
   function showTerm(i){
     var key=String(i);
@@ -306,7 +329,9 @@
   }
   function addTerm(){
     var i=termN++;
-    var f=document.createElement('iframe'); f.className='tpane'; f.dataset.i=i; f.src='/terminal/'; f.title='Terminal '+(i+1);
+    // Each extra terminal gets its own named tmux session (?arg=term-N), so it is independent AND
+    // survives a refresh. Re-adding after a full page reload reconnects the same-named session.
+    var f=document.createElement('iframe'); f.className='tpane'; f.dataset.i=i; f.src='/terminal/?arg=term-'+i; f.title='Terminal '+(i+1);
     document.getElementById('termpanes').appendChild(f);
     var b=document.createElement('button'); b.className='ttab'; b.dataset.i=i;
     b.innerHTML='Terminal '+(i+1)+' <span class="x">✕</span>';
