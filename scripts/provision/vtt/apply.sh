@@ -44,7 +44,12 @@ main() {
     printf 'Applying VTT manifest...\n' >&2
     kubectl apply -f "${SCRIPT_DIR}/web-terminal.yaml"
 
-    apply_configmap_from_file console-src "lab.html=${SCRIPT_DIR}/web/lab.html"
+    # console-src carries every static page the nginx serves (lab + blueprint).
+    printf 'ConfigMap console-src <- web/lab.html, web/diagram.html\n' >&2
+    kubectl create configmap console-src -n "${NS}" \
+        --from-file="lab.html=${SCRIPT_DIR}/web/lab.html" \
+        --from-file="diagram.html=${SCRIPT_DIR}/web/diagram.html" \
+        --dry-run=client -o yaml | kubectl apply -f -
     apply_configmap_from_file console-conf "default.conf=${SCRIPT_DIR}/web/console.conf"
 
     # ConfigMap volume updates do not trigger an nginx reload on their own; roll the pod so the new
