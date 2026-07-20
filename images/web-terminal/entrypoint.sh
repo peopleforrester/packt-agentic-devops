@@ -66,14 +66,12 @@ eval "$(starship init bash)"
 BRC
 
 # -W writable (interactive); -b serves under /terminal so a fronting router can proxy it on a subpath.
-# -a lets each browser tab pass its own session name (?arg=<name>); vtt-shell attaches that named tmux
-# session, so a refresh resumes the SAME running shell instead of spawning a fresh one. Auth/exposure are
-# handled upstream by the per-student router; this is the student's own cluster.
+# Auth/exposure are handled upstream by the per-student router; this is the student's own cluster.
 # The theme is tuned to the Packt palette (orange cursor, ink background) so the terminal matches the
 # lab wrapper. A monospace stack with emoji fallback lets the Starship symbols render.
-exec ttyd -p 7681 -W -b /terminal -a \
+exec ttyd -p 7681 -W -b /terminal \
   -t fontSize=15 \
   -t 'fontFamily=ui-monospace, "SFMono-Regular", "JetBrains Mono", Menlo, Consolas, "Segoe UI Emoji", monospace' \
   -t cursorStyle=bar \
   -t 'theme={"background":"#0f1117","foreground":"#e6e1f0","cursor":"#FA7040","cursorAccent":"#0f1117","selectionBackground":"#FA704055","black":"#191919","brightBlack":"#4A4A4A","red":"#ff6b6b","green":"#2e9e5b","yellow":"#FFB454","blue":"#6db3f2","magenta":"#b48ead","cyan":"#5fb3b3","white":"#e6e1f0","brightWhite":"#ffffff"}' \
-  /usr/local/bin/vtt-shell
+  bash --rcfile "$HOME/.bashrc"

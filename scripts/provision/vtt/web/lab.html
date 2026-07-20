@@ -329,9 +329,7 @@
   }
   function addTerm(){
     var i=termN++;
-    // Each extra terminal gets its own named tmux session (?arg=term-N), so it is independent AND
-    // survives a refresh. Re-adding after a full page reload reconnects the same-named session.
-    var f=document.createElement('iframe'); f.className='tpane'; f.dataset.i=i; f.src='/terminal/?arg=term-'+i; f.title='Terminal '+(i+1);
+    var f=document.createElement('iframe'); f.className='tpane'; f.dataset.i=i; f.src='/terminal/'; f.title='Terminal '+(i+1);
     document.getElementById('termpanes').appendChild(f);
     var b=document.createElement('button'); b.className='ttab'; b.dataset.i=i;
     b.innerHTML='Terminal '+(i+1)+' <span class="x">✕</span>';
