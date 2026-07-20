@@ -49,6 +49,7 @@ main() {
     kubectl create configmap console-src -n "${NS}" \
         --from-file="lab.html=${SCRIPT_DIR}/web/lab.html" \
         --from-file="diagram.html=${SCRIPT_DIR}/web/diagram.html" \
+        --from-file="links.html=${SCRIPT_DIR}/web/links.html" \
         --dry-run=client -o yaml | kubectl apply -f -
     apply_configmap_from_file console-conf "default.conf=${SCRIPT_DIR}/web/console.conf"
 

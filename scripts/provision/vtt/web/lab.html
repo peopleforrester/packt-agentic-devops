@@ -206,11 +206,13 @@
     <section class="termcol">
       <div class="termtabs" id="termtabs">
         <button class="ttab maptab" data-i="map" onclick="showTerm('map')">🗺 Blueprint</button>
+        <button class="ttab maptab" data-i="links" onclick="showTerm('links')">🔗 Endpoints</button>
         <button class="ttab active" data-i="0" onclick="showTerm(0)">Terminal 1</button>
         <button class="tadd" onclick="addTerm()" title="New terminal">+</button>
       </div>
       <div class="termpanes" id="termpanes">
         <iframe class="tpane mappane" data-i="map" src="/diagram" title="Architecture blueprint"></iframe>
+        <iframe class="tpane mappane" data-i="links" src="/links" title="Component endpoints"></iframe>
         <iframe class="tpane active" data-i="0" src="/terminal/" title="Terminal 1"></iframe>
       </div>
     </section>
@@ -276,6 +278,12 @@
     var b=el.querySelector('.cp'); if(b){var o=b.textContent;b.textContent=sent?'sent ✓':'copied';setTimeout(function(){b.textContent=o;el.classList.remove('copied');},1300);}
     toast(sent?'Pasted into your terminal — press Enter to run':'Copied. Click the terminal, then Ctrl+Shift+V');
   }
+  // Embedded panels (Endpoints, Blueprint) ask the parent to drop a command into the terminal.
+  window.addEventListener('message', function(e){
+    if (e && e.data && e.data.type === 'vtt-run' && typeof e.data.text === 'string') {
+      sendToTerminal(e.data.text);
+    }
+  });
   // Collapsible steps: Phase 0 open by default, the rest closed, state persists per step.
   document.querySelectorAll('.guide .step').forEach(function(step, idx){
     var h=step.querySelector('.h');
