@@ -18,6 +18,14 @@ spec:
     helm:
       valuesObject:
         clusterName: REPLACE_WITH_CLUSTER_NAME
+        # The controller reads the VPC id and region from node IMDS by default. The node group sets
+        # http_put_response_hop_limit=1 on purpose (pods must not reach node IMDS), so that lookup times
+        # out and the controller CrashLoops with "failed to fetch VPC ID from instance metadata". Setting
+        # region and vpcId explicitly skips the IMDS call entirely, fixing the controller without loosening
+        # IMDS. The fleet shares one lab VPC (decision D15), so this id is the same for every student
+        # cluster; if the fleet moves off the shared VPC, template this like clusterName.
+        region: us-west-2
+        vpcId: vpc-0fe6915038897f6cf
         # Disable the cluster-wide Service mutating webhook. By default the controller
         # registers mservice.elbv2.k8s.aws with failurePolicy=Fail on ALL Services, so
         # whenever the controller is unhealthy (no IAM, mid-rollout, scaled to zero)
