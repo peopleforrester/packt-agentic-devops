@@ -102,11 +102,16 @@
           <p class="goal">Confirm the bare cluster and tooling, then hand the build to your agent. Install nothing yet.</p>
           <p>Your <code class="inl">kubectl</code> is already wired to this cluster. See that it is up:</p>
           <div class="cmd" onclick="cp(this)"><span class="tag">shell</span><button class="cp">paste</button>kubectl get nodes</div>
-          <p>The workshop repo is already here at <code class="inl">~/workshop</code>. Start your agent:</p>
+          <p>The workshop repo is already here at <code class="inl">~/workshop</code>. Start your agent. It comes up in <b>auto</b> mode: it runs the routine steps on its own and pauses when it needs you.</p>
           <div class="cmd" onclick="cp(this)"><span class="tag">shell</span><button class="cp">paste</button>claude</div>
+          <p>Use whatever model you have access to. Two ready-to-go launches with the model and mode set for you:</p>
+          <div class="cmd" onclick="cp(this)"><span class="tag">shell</span><button class="cp">paste</button>claude --model sonnet --permission-mode auto</div>
+          <div class="cmd" onclick="cp(this)"><span class="tag">shell</span><button class="cp">paste</button>claude --model opus --dangerously-skip-permissions</div>
+          <div class="tip"><b>Models:</b> <code class="inl">opus</code> (Opus 4.8), <code class="inl">sonnet</code> (Sonnet 5), or <code class="inl">fable</code> (Fable 5) if your plan includes it. <b>Modes:</b> it starts in auto; cycle with <b>Shift+Tab</b>, or launch with <code class="inl">--dangerously-skip-permissions</code> to go full-send. It is your own cluster, so run it however you like.</div>
           <p>Then give it its first instruction:</p>
           <div class="cmd prompt" onclick="cp(this)"><span class="tag">in Claude</span><button class="cp">paste</button>Read spec/WORKSHOP-SPEC.md and components.yaml. Summarize what we are building and the nine phases, then stop. Do not install anything yet.</div>
-          <div class="tip">This is your own cluster, so you decide how much rope to give the agent. By default Claude asks before it changes the cluster, and those approvals are worth watching. If you would rather let it run unattended, start it with <code class="inl">claude --dangerously-skip-permissions</code>, or cycle permission modes with <b>Shift+Tab</b> once it is running.</div>
+          <div class="tip"><b>Stuck at any point? That is what your agent is for.</b> Do not spin on a problem. Ask Claude to diagnose it and to show its evidence before it changes anything. A prompt that works well:</div>
+          <div class="cmd prompt" onclick="cp(this)"><span class="tag">in Claude</span><button class="cp">paste</button>Something is not working: describe what you are seeing here. Diagnose the root cause. Before you change anything, show me the exact file and line reference that supports your conclusion, quote the evidence (the error, the resource status, the relevant config), and walk me through your reasoning. Wait for my go-ahead before you apply a fix.</div>
         </div>
       </div>
 
@@ -118,8 +123,6 @@
           <p class="goal">Install ArgoCD, point it at the repo, and let the App-of-Apps bring up cert-manager, OpenBao, External Secrets, and Kyverno.</p>
           <div class="cmd prompt" onclick="cp(this)"><span class="tag">in Claude</span><button class="cp">paste</button>Read components.yaml and platform/0-bootstrap/root-app.yaml. In a few sentences, explain how the App-of-Apps pattern deploys this platform: what the root Application points at, how the per-component Applications are discovered, and how sync waves order the rollout. Do not apply anything yet.</div>
           <div class="cmd prompt" onclick="cp(this)"><span class="tag">in Claude</span><button class="cp">paste</button>Apply the foundation App-of-Apps at platform/0-bootstrap/root-app.yaml into the argocd namespace. This is the bootstrap exception to the GitOps rule. Then watch the ArgoCD sync waves cascade and tell me when the foundation plane is all green.</div>
-          <p>The presenter seeds one broken Application. Heal it the GitOps way:</p>
-          <div class="cmd prompt" onclick="cp(this)"><span class="tag">in Claude</span><button class="cp">paste</button>One Application is failing to sync. Find which one from the ArgoCD status, read the error, and fix the root cause in its values. Commit the fix and watch ArgoCD heal it. Do not touch the cluster directly.</div>
         </div>
       </div>
 
