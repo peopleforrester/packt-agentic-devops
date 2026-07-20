@@ -60,6 +60,7 @@
   .ttab .x:hover{opacity:1}
   .tadd{font:inherit;font-size:16px;font-weight:800;color:#aeb4c8;background:transparent;border:0;cursor:pointer;padding:2px 10px}
   .tadd:hover{color:#fff}
+  .ttab.maptab{color:#f0c9b4} .ttab.maptab.active{background:var(--term);color:var(--accent)}
   .termpanes{flex:1;min-height:0;position:relative}
   .tpane{position:absolute;inset:0;width:100%;height:100%;border:0;display:none}
   .tpane.active{display:block}
@@ -204,10 +205,12 @@
 
     <section class="termcol">
       <div class="termtabs" id="termtabs">
+        <button class="ttab maptab" data-i="map" onclick="showTerm('map')">🗺 Blueprint</button>
         <button class="ttab active" data-i="0" onclick="showTerm(0)">Terminal 1</button>
         <button class="tadd" onclick="addTerm()" title="New terminal">+</button>
       </div>
       <div class="termpanes" id="termpanes">
+        <iframe class="tpane mappane" data-i="map" src="/diagram" title="Architecture blueprint"></iframe>
         <iframe class="tpane active" data-i="0" src="/terminal/" title="Terminal 1"></iframe>
       </div>
     </section>
@@ -244,8 +247,11 @@
   // into the active terminal iframe and hand xterm a paste directly. The student never has to copy then
   // Ctrl+Shift+V; the command lands at their prompt, ready to run.
   function sendToTerminal(text){
-    var iframe=document.querySelector('.tpane.active');
-    if(!iframe) return false;
+    // If the Blueprint tab is showing, flip to Terminal 1 so the command lands somewhere visible.
+    var active=document.querySelector('.tpane.active');
+    if(active && active.classList.contains('mappane')){ showTerm(0); active=document.querySelector('.tpane[data-i="0"]'); }
+    var iframe=active||document.querySelector('.tpane[data-i="0"]');
+    if(!iframe || iframe.classList.contains('mappane')) return false;
     try{
       var doc=iframe.contentDocument||(iframe.contentWindow&&iframe.contentWindow.document);
       if(!doc) return false;
@@ -286,8 +292,9 @@
   // Multi-terminal tabs (Katacoda/KodeKloud style). Each pane is its own ttyd session.
   var termN=1;
   function showTerm(i){
-    document.querySelectorAll('.tpane').forEach(function(p){p.classList.toggle('active', +p.dataset.i===i);});
-    document.querySelectorAll('.ttab').forEach(function(t){t.classList.toggle('active', +t.dataset.i===i);});
+    var key=String(i);
+    document.querySelectorAll('.tpane').forEach(function(p){p.classList.toggle('active', p.dataset.i===key);});
+    document.querySelectorAll('.ttab').forEach(function(t){t.classList.toggle('active', t.dataset.i===key);});
   }
   function addTerm(){
     var i=termN++;
@@ -304,7 +311,7 @@
   function closeTerm(i){
     var p=document.querySelector('.tpane[data-i="'+i+'"]'); if(p)p.remove();
     var t=document.querySelector('.ttab[data-i="'+i+'"]'); if(t)t.remove();
-    var first=document.querySelector('.ttab'); if(first)showTerm(+first.dataset.i);
+    var first=document.querySelector('.ttab:not(.maptab)')||document.querySelector('.ttab'); if(first)showTerm(first.dataset.i);
   }
 </script>
 </body>
