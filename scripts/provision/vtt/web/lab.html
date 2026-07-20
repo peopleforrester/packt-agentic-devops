@@ -106,6 +106,7 @@
           <div class="cmd" onclick="cp(this)"><span class="tag">shell</span><button class="cp">paste</button>claude</div>
           <p>Then give it its first instruction:</p>
           <div class="cmd prompt" onclick="cp(this)"><span class="tag">in Claude</span><button class="cp">paste</button>Read spec/WORKSHOP-SPEC.md and components.yaml. Summarize what we are building and the nine phases, then stop. Do not install anything yet.</div>
+          <div class="tip">This is your own cluster, so you decide how much rope to give the agent. By default Claude asks before it changes the cluster, and those approvals are worth watching. If you would rather let it run unattended, start it with <code class="inl">claude --dangerously-skip-permissions</code>, or cycle permission modes with <b>Shift+Tab</b> once it is running.</div>
         </div>
       </div>
 
