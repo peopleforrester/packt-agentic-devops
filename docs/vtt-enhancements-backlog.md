@@ -1,33 +1,26 @@
 # VTT enhancements backlog
 
-Ideas for the student web terminal (`scripts/provision/vtt/`) that are not built yet.
-Captured so they are not lost; not scheduled.
+Enhancements for the student web terminal (`scripts/provision/vtt/`).
 
-## 1. Interactive architecture diagram tab (progressive reveal)
+## Shipped (v1)
 
-A tab in the terminal section (to the left of "Terminal 1"), or a separate webpage the
-presenter can point to, showing the whole build as an interactive, staged diagram.
+### 1. Interactive architecture blueprint (progressive reveal) — DONE
+`web/diagram.html`, served at `/diagram`, embedded as the **Blueprint** tab. Shows the whole build from a
+bare cluster to all components, revealed phase 0 through 8 with Argo CD as the source of truth. Prev/Next,
+Play, clickable phase pips, keyboard arrows, `?phase=` deep link.
 
-- Start from the bare cluster and progressively reveal components as the build advances
-  from Preflight (Phase 0) through Phase 8, with ArgoCD shown as the source of truth that
-  reconciles each layer.
-- Highlight the current objective so a student always sees where they are and what comes
-  next. Advancing a phase lights up that phase's components.
-- Dynamic or staged, referable live during the presentation.
-- Candidate build: an SVG/HTML diagram driven by the same phase model the lab page uses,
-  keyed off `spec/WORKSHOP-SPEC.md` and `components.yaml` so it stays in sync with the
-  real component set. Could live at `/diagram` behind the same console nginx.
+### 2. Component endpoint directory — DONE
+`web/links.html`, served at `/links`, embedded as the **Endpoints** tab. Phase-revealed catalog of the
+platform UIs with namespace and the phase each comes online. Tapping a card prints that component's address
+on the student's own cluster into the terminal (postMessage bridge to the lab; clipboard fallback standalone).
 
-## 2. Centralized component URL directory for students
+## Still open (v2 ideas)
 
-A single page where students find the live URLs of components as they come up on their own
-cluster, so they can log in and view each one as they build it.
-
-- Covers Backstage, ArgoCD, Grafana, Prometheus, Loki, Tempo, and the rest of the pinned
-  set as each becomes reachable.
-- Curated per phase, or auto-discovered from Ingress/HTTPRoute/Service annotations on the
-  cluster so it reflects what is actually up.
-- Reveals per phase, matching the diagram: a component's link activates once its phase has
-  landed. Ties naturally to the interactive diagram above.
-- Candidate build: a `/links` page behind the console nginx that reads the student's own
-  cluster (the VTT already has kubectl wired) and lists the routable endpoints.
+- **Live phase sync.** Drive the Blueprint and Endpoints current-phase from the student's real progress
+  (which phase Claude has completed) rather than a manual stepper. Could key off a marker the phase tests
+  write, surfaced to the lab via localStorage or a small status endpoint.
+- **Auto-discovered, clickable UIs.** Replace the discovery commands with real reachable links. Two paths:
+  read the cluster's Ingress/HTTPRoute/LoadBalancer objects (needs a small backend, since nginx cannot run
+  kubectl), or path-proxy each UI through the console nginx (needs per-component subpath config: Argo CD
+  `--basehref`, Grafana `serve_from_sub_path`, Backstage `baseUrl`). Fragile per component; scope carefully.
+- **Blueprint <-> Endpoints cross-highlight.** Hovering a component in one panel highlights it in the other.
