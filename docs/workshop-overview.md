@@ -56,6 +56,20 @@ Platform engineers, DevOps engineers, SREs, cloud engineers, architects, and tec
 
 ---
 
+## Why this is more than pointing your own agent at a spec
+
+Anyone can hand an agent a spec. The value here is in what the spec, the guardrails, and the live delivery already encode.
+
+**The spec is battle-tested, not blank.** This build has been run and corrected since January 2026, through the KCD Texas delivery and months of rehearsal. The pinned component set in `components.yaml`, the known-good CRD shapes, and the platform facts that training data gets wrong (EKS Pod Identity over IRSA, `kagent.dev/v1alpha2` with `systemMessage`, agentgateway as a Linux Foundation sibling of kgateway rather than its data plane) are the difference between a platform that comes up and an agent confidently emitting last year's answers. A blank spec gets you stale defaults. This one is current to July 2026.
+
+**The governance model is the differentiator.** Every action the agent takes flows through Git and ArgoCD, mutating actions ask before they run, Kyverno backstops what the agent or a poisoned prompt should never do, and every action lands in the audit trail with per-agent attribution in Loki. This is how you trust an agent with your platform and prove what it did, which is the part almost nobody has a working model for.
+
+**Failure and recovery are part of the material.** The companion prompt library carries the known failure modes for every beat and the exact recovery move, so when the agent drifts on a CRD shape or a sync races, you have already seen the fix. That is where a solo run usually stalls.
+
+**TDD and GitOps as the control system for autonomy.** Neither practice is new. Here they are the safety harness: the phase test is how you know the agent's work actually landed instead of taking "done" on faith, and GitOps is what keeps the agent out of the cluster's front door.
+
+---
+
 ## What attendees build
 
 The cloud-native foundation built in Module 1 and Module 3 is deployed via a single ArgoCD App-of-Apps (the pinned component set lives in `components.yaml`):

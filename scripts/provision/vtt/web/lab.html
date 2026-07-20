@@ -90,7 +90,7 @@
   <div class="split">
     <section class="guide">
       <h1>This cluster is yours. 🛠️</h1>
-      <p class="lede">You are going to build an AI-native Internal Developer Platform on this cluster, phase by phase, with Claude Code as your platform engineer. The presenter builds the same thing in parallel and stops at each phase to explain what just happened. <b>Work one phase at a time and stop at the end of each one.</b> Tap any command or prompt to copy it, then paste it into the terminal on the right.</p>
+      <p class="lede">You are going to build an AI-native Internal Developer Platform on this cluster, phase by phase, with Claude Code as your platform engineer. The presenter builds the same thing in parallel and stops at each phase to explain what just happened. <b>Work one phase at a time and stop at the end of each one.</b> Tap any command or prompt and it drops straight into your terminal on the right. Press Enter to run it.</p>
 
       <div class="tip">Two rules your agent follows the whole way: everything after the ArgoCD bootstrap flows through Git and ArgoCD, and every version comes from <code class="inl">components.yaml</code>, never from memory.</div>
 
@@ -101,11 +101,11 @@
         <div class="b">
           <p class="goal">Confirm the bare cluster and tooling, then hand the build to your agent. Install nothing yet.</p>
           <p>Your <code class="inl">kubectl</code> is already wired to this cluster. See that it is up:</p>
-          <div class="cmd" onclick="cp(this)"><span class="tag">shell</span><button class="cp">copy</button>kubectl get nodes</div>
+          <div class="cmd" onclick="cp(this)"><span class="tag">shell</span><button class="cp">paste</button>kubectl get nodes</div>
           <p>The workshop repo is already here at <code class="inl">~/workshop</code>. Start your agent:</p>
-          <div class="cmd" onclick="cp(this)"><span class="tag">shell</span><button class="cp">copy</button>claude</div>
+          <div class="cmd" onclick="cp(this)"><span class="tag">shell</span><button class="cp">paste</button>claude</div>
           <p>Then give it its first instruction:</p>
-          <div class="cmd prompt" onclick="cp(this)"><span class="tag">paste into Claude</span><button class="cp">copy</button>Read spec/WORKSHOP-SPEC.md and components.yaml. Summarize what we are building and the nine phases, then stop. Do not install anything yet.</div>
+          <div class="cmd prompt" onclick="cp(this)"><span class="tag">in Claude</span><button class="cp">paste</button>Read spec/WORKSHOP-SPEC.md and components.yaml. Summarize what we are building and the nine phases, then stop. Do not install anything yet.</div>
         </div>
       </div>
 
@@ -115,10 +115,10 @@
         <div class="h"><div class="num">1</div><div class="t">Phase 1 — GitOps bootstrap and core foundation</div></div>
         <div class="b">
           <p class="goal">Install ArgoCD, point it at the repo, and let the App-of-Apps bring up cert-manager, OpenBao, External Secrets, and Kyverno.</p>
-          <div class="cmd prompt" onclick="cp(this)"><span class="tag">paste into Claude</span><button class="cp">copy</button>Read components.yaml and platform/0-bootstrap/root-app.yaml. In a few sentences, explain how the App-of-Apps pattern deploys this platform: what the root Application points at, how the per-component Applications are discovered, and how sync waves order the rollout. Do not apply anything yet.</div>
-          <div class="cmd prompt" onclick="cp(this)"><span class="tag">paste into Claude</span><button class="cp">copy</button>Apply the foundation App-of-Apps at platform/0-bootstrap/root-app.yaml into the argocd namespace. This is the bootstrap exception to the GitOps rule. Then watch the ArgoCD sync waves cascade and tell me when the foundation plane is all green.</div>
+          <div class="cmd prompt" onclick="cp(this)"><span class="tag">in Claude</span><button class="cp">paste</button>Read components.yaml and platform/0-bootstrap/root-app.yaml. In a few sentences, explain how the App-of-Apps pattern deploys this platform: what the root Application points at, how the per-component Applications are discovered, and how sync waves order the rollout. Do not apply anything yet.</div>
+          <div class="cmd prompt" onclick="cp(this)"><span class="tag">in Claude</span><button class="cp">paste</button>Apply the foundation App-of-Apps at platform/0-bootstrap/root-app.yaml into the argocd namespace. This is the bootstrap exception to the GitOps rule. Then watch the ArgoCD sync waves cascade and tell me when the foundation plane is all green.</div>
           <p>The presenter seeds one broken Application. Heal it the GitOps way:</p>
-          <div class="cmd prompt" onclick="cp(this)"><span class="tag">paste into Claude</span><button class="cp">copy</button>One Application is failing to sync. Find which one from the ArgoCD status, read the error, and fix the root cause in its values. Commit the fix and watch ArgoCD heal it. Do not touch the cluster directly.</div>
+          <div class="cmd prompt" onclick="cp(this)"><span class="tag">in Claude</span><button class="cp">paste</button>One Application is failing to sync. Find which one from the ArgoCD status, read the error, and fix the root cause in its values. Commit the fix and watch ArgoCD heal it. Do not touch the cluster directly.</div>
         </div>
       </div>
 
@@ -126,7 +126,7 @@
         <div class="h"><div class="num">2</div><div class="t">Phase 2 — Observability plane</div></div>
         <div class="b">
           <p class="goal">kube-prometheus-stack, Loki, Tempo, and the OpenTelemetry Collector and Operator, all through Git.</p>
-          <div class="cmd prompt" onclick="cp(this)"><span class="tag">paste into Claude</span><button class="cp">copy</button>Read spec/phases/phase-2-observability.md and build that phase. Write the phase test first and confirm it fails, add the components through Git so ArgoCD syncs them, confirm the test passes, commit, output the completion promise, then stop.</div>
+          <div class="cmd prompt" onclick="cp(this)"><span class="tag">in Claude</span><button class="cp">paste</button>Read spec/phases/phase-2-observability.md and build that phase. Write the phase test first and confirm it fails, add the components through Git so ArgoCD syncs them, confirm the test passes, commit, output the completion promise, then stop.</div>
         </div>
       </div>
 
@@ -134,7 +134,7 @@
         <div class="h"><div class="num">3</div><div class="t">Phase 3 — Developer portal</div></div>
         <div class="b">
           <p class="goal">Backstage (catalog, TechDocs, scaffolder, ArgoCD plugin), KEDA, and the Argo extensions. End of Module 1: a working IDP.</p>
-          <div class="cmd prompt" onclick="cp(this)"><span class="tag">paste into Claude</span><button class="cp">copy</button>Read spec/phases/phase-3-portal.md and build that phase: test first, build through Git, confirm green, commit, output the completion promise, then stop.</div>
+          <div class="cmd prompt" onclick="cp(this)"><span class="tag">in Claude</span><button class="cp">paste</button>Read spec/phases/phase-3-portal.md and build that phase: test first, build through Git, confirm green, commit, output the completion promise, then stop.</div>
           <div class="tip">Open Backstage when Claude reports it Healthy. That is your golden-path portal for the rest of the workshop.</div>
         </div>
       </div>
@@ -145,8 +145,8 @@
         <div class="h"><div class="num">4</div><div class="t">Phase 4 — AI gateway plane</div></div>
         <div class="b">
           <p class="goal">Gateway API CRDs, kgateway, and agentgateway with mTLS and audit logging. The AI-plane Kyverno policies land here in audit mode, so the plane is governed from birth.</p>
-          <div class="cmd prompt" onclick="cp(this)"><span class="tag">paste into Claude</span><button class="cp">copy</button>Apply the AI-plane App-of-Apps at platform/0-bootstrap/ai-plane-app.yaml. Once kgateway is Healthy, show me the Gateway API resources it created and explain what the Gateway and GatewayClass represent here.</div>
-          <div class="cmd prompt" onclick="cp(this)"><span class="tag">paste into Claude</span><button class="cp">copy</button>agentgateway is deployed as the agentic data plane. Show me its routing configuration: how it mediates LLM, MCP, and A2A traffic, and confirm mTLS and audit logging are on by default.</div>
+          <div class="cmd prompt" onclick="cp(this)"><span class="tag">in Claude</span><button class="cp">paste</button>Apply the AI-plane App-of-Apps at platform/0-bootstrap/ai-plane-app.yaml. Once kgateway is Healthy, show me the Gateway API resources it created and explain what the Gateway and GatewayClass represent here.</div>
+          <div class="cmd prompt" onclick="cp(this)"><span class="tag">in Claude</span><button class="cp">paste</button>agentgateway is deployed as the agentic data plane. Show me its routing configuration: how it mediates LLM, MCP, and A2A traffic, and confirm mTLS and audit logging are on by default.</div>
         </div>
       </div>
 
@@ -154,9 +154,9 @@
         <div class="h"><div class="num">5</div><div class="t">Phase 5 — Agent runtime and safety</div></div>
         <div class="b">
           <p class="goal">kagent and an Agent CRD, LLM Guard, and OpenLLMetry. The agent calls an MCP server through agentgateway; a prompt-injection attempt is blocked.</p>
-          <div class="cmd prompt" onclick="cp(this)"><span class="tag">paste into Claude</span><button class="cp">copy</button>Write a kagent Agent that acts as a platform helper: it answers questions about this platform's components and golden paths, keeps answers short and concrete, and says so when it does not know. Route it at the in-cluster vLLM through a ModelConfig, not any external provider. Put it in the kagent namespace, commit it under platform/2-ai-plane/demo-agent/manifests/, and let ArgoCD reconcile it.</div>
-          <div class="cmd prompt" onclick="cp(this)"><span class="tag">paste into Claude</span><button class="cp">copy</button>Have the platform-helper agent call the MCP server through agentgateway, then show me the audit log entry for that call.</div>
-          <div class="cmd prompt" onclick="cp(this)"><span class="tag">paste into Claude</span><button class="cp">copy</button>Send the prompt-injection test fixture at the agent. Show me LLM Guard intercepting and blocking it, and the blocked request in the audit log.</div>
+          <div class="cmd prompt" onclick="cp(this)"><span class="tag">in Claude</span><button class="cp">paste</button>Write a kagent Agent that acts as a platform helper: it answers questions about this platform's components and golden paths, keeps answers short and concrete, and says so when it does not know. Route it at the in-cluster vLLM through a ModelConfig, not any external provider. Put it in the kagent namespace, commit it under platform/2-ai-plane/demo-agent/manifests/, and let ArgoCD reconcile it.</div>
+          <div class="cmd prompt" onclick="cp(this)"><span class="tag">in Claude</span><button class="cp">paste</button>Have the platform-helper agent call the MCP server through agentgateway, then show me the audit log entry for that call.</div>
+          <div class="cmd prompt" onclick="cp(this)"><span class="tag">in Claude</span><button class="cp">paste</button>Send the prompt-injection test fixture at the agent. Show me LLM Guard intercepting and blocking it, and the blocked request in the audit log.</div>
           <div class="tip">The Agent is <code class="inl">kagent.dev/v1alpha2</code> with <code class="inl">spec.declarative.systemMessage</code>. If your agent reaches for v1alpha1 or systemPrompt, that is stale training data; correct it.</div>
         </div>
       </div>
@@ -165,8 +165,8 @@
         <div class="h"><div class="num">6</div><div class="t">Phase 6 — Model serving</div></div>
         <div class="b">
           <p class="goal">KServe with a small in-cluster vLLM model, llm-d shown as the scheduling layer. The agent trace lands in Tempo. End of Module 2: AI-native.</p>
-          <div class="cmd prompt" onclick="cp(this)"><span class="tag">paste into Claude</span><button class="cp">copy</button>Open the trace from the agent's MCP call in Tempo. Walk the spans and point out the GenAI semantic-convention attributes: model, token counts, tool calls. Then load the AI-plane Grafana dashboard.</div>
-          <div class="cmd prompt" onclick="cp(this)"><span class="tag">paste into Claude</span><button class="cp">copy</button>Send one inference request to the vLLM model through its OpenAI-compatible endpoint and show me the response.</div>
+          <div class="cmd prompt" onclick="cp(this)"><span class="tag">in Claude</span><button class="cp">paste</button>Open the trace from the agent's MCP call in Tempo. Walk the spans and point out the GenAI semantic-convention attributes: model, token counts, tool calls. Then load the AI-plane Grafana dashboard.</div>
+          <div class="cmd prompt" onclick="cp(this)"><span class="tag">in Claude</span><button class="cp">paste</button>Send one inference request to the vLLM model through its OpenAI-compatible endpoint and show me the response.</div>
         </div>
       </div>
 
@@ -176,9 +176,9 @@
         <div class="h"><div class="num">7</div><div class="t">Phase 7 — Self-service golden path</div></div>
         <div class="b">
           <p class="goal">A Backstage scaffolder template for an agent-service and the ArgoCD ApplicationSet that watches for it. The golden path fires end to end.</p>
-          <div class="cmd prompt" onclick="cp(this)"><span class="tag">paste into Claude</span><button class="cp">copy</button>Write a Backstage scaffolder template for an agent-service. The form takes an agent name, purpose, model route, and the MCP tools it is allowed. On submit it generates a repo containing a kagent Agent CRD, an agentgateway route, an LLM Guard policy reference, and OTel instrumentation defaults. Commit it under platform/3-self-service/agent-service/.</div>
-          <div class="cmd prompt" onclick="cp(this)"><span class="tag">paste into Claude</span><button class="cp">copy</button>Write the ApplicationSet that watches the in-cluster Gitea for repos generated by this template and auto-creates an ArgoCD Application for each. Commit it at platform/3-self-service/applicationset.yaml.</div>
-          <div class="cmd prompt" onclick="cp(this)"><span class="tag">paste into Claude</span><button class="cp">copy</button>Through the Backstage portal, request a new agent: fill the form and submit. Then watch the chain: scaffolder generates the repo, the ApplicationSet creates the Application, ArgoCD syncs it, the agent runs, and the first trace lands in Tempo.</div>
+          <div class="cmd prompt" onclick="cp(this)"><span class="tag">in Claude</span><button class="cp">paste</button>Write a Backstage scaffolder template for an agent-service. The form takes an agent name, purpose, model route, and the MCP tools it is allowed. On submit it generates a repo containing a kagent Agent CRD, an agentgateway route, an LLM Guard policy reference, and OTel instrumentation defaults. Commit it under platform/3-self-service/agent-service/.</div>
+          <div class="cmd prompt" onclick="cp(this)"><span class="tag">in Claude</span><button class="cp">paste</button>Write the ApplicationSet that watches the in-cluster Gitea for repos generated by this template and auto-creates an ArgoCD Application for each. Commit it at platform/3-self-service/applicationset.yaml.</div>
+          <div class="cmd prompt" onclick="cp(this)"><span class="tag">in Claude</span><button class="cp">paste</button>Through the Backstage portal, request a new agent: fill the form and submit. Then watch the chain: scaffolder generates the repo, the ApplicationSet creates the Application, ArgoCD syncs it, the agent runs, and the first trace lands in Tempo.</div>
         </div>
       </div>
 
@@ -188,8 +188,8 @@
         <div class="h"><div class="num">8</div><div class="t">Phase 8 — Governance, attribution, and your commitment</div></div>
         <div class="b">
           <p class="goal">Flip the AI-plane Kyverno policies from audit to enforce with a live denial, then show per-agent attribution in Loki.</p>
-          <div class="cmd prompt" onclick="cp(this)"><span class="tag">paste into Claude</span><button class="cp">copy</button>Flip the AI-plane Kyverno policies from audit to enforce. Then try to apply the violating agent fixture with no LLM Guard reference and show Kyverno denying it.</div>
-          <div class="cmd prompt" onclick="cp(this)"><span class="tag">paste into Claude</span><button class="cp">copy</button>Run the Loki query that shows every action in this cluster attributed to a named agent identity, including this Claude Code session's own actions from the audit hook.</div>
+          <div class="cmd prompt" onclick="cp(this)"><span class="tag">in Claude</span><button class="cp">paste</button>Flip the AI-plane Kyverno policies from audit to enforce. Then try to apply the violating agent fixture with no LLM Guard reference and show Kyverno denying it.</div>
+          <div class="cmd prompt" onclick="cp(this)"><span class="tag">in Claude</span><button class="cp">paste</button>Run the Loki query that shows every action in this cluster attributed to a named agent identity, including this Claude Code session's own actions from the audit hook.</div>
           <div class="tip">The agent that built the platform shows up in the platform's own audit trail. That is the point: agents are first-class, governed identities here.</div>
         </div>
       </div>
@@ -228,16 +228,43 @@
     document.title=(instr?'Instructor':'Student')+' terminal — '+cluster;
   })();
   function toast(t){var e=document.getElementById('toast');e.textContent=t;e.classList.add('show');clearTimeout(window._tt);window._tt=setTimeout(function(){e.classList.remove('show');},1300);}
-  function cp(el){
-    // pull the command/prompt text, excluding the copy button and the corner tag label
+  function extractCmd(el){
+    // pull the command/prompt text, excluding the corner tag label and the button
     var txt='';
     el.childNodes.forEach(function(n){ if(n.nodeType===3) txt+=n.nodeValue; });
     txt=txt.trim();
-    if(!txt){ txt=el.textContent.replace(/\s*(copy|shell|paste into Claude)\s*/gi,' ').trim(); }
-    function done(){el.classList.add('copied');var b=el.querySelector('.cp');if(b){var o=b.textContent;b.textContent='copied';setTimeout(function(){b.textContent=o;el.classList.remove('copied');},1200);}toast('Copied');}
-    if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(txt).then(done,function(){fb(txt);done();});}
-    else{fb(txt);done();}
-    function fb(t){var ta=document.createElement('textarea');ta.value=t;ta.style.position='fixed';ta.style.opacity='0';document.body.appendChild(ta);ta.select();try{document.execCommand('copy');}catch(e){}document.body.removeChild(ta);}
+    if(!txt){ txt=el.textContent.replace(/\s*(paste|shell|in Claude)\s*/gi,' ').trim(); }
+    return txt;
+  }
+  // The lab page and the terminal are same-origin (both served by the console nginx), so we can reach
+  // into the active terminal iframe and hand xterm a paste directly. The student never has to copy then
+  // Ctrl+Shift+V; the command lands at their prompt, ready to run.
+  function sendToTerminal(text){
+    var iframe=document.querySelector('.tpane.active');
+    if(!iframe) return false;
+    try{
+      var doc=iframe.contentDocument||(iframe.contentWindow&&iframe.contentWindow.document);
+      if(!doc) return false;
+      var ta=doc.querySelector('.xterm-helper-textarea')||doc.querySelector('.xterm');
+      if(!ta) return false;
+      ta.focus();
+      var dt=new DataTransfer(); dt.setData('text/plain', text);
+      ta.dispatchEvent(new ClipboardEvent('paste',{clipboardData:dt,bubbles:true,cancelable:true}));
+      return true;
+    }catch(e){ return false; }
+  }
+  function clip(t){
+    if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(t).catch(function(){fb(t);});}
+    else{fb(t);}
+    function fb(x){var el=document.createElement('textarea');el.value=x;el.style.position='fixed';el.style.opacity='0';document.body.appendChild(el);el.select();try{document.execCommand('copy');}catch(e){}document.body.removeChild(el);}
+  }
+  function cp(el){
+    var txt=extractCmd(el);
+    var sent=sendToTerminal(txt);
+    clip(txt); // also copy, so Ctrl+Shift+V / Cmd+V is a fallback if the paste bridge is blocked
+    el.classList.add('copied');
+    var b=el.querySelector('.cp'); if(b){var o=b.textContent;b.textContent=sent?'sent ✓':'copied';setTimeout(function(){b.textContent=o;el.classList.remove('copied');},1300);}
+    toast(sent?'Pasted into your terminal — press Enter to run':'Copied. Click the terminal, then Ctrl+Shift+V');
   }
   // Collapsible steps: Phase 0 open by default, the rest closed, state persists per step.
   document.querySelectorAll('.guide .step').forEach(function(step, idx){
