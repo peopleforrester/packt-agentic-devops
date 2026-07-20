@@ -12,7 +12,7 @@ mkdir -p "$HOME/.kube" "$HOME/.aws"
 # The context is named after the cluster (CLUSTER_NAME, defaulting to a friendly label) so the
 # Starship prompt reads "☸ <cluster>" rather than a generic placeholder. Default namespace is
 # "default": the student builds across many namespaces, so the pod's own namespace would mislead.
-CTX_NAME="${CLUSTER_NAME:-eks-workshop}"
+CTX_NAME="${CLUSTER_NAME:-your-cluster}"
 if [ -f "$SA/token" ]; then
   kubectl config set-cluster "$CTX_NAME" \
     --server="https://kubernetes.default.svc" \
