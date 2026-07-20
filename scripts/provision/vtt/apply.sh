@@ -52,6 +52,7 @@ main() {
         --from-file="links.html=${SCRIPT_DIR}/web/links.html" \
         --dry-run=client -o yaml | kubectl apply -f -
     apply_configmap_from_file console-conf "default.conf=${SCRIPT_DIR}/web/console.conf"
+    apply_configmap_from_file status-src "status-loop.sh=${SCRIPT_DIR}/web/status-loop.sh"
 
     # ConfigMap volume updates do not trigger an nginx reload on their own; roll the pod so the new
     # lab page and config are served immediately.
