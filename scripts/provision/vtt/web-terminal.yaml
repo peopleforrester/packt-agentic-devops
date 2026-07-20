@@ -1,9 +1,13 @@
-# ABOUTME: Student web-terminal (VTT) deployed into a workshop cluster: ttyd behind a LoadBalancer,
-# ABOUTME: kubectl wired to THIS cluster via the pod ServiceAccount, the student's AWS keys optional.
+# ABOUTME: Student web-terminal (VTT) for a workshop cluster: a two-pane console (instructions left, ttyd
+# ABOUTME: shell right). nginx serves the lab page and proxies /terminal/ to ttyd; both run in one pod.
 #
-# One Deployment + Service per cluster in the `workshop` namespace. The Service is a plain
-# type: LoadBalancer so the EKS cloud-controller-manager provisions a Classic ELB directly; it does not
-# depend on the AWS Load Balancer Controller. The URL that ELB hands back is the student's terminal.
+# One Deployment + Service per cluster in the `workshop` namespace. nginx is the front door on 8080 and
+# reverse-proxies /terminal/ to ttyd on loopback:7681. The Service is a plain type: LoadBalancer so the
+# EKS cloud-controller-manager provisions a Classic ELB directly; it does not depend on the AWS Load
+# Balancer Controller. The URL that ELB hands back is the student's two-pane lab page.
+#
+# The lab page (web/lab.html) and the nginx config (web/console.conf) are shipped as ConfigMaps generated
+# from those files by apply.sh, so they stay editable as real files rather than YAML blobs.
 ---
 apiVersion: v1
 kind: Namespace
@@ -58,9 +62,9 @@ spec:
     spec:
       serviceAccountName: web-terminal
       automountServiceAccountToken: true # the shell's kubectl uses this token to reach the cluster API
-      # runAsUser 1000 = the image's numeric `student` user. A numeric uid is required to verify
-      # runAsNonRoot at admission.
-      securityContext: { runAsNonRoot: true, runAsUser: 1000, runAsGroup: 1000, seccompProfile: { type: RuntimeDefault } }
+      # runAsNonRoot at the pod; each container pins its own numeric uid below (ttyd 1000 = the image's
+      # `student` user; nginx 101 = the nginx-unprivileged user). Numeric uids let admission verify non-root.
+      securityContext: { runAsNonRoot: true, seccompProfile: { type: RuntimeDefault } }
       containers:
         - name: ttyd
           image: ghcr.io/peopleforrester/packt-agentic-devops:web-terminal
@@ -78,10 +82,42 @@ spec:
             tcpSocket: { port: ttyd }
             initialDelaySeconds: 15
             periodSeconds: 20
-          securityContext: { allowPrivilegeEscalation: false, capabilities: { drop: ["ALL"] } }
+          securityContext:
+            runAsUser: 1000
+            runAsGroup: 1000
+            allowPrivilegeEscalation: false
+            capabilities: { drop: ["ALL"] }
           resources:
             requests: { cpu: 100m, memory: 256Mi }
             limits: { cpu: "2", memory: 2Gi }
+        - name: nginx
+          # nginx-unprivileged listens on 8080 and runs as uid 101. Public image; fine for a demo cluster.
+          image: nginxinc/nginx-unprivileged:1.27-alpine
+          ports: [{ name: http, containerPort: 8080 }]
+          volumeMounts:
+            - { name: web, mountPath: /usr/share/nginx/html, readOnly: true }
+            - { name: conf, mountPath: /etc/nginx/conf.d, readOnly: true }
+          readinessProbe:
+            httpGet: { path: /healthz, port: http }
+            initialDelaySeconds: 3
+            periodSeconds: 10
+          livenessProbe:
+            httpGet: { path: /healthz, port: http }
+            initialDelaySeconds: 10
+            periodSeconds: 20
+          securityContext:
+            runAsUser: 101
+            runAsGroup: 101
+            allowPrivilegeEscalation: false
+            capabilities: { drop: ["ALL"] }
+          resources:
+            requests: { cpu: 25m, memory: 32Mi }
+            limits: { cpu: 250m, memory: 128Mi }
+      volumes:
+        - name: web
+          configMap: { name: console-src }
+        - name: conf
+          configMap: { name: console-conf }
 ---
 apiVersion: v1
 kind: Service
@@ -95,4 +131,4 @@ spec:
   ports:
     - name: http
       port: 80
-      targetPort: ttyd
+      targetPort: http

@@ -1,0 +1,280 @@
+<!-- ABOUTME: Packt workshop student lab page. Katacoda/KodeKloud split: the phase-by-phase build
+     ABOUTME: walkthrough on the left, the in-browser ttyd shell embedded on the right. KCD-Texas model:
+     ABOUTME: students BUILD the AI-native IDP with Claude Code, one phase at a time. -->
+<!doctype html>
+<html lang="en">
+<head>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>%F0%9F%9B%A0</text></svg>">
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Your cluster shell — Agentic DevOps with Claude</title>
+<style>
+  :root{
+    --accent:#FA7040;--ink:#191919;--cream:#F5F5F4;--panel:#ffffff;--lav:#FEF1EA;--mid:#4A4A4A;
+    --line:#e7e2dc;--ok:#2e9e5b;--term:#0f1117;--navy:#191919;
+  }
+  *,*::before,*::after{box-sizing:border-box}
+  html,body{margin:0;height:100%}
+  body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;background:var(--cream);color:var(--ink);display:flex;flex-direction:column;height:100vh;overflow:hidden}
+  header{background:var(--ink);color:#fff;padding:9px 16px;display:flex;align-items:center;gap:12px;flex:0 0 auto;border-bottom:3px solid var(--accent)}
+  header .brand{display:flex;align-items:center;gap:9px;font-weight:800;font-size:16px}
+  header .brand .em{font-size:20px}
+  header .spacer{flex:1}
+  header .pill{background:var(--accent);font-size:12px;font-weight:800;letter-spacing:.3px;padding:5px 11px;border-radius:999px}
+  header a.hb{color:#fff;text-decoration:none;font-weight:800;font-size:12.5px;background:rgba(255,255,255,.16);padding:7px 12px;border-radius:8px;white-space:nowrap}
+  header a.hb:hover{background:rgba(255,255,255,.30)}
+  .crumb{flex:0 0 auto;background:#26201c;color:#e9e2dc;font-size:12.5px;padding:7px 16px;display:flex;gap:8px;align-items:center;border-bottom:1px solid rgba(255,255,255,.08)}
+  .crumb b{color:#fff;font-family:ui-monospace,Menlo,Consolas,monospace}
+  .crumb .role{font-weight:800;text-transform:uppercase;letter-spacing:.4px;font-size:11px;background:var(--accent);color:#fff;padding:2px 8px;border-radius:999px}
+  .split{flex:1;display:flex;min-height:0}
+  .guide{width:42%;max-width:600px;min-width:360px;overflow:auto;padding:20px 22px;background:var(--panel);border-right:1px solid var(--line)}
+  .termcol{flex:1;min-width:0;background:var(--term);position:relative;display:flex;flex-direction:column}
+  .guide h1{font-size:21px;margin:0 0 4px;color:var(--ink)}
+  .guide .lede{color:var(--mid);font-size:14px;margin:0 0 16px;line-height:1.55}
+  .modtag{display:inline-block;font-size:11px;font-weight:800;letter-spacing:.5px;text-transform:uppercase;color:var(--accent);margin:18px 0 8px}
+  .step{border:1px solid var(--line);border-radius:12px;margin-bottom:12px;overflow:hidden}
+  .step .h{display:flex;align-items:center;gap:11px;padding:12px 14px;background:#fbf7f3;cursor:pointer}
+  .step .num{width:26px;height:26px;flex:0 0 26px;border-radius:50%;background:var(--lav);color:var(--accent);font-weight:800;display:grid;place-items:center;font-size:12px}
+  .step .t{font-weight:800;font-size:14.5px}
+  .step .chev{margin-left:auto;color:var(--mid);font-size:12px}
+  .step .b{padding:12px 14px;font-size:14px;line-height:1.55;color:#3a3340;display:none}
+  .step.open .b{display:block}
+  .step .b p{margin:0 0 9px}
+  .step .b .goal{color:var(--mid);font-size:13px;margin:0 0 10px}
+  .cmd{position:relative;display:block;background:var(--term);color:#e6e1f0;border-radius:8px;padding:10px 44px 10px 12px;font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:12.5px;margin:8px 0;white-space:pre-wrap;word-break:break-word;cursor:pointer;line-height:1.5}
+  .cmd:hover{outline:2px solid var(--accent)}
+  .cmd .cp{position:absolute;top:6px;right:6px;font-family:inherit;font-size:11px;font-weight:700;background:var(--accent);color:#fff;border:0;border-radius:6px;padding:3px 7px;cursor:pointer}
+  .cmd.copied .cp{background:var(--ok)}
+  .cmd .tag{position:absolute;top:6px;left:10px;font-size:10px;font-weight:800;letter-spacing:.4px;color:#8a93a6;text-transform:uppercase}
+  .cmd.prompt{padding-top:24px}
+  .tip{background:#f3fbf6;border:1px solid #cdeede;border-radius:10px;padding:10px 12px;font-size:13px;color:#2a5a40;margin:8px 0}
+  .warn{background:#fff6f6;border:1px solid #f3d2d2;border-radius:10px;padding:10px 12px;font-size:13px;color:#7a2e2e;margin:8px 0}
+  code.inl{background:var(--lav);border-radius:5px;padding:1px 6px;font-family:ui-monospace,Menlo,Consolas,monospace;font-size:12.5px}
+  .guide .foot{color:var(--mid);font-size:12px;margin-top:14px}
+  .small{font-size:12.5px;color:var(--mid)}
+  /* multi-terminal tabs: each pane is an independent ttyd session */
+  .termtabs{flex:0 0 auto;display:flex;align-items:center;gap:3px;background:#0a0c12;padding:6px 6px 0}
+  .ttab{font:inherit;font-size:12px;font-weight:700;color:#aeb4c8;background:#1a1e2b;border:0;border-radius:7px 7px 0 0;padding:6px 13px;cursor:pointer;display:flex;align-items:center;gap:7px}
+  .ttab.active{background:var(--term);color:#fff}
+  .ttab .x{opacity:.55;font-size:11px}
+  .ttab .x:hover{opacity:1}
+  .tadd{font:inherit;font-size:16px;font-weight:800;color:#aeb4c8;background:transparent;border:0;cursor:pointer;padding:2px 10px}
+  .tadd:hover{color:#fff}
+  .termpanes{flex:1;min-height:0;position:relative}
+  .tpane{position:absolute;inset:0;width:100%;height:100%;border:0;display:none}
+  .tpane.active{display:block}
+  #toast{position:fixed;bottom:18px;left:50%;transform:translateX(-50%);background:var(--ink);color:#fff;padding:9px 16px;border-radius:999px;font-size:13px;font-weight:700;opacity:0;transition:opacity .2s;pointer-events:none;z-index:30}
+  #toast.show{opacity:1}
+  .mobnote{display:none}
+  @media(max-width:860px){
+    body{overflow:auto;height:auto}
+    .split{flex-direction:column}
+    .guide{width:100%;max-width:none;border-right:0;border-bottom:1px solid var(--line)}
+    .termcol{height:70vh;min-height:420px}
+    .mobnote{display:block}
+  }
+</style>
+</head>
+<body>
+  <header>
+    <div class="brand"><span class="em">🛠️</span> Agentic DevOps with Claude</div>
+    <span class="pill" id="rolepill">HANDS-ON</span>
+    <div class="spacer"></div>
+    <a class="hb" id="provbtn" href="https://packt.ai-enhanced-devops.com" target="_blank" rel="noopener">&#8617; Provisioning</a>
+    <a class="hb" id="repobtn" href="https://github.com/peopleforrester/packt-agentic-devops" target="_blank" rel="noopener">&#128193; Repo</a>
+    <a class="hb" id="specbtn" href="https://github.com/peopleforrester/packt-agentic-devops/blob/main/spec/WORKSHOP-SPEC.md" target="_blank" rel="noopener">&#128220; Spec</a>
+  </header>
+
+  <div class="crumb"><span class="role" id="rolechip">STUDENT</span> Cluster <b id="cl">(loading&hellip;)</b> <span id="who"></span></div>
+
+  <div class="split">
+    <section class="guide">
+      <h1>This cluster is yours. 🛠️</h1>
+      <p class="lede">You are going to build an AI-native Internal Developer Platform on this cluster, phase by phase, with Claude Code as your platform engineer. The presenter builds the same thing in parallel and stops at each phase to explain what just happened. <b>Work one phase at a time and stop at the end of each one.</b> Tap any command or prompt to copy it, then paste it into the terminal on the right.</p>
+
+      <div class="tip">Two rules your agent follows the whole way: everything after the ArgoCD bootstrap flows through Git and ArgoCD, and every version comes from <code class="inl">components.yaml</code>, never from memory.</div>
+
+      <div class="modtag">Opening · Preflight</div>
+
+      <div class="step">
+        <div class="h"><div class="num">0</div><div class="t">Phase 0 — Preflight: look around and start Claude</div></div>
+        <div class="b">
+          <p class="goal">Confirm the bare cluster and tooling, then hand the build to your agent. Install nothing yet.</p>
+          <p>Your <code class="inl">kubectl</code> is already wired to this cluster. See that it is up:</p>
+          <div class="cmd" onclick="cp(this)"><span class="tag">shell</span><button class="cp">copy</button>kubectl get nodes</div>
+          <p>The workshop repo is already here at <code class="inl">~/workshop</code>. Start your agent:</p>
+          <div class="cmd" onclick="cp(this)"><span class="tag">shell</span><button class="cp">copy</button>claude</div>
+          <p>Then give it its first instruction:</p>
+          <div class="cmd prompt" onclick="cp(this)"><span class="tag">paste into Claude</span><button class="cp">copy</button>Read spec/WORKSHOP-SPEC.md and components.yaml. Summarize what we are building and the nine phases, then stop. Do not install anything yet.</div>
+        </div>
+      </div>
+
+      <div class="modtag">Module 1 · Cloud-native foundation</div>
+
+      <div class="step">
+        <div class="h"><div class="num">1</div><div class="t">Phase 1 — GitOps bootstrap and core foundation</div></div>
+        <div class="b">
+          <p class="goal">Install ArgoCD, point it at the repo, and let the App-of-Apps bring up cert-manager, OpenBao, External Secrets, and Kyverno.</p>
+          <div class="cmd prompt" onclick="cp(this)"><span class="tag">paste into Claude</span><button class="cp">copy</button>Read components.yaml and platform/0-bootstrap/root-app.yaml. In a few sentences, explain how the App-of-Apps pattern deploys this platform: what the root Application points at, how the per-component Applications are discovered, and how sync waves order the rollout. Do not apply anything yet.</div>
+          <div class="cmd prompt" onclick="cp(this)"><span class="tag">paste into Claude</span><button class="cp">copy</button>Apply the foundation App-of-Apps at platform/0-bootstrap/root-app.yaml into the argocd namespace. This is the bootstrap exception to the GitOps rule. Then watch the ArgoCD sync waves cascade and tell me when the foundation plane is all green.</div>
+          <p>The presenter seeds one broken Application. Heal it the GitOps way:</p>
+          <div class="cmd prompt" onclick="cp(this)"><span class="tag">paste into Claude</span><button class="cp">copy</button>One Application is failing to sync. Find which one from the ArgoCD status, read the error, and fix the root cause in its values. Commit the fix and watch ArgoCD heal it. Do not touch the cluster directly.</div>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="h"><div class="num">2</div><div class="t">Phase 2 — Observability plane</div></div>
+        <div class="b">
+          <p class="goal">kube-prometheus-stack, Loki, Tempo, and the OpenTelemetry Collector and Operator, all through Git.</p>
+          <div class="cmd prompt" onclick="cp(this)"><span class="tag">paste into Claude</span><button class="cp">copy</button>Read spec/phases/phase-2-observability.md and build that phase. Write the phase test first and confirm it fails, add the components through Git so ArgoCD syncs them, confirm the test passes, commit, output the completion promise, then stop.</div>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="h"><div class="num">3</div><div class="t">Phase 3 — Developer portal</div></div>
+        <div class="b">
+          <p class="goal">Backstage (catalog, TechDocs, scaffolder, ArgoCD plugin), KEDA, and the Argo extensions. End of Module 1: a working IDP.</p>
+          <div class="cmd prompt" onclick="cp(this)"><span class="tag">paste into Claude</span><button class="cp">copy</button>Read spec/phases/phase-3-portal.md and build that phase: test first, build through Git, confirm green, commit, output the completion promise, then stop.</div>
+          <div class="tip">Open Backstage when Claude reports it Healthy. That is your golden-path portal for the rest of the workshop.</div>
+        </div>
+      </div>
+
+      <div class="modtag">Module 2 · The AI plane (the centerpiece)</div>
+
+      <div class="step">
+        <div class="h"><div class="num">4</div><div class="t">Phase 4 — AI gateway plane</div></div>
+        <div class="b">
+          <p class="goal">Gateway API CRDs, kgateway, and agentgateway with mTLS and audit logging. The AI-plane Kyverno policies land here in audit mode, so the plane is governed from birth.</p>
+          <div class="cmd prompt" onclick="cp(this)"><span class="tag">paste into Claude</span><button class="cp">copy</button>Apply the AI-plane App-of-Apps at platform/0-bootstrap/ai-plane-app.yaml. Once kgateway is Healthy, show me the Gateway API resources it created and explain what the Gateway and GatewayClass represent here.</div>
+          <div class="cmd prompt" onclick="cp(this)"><span class="tag">paste into Claude</span><button class="cp">copy</button>agentgateway is deployed as the agentic data plane. Show me its routing configuration: how it mediates LLM, MCP, and A2A traffic, and confirm mTLS and audit logging are on by default.</div>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="h"><div class="num">5</div><div class="t">Phase 5 — Agent runtime and safety</div></div>
+        <div class="b">
+          <p class="goal">kagent and an Agent CRD, LLM Guard, and OpenLLMetry. The agent calls an MCP server through agentgateway; a prompt-injection attempt is blocked.</p>
+          <div class="cmd prompt" onclick="cp(this)"><span class="tag">paste into Claude</span><button class="cp">copy</button>Write a kagent Agent that acts as a platform helper: it answers questions about this platform's components and golden paths, keeps answers short and concrete, and says so when it does not know. Route it at the in-cluster vLLM through a ModelConfig, not any external provider. Put it in the kagent namespace, commit it under platform/2-ai-plane/demo-agent/manifests/, and let ArgoCD reconcile it.</div>
+          <div class="cmd prompt" onclick="cp(this)"><span class="tag">paste into Claude</span><button class="cp">copy</button>Have the platform-helper agent call the MCP server through agentgateway, then show me the audit log entry for that call.</div>
+          <div class="cmd prompt" onclick="cp(this)"><span class="tag">paste into Claude</span><button class="cp">copy</button>Send the prompt-injection test fixture at the agent. Show me LLM Guard intercepting and blocking it, and the blocked request in the audit log.</div>
+          <div class="tip">The Agent is <code class="inl">kagent.dev/v1alpha2</code> with <code class="inl">spec.declarative.systemMessage</code>. If your agent reaches for v1alpha1 or systemPrompt, that is stale training data; correct it.</div>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="h"><div class="num">6</div><div class="t">Phase 6 — Model serving</div></div>
+        <div class="b">
+          <p class="goal">KServe with a small in-cluster vLLM model, llm-d shown as the scheduling layer. The agent trace lands in Tempo. End of Module 2: AI-native.</p>
+          <div class="cmd prompt" onclick="cp(this)"><span class="tag">paste into Claude</span><button class="cp">copy</button>Open the trace from the agent's MCP call in Tempo. Walk the spans and point out the GenAI semantic-convention attributes: model, token counts, tool calls. Then load the AI-plane Grafana dashboard.</div>
+          <div class="cmd prompt" onclick="cp(this)"><span class="tag">paste into Claude</span><button class="cp">copy</button>Send one inference request to the vLLM model through its OpenAI-compatible endpoint and show me the response.</div>
+        </div>
+      </div>
+
+      <div class="modtag">Module 3 · Self-service</div>
+
+      <div class="step">
+        <div class="h"><div class="num">7</div><div class="t">Phase 7 — Self-service golden path</div></div>
+        <div class="b">
+          <p class="goal">A Backstage scaffolder template for an agent-service and the ArgoCD ApplicationSet that watches for it. The golden path fires end to end.</p>
+          <div class="cmd prompt" onclick="cp(this)"><span class="tag">paste into Claude</span><button class="cp">copy</button>Write a Backstage scaffolder template for an agent-service. The form takes an agent name, purpose, model route, and the MCP tools it is allowed. On submit it generates a repo containing a kagent Agent CRD, an agentgateway route, an LLM Guard policy reference, and OTel instrumentation defaults. Commit it under platform/3-self-service/agent-service/.</div>
+          <div class="cmd prompt" onclick="cp(this)"><span class="tag">paste into Claude</span><button class="cp">copy</button>Write the ApplicationSet that watches the in-cluster Gitea for repos generated by this template and auto-creates an ArgoCD Application for each. Commit it at platform/3-self-service/applicationset.yaml.</div>
+          <div class="cmd prompt" onclick="cp(this)"><span class="tag">paste into Claude</span><button class="cp">copy</button>Through the Backstage portal, request a new agent: fill the form and submit. Then watch the chain: scaffolder generates the repo, the ApplicationSet creates the Application, ArgoCD syncs it, the agent runs, and the first trace lands in Tempo.</div>
+        </div>
+      </div>
+
+      <div class="modtag">Wrap · Governance and attribution</div>
+
+      <div class="step">
+        <div class="h"><div class="num">8</div><div class="t">Phase 8 — Governance, attribution, and your commitment</div></div>
+        <div class="b">
+          <p class="goal">Flip the AI-plane Kyverno policies from audit to enforce with a live denial, then show per-agent attribution in Loki.</p>
+          <div class="cmd prompt" onclick="cp(this)"><span class="tag">paste into Claude</span><button class="cp">copy</button>Flip the AI-plane Kyverno policies from audit to enforce. Then try to apply the violating agent fixture with no LLM Guard reference and show Kyverno denying it.</div>
+          <div class="cmd prompt" onclick="cp(this)"><span class="tag">paste into Claude</span><button class="cp">copy</button>Run the Loki query that shows every action in this cluster attributed to a named agent identity, including this Claude Code session's own actions from the audit hook.</div>
+          <div class="tip">The agent that built the platform shows up in the platform's own audit trail. That is the point: agents are first-class, governed identities here.</div>
+        </div>
+      </div>
+
+      <p class="foot">Lost? The terminal on the right is the source of truth. Re-run <code class="inl">kubectl get nodes</code> any time to confirm you are still connected. Your Starship prompt shows your cluster, namespace, and AWS context at a glance.</p>
+      <p class="mobnote foot">On a small screen the terminal is below these steps. A laptop is the better experience.</p>
+    </section>
+
+    <section class="termcol">
+      <div class="termtabs" id="termtabs">
+        <button class="ttab active" data-i="0" onclick="showTerm(0)">Terminal 1</button>
+        <button class="tadd" onclick="addTerm()" title="New terminal">+</button>
+      </div>
+      <div class="termpanes" id="termpanes">
+        <iframe class="tpane active" data-i="0" src="/terminal/" title="Terminal 1"></iframe>
+      </div>
+    </section>
+  </div>
+
+  <div id="toast">copied</div>
+
+<script>
+  // Cluster identity comes from the link the provisioning app built (it knows the student's cluster + email).
+  (function initCrumb(){
+    var q=new URLSearchParams(location.search);
+    var cluster=q.get('cluster')||'(cluster not specified)';
+    var user=q.get('user')||'';
+    var role=(q.get('role')||'student').toLowerCase();
+    var prov=q.get('prov');
+    var instr=role==='instructor';
+    document.getElementById('cl').textContent=cluster;
+    document.getElementById('who').textContent=user?('· '+user):'';
+    document.getElementById('rolechip').textContent=instr?'INSTRUCTOR':'STUDENT';
+    document.getElementById('rolepill').textContent=instr?'INSTRUCTOR':'HANDS-ON';
+    if(prov) document.getElementById('provbtn').href=prov;
+    document.title=(instr?'Instructor':'Student')+' terminal — '+cluster;
+  })();
+  function toast(t){var e=document.getElementById('toast');e.textContent=t;e.classList.add('show');clearTimeout(window._tt);window._tt=setTimeout(function(){e.classList.remove('show');},1300);}
+  function cp(el){
+    // pull the command/prompt text, excluding the copy button and the corner tag label
+    var txt='';
+    el.childNodes.forEach(function(n){ if(n.nodeType===3) txt+=n.nodeValue; });
+    txt=txt.trim();
+    if(!txt){ txt=el.textContent.replace(/\s*(copy|shell|paste into Claude)\s*/gi,' ').trim(); }
+    function done(){el.classList.add('copied');var b=el.querySelector('.cp');if(b){var o=b.textContent;b.textContent='copied';setTimeout(function(){b.textContent=o;el.classList.remove('copied');},1200);}toast('Copied');}
+    if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(txt).then(done,function(){fb(txt);done();});}
+    else{fb(txt);done();}
+    function fb(t){var ta=document.createElement('textarea');ta.value=t;ta.style.position='fixed';ta.style.opacity='0';document.body.appendChild(ta);ta.select();try{document.execCommand('copy');}catch(e){}document.body.removeChild(ta);}
+  }
+  // Collapsible steps: Phase 0 open by default, the rest closed, state persists per step.
+  document.querySelectorAll('.guide .step').forEach(function(step, idx){
+    var h=step.querySelector('.h');
+    var chev=document.createElement('div'); chev.className='chev'; h.appendChild(chev);
+    var saved=localStorage.getItem('packt-step-'+idx);
+    var open = saved===null ? (idx===0) : (saved==='1');
+    step.classList.toggle('open', open); chev.textContent=open?'▾':'▸';
+    h.addEventListener('click', function(){
+      var o=step.classList.toggle('open');
+      localStorage.setItem('packt-step-'+idx, o?'1':'0');
+      chev.textContent=o?'▾':'▸';
+    });
+  });
+  // Multi-terminal tabs (Katacoda/KodeKloud style). Each pane is its own ttyd session.
+  var termN=1;
+  function showTerm(i){
+    document.querySelectorAll('.tpane').forEach(function(p){p.classList.toggle('active', +p.dataset.i===i);});
+    document.querySelectorAll('.ttab').forEach(function(t){t.classList.toggle('active', +t.dataset.i===i);});
+  }
+  function addTerm(){
+    var i=termN++;
+    var f=document.createElement('iframe'); f.className='tpane'; f.dataset.i=i; f.src='/terminal/'; f.title='Terminal '+(i+1);
+    document.getElementById('termpanes').appendChild(f);
+    var b=document.createElement('button'); b.className='ttab'; b.dataset.i=i;
+    b.innerHTML='Terminal '+(i+1)+' <span class="x">✕</span>';
+    b.addEventListener('click', function(){ showTerm(i); });
+    b.querySelector('.x').addEventListener('click', function(ev){ ev.stopPropagation(); closeTerm(i); });
+    var tabs=document.getElementById('termtabs');
+    tabs.insertBefore(b, tabs.querySelector('.tadd'));
+    showTerm(i);
+  }
+  function closeTerm(i){
+    var p=document.querySelector('.tpane[data-i="'+i+'"]'); if(p)p.remove();
+    var t=document.querySelector('.ttab[data-i="'+i+'"]'); if(t)t.remove();
+    var first=document.querySelector('.ttab'); if(first)showTerm(+first.dataset.i);
+  }
+</script>
+</body>
+</html>
