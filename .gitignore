@@ -30,3 +30,7 @@ PROJECT_STATE.md
 # History was scrubbed of these paths when the repo was made public.
 internal/
 prds/
+
+# Repo-local scratch dir (working-directory-boundary rule)
+/tmp/
+tmp/

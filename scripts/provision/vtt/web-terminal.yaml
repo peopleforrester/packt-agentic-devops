@@ -1,0 +1,98 @@
+# ABOUTME: Student web-terminal (VTT) deployed into a workshop cluster: ttyd behind a LoadBalancer,
+# ABOUTME: kubectl wired to THIS cluster via the pod ServiceAccount, the student's AWS keys optional.
+#
+# One Deployment + Service per cluster in the `workshop` namespace. The Service is a plain
+# type: LoadBalancer so the EKS cloud-controller-manager provisions a Classic ELB directly; it does not
+# depend on the AWS Load Balancer Controller. The URL that ELB hands back is the student's terminal.
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: workshop
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: web-terminal
+  namespace: workshop
+---
+# Scoped terminal RBAC: read everything (including secrets, on the student's own single-tenant cluster);
+# write the common workload kinds; exec/debug. NOT cluster-admin and NOT RBAC mutation, so a terminal
+# cannot rewrite its own access or escalate privileges. It debugs and builds; it does not grant itself more.
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: console-terminal
+rules:
+  - apiGroups: ["*"]
+    resources: ["*"]
+    verbs: ["get", "list", "watch"]
+  - apiGroups: ["", "apps", "batch", "networking.k8s.io"]
+    resources: ["*"]
+    verbs: ["create", "update", "patch", "delete"]
+  - apiGroups: [""]
+    resources: ["pods/exec", "pods/portforward", "pods/ephemeralcontainers"]
+    verbs: ["create", "get"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: console-terminal
+roleRef: { apiGroup: rbac.authorization.k8s.io, kind: ClusterRole, name: console-terminal }
+subjects:
+  - kind: ServiceAccount
+    name: web-terminal
+    namespace: workshop
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: web-terminal
+  namespace: workshop
+  labels: { app.kubernetes.io/name: web-terminal }
+spec:
+  replicas: 1
+  selector: { matchLabels: { app.kubernetes.io/name: web-terminal } }
+  template:
+    metadata: { labels: { app.kubernetes.io/name: web-terminal } }
+    spec:
+      serviceAccountName: web-terminal
+      automountServiceAccountToken: true # the shell's kubectl uses this token to reach the cluster API
+      # runAsUser 1000 = the image's numeric `student` user. A numeric uid is required to verify
+      # runAsNonRoot at admission.
+      securityContext: { runAsNonRoot: true, runAsUser: 1000, runAsGroup: 1000, seccompProfile: { type: RuntimeDefault } }
+      containers:
+        - name: ttyd
+          image: ghcr.io/peopleforrester/packt-agentic-devops:web-terminal
+          imagePullPolicy: Always # mutable tag; always re-pull so a rebuild lands on pod restart
+          ports: [{ name: ttyd, containerPort: 7681 }]
+          # The student's own AWS keys, mounted as the DEFAULT profile inside the VTT so `aws` works with
+          # no flags. Created per-cluster outside git; optional so a cluster without it still runs.
+          envFrom:
+            - secretRef: { name: student-aws-creds, optional: true }
+          readinessProbe:
+            tcpSocket: { port: ttyd }
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          livenessProbe:
+            tcpSocket: { port: ttyd }
+            initialDelaySeconds: 15
+            periodSeconds: 20
+          securityContext: { allowPrivilegeEscalation: false, capabilities: { drop: ["ALL"] } }
+          resources:
+            requests: { cpu: 100m, memory: 256Mi }
+            limits: { cpu: "2", memory: 2Gi }
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: web-terminal
+  namespace: workshop
+  labels: { app.kubernetes.io/name: web-terminal }
+spec:
+  type: LoadBalancer
+  selector: { app.kubernetes.io/name: web-terminal }
+  ports:
+    - name: http
+      port: 80
+      targetPort: ttyd

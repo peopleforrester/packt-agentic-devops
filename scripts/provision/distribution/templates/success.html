@@ -11,39 +11,67 @@
     <div style="font-size:15px;color:var(--navy);">Region: <strong>{{ region }}</strong></div>
   </section>
 
-  <h2 style="margin-top:24px;">AWS Credentials</h2>
-  <div class="copy-row">
-    <span class="key-label">Access key</span>
-    <code id="ak">{{ access_key }}</code>
-    <button type="button" class="copy-btn" onclick="copyText('ak', this, 'access key')"
-            aria-label="Copy access key">copy</button>
-  </div>
-  <div class="copy-row">
-    <span class="key-label">Secret key</span>
-    <code id="sk">{{ secret_key }}</code>
-    <button type="button" class="copy-btn" onclick="copyText('sk', this, 'secret key')"
-            aria-label="Copy secret key">copy</button>
-  </div>
+  {% if terminal_url %}
+    <h2 style="margin-top:24px;">Your terminal</h2>
+    <p style="font-size:15px;color:var(--navy);margin:6px 0 12px;">
+      Your browser terminal is already signed in to your cluster. kubectl is wired,
+      Claude Code is installed, and the workshop repo is cloned at <code>~/workshop</code>.
+    </p>
+    <p style="margin:0 0 8px;">
+      <a href="{{ terminal_url }}" target="_blank" rel="noopener"
+         style="display:inline-block;background:var(--accent);color:#fff;text-decoration:none;font-weight:700;font-size:16px;padding:12px 24px;border-radius:6px;">Open your terminal &rarr;</a>
+    </p>
+    <div class="copy-row">
+      <span class="key-label">Terminal URL</span>
+      <code id="turl">{{ terminal_url }}</code>
+      <button type="button" class="copy-btn" onclick="copyText('turl', this, 'terminal URL')"
+              aria-label="Copy terminal URL">copy</button>
+    </div>
+    <div class="callout">
+      <strong style="font-style:normal;color:var(--navy);">Inside the terminal,</strong>
+      run <code style="font-style:normal;">claude</code>, then point Claude at
+      <code style="font-style:normal;">spec/WORKSHOP-SPEC.md</code> and follow the phased build.
+      Claude creates the platform namespaces as it builds &mdash; do not pre-create anything.
+    </div>
+  {% endif %}
 
-  <h2 style="margin-top:28px;">Setup commands</h2>
-  <pre class="codeblock" id="cmds"><button type="button" class="copy-btn" onclick="copyText('cmds', this, 'setup commands')" aria-label="Copy setup commands">copy</button>aws configure                                  # paste keys above; region {{ region }}
+  {% if access_key %}
+    <h2 style="margin-top:28px;">{% if terminal_url %}Prefer your own machine? {% endif %}AWS Credentials</h2>
+    <div class="copy-row">
+      <span class="key-label">Access key</span>
+      <code id="ak">{{ access_key }}</code>
+      <button type="button" class="copy-btn" onclick="copyText('ak', this, 'access key')"
+              aria-label="Copy access key">copy</button>
+    </div>
+    <div class="copy-row">
+      <span class="key-label">Secret key</span>
+      <code id="sk">{{ secret_key }}</code>
+      <button type="button" class="copy-btn" onclick="copyText('sk', this, 'secret key')"
+              aria-label="Copy secret key">copy</button>
+    </div>
+
+    <h2 style="margin-top:28px;">{% if terminal_url %}Local setup commands{% else %}Setup commands{% endif %}</h2>
+    <pre class="codeblock" id="cmds"><button type="button" class="copy-btn" onclick="copyText('cmds', this, 'setup commands')" aria-label="Copy setup commands">copy</button>aws configure                                  # paste keys above; region {{ region }}
 aws eks update-kubeconfig --name {{ cluster_name }} --region {{ region }}
 kubectl get nodes                              # expect 1 Ready  (single t3.2xlarge)
 git clone https://github.com/peopleforrester/packt-agentic-devops.git
 cd packt-agentic-devops
 claude</pre>
+  {% endif %}
 
-  <div class="callout">
-    <strong style="font-style:normal;color:var(--navy);">When Claude starts,</strong>
-    point it at <code style="font-style:normal;">spec/WORKSHOP-SPEC.md</code> and follow the
-    phased build. Claude creates the platform namespaces as it builds
-    &mdash; do not pre-create anything.
-  </div>
+  {% if not terminal_url %}
+    <div class="callout">
+      <strong style="font-style:normal;color:var(--navy);">When Claude starts,</strong>
+      point it at <code style="font-style:normal;">spec/WORKSHOP-SPEC.md</code> and follow the
+      phased build. Claude creates the platform namespaces as it builds
+      &mdash; do not pre-create anything.
+    </div>
 
-  <p style="color:var(--mid-gray);font-size:13px;margin-top:24px;">
-    If <code>kubectl get nodes</code> shows no Ready node, raise your hand during
-    the setup window for a spare cluster.
-  </p>
+    <p style="color:var(--mid-gray);font-size:13px;margin-top:24px;">
+      If <code>kubectl get nodes</code> shows no Ready node, raise your hand during
+      the setup window for a spare cluster.
+    </p>
+  {% endif %}
 
   {% if other_path %}
     <p style="margin-top:18px;font-size:13px;color:var(--light-gray);font-style:italic;">
