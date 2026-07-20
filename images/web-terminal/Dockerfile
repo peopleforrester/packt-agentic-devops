@@ -4,7 +4,7 @@ FROM debian:bookworm-slim
 
 # Base utilities the lab leans on. glibc base so AWS CLI v2 installs cleanly (it is not built for musl).
 RUN apt-get update && apt-get install -y --no-install-recommends \
-      ca-certificates curl wget unzip git jq less vim-tiny gnupg bash procps \
+      ca-certificates curl wget unzip git jq less vim-tiny gnupg bash procps tmux \
  && rm -rf /var/lib/apt/lists/*
 
 # ttyd (static binary), kubectl (pinned to the cluster minor 1.35), AWS CLI v2, helm, eksctl, k9s, yq.
@@ -38,12 +38,16 @@ RUN useradd -m -u 1000 -s /bin/bash student \
  && mkdir -p /home/student/.kube /home/student/.aws /home/student/.config \
  && chown -R student:student /home/student
 
-# Starship prompt config, baked in so the shell comes up pretty on first connect.
+# Starship prompt config + tmux config, baked in so the shell comes up pretty and persistent.
 COPY starship.toml /home/student/.config/starship.toml
+COPY tmux.conf /home/student/.tmux.conf
+
+# ttyd launch shim: attaches each browser terminal to a named, persistent tmux session.
+COPY vtt-shell /usr/local/bin/vtt-shell
 
 COPY entrypoint.sh /entrypoint.sh
-RUN chmod +x /entrypoint.sh \
- && chown student:student /home/student/.config/starship.toml
+RUN chmod +x /entrypoint.sh /usr/local/bin/vtt-shell \
+ && chown student:student /home/student/.config/starship.toml /home/student/.tmux.conf
 
 USER student
 WORKDIR /home/student
