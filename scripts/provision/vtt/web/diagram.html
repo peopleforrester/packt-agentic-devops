@@ -29,6 +29,10 @@
   .btn.primary{background:var(--accent);color:#fff;border-color:var(--accent)}
   .btn.primary:hover{background:var(--accent-d)}
   .btn:disabled{opacity:.4;cursor:default}
+  .btn#live{color:#9aa0ab;border-color:var(--line)}
+  .btn#live.following{color:var(--ok);border-color:#bfe3cd;background:#f4fbf6}
+  .btn#live.following::before{content:'';display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--ok);margin-right:2px;animation:blink 1.4s infinite}
+  @keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
   .pips{display:flex;gap:5px;align-items:center;flex-wrap:wrap}
   .pip{width:30px;height:30px;border-radius:8px;border:1px solid var(--line);background:#fff;color:var(--mid);font:inherit;font-size:12px;font-weight:800;cursor:pointer;display:grid;place-items:center}
   .pip.done{background:var(--lav);color:var(--accent);border-color:var(--lav)}
@@ -83,9 +87,10 @@
   </header>
 
   <div class="controls">
-    <button class="btn" id="prev" onclick="step(-1)">‹ Back</button>
-    <button class="btn primary" id="next" onclick="step(1)">Next ›</button>
+    <button class="btn" id="prev" onclick="userStep(-1)">‹ Back</button>
+    <button class="btn primary" id="next" onclick="userStep(1)">Next ›</button>
     <button class="btn" id="play" onclick="togglePlay()">▶ Play</button>
+    <button class="btn" id="live" onclick="toggleLive()" title="Follow your cluster's real progress">● Live</button>
     <div class="pips" id="pips"></div>
   </div>
 
@@ -177,7 +182,7 @@
   PHASES.forEach(function(ph){
     var b = document.createElement('button'); b.className = 'pip'; b.textContent = ph.n;
     b.title = 'Phase ' + ph.n + ' — ' + ph.name;
-    b.onclick = function(){ goTo(ph.n); };
+    b.onclick = function(){ userGoTo(ph.n); };
     pipsEl.appendChild(b);
   });
   document.getElementById('count').textContent = CHIPS.length + ' components across ' + (PHASES.length-1) + ' phases';
@@ -218,23 +223,47 @@
     document.getElementById('next').disabled = cur === PHASES.length - 1;
   }
   function goTo(n){ cur = Math.max(0, Math.min(PHASES.length-1, n)); render(); }
-  function step(d){ goTo(cur + d); if (cur === PHASES.length-1) stopPlay(); }
+
+  // Live-follow: poll the cluster's real phase and track it, until the presenter takes manual control.
+  var follow = true, livePhase = null, pollTimer = null;
+  function updateLive(){
+    var b = document.getElementById('live');
+    b.classList.toggle('following', follow);
+    b.textContent = follow ? 'Live' : (livePhase !== null ? 'Resume live (phase ' + livePhase + ')' : 'Go live');
+  }
+  function manual(){ if (follow){ follow = false; updateLive(); } }
+  function userGoTo(n){ manual(); stopPlay(); goTo(n); }
+  function userStep(d){ manual(); goTo(cur + d); if (cur === PHASES.length-1) stopPlay(); }
+  function toggleLive(){ follow = !follow; if (follow){ stopPlay(); pollStatus(); } updateLive(); }
+  function pollStatus(){
+    fetch('/api/status', { cache: 'no-store' }).then(function(r){ return r.ok ? r.json() : null; })
+      .then(function(d){
+        if (!d || typeof d.phase !== 'number') return;
+        livePhase = d.phase;
+        if (follow && d.phase !== cur) goTo(d.phase);
+        updateLive();
+      }).catch(function(){ /* status not up yet; stay put */ });
+  }
+
   function togglePlay(){ playing ? stopPlay() : startPlay(); }
   function startPlay(){
-    playing = true; document.getElementById('play').textContent = '⏸ Pause';
+    manual(); playing = true; document.getElementById('play').textContent = '⏸ Pause';
     if (cur === PHASES.length-1) goTo(0);
-    timer = setInterval(function(){ if (cur < PHASES.length-1) step(1); else stopPlay(); }, 2400);
+    timer = setInterval(function(){ if (cur < PHASES.length-1) goTo(cur+1); else stopPlay(); }, 2400);
   }
   function stopPlay(){ playing = false; document.getElementById('play').textContent = '▶ Play'; if (timer) clearInterval(timer); }
 
-  // Keyboard + deep-link (?phase=N)
+  // Keyboard + deep-link (?phase=N forces manual, so a shared link pins a phase).
   document.addEventListener('keydown', function(e){
-    if (e.key === 'ArrowRight') step(1);
-    else if (e.key === 'ArrowLeft') step(-1);
+    if (e.key === 'ArrowRight') userStep(1);
+    else if (e.key === 'ArrowLeft') userStep(-1);
   });
   var qp = new URLSearchParams(location.search).get('phase');
-  if (qp !== null && !isNaN(+qp)) cur = Math.max(0, Math.min(PHASES.length-1, +qp));
+  if (qp !== null && !isNaN(+qp)) { follow = false; cur = Math.max(0, Math.min(PHASES.length-1, +qp)); }
+  updateLive();
   render();
+  pollStatus();
+  pollTimer = setInterval(pollStatus, 8000);
 </script>
 </body>
 </html>
