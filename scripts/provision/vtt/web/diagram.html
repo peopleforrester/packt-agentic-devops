@@ -140,24 +140,25 @@
     {id:'selfservice', title:'Self-service'},
     {id:'governance', title:'Governance & attribution'}
   ];
+  // k = the key the status detector reports in `up` when this component is actually running.
   var CHIPS = [
-    {l:'cert-manager', b:'foundation', p:1}, {l:'OpenBao', b:'foundation', p:1},
-    {l:'External Secrets', b:'foundation', p:1}, {l:'Kyverno · audit', b:'foundation', p:1},
-    {l:'AWS LB Controller', b:'foundation', p:1}, {l:'EBS CSI', b:'foundation', p:1},
-    {l:'Prometheus', b:'observability', p:2}, {l:'Grafana', b:'observability', p:2},
-    {l:'Alertmanager', b:'observability', p:2}, {l:'Loki', b:'observability', p:2},
-    {l:'Tempo', b:'observability', p:2}, {l:'OTel Collector', b:'observability', p:2},
-    {l:'OTel Operator', b:'observability', p:2},
-    {l:'Backstage', b:'portal', p:3}, {l:'KEDA', b:'portal', p:3},
-    {l:'Argo Workflows', b:'portal', p:3}, {l:'Argo Events', b:'portal', p:3},
-    {l:'Argo Rollouts', b:'portal', p:3}, {l:'Gitea', b:'portal', p:3},
-    {l:'Gateway API', b:'aigw', p:4}, {l:'kgateway', b:'aigw', p:4}, {l:'agentgateway', b:'aigw', p:4},
-    {l:'kagent', b:'runtime', p:5}, {l:'LLM Guard', b:'runtime', p:5},
-    {l:'OpenLLMetry', b:'runtime', p:5}, {l:'MCP server', b:'runtime', p:5},
-    {l:'KServe', b:'serving', p:6}, {l:'vLLM', b:'serving', p:6}, {l:'llm-d', b:'serving', p:6},
-    {l:'Scaffolder template', b:'selfservice', p:7}, {l:'ApplicationSet', b:'selfservice', p:7},
-    {l:'Score', b:'selfservice', p:7},
-    {l:'Kyverno · enforce', b:'governance', p:8}, {l:'Per-agent attribution', b:'governance', p:8}
+    {l:'cert-manager', b:'foundation', p:1, k:'cert-manager'}, {l:'OpenBao', b:'foundation', p:1, k:'openbao'},
+    {l:'External Secrets', b:'foundation', p:1, k:'external-secrets'}, {l:'Kyverno · audit', b:'foundation', p:1, k:'kyverno'},
+    {l:'AWS LB Controller', b:'foundation', p:1, k:'alb'}, {l:'EBS CSI', b:'foundation', p:1, k:'ebs'},
+    {l:'Prometheus', b:'observability', p:2, k:'observability'}, {l:'Grafana', b:'observability', p:2, k:'observability'},
+    {l:'Alertmanager', b:'observability', p:2, k:'observability'}, {l:'Loki', b:'observability', p:2, k:'observability'},
+    {l:'Tempo', b:'observability', p:2, k:'observability'}, {l:'OTel Collector', b:'observability', p:2, k:'observability'},
+    {l:'OTel Operator', b:'observability', p:2, k:'observability'},
+    {l:'Backstage', b:'portal', p:3, k:'backstage'}, {l:'KEDA', b:'portal', p:3, k:'keda'},
+    {l:'Argo Workflows', b:'portal', p:3, k:'argo'}, {l:'Argo Events', b:'portal', p:3, k:'argo-events'},
+    {l:'Argo Rollouts', b:'portal', p:3, k:'argo-rollouts'}, {l:'Gitea', b:'portal', p:3, k:'gitea'},
+    {l:'Gateway API', b:'aigw', p:4, k:'gateway-api'}, {l:'kgateway', b:'aigw', p:4, k:'kgateway-system'}, {l:'agentgateway', b:'aigw', p:4, k:'agentgateway'},
+    {l:'kagent', b:'runtime', p:5, k:'kagent'}, {l:'LLM Guard', b:'runtime', p:5, k:'kagent'},
+    {l:'OpenLLMetry', b:'runtime', p:5, k:'kagent'}, {l:'MCP server', b:'runtime', p:5, k:'kagent'},
+    {l:'KServe', b:'serving', p:6, k:'kserve'}, {l:'vLLM', b:'serving', p:6, k:'inferenceservice'}, {l:'llm-d', b:'serving', p:6, k:'llm-d'},
+    {l:'Scaffolder template', b:'selfservice', p:7, k:'applicationset'}, {l:'ApplicationSet', b:'selfservice', p:7, k:'applicationset'},
+    {l:'Score', b:'selfservice', p:7, k:'applicationset'},
+    {l:'Kyverno · enforce', b:'governance', p:8, k:'kyverno-enforce'}, {l:'Per-agent attribution', b:'governance', p:8, k:'observability'}
   ];
 
   var cur = 0, playing = false, timer = null;
@@ -169,7 +170,7 @@
     var t = document.createElement('div'); t.className = 'bt'; t.textContent = band.title; wrap.appendChild(t);
     var chips = document.createElement('div'); chips.className = 'chips';
     CHIPS.filter(function(c){return c.b===band.id;}).forEach(function(c){
-      var el = document.createElement('span'); el.className = 'chip'; el.dataset.phase = c.p;
+      var el = document.createElement('span'); el.className = 'chip'; el.dataset.phase = c.p; el.dataset.k = c.k;
       el.innerHTML = '<span class="dot"></span>' + c.l;
       chips.appendChild(el);
     });
@@ -194,25 +195,34 @@
     document.getElementById('obj').textContent = ph.obj;
     document.getElementById('empty').style.display = cur === 0 ? 'block' : 'none';
 
-    // Argo CD + Git appear at phase 1
-    var argoOn = cur >= 1;
+    // In live mode a component is "built" only if the detector reports it actually running (up[]); in
+    // manual mode we show the phase-by-phase reveal for presenting.
+    var liveNow = (typeof follow !== 'undefined') && follow;
+    function chipUp(k){ return liveUp.indexOf(k) !== -1; }
+
+    // Argo CD + Git: on when argocd is actually up (live) or from phase 1 (manual).
+    var argoOn = liveNow ? chipUp('argocd') : (cur >= 1);
     document.getElementById('node-git').style.opacity = argoOn ? '1' : '.35';
     var argo = document.getElementById('node-argo');
     argo.style.opacity = argoOn ? '1' : '.35';
-    argo.classList.toggle('active-hub', cur === 1);
+    argo.classList.toggle('active-hub', !liveNow && cur === 1);
     document.getElementById('reconcile').style.opacity = argoOn ? '1' : '.4';
 
     document.querySelectorAll('.chip').forEach(function(el){
-      var p = +el.dataset.phase;
+      var p = +el.dataset.phase, k = el.dataset.k;
       el.classList.remove('future','active','built');
-      if (p > cur) el.classList.add('future');
-      else if (p === cur) el.classList.add('active');
-      else el.classList.add('built');
+      if (liveNow) {
+        el.classList.add(chipUp(k) ? 'built' : 'future');
+      } else if (p > cur) { el.classList.add('future'); }
+      else if (p === cur) { el.classList.add('active'); }
+      else { el.classList.add('built'); }
     });
-    // Dim a band whose chips are all still in the future
+    // Dim a band with nothing live/revealed yet.
     document.querySelectorAll('.band').forEach(function(bd){
-      var anyLive = Array.prototype.some.call(bd.querySelectorAll('.chip'), function(c){ return +c.dataset.phase <= cur; });
-      bd.style.opacity = anyLive ? '1' : '.5';
+      var any = Array.prototype.some.call(bd.querySelectorAll('.chip'), function(c){
+        return liveNow ? chipUp(c.dataset.k) : (+c.dataset.phase <= cur);
+      });
+      bd.style.opacity = any ? '1' : '.5';
     });
     // Pips
     document.querySelectorAll('.pip').forEach(function(p, i){
@@ -225,7 +235,7 @@
   function goTo(n){ cur = Math.max(0, Math.min(PHASES.length-1, n)); render(); }
 
   // Live-follow: poll the cluster's real phase and track it, until the presenter takes manual control.
-  var follow = true, livePhase = null, pollTimer = null;
+  var follow = true, livePhase = null, liveUp = [], pollTimer = null;
   function updateLive(){
     var b = document.getElementById('live');
     b.classList.toggle('following', follow);
@@ -238,9 +248,10 @@
   function pollStatus(){
     fetch('/api/status', { cache: 'no-store' }).then(function(r){ return r.ok ? r.json() : null; })
       .then(function(d){
-        if (!d || typeof d.phase !== 'number') return;
-        livePhase = d.phase;
-        if (follow && d.phase !== cur) goTo(d.phase);
+        if (!d) return;
+        if (Array.isArray(d.up)) liveUp = d.up;
+        if (typeof d.phase === 'number') livePhase = d.phase;
+        if (follow) { if (typeof d.phase === 'number') cur = d.phase; render(); }
         updateLive();
       }).catch(function(){ /* status not up yet; stay put */ });
   }
