@@ -9,15 +9,19 @@ export PATH="$HOME/.local/bin:$HOME/workshop:$PATH"
 mkdir -p "$HOME/.kube" "$HOME/.aws"
 
 # kubectl talks to THIS cluster via the pod's own ServiceAccount token. No kubeconfig secret needed.
+# The context is named after the cluster (CLUSTER_NAME, defaulting to a friendly label) so the
+# Starship prompt reads "☸ <cluster>" rather than a generic placeholder. Default namespace is
+# "default": the student builds across many namespaces, so the pod's own namespace would mislead.
+CTX_NAME="${CLUSTER_NAME:-eks-workshop}"
 if [ -f "$SA/token" ]; then
-  kubectl config set-cluster this \
+  kubectl config set-cluster "$CTX_NAME" \
     --server="https://kubernetes.default.svc" \
     --certificate-authority="$SA/ca.crt" --embed-certs=true >/dev/null
   kubectl config set-credentials me --token="$(cat "$SA/token")" >/dev/null
-  kubectl config set-context this --cluster=this --user=me \
-    --namespace="$(cat "$SA/namespace")" >/dev/null
-  kubectl config use-context this >/dev/null
-  echo "kubectl is wired to THIS cluster (namespace: $(cat "$SA/namespace"))." > "$HOME/.motd"
+  kubectl config set-context "$CTX_NAME" --cluster="$CTX_NAME" --user=me \
+    --namespace=default >/dev/null
+  kubectl config use-context "$CTX_NAME" >/dev/null
+  echo "kubectl is wired to your cluster (context: $CTX_NAME)." > "$HOME/.motd"
 else
   echo "WARNING: no in-cluster ServiceAccount token found; kubectl is not auto-configured." > "$HOME/.motd"
 fi
@@ -48,16 +52,26 @@ fi
 
 cat > "$HOME/.bashrc" <<'BRC'
 cat ~/.motd 2>/dev/null
-echo "Welcome to your Agentic DevOps with Claude workshop terminal."
+printf '\n\033[38;5;208m▌\033[0m \033[1mAgentic DevOps with Claude\033[0m — your workshop terminal\n'
 echo "  kubectl is wired to your cluster   (try: kubectl get nodes)"
-echo "  aws is ready with your keys        (try: aws sts get-caller-identity)"
-echo "  the workshop repo is at ~/workshop (cd ~/workshop)"
-echo "  start building with Claude Code    (run: claude)"
+echo "  the workshop repo is at ~/workshop (you start here)"
+echo "  build it with Claude Code          (run: claude)"
+echo "  then follow the phases in the panel on the left, one prompt at a time."
+echo
 export PATH="$HOME/.local/bin:$HOME/workshop:$PATH"
+export KUBE_EDITOR=vim
 cd "$HOME/workshop" 2>/dev/null || cd "$HOME"
-export PS1='\[\e[38;5;208m\]workshop\[\e[0m\]:\w$ '
+# Starship: rich prompt with cluster context, AWS, git, and dir. Config baked at ~/.config/starship.toml.
+eval "$(starship init bash)"
 BRC
 
 # -W writable (interactive); -b serves under /terminal so a fronting router can proxy it on a subpath.
 # Auth/exposure are handled upstream by the per-student router; this is the student's own cluster.
-exec ttyd -p 7681 -W -b /terminal -t fontSize=14 -t 'theme={"background":"#0f1117"}' bash --rcfile "$HOME/.bashrc"
+# The theme is tuned to the Packt palette (orange cursor, ink background) so the terminal matches the
+# lab wrapper. A monospace stack with emoji fallback lets the Starship symbols render.
+exec ttyd -p 7681 -W -b /terminal \
+  -t fontSize=15 \
+  -t 'fontFamily=ui-monospace, "SFMono-Regular", "JetBrains Mono", Menlo, Consolas, "Segoe UI Emoji", monospace' \
+  -t cursorStyle=bar \
+  -t 'theme={"background":"#0f1117","foreground":"#e6e1f0","cursor":"#FA7040","cursorAccent":"#0f1117","selectionBackground":"#FA704055","black":"#191919","brightBlack":"#4A4A4A","red":"#ff6b6b","green":"#2e9e5b","yellow":"#FFB454","blue":"#6db3f2","magenta":"#b48ead","cyan":"#5fb3b3","white":"#e6e1f0","brightWhite":"#ffffff"}' \
+  bash --rcfile "$HOME/.bashrc"
