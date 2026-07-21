@@ -41,6 +41,13 @@ apply_configmap_from_file() {
 }
 
 main() {
+    # The default gp3 StorageClass, applied here rather than waiting for the student's phase-1 bootstrap.
+    # EKS ships no default StorageClass since 1.30, and the VTT's claude-home PVC is created at
+    # provisioning time, so without this the PVC (and the pod) hang Pending on a fresh cluster. Same file
+    # the platform bootstrap uses, so re-applying it in phase 1 is a no-op.
+    printf 'Applying the default gp3 StorageClass...\n' >&2
+    kubectl apply -f "${SCRIPT_DIR}/../../../platform/0-bootstrap/gp3-storageclass.yaml"
+
     printf 'Applying VTT manifest...\n' >&2
     kubectl apply -f "${SCRIPT_DIR}/web-terminal.yaml"
 
