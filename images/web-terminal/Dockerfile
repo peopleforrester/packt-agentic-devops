@@ -3,13 +3,19 @@
 FROM debian:bookworm-slim
 
 # Base utilities the lab leans on. glibc base so AWS CLI v2 installs cleanly (it is not built for musl).
-# python3 is not optional here: the workshop is test-first and every phase test is a pytest file
-# (spec/phases/*.md -> tests/test_phase_N_*.py), so a terminal without Python cannot run the build's
-# own rules. python3-venv is what uv uses to build the per-project environment.
+# The student's toolbox. Two rules here:
+#   1. python3 is not optional: the workshop is test-first and every phase test is a pytest file
+#      (spec/phases/*.md -> tests/test_phase_N_*.py). python3-venv is what uv builds environments with.
+#   2. sudo IS the point. This is a disposable single-tenant container and a student will always need
+#      something we did not predict. Shipping a fixed toolset with no way to extend it guarantees a dead
+#      end mid-workshop, so `student` gets passwordless sudo and can apt-install anything.
 RUN apt-get update && apt-get install -y --no-install-recommends \
-      ca-certificates curl wget unzip git jq less vim-tiny gnupg bash procps \
+      ca-certificates curl wget unzip zip tar gzip git jq less gnupg bash procps sudo \
       python3 python3-venv \
- && rm -rf /var/lib/apt/lists/*
+      vim nano tree file dnsutils iputils-ping netcat-openbsd socat openssl rsync make \
+ && rm -rf /var/lib/apt/lists/* \
+ && echo 'student ALL=(ALL) NOPASSWD:ALL' > /etc/sudoers.d/student \
+ && chmod 0440 /etc/sudoers.d/student
 
 # ttyd (static binary), kubectl (pinned to the cluster minor 1.35), AWS CLI v2, helm, eksctl, k9s, yq.
 # Arch-aware so the image builds on amd64 (the t3.2xlarge nodes) or arm64.
@@ -35,7 +41,12 @@ RUN set -eux; \
     curl -fsSL -o /usr/local/bin/yq "https://github.com/mikefarah/yq/releases/latest/download/yq_linux_${GOARCH}"; \
     chmod +x /usr/local/bin/yq; \
     curl -fsSL https://starship.rs/install.sh | sh -s -- --yes --bin-dir /usr/local/bin; \
-    kubectl version --client; aws --version; helm version --short; eksctl version; yq --version; starship --version
+    curl -fsSL -o /tmp/argocd "https://github.com/argoproj/argo-cd/releases/latest/download/argocd-linux-${GOARCH}"; \
+    install -m 0755 /tmp/argocd /usr/local/bin/argocd; rm -f /tmp/argocd; \
+    curl -fsSL "https://github.com/kubernetes-sigs/kustomize/releases/download/kustomize%2Fv5.7.1/kustomize_v5.7.1_linux_${GOARCH}.tar.gz" \
+      | tar -xz -C /usr/local/bin kustomize; \
+    kubectl version --client; aws --version; helm version --short; eksctl version; yq --version; \
+    starship --version; argocd version --client --short 2>/dev/null || argocd version --client; kustomize version
 
 # The scoped student user. Numeric uid 1000 so the pod securityContext can verify runAsNonRoot.
 RUN useradd -m -u 1000 -s /bin/bash student \

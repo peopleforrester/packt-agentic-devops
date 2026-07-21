@@ -104,8 +104,12 @@ spec:
           securityContext:
             runAsUser: 1000
             runAsGroup: 1000
-            allowPrivilegeEscalation: false
-            capabilities: { drop: ["ALL"] }
+            # The student must be able to install things. sudo is setuid, so it needs escalation
+            # permitted AND the capabilities a package install uses (CHOWN/DAC_OVERRIDE/FOWNER);
+            # with `drop: ALL` the bounding set is empty and sudo lands as a root that can do nothing.
+            # This is a disposable single-tenant workshop shell, so the trade is right. The nginx and
+            # status sidecars below stay fully locked down.
+            allowPrivilegeEscalation: true
           resources:
             requests: { cpu: 100m, memory: 256Mi }
             limits: { cpu: "2", memory: 2Gi }
