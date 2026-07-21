@@ -3,8 +3,12 @@
 FROM debian:bookworm-slim
 
 # Base utilities the lab leans on. glibc base so AWS CLI v2 installs cleanly (it is not built for musl).
+# python3 is not optional here: the workshop is test-first and every phase test is a pytest file
+# (spec/phases/*.md -> tests/test_phase_N_*.py), so a terminal without Python cannot run the build's
+# own rules. python3-venv is what uv uses to build the per-project environment.
 RUN apt-get update && apt-get install -y --no-install-recommends \
       ca-certificates curl wget unzip git jq less vim-tiny gnupg bash procps \
+      python3 python3-venv \
  && rm -rf /var/lib/apt/lists/*
 
 # ttyd (static binary), kubectl (pinned to the cluster minor 1.35), AWS CLI v2, helm, eksctl, k9s, yq.
@@ -53,6 +57,12 @@ WORKDIR /home/student
 # subscription on first `claude` run. No credentials are baked in.
 RUN curl -fsSL https://claude.ai/install.sh | bash \
  && /home/student/.local/bin/claude --version
+
+# uv: the project's package/runner standard, and what the phase tests are driven with (`uv run pytest`).
+# Installs to ~/.local/bin, which the shell already has on PATH.
+RUN curl -LsSf https://astral.sh/uv/install.sh | sh \
+ && /home/student/.local/bin/uv --version \
+ && /home/student/.local/bin/uvx --version
 
 # The workshop repo, pre-cloned so a student lands with the materials already present. Public repo, so
 # no credentials are needed at build or for a later `git pull`. entrypoint.sh refreshes it on start.

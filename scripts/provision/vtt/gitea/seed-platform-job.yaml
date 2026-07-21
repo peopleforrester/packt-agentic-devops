@@ -34,12 +34,17 @@ spec:
           image: ghcr.io/peopleforrester/packt-agentic-devops:web-terminal
           imagePullPolicy: Always
           env:
-            - { name: GITEA,      value: "http://gitea-http.gitea.svc:3000" }
-            - { name: ADMIN_USER, value: "gitea_admin" }
-            - { name: ADMIN_PASS, value: "workshop-dev-only" }
-            - { name: ORG,        value: "platform" }
-            - { name: REPO,       value: "packt-agentic-devops" }
-            - { name: HOME,       value: "/tmp" }
+            - { name: GITEA, value: "http://gitea-http.gitea.svc:3000" }
+            # Credentials come from a Secret that apply.sh generates FROM gitea/values.yaml, so the chart's
+            # admin and this job can never disagree. They did once: the password was updated in the values
+            # and the Application but not here, and every API call came back 401.
+            - name: ADMIN_USER
+              valueFrom: { secretKeyRef: { name: gitea-seed-creds, key: username } }
+            - name: ADMIN_PASS
+              valueFrom: { secretKeyRef: { name: gitea-seed-creds, key: password } }
+            - { name: ORG,  value: "platform" }
+            - { name: REPO, value: "packt-agentic-devops" }
+            - { name: HOME, value: "/tmp" }
           command: ["/bin/bash", "-c"]
           args:
             - |
