@@ -1,0 +1,96 @@
+# ABOUTME: Seeds the in-cluster Gitea with the workshop's platform manifests so ArgoCD sources GitOps
+# ABOUTME: from inside the cluster, not from GitHub. Runs once at provisioning, before the student starts.
+#
+# Why this exists: pointing 250 clusters' ArgoCD at one public GitHub repo means ~5,000 git fetches an
+# hour egressing through 5 NAT IPs, which GitHub throttles, and it leaves students unable to push (they
+# have no write access to that repo). An in-cluster Git host removes the last shared dependency: each
+# cluster is self-contained, and the student can push and watch ArgoCD reconcile their own commit.
+#
+# The manifests come from the copy already baked into the web-terminal image at /home/student/workshop,
+# so seeding costs no GitHub traffic at all. The baked clone is shallow, and pushing a shallow clone is
+# rejected, so this re-inits a clean single-commit repo from the working tree instead.
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: gitea-seed-platform
+  namespace: gitea
+  labels:
+    app.kubernetes.io/part-of: agentic-platform
+spec:
+  backoffLimit: 20
+  template:
+    metadata:
+      labels: { app: gitea-seed-platform }
+    spec:
+      restartPolicy: OnFailure
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1000
+        runAsGroup: 1000
+        seccompProfile: { type: RuntimeDefault }
+      containers:
+        - name: seed
+          # The web-terminal image: carries git and the workshop repo at /home/student/workshop.
+          image: ghcr.io/peopleforrester/packt-agentic-devops:web-terminal
+          imagePullPolicy: Always
+          env:
+            - { name: GITEA,      value: "http://gitea-http.gitea.svc:3000" }
+            - { name: ADMIN_USER, value: "gitea_admin" }
+            - { name: ADMIN_PASS, value: "workshop-dev-only" }
+            - { name: ORG,        value: "platform" }
+            - { name: REPO,       value: "packt-agentic-devops" }
+            - { name: HOME,       value: "/tmp" }
+          command: ["/bin/bash", "-c"]
+          args:
+            - |
+              set -euo pipefail
+              auth=(-u "${ADMIN_USER}:${ADMIN_PASS}")
+
+              echo "waiting for the Gitea API..."
+              until curl -fsS "${GITEA}/api/v1/version" >/dev/null 2>&1; do sleep 3; done
+              echo "Gitea is up: $(curl -fsS "${GITEA}/api/v1/version")"
+
+              echo "ensuring org ${ORG}"
+              curl -sS "${auth[@]}" -X POST "${GITEA}/api/v1/orgs" \
+                -H 'Content-Type: application/json' \
+                -d "{\"username\":\"${ORG}\",\"visibility\":\"public\"}" -o /dev/null -w 'org: %{http_code}\n' || true
+
+              # Public repo: ArgoCD then reads it anonymously and needs no repository credential.
+              echo "ensuring repo ${ORG}/${REPO}"
+              curl -sS "${auth[@]}" -X POST "${GITEA}/api/v1/orgs/${ORG}/repos" \
+                -H 'Content-Type: application/json' \
+                -d "{\"name\":\"${REPO}\",\"private\":false,\"default_branch\":\"main\"}" \
+                -o /dev/null -w 'repo: %{http_code}\n' || true
+
+              # Refresh the baked copy so we seed current main, not the image-build snapshot. One fetch
+              # per cluster at provisioning, not a reconcile loop, so it costs GitHub nothing at scale.
+              # Best-effort: if egress is blocked, the baked copy is still a valid manifest set.
+              echo "refreshing the baked repo (best-effort)"
+              git -C /home/student/workshop pull --ff-only --quiet 2>/dev/null \
+                && echo "  refreshed to $(git -C /home/student/workshop rev-parse --short HEAD)" \
+                || echo "  pull unavailable; seeding the image-baked copy"
+
+              echo "building a clean tree from the manifests"
+              rm -rf /tmp/seed && mkdir -p /tmp/seed
+              cp -a /home/student/workshop/. /tmp/seed/
+              cd /tmp/seed
+              rm -rf .git
+              git init -q -b main
+              git config user.email "provisioning@platform.local"
+              git config user.name  "Workshop Provisioning"
+              git add -A
+              git commit -q -m "Workshop platform manifests (seeded at provisioning)"
+
+              echo "pushing to Gitea"
+              git remote add origin "http://${ADMIN_USER}:${ADMIN_PASS}@gitea-http.gitea.svc:3000/${ORG}/${REPO}.git"
+              git push -q --force origin main
+
+              echo "verifying the push is readable anonymously (ArgoCD reads it with no credential)"
+              curl -fsS "${GITEA}/api/v1/repos/${ORG}/${REPO}/branches/main" >/dev/null
+              echo "seed complete: ${GITEA}/${ORG}/${REPO}.git @ main"
+          resources:
+            requests: { cpu: "100m", memory: "192Mi" }
+            limits:   { cpu: "1",    memory: "1Gi" }
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities: { drop: ["ALL"] }

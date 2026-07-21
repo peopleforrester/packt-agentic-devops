@@ -1,0 +1,31 @@
+# ABOUTME: Helm values for the in-cluster Gitea installed at PROVISIONING time, so ArgoCD can source the
+# ABOUTME: platform manifests from inside the cluster instead of from GitHub. Mirrors the values in
+# ABOUTME: platform/1-foundation/gitea/application.yaml so the student's phase-3 sync adopts this release.
+replicaCount: 1
+# SQLite requires a single replica; no rolling surge.
+strategy:
+  type: Recreate
+admin:
+  username: gitea_admin
+  # Dev workshop only, ephemeral, on the student's own throwaway cluster. Not a real credential.
+  password: "workshop-dev-only"
+  email: "admin@platform.local"
+postgresql-ha:
+  enabled: false
+postgresql:
+  enabled: false
+valkey-cluster:
+  enabled: false
+valkey:
+  enabled: false
+persistence:
+  enabled: true
+  size: 5Gi
+gitea:
+  config:
+    database:
+      DB_TYPE: sqlite3
+    server:
+      ROOT_URL: http://gitea-http.gitea.svc:3000/
+    service:
+      DISABLE_REGISTRATION: true

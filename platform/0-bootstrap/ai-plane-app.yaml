@@ -15,7 +15,7 @@ metadata:
 spec:
   project: default
   source:
-    repoURL: https://github.com/peopleforrester/packt-agentic-devops.git
+    repoURL: http://gitea-http.gitea.svc:3000/platform/packt-agentic-devops.git
     targetRevision: main
     path: platform/2-ai-plane
     directory:

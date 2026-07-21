@@ -1,7 +1,7 @@
 # ABOUTME: ArgoCD Application for the cert-manager ClusterIssuers.
 # ABOUTME: Syncs after cert-manager's CRDs are established (wave 1).
 #
-# Raw manifests live under manifests/. Needs the Git remote set on repoURL to sync
+# Raw manifests live under manifests/. Sourced from the in-cluster Gitea that provisioning seeds; ArgoCD reads it anonymously
 # through ArgoCD. Until a remote exists, apply manifests/ directly with kubectl.
 apiVersion: argoproj.io/v1alpha1
 kind: Application
@@ -15,7 +15,7 @@ metadata:
 spec:
   project: default
   source:
-    repoURL: https://github.com/peopleforrester/packt-agentic-devops.git
+    repoURL: http://gitea-http.gitea.svc:3000/platform/packt-agentic-devops.git
     targetRevision: main
     path: platform/1-foundation/cert-manager-issuers/manifests
     directory:
