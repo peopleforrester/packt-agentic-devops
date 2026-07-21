@@ -12,7 +12,7 @@ FROM debian:bookworm-slim
 RUN apt-get update && apt-get install -y --no-install-recommends \
       ca-certificates curl wget unzip zip tar gzip git jq less gnupg bash procps sudo \
       python3 python3-venv \
-      vim nano tree file dnsutils iputils-ping netcat-openbsd socat openssl rsync make \
+      vim nano tree file dnsutils iputils-ping openssl rsync make \
  && rm -rf /var/lib/apt/lists/* \
  && echo 'student ALL=(ALL) NOPASSWD:ALL' > /etc/sudoers.d/student \
  && chmod 0440 /etc/sudoers.d/student
