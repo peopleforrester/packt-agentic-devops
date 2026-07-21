@@ -6,6 +6,9 @@ set -euo pipefail
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 readonly SCRIPT_DIR
 readonly NS="workshop"
+# Pinned to match platform/1-foundation/aws-load-balancer-controller/application.yaml so provisioning and
+# the student's phase-1 sync install the identical chart version.
+readonly LBC_CHART_VERSION="3.4.0"
 
 # Cluster context safety: this box is shared. Require an explicit KUBECONFIG and verify the current
 # context before any mutation. Never operate against a cluster you did not intend to.
@@ -40,7 +43,36 @@ apply_configmap_from_file() {
         --dry-run=client -o yaml | kubectl apply -f -
 }
 
+# The AWS Load Balancer Controller, installed at provisioning because the VTT Service is an
+# internet-facing ip-target NLB and nothing else can create one. Without this the Service falls back to a
+# Classic ELB (deprecated, and capped at 20 per region against a fleet need of 50). Terraform already
+# creates the Pod Identity association for kube-system/aws-load-balancer-controller, so no keys are
+# needed. Idempotent: the student's phase-1 App-of-Apps re-applies the same chart and adopts it.
+bootstrap_lb_controller() {
+    local cluster region vpc
+    cluster="$(kubectl config current-context | sed 's|.*/||')"
+    region="${AWS_REGION:-us-west-2}"
+    vpc="$(aws eks describe-cluster --name "${cluster}" --region "${region}" \
+        --query 'cluster.resourcesVpcConfig.vpcId' --output text 2>/dev/null)"
+    [[ -n "${vpc}" && "${vpc}" != None ]] || { printf 'could not resolve VPC for %s\n' "${cluster}" >&2; return 1; }
+
+    printf 'Installing AWS Load Balancer Controller (cluster=%s vpc=%s)...\n' "${cluster}" "${vpc}" >&2
+    helm repo add eks https://aws.github.io/eks-charts >/dev/null 2>&1 || true
+    helm repo update eks >/dev/null 2>&1 || true
+    helm upgrade --install aws-load-balancer-controller eks/aws-load-balancer-controller \
+        --namespace kube-system --version "${LBC_CHART_VERSION}" \
+        --set "clusterName=${cluster}" \
+        --set "region=${region}" \
+        --set "vpcId=${vpc}" \
+        --set serviceAccount.create=true \
+        --set serviceAccount.name=aws-load-balancer-controller \
+        --set enableServiceMutatorWebhook=false \
+        --wait --timeout 5m >&2
+}
+
 main() {
+    bootstrap_lb_controller
+
     # The default gp3 StorageClass, applied here rather than waiting for the student's phase-1 bootstrap.
     # EKS ships no default StorageClass since 1.30, and the VTT's claude-home PVC is created at
     # provisioning time, so without this the PVC (and the pod) hang Pending on a fresh cluster. Same file
