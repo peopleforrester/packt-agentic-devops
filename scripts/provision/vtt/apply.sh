@@ -87,6 +87,16 @@ bootstrap_gitea() {
         -f "${SCRIPT_DIR}/gitea/values.yaml" \
         --wait --timeout 10m >&2
 
+    # Hand the seed job the SAME credentials the chart just used, read straight out of values.yaml.
+    # Keeping a second copy in the Job manifest drifted once and cost a debug cycle (401 on every call).
+    local gu gp
+    gu="$(python3 -c "import yaml,sys;print(yaml.safe_load(open(sys.argv[1]))['gitea']['admin']['username'])" "${SCRIPT_DIR}/gitea/values.yaml")"
+    gp="$(python3 -c "import yaml,sys;print(yaml.safe_load(open(sys.argv[1]))['gitea']['admin']['password'])" "${SCRIPT_DIR}/gitea/values.yaml")"
+    [[ -n "${gu}" && -n "${gp}" ]] || { printf 'could not read gitea admin creds from values.yaml\n' >&2; return 1; }
+    kubectl -n gitea create secret generic gitea-seed-creds \
+        --from-literal=username="${gu}" --from-literal=password="${gp}" \
+        --dry-run=client -o yaml | kubectl apply -f - >/dev/null
+
     printf 'Seeding Gitea with the platform manifests...\n' >&2
     kubectl -n gitea delete job gitea-seed-platform --ignore-not-found >/dev/null 2>&1 || true
     kubectl apply -f "${SCRIPT_DIR}/gitea/seed-platform-job.yaml" >&2
