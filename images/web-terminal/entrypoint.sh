@@ -29,19 +29,26 @@ fi
 # Pre-configure the AWS CLI with the student's OWN keys (mounted as the optional `student-aws-creds`
 # secret -> env). Written as the DEFAULT profile so `aws` works with no --profile inside the VTT. On a
 # cluster without the secret, aws is installed but unconfigured; kubectl still works via the SA above.
+cat > "$HOME/.aws/config" <<CFG
+[default]
+region = ${AWS_DEFAULT_REGION:-${AWS_REGION:-us-west-2}}
+output = json
+CFG
+
 if [[ -n "${AWS_ACCESS_KEY_ID:-}" && -n "${AWS_SECRET_ACCESS_KEY:-}" ]]; then
   cat > "$HOME/.aws/credentials" <<CREDS
 [default]
 aws_access_key_id = ${AWS_ACCESS_KEY_ID}
 aws_secret_access_key = ${AWS_SECRET_ACCESS_KEY}
 CREDS
-  cat > "$HOME/.aws/config" <<CFG
-[default]
-region = ${AWS_DEFAULT_REGION:-us-west-2}
-output = json
-CFG
   chmod 600 "$HOME/.aws/credentials"
-  printf 'aws is configured with your keys (default profile, region %s).\n' "${AWS_DEFAULT_REGION:-us-west-2}" >> "$HOME/.motd"
+  printf 'aws is configured with your keys (default profile).\n' >> "$HOME/.motd"
+elif [[ -n "${AWS_CONTAINER_CREDENTIALS_FULL_URI:-}" ]]; then
+  # EKS Pod Identity: the agent injects AWS_CONTAINER_CREDENTIALS_FULL_URI and a token file at admission,
+  # and the SDK reads both with no config. Write NO credentials file: an empty or stale one would sit
+  # ahead of Pod Identity in the CLI's credential chain and shadow a working identity.
+  rm -f "$HOME/.aws/credentials"
+  printf 'aws is wired to your cluster via EKS Pod Identity (read-only, no keys to manage).\n' >> "$HOME/.motd"
 fi
 
 # Point the student's working copy at the IN-CLUSTER Gitea, which is what ArgoCD reconciles from. Without
@@ -58,13 +65,23 @@ if [ -d "$HOME/workshop/.git" ]; then
     else
       _remote="${GITEA_REPO_URL}"
     fi
-    git -C "$HOME/workshop" remote set-url origin "${_remote}" 2>/dev/null || \
-      git -C "$HOME/workshop" remote add origin "${_remote}" 2>/dev/null || true
-    git -C "$HOME/workshop" fetch --quiet origin 2>/dev/null || true
-    git -C "$HOME/workshop" checkout -q -B main origin/main 2>/dev/null || true
+    # Clone fresh rather than repointing the baked copy. That copy is a SHALLOW, SINGLE-BRANCH clone of
+    # staging, so its refspec only ever requests refs/heads/staging; against Gitea (which has main) the
+    # fetch dies with "couldn't find remote ref" and the checkout silently leaves the student on a branch
+    # ArgoCD does not reconcile. A fresh clone gets the right branch, refspec and tracking every time.
+    # Nothing is lost: the container filesystem is ephemeral, so this only runs on a fresh pod.
+    if git ls-remote "${_remote}" >/dev/null 2>&1 \
+       && git clone --quiet "${_remote}" "$HOME/workshop.new" 2>/dev/null; then
+      rm -rf "$HOME/workshop"
+      mv "$HOME/workshop.new" "$HOME/workshop"
+      printf 'git remote points at your in-cluster Gitea; commit and push to have ArgoCD apply it.\n' >> "$HOME/.motd"
+    else
+      rm -rf "$HOME/workshop.new"
+      git -C "$HOME/workshop" pull --ff-only --quiet 2>/dev/null || true
+      printf 'NOTE: in-cluster Gitea unreachable; using the read-only GitHub copy.\n' >> "$HOME/.motd"
+    fi
     git -C "$HOME/workshop" config user.email "student@workshop.local" 2>/dev/null || true
     git -C "$HOME/workshop" config user.name  "Workshop Student" 2>/dev/null || true
-    printf 'git remote points at your in-cluster Gitea; commit and push to have ArgoCD apply it.\n' >> "$HOME/.motd"
   else
     # No in-cluster Git wired: fall back to refreshing the public read-only clone.
     git -C "$HOME/workshop" pull --ff-only --quiet 2>/dev/null || true
