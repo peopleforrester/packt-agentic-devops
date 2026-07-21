@@ -8,11 +8,9 @@
 # `aws eks describe-cluster` work and nothing else does.
 set -euo pipefail
 
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-readonly SCRIPT_DIR
 readonly NS="workshop"
 
-: "${KUBECONFIG:?set KUBECONFIG to the target cluster's kubeconfig}"
+: "${KUBECONFIG:?set KUBECONFIG to the target cluster kubeconfig}"
 : "${AWS_PROFILE:?set AWS_PROFILE for the account that owns the cluster}"
 export KUBECONFIG AWS_PROFILE
 REGION="${AWS_REGION:-us-west-2}"
