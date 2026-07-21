@@ -77,7 +77,8 @@ RUN curl -LsSf https://astral.sh/uv/install.sh | sh \
 
 # The workshop repo, pre-cloned so a student lands with the materials already present. Public repo, so
 # no credentials are needed at build or for a later `git pull`. entrypoint.sh refreshes it on start.
-RUN git clone --depth 1 https://github.com/peopleforrester/packt-agentic-devops.git /home/student/workshop
+RUN git clone --depth 1 --branch main \
+      https://github.com/peopleforrester/packt-agentic-devops.git /home/student/workshop
 
 # ttyd listens on 7681; the per-student router fronts it. Auth/exposure are handled upstream.
 EXPOSE 7681

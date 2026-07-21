@@ -34,3 +34,4 @@ prds/
 # Repo-local scratch dir (working-directory-boundary rule)
 /tmp/
 tmp/
+transcripts/
