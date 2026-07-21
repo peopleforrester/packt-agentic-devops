@@ -1,9 +1,10 @@
 # Production App-of-Apps. Points ArgoCD at platform/1-foundation in this repo and
 # recurses for the per-component Application manifests.
 #
-# This needs the repo to be reachable by ArgoCD over Git. Set repoURL to the Git
-# remote once one exists. Until then, use the dev path in bootstrap/README.md
-# (apply the per-component Applications directly; each is Helm-sourced).
+# Sourced from the IN-CLUSTER Gitea, which provisioning installs and seeds with these
+# manifests before the student starts. That keeps each cluster self-contained: no GitHub
+# in the reconcile loop, and the student can push to this remote and watch ArgoCD apply
+# their own commit. The repo is public inside the cluster, so ArgoCD needs no credential.
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
@@ -14,7 +15,7 @@ metadata:
 spec:
   project: default
   source:
-    repoURL: https://github.com/peopleforrester/packt-agentic-devops.git
+    repoURL: http://gitea-http.gitea.svc:3000/platform/packt-agentic-devops.git
     targetRevision: main
     path: platform/1-foundation
     directory:

@@ -1,7 +1,7 @@
 # ABOUTME: ArgoCD Application wiring ESO to OpenBao: the ClusterSecretStore, the dev
 # ABOUTME: token, a seed Job, and a demo ExternalSecret. Syncs after both are up (wave 2).
 #
-# Needs the Git remote on repoURL to sync through ArgoCD. Until a remote exists, apply
+# Sourced from the in-cluster Gitea that provisioning seeds; ArgoCD reads it anonymously. Until a remote exists, apply
 # manifests/ directly with kubectl after OpenBao and ESO are running.
 apiVersion: argoproj.io/v1alpha1
 kind: Application
@@ -15,7 +15,7 @@ metadata:
 spec:
   project: default
   source:
-    repoURL: https://github.com/peopleforrester/packt-agentic-devops.git
+    repoURL: http://gitea-http.gitea.svc:3000/platform/packt-agentic-devops.git
     targetRevision: main
     path: platform/1-foundation/openbao-config/manifests
     directory:

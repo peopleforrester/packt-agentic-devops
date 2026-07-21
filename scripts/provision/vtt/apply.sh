@@ -9,6 +9,8 @@ readonly NS="workshop"
 # Pinned to match platform/1-foundation/aws-load-balancer-controller/application.yaml so provisioning and
 # the student's phase-1 sync install the identical chart version.
 readonly LBC_CHART_VERSION="3.4.0"
+# Matches platform/1-foundation/gitea/application.yaml so provisioning and phase 3 install the same chart.
+readonly GITEA_CHART_VERSION="12.6.0"
 
 # Cluster context safety: this box is shared. Require an explicit KUBECONFIG and verify the current
 # context before any mutation. Never operate against a cluster you did not intend to.
@@ -70,6 +72,32 @@ bootstrap_lb_controller() {
         --wait --timeout 5m >&2
 }
 
+# In-cluster Gitea, installed at provisioning and seeded with the platform manifests, so ArgoCD sources
+# GitOps from inside the cluster. This is what makes a student cluster self-contained: no GitHub in the
+# reconcile loop (250 clusters polling one repo through 5 NAT IPs gets throttled), and the student can
+# actually push, because they own this Git host. Same chart/version/values as
+# platform/1-foundation/gitea/application.yaml, so the student's phase-3 sync adopts this release.
+bootstrap_gitea() {
+    printf 'Installing in-cluster Gitea...\n' >&2
+    helm repo add gitea https://dl.gitea.com/charts/ >/dev/null 2>&1 || true
+    helm repo update gitea >/dev/null 2>&1 || true
+    helm upgrade --install gitea gitea/gitea \
+        --namespace gitea --create-namespace \
+        --version "${GITEA_CHART_VERSION}" \
+        -f "${SCRIPT_DIR}/gitea/values.yaml" \
+        --wait --timeout 10m >&2
+
+    printf 'Seeding Gitea with the platform manifests...\n' >&2
+    kubectl -n gitea delete job gitea-seed-platform --ignore-not-found >/dev/null 2>&1 || true
+    kubectl apply -f "${SCRIPT_DIR}/gitea/seed-platform-job.yaml" >&2
+    if ! kubectl -n gitea wait --for=condition=complete job/gitea-seed-platform --timeout=10m >&2; then
+        printf 'Gitea seed job did not complete. Logs:\n' >&2
+        kubectl -n gitea logs job/gitea-seed-platform --tail=40 >&2 || true
+        return 1
+    fi
+    kubectl -n gitea logs job/gitea-seed-platform --tail=6 >&2 || true
+}
+
 main() {
     bootstrap_lb_controller
 
@@ -79,6 +107,8 @@ main() {
     # the platform bootstrap uses, so re-applying it in phase 1 is a no-op.
     printf 'Applying the default gp3 StorageClass...\n' >&2
     kubectl apply -f "${SCRIPT_DIR}/../../../platform/0-bootstrap/gp3-storageclass.yaml"
+
+    bootstrap_gitea
 
     printf 'Applying VTT manifest...\n' >&2
     kubectl apply -f "${SCRIPT_DIR}/web-terminal.yaml"
