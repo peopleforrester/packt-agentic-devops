@@ -34,29 +34,22 @@ spec:
     requests:
       storage: 1Gi
 ---
-# Scoped terminal RBAC: read everything (including secrets, on the student's own single-tenant cluster);
-# write the common workload kinds; exec/debug. NOT cluster-admin and NOT RBAC mutation, so a terminal
-# cannot rewrite its own access or escalate privileges. It debugs and builds; it does not grant itself more.
-apiVersion: rbac.authorization.k8s.io/v1
-kind: ClusterRole
-metadata:
-  name: console-terminal
-rules:
-  - apiGroups: ["*"]
-    resources: ["*"]
-    verbs: ["get", "list", "watch"]
-  - apiGroups: ["", "apps", "batch", "networking.k8s.io"]
-    resources: ["*"]
-    verbs: ["create", "update", "patch", "delete"]
-  - apiGroups: [""]
-    resources: ["pods/exec", "pods/portforward", "pods/ephemeralcontainers"]
-    verbs: ["create", "get"]
----
+# The student's terminal is cluster-admin ON THEIR OWN SINGLE-TENANT THROWAWAY CLUSTER.
+#
+# This is deliberate, and a narrower role does not work. The workshop's entire task is for the student's
+# agent to INSTALL a platform: ArgoCD alone creates ~12 CRDs plus ClusterRoles and ClusterRoleBindings,
+# and the phases that follow add admission webhooks (Kyverno), more CRDs (Gateway API, kagent, KServe),
+# and cluster-scoped controllers. A role that withholds CRD and RBAC creation blocks Phase 1 at its first
+# command and every phase after it.
+#
+# The isolation boundary here is the CLUSTER, not intra-cluster RBAC: one disposable cluster per student,
+# torn down after the workshop, with no shared tenancy and nothing of value on it. Scoping RBAC inside a
+# cluster the student is meant to own outright buys no safety and costs the whole build.
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
 metadata:
   name: console-terminal
-roleRef: { apiGroup: rbac.authorization.k8s.io, kind: ClusterRole, name: console-terminal }
+roleRef: { apiGroup: rbac.authorization.k8s.io, kind: ClusterRole, name: cluster-admin }
 subjects:
   - kind: ServiceAccount
     name: web-terminal
