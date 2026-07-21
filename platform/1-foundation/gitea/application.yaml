@@ -25,11 +25,6 @@ spec:
         # SQLite requires a single replica; no rolling surge.
         strategy:
           type: Recreate
-        admin:
-          username: gitea_admin
-          # Dev workshop only, ephemeral. Not a real credential.
-          password: "workshop-dev-only"
-          email: "admin@platform.local"
         postgresql-ha:
           enabled: false
         postgresql:
@@ -42,6 +37,13 @@ spec:
           enabled: true
           size: 5Gi
         gitea:
+          # admin MUST be nested here. At the top level the chart ignores it and keeps its own default
+          # password, which then 401s every authenticated API call (found live on the seed job).
+          admin:
+            username: gitea_admin
+            # Dev workshop only, ephemeral. Not a real credential.
+            password: "Workshop-Dev-Only1!"
+            email: "admin@platform.local"
           config:
             database:
               DB_TYPE: sqlite3
