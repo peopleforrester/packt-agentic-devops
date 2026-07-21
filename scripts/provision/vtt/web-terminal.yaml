@@ -91,6 +91,10 @@ spec:
           # no flags. Created per-cluster outside git; optional so a cluster without it still runs.
           envFrom:
             - secretRef: { name: student-aws-creds, optional: true }
+            # Points the student's working copy at the in-cluster Gitea so `git push` reaches ArgoCD.
+            # Written by apply.sh from the same values the Gitea chart used. Optional so a cluster
+            # without Gitea still starts.
+            - secretRef: { name: student-git-creds, optional: true }
           volumeMounts:
             - { name: claude-home, mountPath: /home/student/.claude } # login + conversation history persist here
           readinessProbe:

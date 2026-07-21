@@ -44,10 +44,31 @@ CFG
   printf 'aws is configured with your keys (default profile, region %s).\n' "${AWS_DEFAULT_REGION:-us-west-2}" >> "$HOME/.motd"
 fi
 
-# Refresh the pre-cloned workshop repo so a restarted pod picks up the latest committed materials. The
-# repo is public, so this needs no credentials. A failure here is non-fatal: the baked-in copy still works.
+# Point the student's working copy at the IN-CLUSTER Gitea, which is what ArgoCD reconciles from. Without
+# this the clone still points at the public GitHub repo, so the student can commit but never push, and the
+# GitOps loop never closes for them: their change cannot reach ArgoCD. With it, `git push` lands in Gitea
+# and ArgoCD applies their own commit, which is the whole point of the workshop.
 if [ -d "$HOME/workshop/.git" ]; then
-  git -C "$HOME/workshop" pull --ff-only --quiet 2>/dev/null || true
+  if [ -n "${GITEA_REPO_URL:-}" ]; then
+    # Credentials are embedded in the remote so push needs no prompt. This is the throwaway dev admin on
+    # the student's own single-tenant cluster, the same posture as the OpenBao dev token.
+    if [ -n "${GITEA_USER:-}" ] && [ -n "${GITEA_PASSWORD:-}" ]; then
+      _host="${GITEA_REPO_URL#http://}"
+      _remote="http://${GITEA_USER}:${GITEA_PASSWORD}@${_host}"
+    else
+      _remote="${GITEA_REPO_URL}"
+    fi
+    git -C "$HOME/workshop" remote set-url origin "${_remote}" 2>/dev/null || \
+      git -C "$HOME/workshop" remote add origin "${_remote}" 2>/dev/null || true
+    git -C "$HOME/workshop" fetch --quiet origin 2>/dev/null || true
+    git -C "$HOME/workshop" checkout -q -B main origin/main 2>/dev/null || true
+    git -C "$HOME/workshop" config user.email "student@workshop.local" 2>/dev/null || true
+    git -C "$HOME/workshop" config user.name  "Workshop Student" 2>/dev/null || true
+    printf 'git remote points at your in-cluster Gitea; commit and push to have ArgoCD apply it.\n' >> "$HOME/.motd"
+  else
+    # No in-cluster Git wired: fall back to refreshing the public read-only clone.
+    git -C "$HOME/workshop" pull --ff-only --quiet 2>/dev/null || true
+  fi
 fi
 
 cat > "$HOME/.bashrc" <<'BRC'

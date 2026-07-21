@@ -120,6 +120,19 @@ main() {
 
     bootstrap_gitea
 
+    # Hand the terminal the in-cluster Git remote (same creds the chart used) so the student can push and
+    # watch ArgoCD apply their own commit. Without this their clone still points at the public GitHub
+    # repo, which they cannot write to, and the GitOps loop never closes for them.
+    local gu2 gp2
+    gu2="$(python3 -c "import yaml,sys;print(yaml.safe_load(open(sys.argv[1]))['gitea']['admin']['username'])" "${SCRIPT_DIR}/gitea/values.yaml")"
+    gp2="$(python3 -c "import yaml,sys;print(yaml.safe_load(open(sys.argv[1]))['gitea']['admin']['password'])" "${SCRIPT_DIR}/gitea/values.yaml")"
+    kubectl create namespace "${NS}" --dry-run=client -o yaml | kubectl apply -f - >/dev/null
+    kubectl -n "${NS}" create secret generic student-git-creds \
+        --from-literal=GITEA_REPO_URL="http://gitea-http.gitea.svc:3000/platform/packt-agentic-devops.git" \
+        --from-literal=GITEA_USER="${gu2}" \
+        --from-literal=GITEA_PASSWORD="${gp2}" \
+        --dry-run=client -o yaml | kubectl apply -f - >/dev/null
+
     printf 'Applying VTT manifest...\n' >&2
     kubectl apply -f "${SCRIPT_DIR}/web-terminal.yaml"
 
