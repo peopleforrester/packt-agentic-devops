@@ -121,3 +121,22 @@ pings. The knowledge repo it was told to write to
 (`~/repos/peopleforrester/mrf-knowledge`) is not cloned on this machine, which probably
 stalled it, but it never said so. Check that a delegated target path exists before
 dispatching, and treat an empty subagent result as a failure to redo, never as a finding.
+
+## Distribution app: two things that must be true on the day
+
+Found 2026-07-22 while removing the KodeKloud path.
+
+**1. The database must stay on the volume.** The service now has a Railway volume
+`packt-provisioning-volume` mounted at `/data`, with `DATABASE_PATH=/data/pool.db`. Before
+this, the SQLite database sat on the container filesystem, which Railway discards on every
+deploy, restart, or crash. A reset during the event does more than lose tracking: reseeding
+from `pool.csv` sets `claimed_by` back to NULL on every cluster, so a returning attendee is
+handed a different cluster and two attendees can end up on the same one. Verified by writing
+a marker row, redeploying, and reading it back. Do not remove the volume or the variable.
+
+**2. `pool.csv` must be regenerated and shipped.** It is currently header-only, because
+every cluster was torn down, so production seeds 0 clusters and every attendee would land on
+the exhausted page. After provisioning the fleet, regenerate it and deploy with
+`railway up --no-gitignore` from `scripts/provision/distribution` (the `--no-gitignore` flag
+is what lets the gitignored `pool.csv` reach the deploy; `.railwayignore` is then the only
+ignore list). Confirm `/admin?token=...` reports a non-zero Total before the doors open.

@@ -64,7 +64,23 @@ rows in the admin CSV export. Tests assert both routes now return 404 and that n
 mentions KodeKloud. The `path` column in the export is kept so an old export and a new one
 still line up column-for-column.
 
-The `browser_claims` table is no longer created or read. An existing `pool.db` from before
-this change still carries the table; it is inert and can be dropped whenever convenient.
+The `browser_claims` table is no longer created or read. Production never had to be
+migrated: `.railwayignore` excludes `*.db`, so the deployed database is built fresh by the
+running code, and the current one contains only `clusters`. The local `pool.db` still
+carries the empty table. It is inert, tracks nothing, and dropping it buys nothing, so it
+is left alone.
+
+## Database persistence (do not remove)
+
+The service has a Railway volume `packt-provisioning-volume` mounted at `/data`, and
+`DATABASE_PATH=/data/pool.db`. This is load-bearing. Without it the database lives on the
+container filesystem, which Railway discards on every deploy, restart, or crash. A reset
+mid-event does not merely lose tracking: reseeding from `pool.csv` sets `claimed_by` back
+to NULL on every cluster, so idempotency breaks and two attendees can be handed the same
+cluster. Verified on 2026-07-22 by writing a marker row, redeploying, and reading it back.
+
+Before the event, `pool.csv` must be regenerated from the provisioned fleet and shipped
+with `railway up --no-gitignore`. A header-only `pool.csv` seeds 0 clusters and every
+attendee lands on the exhausted page. Check `/admin?token=...` shows a non-zero Total.
 
 The sender email (`workshop@ai-enhanced-devops.com`) is configurable.
