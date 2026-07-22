@@ -100,6 +100,11 @@ module "eks" {
         env = {
           ENABLE_PREFIX_DELEGATION = "true"
           WARM_PREFIX_TARGET       = "1"
+          # Tag the ENIs the CNI creates. Provider default_tags cannot reach them (the CNI, not
+          # terraform, creates them), and an untagged ENI is invisible to the orphan sweep while
+          # being exactly the thing that blocks a subnet delete with no useful error. Measured
+          # before this: ~200 untagged network interfaces per 50-cluster account.
+          ADDITIONAL_ENI_TAGS = jsonencode(local.fleet_tags)
         }
       })
     }
