@@ -62,6 +62,20 @@ main() {
         done < <(known_clusters "${account}")
     done < <(accounts_list)
 
+    # Static routes for hosts the fleet driver does not manage, currently the instructor's
+    # standalone cluster. Without this they would be silently dropped from the table on the next
+    # scale change, because the table is rebuilt from the fleet inventory each time.
+    local static="${ROUTER_DIR}/routes.static"
+    if [[ -f "${static}" ]]; then
+        local shost supstream n=0
+        while read -r shost supstream; do
+            [[ -n "${shost}" && "${shost}" != \#* ]] || continue
+            printf '\t\t%s\t%s\n' "${shost}" "${supstream}" >> "${ROUTES_MAP}"
+            total=$((total + 1)); n=$((n + 1))
+        done < "${static}"
+        [[ "${n}" -gt 0 ]] && log "  plus ${n} static route(s) from routes.static"
+    fi
+
     log "routing table: ${total} clusters mapped, ${missing} omitted"
     # An empty table means every student gets a 404, so it is refused unless asked for explicitly.
     # The one legitimate case is bootstrapping the service before the first cluster exists.
