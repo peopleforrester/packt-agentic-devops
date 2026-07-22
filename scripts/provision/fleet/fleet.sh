@@ -49,12 +49,35 @@ require_tools() {
 # records its own outcome to a file, and the gate reads the file rather than trusting the shell.
 
 RUN_ID="${RUN_ID:-$(date -u +%Y%m%dT%H%M%SZ)}"
-FAILURES="${LOG_ROOT}/failures-${RUN_ID}.txt"
 SUCCESSES="${LOG_ROOT}/ok-${RUN_ID}.txt"
-export RUN_ID FAILURES SUCCESSES
+export RUN_ID SUCCESSES
 
-record_fail() { mkdir -p "${LOG_ROOT}"; printf '%s\t%s\t%s\n' "$1" "$2" "$3" >> "${FAILURES}"; }
+# Failures are recorded per account. up-fleet runs one subshell per account, and the converge pass
+# below rewrites the file to drop entries it has resolved; a single shared file would mean five
+# concurrent rewriters racing and losing each other's failures.
+failures_file() { printf '%s/failures-%s-%s.txt' "${LOG_ROOT}" "${RUN_ID}" "$1"; }
+
+record_fail() { mkdir -p "${LOG_ROOT}"; printf '%s\t%s\t%s\n' "$1" "$2" "$3" >> "$(failures_file "$1")"; }
 record_ok() { mkdir -p "${LOG_ROOT}"; printf '%s\t%s\n' "$1" "$2" >> "${SUCCESSES}"; }
+
+# A cluster that is fully built can still miss its health window: a fresh NLB hostname takes time
+# to become resolvable, and that wait only starts once AWS assigns it. Observed on 3 of 49 in S2,
+# all three healthy minutes later. At 250 that is a handful of clusters reported as failures when
+# nothing is wrong. up_one is idempotent and returns in seconds for an already-healthy cluster, so
+# one converge pass costs almost nothing and removes the whole class of spurious failure.
+converge_account() {
+    local account="$1" ff name
+    ff="$(failures_file "${account}")"
+    [[ -f "${ff}" ]] || return 0
+    local -a retry=()
+    while IFS=$'\t' read -r _ name _; do
+        [[ -n "${name}" ]] && retry+=("${name}")
+    done < "${ff}"
+    (( ${#retry[@]} )) || return 0
+    log "[${account}] converge pass over ${#retry[@]} cluster(s): ${retry[*]}"
+    rm -f "${ff}"
+    run_pool up_one "${account}" "${retry[@]}"
+}
 
 # --- Health assertions (L1 / L2 / L3) --------------------------------------------------------
 
@@ -305,6 +328,7 @@ cmd_up() {
     mapfile -t names < <(account_names "${account}" "${n}")
     log "[${account}] target ${n} clusters (max ${MAX_PARALLEL} parallel)"
     run_pool up_one "${account}" "${names[@]}"
+    converge_account "${account}"
     cmd_report
 }
 
@@ -322,6 +346,7 @@ cmd_up_fleet() {
             local names
             mapfile -t names < <(account_names "${account}" "${n}")
             run_pool up_one "${account}" "${names[@]}"
+            converge_account "${account}"
         ) &
     done < <(accounts_list)
     wait
@@ -385,13 +410,14 @@ cmd_status() {
 }
 
 cmd_report() {
-    local ok=0 bad=0
-    [[ -f "${SUCCESSES}" ]] && ok="$(wc -l < "${SUCCESSES}")"
-    [[ -f "${FAILURES}" ]] && bad="$(wc -l < "${FAILURES}")"
+    local ok=0 bad=0 all
+    [[ -f "${SUCCESSES}" ]] && ok="$(sort -u "${SUCCESSES}" | wc -l)"
+    all="$(cat "${LOG_ROOT}"/failures-"${RUN_ID}"-*.txt 2>/dev/null || true)"
+    [[ -n "${all}" ]] && bad="$(printf '%s\n' "${all}" | grep -c . )"
     log "run ${RUN_ID}: ${ok} ok, ${bad} failed"
     if [[ "${bad}" -gt 0 ]]; then
-        log "failures (${FAILURES}):"
-        sed 's/^/    /' "${FAILURES}" >&2
+        log "failures:"
+        printf '%s\n' "${all}" | sed 's/^/    /' >&2
         return 1
     fi
     return 0

@@ -13,3 +13,10 @@ allowVolumeExpansion: true
 parameters:
   type: gp3
   encrypted: "true"
+  # Tag every dynamically-provisioned volume as ours. The CSI driver applies its own
+  # kubernetes.io/* tags but nothing that identifies the workshop, and the orphan sweep selects on
+  # Workshop=packt. Without these, a PVC volume that outlives its cluster is invisible to the
+  # sweep and bills indefinitely: two volumes per cluster, so 500 of them across the full fleet.
+  tagSpecification_1: "Workshop=packt"
+  tagSpecification_2: "Project=packt-agentic-devops"
+  tagSpecification_3: "ManagedBy=ebs-csi"

@@ -199,3 +199,29 @@ def test_teardown_drains_load_balancers_before_destroy():
     drain = body.index("delete svc")
     destroy = body.index("terraform -chdir=\"${CLUSTER_DIR}\" destroy")
     assert drain < destroy, "LoadBalancer Services must be drained BEFORE terraform destroy"
+
+
+# --- Every billable resource must be findable by tag ------------------------------------------
+
+def test_dynamically_provisioned_volumes_are_tagged_as_ours():
+    # The EBS CSI driver applies only its own kubernetes.io/* tags, so PVC volumes carried no
+    # Workshop tag. Measured on the live fleet: 100 of 150 volumes were invisible to the orphan
+    # sweep, which selects on Workshop=packt. That is two volumes per cluster, 500 at full size,
+    # each one billing after its cluster is gone.
+    sc_path = os.path.join(REPO_ROOT, "platform", "0-bootstrap", "gp3-storageclass.yaml")
+    sc = yaml.safe_load(_read(sc_path))
+    params = sc.get("parameters", {})
+    tags = {v for k, v in params.items() if k.startswith("tagSpecification_")}
+    assert any(t == "Workshop=packt" for t in tags), (
+        "the default StorageClass must tag provisioned volumes Workshop=packt, "
+        "or the orphan sweep cannot see them"
+    )
+
+
+def test_sweep_finds_csi_volumes_that_predate_the_storageclass_tags():
+    # The StorageClass only tags NEW volumes. Anything already provisioned, or provisioned by a
+    # chart bringing its own StorageClass, still needs a selector that does not rely on our tag.
+    body = _read(os.path.join(PROVISION, "fleet", "sweep.sh"))
+    assert "kubernetes.io/cluster/student" in body, (
+        "sweep must also select CSI volumes by their kubernetes.io/cluster/<name> tag"
+    )
