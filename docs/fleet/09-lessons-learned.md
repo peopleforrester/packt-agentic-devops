@@ -257,3 +257,70 @@ rate, and the natural response, re-running the whole stage, would have been both
 `tag-audit.sh` brought one account from 451 untagged resources to 0 (903 tagged). Run
 `tag-audit.sh all --fix` after **every** provisioning run and before teardown, because a resource
 the sweep cannot see is a resource that bills after the event.
+
+---
+
+## Prompt walkthrough on a clean-room cluster (2026-07-23)
+
+Stood up an isolated cluster, seeded its Gitea with current `main`, installed ArgoCD, and ran
+the Module 1 prompts (P01–P03) as a student would. The filming build (`adwc-dev`) had masked
+what follows because its foundation Applications were **suspended and hand-patched**; this was
+the first from-scratch foundation sync with no intervention, and it does not cleanly converge.
+
+### Timings
+
+| Step | Wall clock |
+|---|---|
+| ArgoCD install (the opening "bootstrap exception") | **56 s** to all pods Ready |
+| P01 (read manifests, explain) | read-only, no cluster wait |
+| P02 (apply root-app, watch foundation) | **~7 min to 15 of 21 Healthy, then STALLS** |
+| P03 fault | presents immediately and correctly |
+
+The run-of-show budgets P02 at 20 min and claims "green in well under the 12 min gate." On a
+clean cluster it does **not** reach green: three apps stay unhealthy indefinitely, two of them
+for real reasons.
+
+### P03 fault: works perfectly
+
+Grafana pod: `ImagePullBackOff`, message `docker.io/grafana/grafana:13.0.2-hotfix: not found`.
+The tag is named in the error, discoverable from the ArgoCD UI alone. The fixture is correct.
+Sub-note: Grafana pulls from **docker.io** (Docker Hub), the one student-facing image that
+does. Small and pulled once, but it is the lone Docker Hub dependency in the student path.
+
+### Bug 1: the LB controller placeholder is never substituted
+
+`platform/1-foundation/aws-load-balancer-controller/application.yaml` ships
+`clusterName: REPLACE_WITH_CLUSTER_NAME`. Nothing substitutes it: a repo-wide grep finds the
+string only in the file that declares it. The manifest comment says "template vpcId at
+provisioning the same way clusterName is templated," but **nothing templates clusterName**.
+
+When ArgoCD syncs this, the controller starts with a literal placeholder cluster name and no
+vpcId, falls back to IMDS for the VPC, times out (`failed to fetch VPC ID from instance
+metadata: context deadline exceeded`), and crash-loops. The provisioning-time `helm install` in
+`vtt/apply.sh` works because it passes `--set clusterName --set vpcId --set region`, so the two
+coexist: the working provisioning pods keep the VTT up while ArgoCD's revision crashes and the
+Application sits Degraded forever.
+
+Fix: substitute the real cluster name (and vpcId) into the Gitea-seeded manifest at
+provisioning, per cluster. The seed step is the right place, since each cluster's name and VPC
+differ.
+
+### Bug 2: the OpenBao seed job runs as root under runAsNonRoot
+
+`openbao-seed-demo` is `CreateContainerConfigError`: "container has runAsNonRoot and image will
+run as root". Same class as the vLLM and llm-guard fixes earlier in the project: an image with a
+root or non-numeric USER under a `runAsNonRoot` security context needs an explicit numeric
+`runAsUser`. Blocks `openbao-config` from Healthy.
+
+### cert-manager-issuers: likely expected
+
+`letsencrypt-staging` ClusterIssuer stays `Ready=False` (ACME cannot validate on a throwaway
+cluster with no public issuer path); `selfsigned` is Ready. Probably by design, but it shows as
+Degraded in the UI and should either be removed from the foundation set or documented as
+expected, so it does not read as a failure during P02.
+
+### The meta-lesson
+
+A build validated with suspended, hand-patched Applications does not prove the student's
+from-scratch GitOps path. The only faithful test is a clean cluster syncing from an untouched
+repo, exactly what a student does. Every run before the event should include one.
