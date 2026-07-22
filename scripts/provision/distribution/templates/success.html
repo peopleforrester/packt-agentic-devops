@@ -73,13 +73,6 @@ claude</pre>
     </p>
   {% endif %}
 
-  {% if other_path %}
-    <p style="margin-top:18px;font-size:13px;color:var(--light-gray);font-style:italic;">
-      You also have a {{ other_path.label }} record from {{ other_path.at }} UTC.
-      We&rsquo;ve kept both &mdash; pick whichever path you want to use.
-    </p>
-  {% endif %}
-
   <p style="color:var(--light-gray);font-size:13px;font-style:italic;margin-top:8px;">
     Lost this page? Re-enter your email
     <a href="{{ url_for('index') }}" style="color:var(--accent);">on the home page</a>

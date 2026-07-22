@@ -1,5 +1,5 @@
 # ABOUTME: Pytest suite for the Agentic DevOps with Claude credential distribution app.
-# ABOUTME: Covers picker, browser path, EKS path (incl. back-compat /claim), admin, healthz.
+# ABOUTME: Covers the EKS claim path (incl. back-compat /claim), admin, export, and healthz.
 
 import csv
 
@@ -135,7 +135,7 @@ def test_root_is_the_eks_form(client):
     assert 'name="email"' in body                     # form input present
     assert 'action="/eks-claim"' in body              # posts directly to claim endpoint
     assert "Claim my cluster" in body                 # CTA copy
-    # KodeKloud is hidden from the root, but the /browser route still works.
+    # The KodeKloud browser path is gone entirely; nothing should reference it.
     assert "KodeKloud" not in body
     assert 'href="/browser"' not in body
 
@@ -148,46 +148,23 @@ def test_eks_form_url_redirects_to_root(client):
     assert res.headers["Location"].endswith("/")
 
 
-def test_browser_route_still_works_off_menu(client):
-    # KodeKloud was removed from the picker but the route is intentionally
-    # preserved so anyone with a direct link can still register.
-    assert client.get("/browser").status_code == 200
-    assert client.post("/browser-claim", data={"email": "kk@example.com"}).status_code == 200
+def test_browser_path_is_gone(client):
+    # The KodeKloud browser path was removed: Packt issues EKS clusters only, and a
+    # reachable /browser sent anyone with a direct link toward a course that is not
+    # provisioned for these attendees. Both routes must 404, not merely be unlinked.
+    assert client.get("/browser").status_code == 404
+    assert client.post("/browser-claim", data={"email": "kk@example.com"}).status_code == 404
 
 
-def test_browser_claim_happy_path(client):
-    res = client.post("/browser-claim", data={"email": "carol@example.com"})
-    assert res.status_code == 200
-    body = res.get_data(as_text=True)
-    assert "Open KodeKloud course" in body
-    assert "learn.kodekloud.com/user/courses/the-90-minutes-idp" in body
-    assert "kubectl get nodes" in body
-    assert "git clone https://github.com/peopleforrester/packt-agentic-devops.git" in body
-
-
-def test_browser_reclaim_is_idempotent(client):
-    first = client.post("/browser-claim", data={"email": "dana@example.com"})
-    second = client.post("/browser-claim", data={"email": "dana@example.com"})
-    third = client.post("/browser-claim", data={"email": "DANA@example.com"})
-    for r in (first, second, third):
-        assert r.status_code == 200
-    # Admin should show exactly one browser-claim row for dana despite 3 submits.
-    admin = client.get("/admin?token=test-admin-token")
-    body = admin.get_data(as_text=True)
-    assert body.count("dana@example.com") == 1
-
-
-def test_cross_path_note_appears(client):
-    """Same email on both paths: each success page mentions the other record."""
+def test_no_kodekloud_reference_survives_on_any_page(client):
     client.post("/eks-claim", data={"email": "ed@example.com"})
-    browser_res = client.post("/browser-claim", data={"email": "ed@example.com"})
-    browser_body = browser_res.get_data(as_text=True)
-    assert "EKS terminal" in browser_body
-    assert "test-cluster-01" in browser_body  # the cluster they hold
-
-    eks_res = client.post("/eks-claim", data={"email": "ed@example.com"})
-    eks_body = eks_res.get_data(as_text=True)
-    assert "browser (KodeKloud)" in eks_body
+    for res in (
+        client.get("/"),
+        client.post("/eks-claim", data={"email": "ed@example.com"}),
+        client.get("/admin?token=test-admin-token"),
+        client.get("/admin/export?token=test-admin-token"),
+    ):
+        assert "kodekloud" not in res.get_data(as_text=True).lower()
 
 
 # ---------- VTT terminal_url wiring -------------------------------------------

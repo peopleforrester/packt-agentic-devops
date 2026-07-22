@@ -54,7 +54,17 @@ is "Agentic DevOps with Claude", the setup commands point at `packt-agentic-devo
 `spec/WORKSHOP-SPEC.md`, and the node-count copy is corrected to a single node (`expect 1
 Ready`, this platform runs one t3.2xlarge per student). Tests updated and green.
 
-Remaining cleanup: the KodeKloud "browser path" (`/browser`, `/browser-claim`,
-`browser*.html`, the admin browser stats) is dead code for Packt. It is off-menu (a
-student never reaches it) and rebranded, but should be removed entirely since Packt issues
-EKS clusters only. The sender email (`workshop@ai-enhanced-devops.com`) is configurable.
+The KodeKloud "browser path" was removed on 2026-07-22. Packt issues EKS clusters only,
+and while the path was off-menu it still answered 200 in production, so anyone with a
+direct link could claim on it and be emailed toward a course that is not provisioned for
+these attendees. Gone: the `/browser` and `/browser-claim` routes, the two email builders,
+`browser.html` and `browser_success.html`, the `browser_claims` table, the admin browser
+stats and recent-claims table, the cross-path notes on both success pages, and the browser
+rows in the admin CSV export. Tests assert both routes now return 404 and that no page
+mentions KodeKloud. The `path` column in the export is kept so an old export and a new one
+still line up column-for-column.
+
+The `browser_claims` table is no longer created or read. An existing `pool.db` from before
+this change still carries the table; it is inert and can be dropped whenever convenient.
+
+The sender email (`workshop@ai-enhanced-devops.com`) is configurable.

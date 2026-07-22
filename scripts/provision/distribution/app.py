@@ -19,10 +19,7 @@ RESEND_ENDPOINT = "https://api.resend.com/emails"
 RESEND_FROM = "Agentic DevOps with Claude <workshop@ai-enhanced-devops.com>"
 RESEND_SUBJECT_EKS = "Agentic DevOps with Claude — Your EKS Cluster Credentials"
 RESEND_SUBJECT_TERMINAL = "Agentic DevOps with Claude — Your Lab Terminal"
-RESEND_SUBJECT_BROWSER = "Agentic DevOps with Claude — Your Lab Info"
 RESEND_TIMEOUT_SECONDS = 5
-
-KODEKLOUD_COURSE_URL = "https://learn.kodekloud.com/user/courses/the-90-minutes-idp"
 
 
 def _resolve_admin_token() -> str:
@@ -250,82 +247,6 @@ def _build_terminal_email_html(cluster_name, region, terminal_url, access_key, s
 </html>"""
 
 
-def _build_browser_email_text(root_url, kodekloud_url):
-    bar = "=" * 56
-    rule = "-" * 56
-    return (
-        f"{bar}\n"
-        "Agentic DevOps with Claude -- Browser Path (KodeKloud)\n"
-        f"{bar}\n\n"
-        "You're registered for the browser path. KodeKloud provides your\n"
-        "cluster directly -- no AWS credentials are needed.\n\n"
-        f"{rule}\n"
-        "Open KodeKloud\n"
-        f"{rule}\n"
-        f"{kodekloud_url}\n\n"
-        f"{rule}\n"
-        "Once you're in the KodeKloud browser shell, run\n"
-        f"{rule}\n"
-        "curl -fsSL https://claude.ai/install.sh | bash    # install Claude in this shell first\n"
-        "kubectl get nodes        # expect 2 Ready  (KodeKloud)\n"
-        "git clone https://github.com/peopleforrester/packt-agentic-devops.git\n"
-        "cd packt-agentic-devops\n"
-        "claude\n\n"
-        "When Claude starts, paste the prompt at the top of spec/WORKSHOP-SPEC.md.\n"
-        "Claude detects you're on KodeKloud (kubeadm) and adapts Phases 1, 3,\n"
-        "and 7 automatically.\n\n"
-        f"Lost this email? Re-enter your email at {root_url}/browser to redisplay\n"
-        "your registration.\n\n"
-        "Sponsored by Packt Publishing.\n"
-    )
-
-
-def _build_browser_email_html(root_url, kodekloud_url):
-    mono_block = (
-        "margin:6px 0 0; padding:12px 14px; background:#0D0D0D; color:#FFFFFF;"
-        " font-family:Consolas,\"SFMono-Regular\",Menlo,monospace; font-size:13px;"
-        " border-radius:6px; white-space:pre; overflow-x:auto; line-height:1.55;"
-    )
-    label_style = "margin-top:18px; font-size:13px; color:#191919; font-weight:600; letter-spacing:.02em;"
-    return f"""<!doctype html>
-<html>
-<body style="margin:0;padding:0;background:#F5F5F4;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;color:#333333;line-height:1.5;">
-  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background:#F5F5F4;">
-    <tr><td align="center" style="padding:24px 12px;">
-      <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="max-width:640px;background:#FFFFFF;border-radius:10px;border:1px solid #e2e4ee;">
-        <tr><td style="background:#191919;color:#FFFFFF;padding:18px 24px;border-radius:10px 10px 0 0;border-bottom:3px solid #FA7040;">
-          <div style="font-size:12px;letter-spacing:.08em;text-transform:uppercase;opacity:.75;">Agentic DevOps with Claude</div>
-          <div style="font-size:20px;font-weight:700;margin-top:2px;">Browser path (KodeKloud)</div>
-        </td></tr>
-        <tr><td style="padding:24px;">
-          <p style="margin:0 0 18px;font-size:15px;color:#333333;">
-            You&rsquo;re registered for the browser path. KodeKloud provides your cluster directly &mdash; no AWS credentials needed.
-          </p>
-
-          <a href="{kodekloud_url}" style="display:inline-block;background:#FA7040;color:#FFFFFF;text-decoration:none;font-weight:700;font-size:15px;padding:12px 22px;border-radius:6px;">Open KodeKloud course &rarr;</a>
-
-          <div style="{label_style}">Once you&rsquo;re in the KodeKloud browser shell</div>
-          <pre style="{mono_block}">curl -fsSL https://claude.ai/install.sh | bash    # install Claude in this shell first
-kubectl get nodes        # expect 2 Ready  (KodeKloud)
-git clone https://github.com/peopleforrester/packt-agentic-devops.git
-cd packt-agentic-devops
-claude</pre>
-
-          <div style="margin-top:22px;padding:12px 14px;border-left:3px solid #FA7040;background:#FEF1EA;color:#191919;font-size:14px;font-style:italic;border-radius:0 6px 6px 0;">
-            <strong style="font-style:normal;">When Claude starts,</strong> paste the prompt at the top of <code style="font-style:normal;font-family:Consolas,monospace;">spec/WORKSHOP-SPEC.md</code>. Claude detects you&rsquo;re on KodeKloud (kubeadm) and adapts Phases 1, 3, and 7 automatically.
-          </div>
-        </td></tr>
-        <tr><td style="padding:14px 24px 22px;border-top:1px solid #e2e4ee;color:#6B6B6B;font-size:12px;text-align:center;font-style:italic;">
-          Lost this email? Re-enter your email at <a href="{root_url}/browser" style="color:#FA7040;text-decoration:none;">the browser-path form</a> to redisplay your registration.
-          <div style="margin-top:8px;font-style:normal;color:#6B6B6B;">Sponsored by <strong style="color:#191919;">Packt Publishing</strong></div>
-        </td></tr>
-      </table>
-    </td></tr>
-  </table>
-</body>
-</html>"""
-
-
 def _send_resend_email(api_key, to_email, subject, text_body, html_body):
     payload = {
         "from": RESEND_FROM,
@@ -415,15 +336,6 @@ def create_app(database_path=None, pool_csv=None, resend_api_key=None, eks_pool_
             conn.execute("ALTER TABLE clusters ADD COLUMN email_sent INTEGER NOT NULL DEFAULT 0")
         if "terminal_url" not in cols:
             conn.execute("ALTER TABLE clusters ADD COLUMN terminal_url TEXT NOT NULL DEFAULT ''")
-        conn.execute(
-            """
-            CREATE TABLE IF NOT EXISTS browser_claims (
-                id          INTEGER PRIMARY KEY,
-                email       TEXT UNIQUE NOT NULL,
-                claimed_at  TEXT NOT NULL
-            )
-            """
-        )
 
     def seed_from_csv(conn, csv_path):
         if not Path(csv_path).exists():
@@ -501,58 +413,6 @@ def create_app(database_path=None, pool_csv=None, resend_api_key=None, eks_pool_
         # Back-compat for any QR codes / shared links pointing at /eks.
         return redirect(url_for("index"))
 
-    @app.get("/browser")
-    def browser_form():
-        return render_template("browser.html")
-
-    @app.post("/browser-claim")
-    def browser_claim():
-        email = (request.form.get("email") or "").strip().lower()
-        if not email or not EMAIL_RE.match(email):
-            return render_template("browser.html", error="Please enter a valid email address."), 400
-
-        conn = get_db()
-        # Check existence FIRST so we know whether this is a brand-new claim
-        # (which should trigger an email) or a re-claim by the same email
-        # (which is idempotent and never sends a second email).
-        prior = conn.execute(
-            "SELECT 1 FROM browser_claims WHERE email = ?", (email,)
-        ).fetchone()
-        is_new_claim = prior is None
-        if is_new_claim:
-            conn.execute(
-                "INSERT OR IGNORE INTO browser_claims (email, claimed_at) "
-                "VALUES (?, strftime('%Y-%m-%dT%H:%M:%SZ','now'))",
-                (email,),
-            )
-        row = conn.execute(
-            "SELECT email, claimed_at FROM browser_claims WHERE email = ?",
-            (email,),
-        ).fetchone()
-
-        # Email backup — same pattern as the EKS path. Failures log but never
-        # block in-browser display, and re-claims never trigger a second send.
-        if is_new_claim and app.config["RESEND_API_KEY"]:
-            root = request.url_root.rstrip("/")
-            text = _build_browser_email_text(root, KODEKLOUD_COURSE_URL)
-            html = _build_browser_email_html(root, KODEKLOUD_COURSE_URL)
-            _send_resend_email(
-                app.config["RESEND_API_KEY"], email, RESEND_SUBJECT_BROWSER, text, html,
-            )
-
-        # Cross-path note: did this email also claim an EKS cluster?
-        eks_row = conn.execute(
-            "SELECT name, claimed_at FROM clusters WHERE claimed_by = ? LIMIT 1",
-            (email,),
-        ).fetchone()
-        return render_template(
-            "browser_success.html",
-            email=email,
-            claimed_at=row["claimed_at"],
-            kodekloud_url=KODEKLOUD_COURSE_URL,
-            other_path=({"label": "EKS terminal", "cluster": eks_row["name"], "at": eks_row["claimed_at"]} if eks_row else None),
-        )
-
     @app.post("/eks-claim")
     def eks_claim():
         email = (request.form.get("email") or "").strip().lower()
@@ -578,10 +438,9 @@ def create_app(database_path=None, pool_csv=None, resend_api_key=None, eks_pool_
                     "FROM clusters WHERE claimed_by IS NULL ORDER BY id LIMIT 1"
                 ).fetchone()
                 if row is None:
-                    # Pool exhausted for a brand-new email. The browser path is
-                    # no longer offered from the main page, so render the
-                    # exhausted fallback instead of silently routing to a path
-                    # we removed.
+                    # Pool exhausted for a brand-new email. EKS is the only path
+                    # now, so render the exhausted fallback and let the attendee
+                    # ask for a spare during the setup window.
                     conn.execute("ROLLBACK")
                     return render_template(
                         "exhausted.html",
@@ -629,11 +488,6 @@ def create_app(database_path=None, pool_csv=None, resend_api_key=None, eks_pool_
             if _send_resend_email(app.config["RESEND_API_KEY"], email, subject, text, html):
                 conn.execute("UPDATE clusters SET email_sent = 1 WHERE id = ?", (cluster["id"],))
 
-        # Cross-path note: did this email also do a browser claim?
-        browser_row = conn.execute(
-            "SELECT claimed_at FROM browser_claims WHERE email = ? LIMIT 1",
-            (email,),
-        ).fetchone()
         return render_template(
             "success.html",
             email=email,
@@ -643,7 +497,6 @@ def create_app(database_path=None, pool_csv=None, resend_api_key=None, eks_pool_
             secret_key=cluster["secret_key"],
             terminal_url=terminal_url,
             root_url=request.url_root.rstrip("/"),
-            other_path=({"label": "browser (KodeKloud)", "at": browser_row["claimed_at"]} if browser_row else None),
         )
 
     @app.post("/claim")
@@ -662,16 +515,11 @@ def create_app(database_path=None, pool_csv=None, resend_api_key=None, eks_pool_
             "SELECT name, region, claimed_by, claimed_at FROM clusters "
             "WHERE claimed_by IS NOT NULL ORDER BY claimed_at"
         ).fetchall()
-        br_rows = conn.execute(
-            "SELECT email, claimed_at FROM browser_claims ORDER BY claimed_at"
-        ).fetchall()
-        # One CSV with a leading "path" column so the two paths are easy to
-        # sort/filter from any spreadsheet.
+        # The leading "path" column is retained so an export opened alongside an
+        # older one still lines up column-for-column in a spreadsheet.
         lines = ["path,email,cluster_name,region,claimed_at"]
         for r in eks_rows:
             lines.append(f"eks,{r['claimed_by']},{r['name']},{r['region']},{r['claimed_at']}")
-        for r in br_rows:
-            lines.append(f"browser,{r['email']},,,{r['claimed_at']}")
         body = "\n".join(lines) + "\n"
         return body, 200, {"Content-Type": "text/csv; charset=utf-8"}
 
@@ -689,24 +537,12 @@ def create_app(database_path=None, pool_csv=None, resend_api_key=None, eks_pool_
             "SELECT name, region, claimed_by, claimed_at FROM clusters "
             "WHERE claimed_by IS NOT NULL ORDER BY claimed_at DESC LIMIT 10"
         ).fetchall()
-        (browser_count,) = conn.execute("SELECT COUNT(*) FROM browser_claims").fetchone()
-        browser_recent = conn.execute(
-            "SELECT email, claimed_at FROM browser_claims ORDER BY claimed_at DESC LIMIT 10"
-        ).fetchall()
-        combined = browser_count + eks_claimed
-        browser_pct = round(100 * browser_count / combined) if combined else 0
-        eks_pct = 100 - browser_pct if combined else 0
         return render_template(
             "admin.html",
             total=eks_total,
             claimed=eks_claimed,
             available=eks_total - eks_claimed,
             recent=eks_recent,
-            browser_count=browser_count,
-            browser_recent=browser_recent,
-            combined=combined,
-            browser_pct=browser_pct,
-            eks_pct=eks_pct,
         )
 
     return app
