@@ -384,12 +384,23 @@ def create_app(database_path=None, pool_csv=None, resend_api_key=None, eks_pool_
     def bootstrap():
         with closing(sqlite3.connect(app.config["DATABASE_PATH"], isolation_level=None)) as conn:
             init_schema(conn)
-            (count,) = conn.execute("SELECT COUNT(*) FROM clusters").fetchone()
-            if count == 0:
-                added = seed_from_csv(conn, app.config["POOL_CSV"])
-                print(f"[startup] seeded {added} clusters from {app.config['POOL_CSV']}", flush=True)
-            else:
-                print(f"[startup] clusters table already has {count} rows; skipping seed", flush=True)
+            (before,) = conn.execute("SELECT COUNT(*) FROM clusters").fetchone()
+            # Seed on EVERY start, not just an empty table. The fleet is built progressively
+            # (5, then 54, then 250) against a database on a persistent volume, so each restart
+            # sees a pool.csv with more clusters than the last. Seeding only when empty meant the
+            # app kept serving the first stage forever: 54 clusters built, 5 offered.
+            #
+            # This is safe to repeat because `name` is UNIQUE and seed_from_csv skips the
+            # IntegrityError per row. Existing rows are never updated, so claimed_by survives.
+            # That distinction is the whole point: a re-seed that RESET claims would hand a
+            # returning attendee a different cluster and could put two people on the same one.
+            added = seed_from_csv(conn, app.config["POOL_CSV"])
+            (after,) = conn.execute("SELECT COUNT(*) FROM clusters").fetchone()
+            print(
+                f"[startup] pool: {before} rows before, {added} added from "
+                f"{app.config['POOL_CSV']}, {after} now",
+                flush=True,
+            )
         if app.config["RESEND_API_KEY"]:
             print("[startup] RESEND_API_KEY set — credential emails enabled", flush=True)
         else:

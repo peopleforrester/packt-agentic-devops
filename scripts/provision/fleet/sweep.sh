@@ -151,15 +151,31 @@ sweep_account() {
     fi
 
     # 4. Detached EBS volumes left by PVCs whose CSI controller died with the cluster.
+    #
+    # Two selectors, because they catch different volumes. The node root volumes carry
+    # Workshop=packt from the launch template. The PVC volumes are created by the EBS CSI driver,
+    # which applies only its own kubernetes.io/* tags: measured on the live fleet, 100 of 150
+    # volumes had no Workshop tag at all (two PVCs per cluster, so 500 at full size). The
+    # StorageClass now adds our tags to NEW volumes, but anything provisioned before that, and
+    # anything provisioned by a chart with its own StorageClass, still needs the second selector.
+    #
+    # The second selector keys on kubernetes.io/cluster/student<N>, which the CSI driver always
+    # writes and which the fleet name guard makes unambiguously ours. Only `available` volumes are
+    # ever deleted, so an in-use volume is never touched.
     local vol
-    while read -r vol; do
-        [[ -n "${vol}" && "${vol}" != "None" ]] || continue
-        log "    detached volume: ${vol}"
-        do_or_echo "delete volume ${vol}" \
-            aws ec2 delete-volume --region "${PACKT_REGION}" --volume-id "${vol}"
-    done < <(retry_aws aws ec2 describe-volumes --region "${PACKT_REGION}" \
-        --filters "Name=status,Values=available" "Name=tag:Workshop,Values=packt" \
-        --query 'Volumes[].VolumeId' --output text 2>/dev/null | tr '\t' '\n')
+    delete_available_volumes() {
+        local desc="$1"; shift
+        while read -r vol; do
+            [[ -n "${vol}" && "${vol}" != "None" ]] || continue
+            log "    detached volume (${desc}): ${vol}"
+            do_or_echo "delete volume ${vol}" \
+                aws ec2 delete-volume --region "${PACKT_REGION}" --volume-id "${vol}"
+        done < <(retry_aws aws ec2 describe-volumes --region "${PACKT_REGION}" \
+            --filters "Name=status,Values=available" "$@" \
+            --query 'Volumes[].VolumeId' --output text 2>/dev/null | tr '\t' '\n')
+    }
+    delete_available_volumes "Workshop tag" "Name=tag:Workshop,Values=packt"
+    delete_available_volumes "CSI/PVC" "Name=tag-key,Values=kubernetes.io/cluster/student*"
 
     # 5. Orphaned eks-cluster-sg-* groups. They cross-reference each other, so DeleteSecurityGroup
     #    fails with DependencyViolation while the references exist: revoke all rules first.

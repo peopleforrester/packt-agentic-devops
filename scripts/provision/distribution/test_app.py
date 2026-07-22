@@ -221,3 +221,56 @@ def test_pool_without_terminal_url_is_unchanged(tmp_path, monkeypatch):
     body = res.get_data(as_text=True)
     assert "aws eks update-kubeconfig --name test-cluster-01" in body
     assert "/terminal/" not in body
+
+
+# --- Pool convergence across a progressive rollout -------------------------------------------
+# The fleet grows in stages (5 -> 54 -> 250) and the database lives on a persistent volume, so
+# every restart re-reads a pool.csv that has MORE clusters than the last one. Seeding only when
+# the table was empty meant the app kept serving the first stage's clusters forever: 54 built,
+# 5 offered. Seeding must therefore be additive, and it must not disturb existing claims.
+
+def test_growing_pool_adds_new_clusters_on_restart(tmp_path, monkeypatch):
+    csv_path = tmp_path / "pool.csv"
+    _write_pool_csv_with_terminal(
+        csv_path,
+        [["student1", "", "", "us-west-2", "https://student1.example.com/"]],
+    )
+    client = _make_client(tmp_path, monkeypatch, csv_path)
+    assert client.get("/admin?token=test-admin-token").status_code == 200
+
+    # The fleet grows; the same database is reused, as it is on a Railway volume.
+    _write_pool_csv_with_terminal(
+        csv_path,
+        [
+            ["student1", "", "", "us-west-2", "https://student1.example.com/"],
+            ["student2", "", "", "us-west-2", "https://student2.example.com/"],
+            ["student3", "", "", "us-west-2", "https://student3.example.com/"],
+        ],
+    )
+    client = _make_client(tmp_path, monkeypatch, csv_path)
+    body = client.get("/admin?token=test-admin-token").get_data(as_text=True)
+    assert ">3<" in body, "restart with a larger pool.csv must add the new clusters"
+
+
+def test_reseeding_never_releases_an_existing_claim(tmp_path, monkeypatch):
+    # The reason seeding was one-shot: a naive re-seed resets claimed_by, so a returning
+    # attendee is handed a different cluster and two people can land on the same one.
+    csv_path = tmp_path / "pool.csv"
+    _write_pool_csv_with_terminal(
+        csv_path,
+        [["student1", "", "", "us-west-2", "https://student1.example.com/"]],
+    )
+    client = _make_client(tmp_path, monkeypatch, csv_path)
+    first = client.post("/eks-claim", data={"email": "attendee@example.com"})
+    assert first.status_code == 200
+
+    _write_pool_csv_with_terminal(
+        csv_path,
+        [
+            ["student1", "", "", "us-west-2", "https://student1.example.com/"],
+            ["student2", "", "", "us-west-2", "https://student2.example.com/"],
+        ],
+    )
+    client = _make_client(tmp_path, monkeypatch, csv_path)
+    export = client.get("/admin/export?token=test-admin-token").get_data(as_text=True)
+    assert "attendee@example.com,student1" in export, "the existing claim must survive a re-seed"
