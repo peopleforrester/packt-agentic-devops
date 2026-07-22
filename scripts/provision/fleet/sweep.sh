@@ -43,7 +43,13 @@ retry_aws() {
     local attempt=0 max=6 delay=2 out rc
     while :; do
         if out="$("$@" 2>&1)"; then
-            printf '%s' "${out}"
+            # The trailing newline is load-bearing. Command substitution strips it, and a
+            # `while read` loop fed a final line with no newline sets the variable but returns
+            # non-zero, so the loop body never runs for that element. Every resource list here is
+            # consumed by such a loop, so `printf '%s'` silently dropped the LAST load balancer,
+            # target group, volume and security group. With a single load balancer that is all of
+            # them, and the sweep reports a clean account while the NLB keeps billing.
+            printf '%s\n' "${out}"
             return 0
         fi
         rc=$?
@@ -69,10 +75,25 @@ do_or_echo() {
 }
 
 sweep_account() {
-    local account="$1" vpc
+    local account="$1" vpc still_live
     assert_account "${account}"
     printf '\n=== sweep %s ===\n' "${account}" >&2
     export AWS_PROFILE="${account}"
+
+    # HARD GUARD. This script deletes every load balancer in the lab VPC and every eks-cluster-sg
+    # group it finds, on the assumption that the clusters are already gone. Run against an account
+    # that still has live clusters it does not clean up orphans: it revokes the security groups of
+    # RUNNING clusters and tears down their networking mid-workshop. Nothing else in the chain
+    # stops that, so it is refused here rather than left to operator discipline.
+    still_live="$(live_clusters "${account}" | wc -l)"
+    if [[ "${still_live}" -gt 0 ]]; then
+        log "  REFUSING: ${still_live} student cluster(s) still live in ${account}."
+        log "  The sweep deletes load balancers and eks-cluster-sg groups belonging to live"
+        log "  clusters. Tear them down first: PACKT_APPLY=1 ${0%/*}/fleet.sh down-fleet"
+        log "  Override only if you know the remaining clusters are not yours: SWEEP_FORCE=1"
+        [[ "${SWEEP_FORCE:-}" == "1" ]] || return 1
+        log "  SWEEP_FORCE=1 set; proceeding anyway"
+    fi
 
     vpc="$(retry_aws aws ec2 describe-vpcs --region "${PACKT_REGION}" \
         --filters "Name=tag:Workshop,Values=packt" "Name=tag:Purpose,Values=lab-shared-vpc" \

@@ -59,37 +59,48 @@ gate_size() {
 # --- Account isolation and membership (D5, D6) ------------------------------------------------
 # The bug class this catches: a VPC id or profile leaking across the per-account subshells, which
 # silently builds a cluster in the wrong account and is invisible from the cluster itself.
+# One list-clusters per account (5 calls), then set comparison. The obvious implementation is a
+# describe-cluster per cluster per account, which is 1,250 sequential calls at full size: slow
+# enough to matter and likely to throttle, which would then be misread as an isolation failure.
+# Listing once per account is both faster and strictly stronger, because it sees clusters the
+# driver has no state for.
 gate_isolation() {
     section "Account isolation and membership"
-    local account other name recorded found
+    local account other name recorded tmp
+    tmp="$(mktemp -d)"
     while read -r account; do
+        live_clusters "${account}" | sort > "${tmp}/${account}.live"
+        known_clusters "${account}" | sort > "${tmp}/${account}.known"
+    done < <(accounts_list)
+
+    while read -r account; do
+        # Every cluster the driver claims for this account must actually be here.
         while read -r name; do
             [[ -n "${name}" ]] || continue
             recorded="$(read_membership "${account}" "${name}" 2>/dev/null || true)"
             [[ "${recorded}" == "${account}" ]] \
-                || { fail "${name}: membership file says '${recorded}', expected ${account}"; continue; }
-            # It must exist here...
-            if ! AWS_PROFILE="${account}" aws eks describe-cluster --name "${name}" \
-                    --region "${PACKT_REGION}" >/dev/null 2>&1; then
-                fail "${name}: not found in ${account} despite membership record"
-                continue
-            fi
-            # ...and nowhere else.
-            found=""
+                || fail "${name}: membership file says '${recorded}', expected ${account}"
+            grep -qx "${name}" "${tmp}/${account}.live" \
+                || fail "${name}: recorded in ${account} but not live there"
+            # ...and in no other account.
             while read -r other; do
                 [[ "${other}" == "${account}" ]] && continue
-                if AWS_PROFILE="${other}" aws eks describe-cluster --name "${name}" \
-                        --region "${PACKT_REGION}" >/dev/null 2>&1; then
-                    found="${other}"
-                fi
+                grep -qx "${name}" "${tmp}/${other}.live" \
+                    && fail "${name}: ALSO exists in ${other}; account isolation broken"
             done < <(accounts_list)
-            if [[ -n "${found}" ]]; then
-                fail "${name}: ALSO exists in ${found}; account isolation broken"
-            else
-                pass "${name}: only in ${account}"
-            fi
         done < <(known_clusters "${account}")
+
+        # And every fleet-named cluster live in this account must be one we know about. A cluster
+        # nobody has state for is unmanaged: it bills, and no teardown will ever remove it.
+        while read -r name; do
+            [[ -n "${name}" ]] || continue
+            grep -qx "${name}" "${tmp}/${account}.known" \
+                || fail "${name}: live in ${account} with no driver state (unmanaged, will not tear down)"
+        done < "${tmp}/${account}.live"
+
+        pass "${account}: $(wc -l < "${tmp}/${account}.known") cluster(s) placed correctly"
     done < <(accounts_list)
+    rm -rf "${tmp}"
 }
 
 # --- L1-L3 ------------------------------------------------------------------------------------

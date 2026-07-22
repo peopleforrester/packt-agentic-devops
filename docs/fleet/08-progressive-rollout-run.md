@@ -189,6 +189,22 @@ Stop and reassess rather than widening:
   throttling,
 - the cost meter diverges from ~$107/hr at full size by more than 25%.
 
+## Measured: concurrency is not RAM-bound
+
+`01-architecture-and-decisions.md` (D7) assumes ~600 MB per terraform build tree and concludes
+the local binding constraint is memory. Measured during S2 at 25-wide on 2026-07-22:
+
+| Quantity | Assumed | Measured |
+|---|---|---|
+| RSS per terraform process | ~600 MB | **90 MB** |
+| 25 concurrent | ~15 GB | **2.1 GB** |
+
+That is 6.7x pessimistic. At 90 MB a 75-wide run costs under 7 GB, so on a 62 GB box local memory
+is nowhere near the limit. The real ceiling is the per-account AWS API rate, not the provisioning
+host, and it should be tuned per account rather than globally. S3 therefore runs at 15 per account
+(75 concurrent), which is D7's original figure, chosen now for the API reason rather than the
+memory one.
+
 ## Cost and wall-clock
 
 | Stage | Live | Rate | Build |
