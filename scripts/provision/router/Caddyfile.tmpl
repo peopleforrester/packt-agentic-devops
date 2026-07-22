@@ -1,0 +1,44 @@
+# Template for the fleet router. `fleet.sh routes` renders this into Caddyfile by replacing the
+# ROUTES marker with one line per live cluster, then deploys. Do not edit the rendered Caddyfile:
+# it is generated and overwritten on every scale change.
+#
+# The router maps studentN.packt.ai-enhanced-devops.com to that cluster's NLB. TLS terminates at
+# the Railway edge on ONE wildcard certificate, because Let's Encrypt caps certificates at 50 per
+# registered domain per 7 days and 250 per-host certs would breach that by 5x.
+
+{
+	# Railway already terminated TLS. Leaving auto_https on makes Caddy attempt ACME for every
+	# student hostname, which both fails and burns the rate limit that forced the wildcard.
+	auto_https off
+	admin off
+}
+
+:{$PORT:8080} {
+	map {host} {upstream} {
+{{ROUTES}}
+		default ""
+	}
+
+	# A hostname with no cluster behind it: a reaped cluster, a typo, or a stale bookmark. Answer
+	# with a real page rather than a proxy error, so a student who lands here knows what to do.
+	@unknown expression {upstream} == ""
+	handle @unknown {
+		root * /srv
+		rewrite * /404.html
+		file_server {
+			status 404
+		}
+	}
+
+	handle {
+		# reverse_proxy upgrades websockets natively, which is what carries the ttyd terminal.
+		# Because the student page is a same-origin iframe under an HTTPS hostname, the browser
+		# opens wss:// with no code change; corporate proxies block plain ws:// far more often.
+		# No scheme on the upstream: Caddy rejects a placeholder address that carries one
+		# ("placeholders are not allowed when an upstream address contains a scheme"). Plain
+		# HTTP is the default and is what we want inward, since TLS ended at the edge.
+		reverse_proxy {upstream} {
+			header_up X-Forwarded-Proto https
+		}
+	}
+}
