@@ -57,11 +57,15 @@ fi
 # and ArgoCD applies their own commit, which is the whole point of the workshop.
 if [ -d "$HOME/workshop/.git" ]; then
   if [ -n "${GITEA_REPO_URL:-}" ]; then
-    # Credentials are embedded in the remote so push needs no prompt. This is the throwaway dev admin on
-    # the student's own single-tenant cluster, the same posture as the OpenBao dev token.
+    # Credentials go in a 0600 credential-store file, NOT in the remote URL. Embedding them in the URL
+    # writes the password into .git/config and prints it from `git remote -v`, which puts it on screen
+    # any time a student shares their terminal. The store file keeps push promptless without that.
     if [ -n "${GITEA_USER:-}" ] && [ -n "${GITEA_PASSWORD:-}" ]; then
       _host="${GITEA_REPO_URL#http://}"
       _remote="http://${GITEA_USER}:${GITEA_PASSWORD}@${_host}"
+      umask 077
+      printf 'http://%s:%s@%s\n' "${GITEA_USER}" "${GITEA_PASSWORD}" "${_host%%/*}" > "$HOME/.git-credentials"
+      git config --global credential.helper store
     else
       _remote="${GITEA_REPO_URL}"
     fi
@@ -74,6 +78,8 @@ if [ -d "$HOME/workshop/.git" ]; then
        && git clone --quiet "${_remote}" "$HOME/workshop.new" 2>/dev/null; then
       rm -rf "$HOME/workshop"
       mv "$HOME/workshop.new" "$HOME/workshop"
+      # Store the remote WITHOUT credentials; the credential helper above supplies them on push.
+      git -C "$HOME/workshop" remote set-url origin "${GITEA_REPO_URL}"
       printf 'git remote points at your in-cluster Gitea; commit and push to have ArgoCD apply it.\n' >> "$HOME/.motd"
     else
       rm -rf "$HOME/workshop.new"
