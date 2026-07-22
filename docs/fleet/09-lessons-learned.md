@@ -122,12 +122,32 @@ Let the library own its own variables.
 
 ## Assumptions that were wrong
 
-### 12. Concurrency is not RAM-bound
+### 12. Concurrency is CPU-bound on the provisioning host, not RAM-bound and not API-bound
 
 The design assumed ~600 MB per terraform build tree and sized parallelism around memory. Measured
-at 25-wide: **90 MB average RSS, 2.1 GB total, 40 GiB still free.** That is 6.7x pessimistic. The
-real ceiling is the per-account AWS API rate, so parallelism should be tuned per account and not
-against the provisioning host.
+at 25-wide: **90 MB average RSS, 2.1 GB total, 40 GiB still free.** That is 6.7x pessimistic, so
+memory is not the constraint.
+
+Neither is the AWS API: zero throttling errors across 26 concurrent cluster builds in one account.
+
+The actual constraint is **local CPU**. At 25 concurrent builds on a 16-core host:
+
+```
+load average: 29.9        (~1.9x core count)
+%Cpu(s): 67.6 us, 20.4 sy, 10.9 id    -> 88% busy
+```
+
+Load average alone would have been misleading, since it counts network-blocked processes; the
+`%idle` figure is what confirms real saturation. The cost is concentrated in the **bootstrap**
+phase (helm, kubectl, and an `aws eks get-token` credential exec on every kubectl call), not in the
+~10 minute control-plane wait, which is nearly idle. So load is bursty and gets worse when many
+clusters reach the bootstrap phase together, which is exactly what a single-account wave does.
+
+Consequence for sizing: total concurrency across **all** accounts is the number that matters, not
+per-account. Oversubscribing does not just slow things down, it risks tripping the fixed timeouts
+in the bootstrap chain (`helm --wait --timeout 10m`, `kubectl rollout status --timeout=180s`) and
+turning contention into spurious cluster failures. Running five accounts naturally desynchronises
+the phases, which helps, but the ceiling is still the host.
 
 ### 13. The Docker Hub rate-limit risk is already retired
 
