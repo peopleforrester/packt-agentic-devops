@@ -11,7 +11,6 @@
 set -euo pipefail
 
 FLEET_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
-readonly FLEET_DIR
 # shellcheck source=../lib.sh
 source "${FLEET_DIR}/lib.sh"
 
@@ -25,9 +24,13 @@ FAILS=0
 fail() { printf '  FAIL  %s\n' "$*" >&2; FAILS=$((FAILS + 1)); }
 pass() { printf '  ok    %s\n' "$*" >&2; }
 
+# The railway CLI resolves its project from the working directory, so this must run inside the
+# linked service directory. It also must not abort the whole test: under `set -e` with pipefail a
+# failed railway call kills the script mid-run and the gate reports "failed" with no reason printed.
 admin_token() {
-    railway variables --service "${DIST_SERVICE}" --kv 2>/dev/null \
-        | sed -n 's/^ADMIN_TOKEN=//p' | head -1
+    ( cd "${PROVISION_DIR}/distribution" 2>/dev/null \
+        && railway variables --service "${DIST_SERVICE}" --kv 2>/dev/null ) \
+        | sed -n 's/^ADMIN_TOKEN=//p' | head -1 || true
 }
 
 expected_pool_size() {
@@ -42,7 +45,7 @@ main() {
     printf '[L5] claim flow against %s\n' "${APP}" >&2
     local code token body url1 url2 want
 
-    code="$(curl -sS -o /dev/null -w '%{http_code}' --max-time 20 "${APP}/healthz" || echo 000)"
+    code="$(curl -sS -o /dev/null -w '%{http_code}' --max-time 20 "${APP}/healthz" 2>/dev/null)" || true
     [[ "${code}" == "200" ]] && pass "/healthz -> 200" || fail "/healthz -> ${code}"
 
     token="$(admin_token)"
@@ -51,11 +54,18 @@ main() {
     else
         want="$(expected_pool_size)"
         body="$(curl -sS --max-time 20 "${APP}/admin?token=${token}" || true)"
-        # The admin page reports the pool total; assert it matches the fleet we actually built.
-        if printf '%s' "${body}" | grep -qE "(^|[^0-9])${want}([^0-9]|$)"; then
-            pass "/admin reports a total consistent with ${want} clusters"
+        # Read the Total stat specifically. Grepping the whole page for the bare number matches any
+        # digit anywhere (the Claimed count, a region, a timestamp) and so passes for the wrong
+        # reason, which is worse than failing: this check exists to catch a pool that does not
+        # describe the fleet.
+        local total
+        total="$(printf '%s' "${body}" \
+            | tr -d '\n' \
+            | sed -n 's/.*<div class="label">Total<\/div>[[:space:]]*<div class="value">\([0-9]*\).*/\1/p')"
+        if [[ "${total}" == "${want}" ]]; then
+            pass "/admin reports Total=${total}, matching the ${want} clusters built"
         else
-            fail "/admin does not report ${want} clusters (a mismatched pool hands out dead clusters)"
+            fail "/admin reports Total='${total:-unreadable}', expected ${want} (a mismatched pool hands out dead clusters)"
         fi
     fi
 
@@ -88,7 +98,7 @@ main() {
         local host base
         host="$(printf '%s' "${url1}" | sed -E 's|https://([^/]+).*|\1|')"
         base="https://${host}"
-        code="$(curl -sS -o /dev/null -w '%{http_code}' --max-time 25 "${base}/" || echo 000)"
+        code="$(curl -sS -o /dev/null -w '%{http_code}' --max-time 25 "${base}/" 2>/dev/null)" || true
         [[ "${code}" == "200" ]] && pass "claimed URL serves 200" || fail "claimed URL -> ${code}"
         if curl -sS --max-time 25 "${base}/api/status" 2>/dev/null \
                 | jq -e 'has("phase") and (.phase|type=="number")' >/dev/null 2>&1; then
