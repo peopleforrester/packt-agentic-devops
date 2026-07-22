@@ -20,13 +20,20 @@ provider "aws" {
   region  = var.region
   profile = var.profile
   default_tags {
-    tags = {
-      Workshop  = "packt"
-      Project   = "packt-agentic-devops"
-      Purpose   = "student-cluster"
-      ManagedBy = "terraform"
-      Student   = var.name
-    }
+    tags = local.fleet_tags
+  }
+}
+
+# One tag set, applied two ways: as provider default_tags (everything terraform creates) and
+# as launch_template_tags (the node instance and its volumes, which default_tags cannot reach).
+# The orphan sweep filters on Workshop=packt, so anything missing this tag is invisible to it.
+locals {
+  fleet_tags = {
+    Workshop  = "packt"
+    Project   = "packt-agentic-devops"
+    Purpose   = "student-cluster"
+    ManagedBy = "terraform"
+    Student   = var.name
   }
 }
 
@@ -36,13 +43,17 @@ variable "region" {
 }
 
 variable "profile" {
-  type    = string
-  default = "accen-dev"
+  type        = string
+  description = <<-DESC
+    AWS profile that owns this cluster. Deliberately has NO default: the fleet spans five
+    accounts, and an implicit profile means a driver bug applies 50 clusters into whichever
+    account the default names instead of failing. That is unrecoverable without a sweep.
+  DESC
 }
 
 variable "name" {
   type        = string
-  description = "Unique cluster name, one per student (e.g. packt-student-001)."
+  description = "Unique cluster name, one per student (e.g. student42)."
 }
 
 variable "kubernetes_version" {
@@ -114,7 +125,36 @@ module "eks" {
       min_size       = 1
       max_size       = 1
       desired_size   = 1
-      disk_size      = 80
+
+      # Root disk sized to measured need. The full platform pulls ~30 GB of container images
+      # (the baked vLLM image dominates) and writes a few hundred MB to pod layers, for ~35 GB
+      # used. 50 GB keeps imagefs at ~69%, below kubelet's 85% image-GC high threshold (so the
+      # baked vLLM image is never collected mid-workshop) and well above the 10% eviction floor.
+      #
+      # disk_size is deliberately NOT set: this module manages a launch template for the node
+      # group, and disk_size is SILENTLY IGNORED when a launch template exists. A bare
+      # disk_size left the root volume at the AL2023 default of 20 GB, DiskPressure evicted the
+      # platform, and terraform reported success throughout. Do not re-add disk_size.
+      block_device_mappings = {
+        xvda = {
+          device_name = "/dev/xvda"
+          ebs = {
+            volume_size           = 50
+            volume_type           = "gp3"
+            encrypted             = true
+            delete_on_termination = true
+          }
+        }
+      }
+
+      # Managed node groups do NOT propagate provider default_tags to the EC2 instances or
+      # their volumes: launch-template tag_specifications are data inside the template, not
+      # resources the provider tags. On the validation run these were tagged by hand. At 250
+      # that does not happen, and an untagged instance is invisible to the orphan sweep, which
+      # filters on Workshop=packt.
+      tag_specifications   = ["instance", "volume", "network-interface"]
+      launch_template_tags = local.fleet_tags
+
       # AL2023 nodeadm ignores prefix delegation when computing max-pods, so set it
       # explicitly to the prefix-delegation value for t3.2xlarge.
       cloudinit_pre_nodeadm = [{

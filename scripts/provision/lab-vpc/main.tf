@@ -36,8 +36,12 @@ variable "region" {
 }
 
 variable "profile" {
-  type    = string
-  default = "accen-dev"
+  type        = string
+  description = <<-DESC
+    AWS profile that owns this lab VPC. No default on purpose: one VPC is applied per account
+    across five accounts, and an implicit profile silently points a second account's apply at
+    the first account's state.
+  DESC
 }
 
 data "aws_availability_zones" "available" {

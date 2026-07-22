@@ -1,0 +1,4 @@
+# railway up runs with --no-gitignore, because the generated Caddyfile and routes.map are
+# gitignored and are the entire point of the deploy. This file is then the only ignore list.
+*.log
+.railway/
