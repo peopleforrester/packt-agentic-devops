@@ -96,8 +96,10 @@ check_l3() {
     local account="$1" name="$2" host code body
     host="$(cluster_lb_host "${account}" "${name}")"
     [[ -n "${host}" ]] || { printf 'L3 no LoadBalancer hostname assigned'; return 1; }
-    code="$(curl -sS -o /dev/null -w '%{http_code}' --max-time 15 "http://${host}/" 2>/dev/null || echo 000)"
-    [[ "${code}" == "200" ]] || { printf 'L3 GET / returned %s' "${code}"; return 1; }
+    # curl already writes %{http_code} as 000 when the request fails, so an `|| echo 000` fallback
+    # appends a SECOND value and yields "000000". Let curl own the value and swallow only its exit.
+    code="$(curl -sS -o /dev/null -w '%{http_code}' --max-time 15 "http://${host}/" 2>/dev/null)" || true
+    [[ "${code}" == "200" ]] || { printf 'L3 GET / returned %s' "${code:-000}"; return 1; }
     body="$(curl -sS --max-time 15 "http://${host}/api/status" 2>/dev/null || true)"
     printf '%s' "${body}" | jq -e 'has("phase") and (.phase|type=="number")' >/dev/null 2>&1 \
         || { printf 'L3 /api/status did not parse with a numeric phase'; return 1; }
@@ -173,10 +175,23 @@ up_one() {
         return 1
     fi
 
-    # The NLB needs time to be assigned and to pass its target health checks before the surface
-    # answers. Poll rather than sleeping a fixed guess.
+    # Two different waits, kept separate on purpose. Collapsing them into one budget is what made a
+    # perfectly healthy cluster record a failure: the clock was already half spent waiting for the
+    # LB to be assigned, leaving too little for the DNS propagation that only STARTS at that point.
+    #
+    # 1) AWS assigns the NLB hostname.
+    i=0
     while (( i < 40 )); do
+        [[ -n "$(cluster_lb_host "${account}" "${name}" 2>/dev/null)" ]] && break
+        sleep 15
+        i=$((i + 1))
+    done
+    # 2) That hostname becomes resolvable and its targets pass health checks. Fresh NLB DNS is
+    #    routinely several minutes and is the slowest step in the whole build.
+    i=0
+    while (( i < 80 )); do
         if health_one "${account}" "${name}" >/dev/null 2>&1; then break; fi
+        (( i % 8 == 7 )) && log "  ${name}: still waiting on the surface ($(( (i + 1) * 15 / 60 ))m)"
         sleep 15
         i=$((i + 1))
     done

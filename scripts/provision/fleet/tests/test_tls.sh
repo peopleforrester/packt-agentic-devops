@@ -63,16 +63,16 @@ check_certificate() {
 
 check_https() {
     local code
-    code="$(curl -sS -o /dev/null -w '%{http_code}' --max-time 20 "https://${HOST}/" 2>/dev/null || echo 000)"
+    code="$(curl -sS -o /dev/null -w '%{http_code}' --max-time 20 "https://${HOST}/" 2>/dev/null)" || true
     [[ "${code}" == "200" ]] && pass "${HOST}: GET https:// -> 200" || fail "${HOST}: GET https:// -> ${code}"
 
-    code="$(curl -sS -o /dev/null -w '%{http_code}' --max-time 20 "https://${HOST}/api/status" 2>/dev/null || echo 000)"
+    code="$(curl -sS -o /dev/null -w '%{http_code}' --max-time 20 "https://${HOST}/api/status" 2>/dev/null)" || true
     [[ "${code}" == "200" ]] && pass "${HOST}: /api/status -> 200" || fail "${HOST}: /api/status -> ${code}"
 }
 
 check_http_redirects() {
     local code
-    code="$(curl -sS -o /dev/null -w '%{http_code}' --max-time 20 "http://${HOST}/" 2>/dev/null || echo 000)"
+    code="$(curl -sS -o /dev/null -w '%{http_code}' --max-time 20 "http://${HOST}/" 2>/dev/null)" || true
     case "${code}" in
         301|302|307|308) pass "${HOST}: http:// redirects (${code})" ;;
         200) fail "${HOST}: http:// serves 200 instead of redirecting to https" ;;
@@ -85,7 +85,10 @@ check_websocket() {
     # the socket will not open in the student's browser.
     local key resp
     key="$(openssl rand -base64 16)"
-    resp="$(curl -sS -i --max-time 20 \
+    # --http1.1 is required. Over an ALPN-negotiated HTTP/2 connection the upgrade handshake is not
+    # valid and the edge answers 404, which reads as a broken terminal when the terminal is fine.
+    # Browsers open websockets over HTTP/1.1 too, so this matches what a student actually does.
+    resp="$(curl -sS -i --max-time 20 --http1.1 \
         -H "Connection: Upgrade" -H "Upgrade: websocket" \
         -H "Sec-WebSocket-Version: 13" -H "Sec-WebSocket-Key: ${key}" \
         -H "Sec-WebSocket-Protocol: tty" \

@@ -12,7 +12,6 @@
 set -euo pipefail
 
 FLEET_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
-readonly FLEET_DIR
 # shellcheck source=../lib.sh
 source "${FLEET_DIR}/lib.sh"
 
@@ -28,7 +27,7 @@ stamp() { date -u +%Y-%m-%dT%H:%M:%SZ; }
 probe() {
     local name="$1" host code body
     host="${name}.${PACKT_DOMAIN}"
-    code="$(curl -sS -o /dev/null -w '%{http_code}' --max-time 20 "https://${host}/" 2>/dev/null || echo 000)"
+    code="$(curl -sS -o /dev/null -w '%{http_code}' --max-time 20 "https://${host}/" 2>/dev/null)" || true
     if [[ "${code}" != "200" ]]; then
         printf '%s FAIL:http-%s\n' "${name}" "${code}"
         return

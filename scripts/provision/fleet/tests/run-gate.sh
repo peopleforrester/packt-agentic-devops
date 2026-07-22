@@ -7,7 +7,6 @@
 set -euo pipefail
 
 FLEET_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
-readonly FLEET_DIR
 # shellcheck source=../lib.sh
 source "${FLEET_DIR}/lib.sh"
 

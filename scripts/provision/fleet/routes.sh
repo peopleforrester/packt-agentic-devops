@@ -55,7 +55,9 @@ main() {
                 missing=$((missing + 1))
                 continue
             fi
-            printf '\t\t%s.%s\t%s\n' "${name}" "${PACKT_DOMAIN}" "${host}" >> "${ROUTES_MAP}"
+            # The port belongs in the map value. A placeholder upstream with no port does NOT
+            # default to 80: Caddy dials port 0 and every request 502s with an i/o timeout.
+            printf '\t\t%s.%s\t%s:80\n' "${name}" "${PACKT_DOMAIN}" "${host}" >> "${ROUTES_MAP}"
             total=$((total + 1))
         done < <(known_clusters "${account}")
     done < <(accounts_list)
