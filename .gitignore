@@ -35,3 +35,5 @@ prds/
 /tmp/
 tmp/
 transcripts/
+pool.db.bak-*
+*.db.bak-*
