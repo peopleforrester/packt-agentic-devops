@@ -220,3 +220,40 @@ shared with a co-tenant project.
 fixes (StorageClass `tagSpecification_*`, CNI `ADDITIONAL_ENI_TAGS`) reduce what it has to repair
 but cannot cover resources EKS creates for itself, notably the log groups, which exist precisely
 because `create_cloudwatch_log_group = false` keeps a reused cluster name from colliding.
+
+---
+
+## Measured timings (run 1, 2026-07-22)
+
+The numbers to plan the event morning against. All at `MAX_PARALLEL=8` per account across five
+accounts, so 40 concurrent builds, on a 16-core / 62 GB host.
+
+| Stage | Built | Wall clock | Notes |
+|---|---|---|---|
+| Lab VPCs, 5 accounts | 5 VPCs | **2.5 min** | run concurrently, one apply per account |
+| S1: 1 per account | 5 | ~25 min | dominated by the ~10 min control-plane create |
+| S2: accen-dev to 50 | 49 | ~50 min | 25-wide, single account |
+| S3: all accounts to 50 | 200 | **2h 23m** | 40-wide; accen-dev already held 50 |
+| Instructor cluster | 1 | **20 min** | single cluster, no contention |
+| Router deploy | n/a | ~1.5 min | rebuild + redeploy of the routing table |
+| Pool ingest + deploy | 250 rows | ~2.5 min | |
+| Full S3 gate (L0–L5) | 250 | ~9 min | health 30-wide, TLS 30-wide |
+
+**A from-cold 250 build is therefore roughly 2h45m at 40-wide**, plus about 15 minutes for routes,
+pool and the gate. The per-cluster floor is ~22 minutes (≈13 min terraform, ≈6 min bootstrap, plus
+the load-balancer wait), and that floor is irreducible; only concurrency moves the total.
+
+### The converge pass is not optional at scale
+
+4 of 5 accounts needed one, covering **27 of 250 clusters (11%)**, every one of them a fully built
+cluster whose fresh NLB hostname had not become resolvable inside the health window. All 27 passed
+on the retry. Final result: **250 ok, 0 failed.**
+
+Without the converge pass this run would have reported 27 failures and looked like an 89% success
+rate, and the natural response, re-running the whole stage, would have been both slow and wrong.
+
+## Tag coverage after the run
+
+`tag-audit.sh` brought one account from 451 untagged resources to 0 (903 tagged). Run
+`tag-audit.sh all --fix` after **every** provisioning run and before teardown, because a resource
+the sweep cannot see is a resource that bills after the event.

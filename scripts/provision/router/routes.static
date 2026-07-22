@@ -1,0 +1,6 @@
+# Hosts the fleet driver does not manage. Rebuilt tables would otherwise drop these.
+# Format: <hostname> <upstream-host:port>
+#
+# The instructor's standalone cluster: separate account (kcd-instructor), name outside the
+# fleet's ^student[0-9]+$ range, state outside fleet/states. Fleet teardown cannot reach it.
+instructor.packt.ai-enhanced-devops.com k8s-workshop-webtermi-80e24e3084-ddfa069aba3d9c35.elb.us-west-2.amazonaws.com:80
