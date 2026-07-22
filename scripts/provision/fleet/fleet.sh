@@ -328,21 +328,49 @@ cmd_up_fleet() {
     cmd_report
 }
 
+# One cluster's health as a single printable line. Exported so the parallel pool can call it.
+health_line() {
+    local account="$1" name="$2" why
+    if why="$(health_one "${account}" "${name}")"; then
+        printf 'OK   %-16s %-14s %s\n' "${account}" "${name}" "$(student_url "${name}")"
+    else
+        printf 'FAIL %-16s %-14s %s\n' "${account}" "${name}" "${why}"
+    fi
+}
+
 cmd_health() {
-    local target="${1:-all}" account name why fails=0
+    local target="${1:-all}" account name fails work results
+    # Each cluster costs 2 AWS calls, 3 kubectl and 2 HTTP round trips. Sequentially that is ~8s
+    # per cluster, or over half an hour at full size, which is far too slow to gate on. The checks
+    # are independent, so run them in a bounded pool.
+    work="$(mktemp)"
+    results="$(mktemp)"
     while read -r account; do
         assert_account "${account}"
         while read -r name; do
             [[ -n "${name}" ]] || continue
-            if why="$(health_one "${account}" "${name}")"; then
-                printf 'OK   %-16s %-14s %s\n' "${account}" "${name}" "$(student_url "${name}")"
-            else
-                printf 'FAIL %-16s %-14s %s\n' "${account}" "${name}" "${why}"
-                fails=$((fails + 1))
-            fi
+            printf '%s\t%s\n' "${account}" "${name}" >> "${work}"
         done < <(known_clusters "${account}")
     done < <( [[ "${target}" == "all" ]] && accounts_list || printf '%s\n' "${target}" )
-    [[ "${fails}" -eq 0 ]] || { log "${fails} cluster(s) failed health"; return 1; }
+
+    # Bounded pool of background subshells. They inherit health_line directly, so there is no need
+    # to re-enter this script; each appends one line, and O_APPEND keeps single writes atomic.
+    local running=0 cap="${HEALTH_PARALLEL:-25}"
+    while IFS=$'\t' read -r account name; do
+        [[ -n "${name}" ]] || continue
+        health_line "${account}" "${name}" >> "${results}" &
+        running=$((running + 1))
+        if (( running >= cap )); then
+            wait -n 2>/dev/null || true
+            running=$((running - 1))
+        fi
+    done < "${work}"
+    wait
+
+    sort -k2,2 -k3,3 "${results}"
+    fails="$(grep -c '^FAIL' "${results}" || true)"
+    rm -f "${work}" "${results}"
+    [[ "${fails:-0}" -eq 0 ]] || { log "${fails} cluster(s) failed health"; return 1; }
     log "all known clusters healthy"
 }
 
