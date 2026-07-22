@@ -185,3 +185,38 @@ first, diff, then apply: 11 preserved, 2 added, 0 removed.
 The `_railway-verify.packt` TXT record Railway asked for was already present with the exact same
 token, from an earlier attempt. Reading the zone first turned a "create three records" job into
 "add two".
+
+---
+
+## 18. Most fleet infrastructure is not tagged by whatever created it
+
+Audit of one account holding 50 clusters: **451 resources carried no `Workshop` tag.**
+
+| Resource | Tagged by | Was it tagged? |
+|---|---|---|
+| EKS clusters, VPC, subnets, NAT, IAM roles | terraform `default_tags` | yes |
+| EC2 instances, root volumes | launch template `tag_specifications` | yes (after an earlier fix) |
+| Load balancers, target groups | LB controller annotation | yes |
+| **PVC volumes** | EBS CSI driver | **no** (100) |
+| **Network interfaces** | VPC CNI | **no** (201) |
+| **`eks-cluster-sg-*` groups** | EKS itself | **no** (100) |
+| **Control-plane log groups** | EKS itself | **no** (50) |
+
+Terraform `default_tags` only reach what terraform creates. Everything provisioned by a Kubernetes
+controller or by EKS itself is outside that, and each one needs its own mechanism. There is no
+single switch.
+
+This matters because the orphan sweep selects on `Workshop=packt`. Untagged infrastructure is
+infrastructure the sweep cannot see, and what it cannot see bills after the workshop ends. Scaled to
+the full fleet that is roughly 2,250 resources, including 500 EBS volumes.
+
+`scripts/provision/fleet/tag-audit.sh <account|all> [--fix]` audits every taggable type and repairs
+what is missing. It refuses to touch anything not provably ours: an EKS name matching
+`^student[0-9]+$`, membership of the lab VPC, a `kubernetes.io/cluster/student<N>` tag, or the
+fleet's IAM naming scheme. Anything else is reported and left alone, because these accounts are
+shared with a co-tenant project.
+
+**Run `tag-audit.sh all --fix` after every provisioning run, before teardown.** The source-level
+fixes (StorageClass `tagSpecification_*`, CNI `ADDITIONAL_ENI_TAGS`) reduce what it has to repair
+but cannot cover resources EKS creates for itself, notably the log groups, which exist precisely
+because `create_cloudwatch_log_group = false` keeps a reused cluster name from colliding.
