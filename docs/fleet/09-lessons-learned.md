@@ -389,3 +389,52 @@ Hot-patching an already-synced Application meant fighting the repo-server manife
 `refresh=hard` annotation was not always enough, and a `rollout restart` of the repo-server was
 sometimes needed before ArgoCD re-read the pushed revision. This is an artifact of iterating on a
 live cluster; a from-cold build seeds the fixed manifests once and never hits it.
+
+---
+
+## Run 2: the provisioning system validated end to end from cold (2026-07-23)
+
+Two tracks in parallel after the web-terminal image was rebuilt from `main` (so the baked repo
+carries every fix rather than relying on the seed job's best-effort pull).
+
+### Track A: cold provision proves the substitution runs itself
+
+Provisioned `student1` cold through `fleet.sh` with zero manual steps. The seed job substituted
+the LB controller manifest **by itself**: the manifest in the cluster's own Gitea read
+`clusterName: student1`, `vpcId: vpc-043c280bb3a9e9aff`, no placeholders, and the seed log said
+`LB controller pinned to cluster=student1 vpc=vpc-043c280bb3a9e9aff`. Every Module 1 fix
+(openbao/gitea-config runAsUser, gitea-config secretKeyRef, cert email, P03 fault) was present in
+that Gitea automatically.
+
+Then ArgoCD installed in **41 s** and the foundation converged from cold to **19 of 21 Healthy in
+6m46s** with no intervention: no manual sed, no job deletes, no cache busting. The two not-green
+are the intentional P03 fault and the known broken Backstage image. This is the joined proof the
+walkthrough could not give on its own: the fixes and the automatic substitution work together
+through the real provisioning path.
+
+### Track B: the AI plane comes up and vLLM serves
+
+Applied the AI-plane App-of-Apps (P05) on the rehearsal cluster. **16 of 17 Applications Healthy**
+in ~7 minutes (agentgateway, kagent, kgateway, kserve, llm-guard, llm-d, mcp-server, demo-agent,
+ai-policies, the CRD sets). vLLM's InferenceService reads `Ready=False`, but only because
+`IngressReady=False`; `PredictorReady=True` and the model serves. A real in-cluster completion
+against `qwen3-1.7b` returned an answer with token metadata confirming local inference (and Qwen3's
+`<think>` block, matching the filming note). The workshop's demo agent calls this in-cluster
+endpoint, so the external ingress condition does not gate it, but it should be documented as
+expected so vLLM reading not-Ready in the ArgoCD UI does not look like a failure.
+
+### Timings recorded
+
+| Step | Cold, measured |
+|---|---|
+| Single cluster provision (terraform + bootstrap) | ~18 min |
+| ArgoCD install | 41–56 s |
+| Foundation converge from cold | **6m46s** to 19/21 |
+| AI plane converge | ~7 min to 16/17, vLLM model load a few min more |
+
+### Still open after run 2
+
+- **Backstage custom image** crashes `Cannot find module '/app/packages/backend'`; needs the image
+  rebuilt, not a manifest change. Affects the B04 finale on every cluster.
+- **vLLM IngressReady=False** is expected (workshop uses the in-cluster endpoint) but should be
+  documented so it does not read as a failure.
