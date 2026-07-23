@@ -16,6 +16,10 @@ LAB_VPC_TF = os.path.join(PROVISION, "lab-vpc", "main.tf")
 FLEET_SH = os.path.join(PROVISION, "fleet", "fleet.sh")
 FLEET_LIB = os.path.join(PROVISION, "fleet", "lib.sh")
 VTT_MANIFEST = os.path.join(PROVISION, "vtt", "web-terminal.yaml")
+# The reference build moved from platform/ to solution/platform/ (the restructure that split the
+# answer out of the student's empty platform/). These tests validate the reference build, so every
+# manifest path is rooted here. Keep this the single source of truth for that location.
+PLATFORM = os.path.join(REPO_ROOT, "solution", "platform")
 
 
 def _read(path):
@@ -208,7 +212,7 @@ def test_dynamically_provisioned_volumes_are_tagged_as_ours():
     # Workshop tag. Measured on the live fleet: 100 of 150 volumes were invisible to the orphan
     # sweep, which selects on Workshop=packt. That is two volumes per cluster, 500 at full size,
     # each one billing after its cluster is gone.
-    sc_path = os.path.join(REPO_ROOT, "platform", "0-bootstrap", "gp3-storageclass.yaml")
+    sc_path = os.path.join(PLATFORM, "0-bootstrap", "gp3-storageclass.yaml")
     sc = yaml.safe_load(_read(sc_path))
     params = sc.get("parameters", {})
     tags = {v for k, v in params.items() if k.startswith("tagSpecification_")}
@@ -232,7 +236,7 @@ def test_sweep_finds_csi_volumes_that_predate_the_storageclass_tags():
 def test_grafana_ships_no_broken_image_override():
     # There is no seeded fault. The workshop must not manufacture a failure; students hit enough
     # real ones. Grafana uses the chart default image, with no tag override that could break the pull.
-    app = os.path.join(REPO_ROOT, "platform", "1-foundation", "kube-prometheus-stack",
+    app = os.path.join(PLATFORM, "1-foundation", "kube-prometheus-stack",
                        "application.yaml")
     doc = yaml.safe_load(_read(app))
     grafana = doc["spec"]["source"]["helm"]["valuesObject"]["grafana"]
@@ -245,7 +249,7 @@ def test_lb_controller_ships_substitutable_placeholders():
     # clusterName and vpcId cannot be hardcoded across 250 clusters. They ship as placeholders and
     # are substituted at seed time. An unsubstituted clusterName plus an IMDS VPC-id timeout makes
     # the controller crash-loop and its Application sit Degraded forever (found in a clean-room run).
-    app = os.path.join(PROVISION, "..", "..", "platform", "1-foundation",
+    app = os.path.join(PLATFORM, "1-foundation",
                        "aws-load-balancer-controller", "application.yaml")
     body = _read(app)
     assert "REPLACE_WITH_CLUSTER_NAME" in body, "clusterName must be a substitutable placeholder"
@@ -277,7 +281,7 @@ def test_seed_job_substitutes_and_verifies_no_placeholder_survives():
 def test_openbao_seed_job_runs_as_the_image_uid():
     # runAsNonRoot without a numeric runAsUser fails with CreateContainerConfigError because kubelet
     # cannot verify non-root from the image's non-numeric user (uid 100 openbao). D18 pattern.
-    job = os.path.join(PROVISION, "..", "..", "platform", "1-foundation", "openbao-config",
+    job = os.path.join(PLATFORM, "1-foundation", "openbao-config",
                        "manifests", "seed-job.yaml")
     doc = yaml.safe_load(_read(job))
     sc = doc["spec"]["template"]["spec"]["securityContext"]
@@ -291,7 +295,7 @@ def test_no_image_repository_doubles_the_registry_host():
     # its repository field.
     import glob
     bad = []
-    for f in glob.glob(os.path.join(REPO_ROOT, "platform", "**", "application.yaml"), recursive=True):
+    for f in glob.glob(os.path.join(PLATFORM, "**", "application.yaml"), recursive=True):
         for docd in yaml.safe_load_all(_read(f)):
             if not isinstance(docd, dict):
                 continue

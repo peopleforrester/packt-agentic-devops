@@ -167,7 +167,9 @@ def test_no_manifest_pins_a_workshop_repo_to_github():
     # ArgoCD must reconcile from the in-cluster Gitea. 250 clusters polling one GitHub repo through
     # 5 NAT IPs gets throttled, and a student cannot push to a repo they do not own.
     offenders = []
-    platform = os.path.join(REPO_ROOT, "platform")
+    # The reference build lives in solution/platform/ since the restructure; the student's platform/
+    # is empty. Walk the reference build, or this test passes vacuously on an empty tree.
+    platform = os.path.join(REPO_ROOT, "solution", "platform")
     for root, _dirs, files in os.walk(platform):
         for name in files:
             if not name.endswith((".yaml", ".yml")):
