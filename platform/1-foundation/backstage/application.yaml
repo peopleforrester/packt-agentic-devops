@@ -22,8 +22,12 @@ spec:
           # workshop GHCR namespace. The chart's built-in image is demo-only and
           # carries no plugins; the real app must be a custom image.
           image:
+            # The chart builds the ref as registry/repository, so repository must NOT repeat the
+            # host. It read ghcr.io/ghcr.io/peopleforrester/backstage, a doubled path that resolved
+            # to a different, broken image, and the pod crash-looped with
+            # "Cannot find module '/app/packages/backend'". The correctly-pathed image is fine.
             registry: ghcr.io
-            repository: ghcr.io/peopleforrester/backstage
+            repository: peopleforrester/backstage
             tag: 2026-07-23
         # Bundled PostgreSQL for the demo. Production backs the catalog with RDS.
         # No existingSecret: it named backstage-postgresql, which nothing created, so both the
