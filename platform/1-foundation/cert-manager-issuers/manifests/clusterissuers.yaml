@@ -15,7 +15,13 @@ metadata:
 spec:
   acme:
     server: https://acme-staging-v02.api.letsencrypt.org/directory
-    email: REPLACE_WITH_EMAIL
+    # A real, parseable email. The placeholder REPLACE_WITH_EMAIL made ACME account registration
+    # fail ("invalidContact: unable to parse email address") and left this ClusterIssuer, and so
+    # the cert-manager-issuers Application, permanently Degraded. This issuer is a demonstration:
+    # workshop TLS terminates at the Railway edge, so nothing on-cluster requests a cert from it,
+    # but it must register cleanly to read Healthy. A static workshop address is correct here;
+    # there is no per-cluster email to template.
+    email: workshop@ai-enhanced-devops.com
     privateKeySecretRef:
       name: letsencrypt-staging
     solvers:
