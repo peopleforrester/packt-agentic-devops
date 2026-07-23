@@ -28,7 +28,12 @@ spec:
             # "Cannot find module '/app/packages/backend'". The correctly-pathed image is fine.
             registry: ghcr.io
             repository: peopleforrester/backstage
-            tag: 2026-07-23
+            # 2026-07-23-2 adds a layer that sets /app to 0755. The base 2026-07-23 image left /app
+            # at 0700 root, and the container runs as the non-root node user, which then could not
+            # traverse /app and crashed with "Cannot find module '/app/packages/backend'". The
+            # Dockerfile now chmods /app so a fresh build needs no such patch (internal/images/
+            # backstage/Dockerfile); this tag carries the fix for the already-built image.
+            tag: 2026-07-23-2
         # Bundled PostgreSQL for the demo. Production backs the catalog with RDS.
         # No existingSecret: it named backstage-postgresql, which nothing created, so both the
         # database pod and the Backstage backend failed with "secret backstage-postgresql not
