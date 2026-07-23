@@ -20,7 +20,10 @@ spec:
     # Official mcp/everything image, mirrored to GHCR. Its entrypoint runs
     # `node dist/index.js`, which defaults to the stdio transport, so KMCP uses the image
     # default and no cmd/args override is needed.
-    image: ghcr.io/peopleforrester/mcp-server-everything:latest
+    # Pinned by digest: the GHCR mirror of the MCP "everything" reference server publishes only a
+    # :latest tag, so the digest is the deterministic pin (no floating :latest, per the repo's
+    # pinning rule). Re-resolve and update at the version freeze.
+    image: ghcr.io/peopleforrester/mcp-server-everything@sha256:330885a0c4b2eed6f0cd3aae0f0b37152ccdf2852e2f6af6d616a5d5c1e9817d
     port: 3000
     resources:
       requests:
