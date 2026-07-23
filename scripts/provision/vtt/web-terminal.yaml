@@ -116,7 +116,11 @@ spec:
             allowPrivilegeEscalation: true
           resources:
             requests: { cpu: 100m, memory: 256Mi }
-            limits: { cpu: "2", memory: 2Gi }
+            # 8Gi, not 2Gi: the shell runs the agentic CLI plus the build toolchain (kubectl, helm,
+            # argocd, node), which OOM-kills a 2Gi container mid-build and drops the student's session.
+            # Request stays low so packing is unaffected; the node is a t3.2xlarge (~31Gi), so the cap
+            # is safe. A live cluster can take this without a restart via in-place resize (EKS >=1.33).
+            limits: { cpu: "2", memory: 8Gi }
         - name: nginx
           # nginx-unprivileged listens on 8080 and runs as uid 101. Public image; fine for a demo cluster.
           image: nginxinc/nginx-unprivileged:1.27-alpine
