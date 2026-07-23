@@ -301,11 +301,15 @@
     try{
       var doc=iframe.contentDocument||(iframe.contentWindow&&iframe.contentWindow.document);
       if(!doc) return false;
-      var ta=doc.querySelector('.xterm-helper-textarea')||doc.querySelector('.xterm');
-      if(!ta) return false;
-      ta.focus();
+      var ta=doc.querySelector('.xterm-helper-textarea');
+      var xt=doc.querySelector('.xterm');
+      if(!ta && !xt) return false;
       var dt=new DataTransfer(); dt.setData('text/plain', text);
-      ta.dispatchEvent(new ClipboardEvent('paste',{clipboardData:dt,bubbles:true,cancelable:true}));
+      var mkEvt=function(){ return new ClipboardEvent('paste',{clipboardData:dt,bubbles:true,cancelable:true}); };
+      // Dispatch on both targets: xterm builds listen on the helper textarea in some versions and
+      // on the .xterm root in others. Focusing first is what lets a live terminal accept the paste.
+      if(ta){ ta.focus(); ta.dispatchEvent(mkEvt()); }
+      if(xt){ xt.dispatchEvent(mkEvt()); }
       return true;
     }catch(e){ return false; }
   }
@@ -320,7 +324,7 @@
     clip(txt); // also copy, so Ctrl+Shift+V / Cmd+V is a fallback if the paste bridge is blocked
     el.classList.add('copied');
     var b=el.querySelector('.cp'); if(b){var o=b.textContent;b.textContent=sent?'sent ✓':'copied';setTimeout(function(){b.textContent=o;el.classList.remove('copied');},1300);}
-    toast(sent?'Pasted into your terminal — press Enter to run':'Copied. Click the terminal, then Ctrl+Shift+V');
+    toast(sent?'Sent to your terminal — press Enter. If nothing appears, click the terminal and press Ctrl+Shift+V.':'Copied. Click the terminal, then Ctrl+Shift+V.');
   }
   // Embedded panels (Endpoints, Blueprint) ask the parent to drop a command into the terminal.
   window.addEventListener('message', function(e){
