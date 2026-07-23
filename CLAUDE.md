@@ -40,6 +40,29 @@ Contract tests in `tests/test_fleet_contract.py` assert all of the above; run
 `uv run --with pytest --with pyyaml python -m pytest tests/test_fleet_contract.py -q` after any
 manifest or provisioning change.
 
+## Railway and the claim portal (read before any `railway` command)
+
+Full detail in `scripts/provision/distribution/RAILWAY-OPS.md`. The critical facts:
+
+- **The LIVE claim/provisioning app is the `packt-provisioning` service**, serving
+  `https://packt.ai-enhanced-devops.com/`. It owns the persistent volume and the claim DB
+  (`/data/pool.db`). Deploy the claim app ONLY here. `packt-router` (Caddy) serves the
+  `studentN.packt.ai-enhanced-devops.com` terminals and is deployed by `routes.sh`.
+  `ai-enhanced-devops-website` is a STALE/failed sibling that serves nothing live: do not deploy
+  to it. The tell you are on the wrong service is `railway ssh -s <svc> -- echo ok` returning the
+  Railway meta-gateway JSON instead of `ok`.
+- **`railway ssh` exec: pipe the script over STDIN** (`railway ssh -s packt-provisioning -- python3
+  < script.py`); inline `python3 -c "..."` breaks because the CLI re-parses through a remote shell.
+  **`railway variables` truncates in the table view**: use `--kv`/`--json` for full tokens.
+  **`Failed to stream build logs` on `railway up` is transient**: verify the deploy via URLs or
+  `railway status`, not the CLI exit code.
+- **The claim pool DB only adds rows on restart, never removes.** Editing `pool.csv` + restart does
+  NOT shrink it. Prune by editing the DB directly via `railway ssh`, or use a fresh `DATABASE_PATH`.
+  The pool must contain the real banded cluster names (student1-20, 51-70, 101-120, 151-170,
+  201-220), not sequential `student1-N`, or students past the first band claim clusters that were
+  never built. Regenerate with `scripts/provision/gen-pool.sh`; run `routes.sh` after every scale
+  change or the URLs 404.
+
 ## What this repo is
 
 A GitOps-driven, AI-native Internal Developer Platform. ArgoCD reconciles everything from Git. The foundation plane is cloud-native (Backstage, the Argo stack, the observability plane, policy and secrets tooling). The AI plane adds agent infrastructure (kgateway, agentgateway, kagent, LLM Guard, OpenLLMetry, KServe with vLLM, llm-d).
