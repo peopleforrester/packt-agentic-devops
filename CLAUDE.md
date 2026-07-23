@@ -2,6 +2,44 @@
 
 Project memory for the Agentic DevOps with Claude workshop repo. This is the platform Claude Code builds live on Amazon EKS during the Packt workshop on July 23, 2026. Read `internal/build-spec.md` for the full build spec and `internal/research-findings-june-2026.md` for verified versions.
 
+## Fleet provisioning and validation (read before touching provisioning or platform manifests)
+
+The 250-cluster fleet, its driver, and the full from-cold validation are documented in
+`docs/fleet/`. Read these before changing provisioning or debugging a platform sync:
+
+- `docs/fleet/08-progressive-rollout-run.md` is the rollout plan (5 to 54 to 250, the gates).
+- `docs/fleet/09-lessons-learned.md` is the running record of every defect found and fixed.
+- The driver is `scripts/provision/fleet/fleet.sh` (+ `lib.sh`); `tag-audit.sh` finds and
+  repairs untagged resources; `sweep.sh` is the orphan cleanup.
+
+**Validated (2026-07-23):** 250 clusters provisioned and torn down cleanly across five accounts;
+the foundation and AI plane both converge from a cold provision with zero manual steps (foundation
+to 19/21 in ~7 min, the two exceptions being the intentional P03 fault and, until fixed, the
+Backstage image). vLLM serves real in-cluster completions. The filming build had masked most
+foundation bugs because its Applications were suspended and hand-patched; the only faithful test is
+a clean cluster syncing from an untouched repo.
+
+**Defect classes that recur in these manifests. Grep for each before a run:**
+
+1. **Unsubstituted `REPLACE_WITH_*` placeholders.** `grep -rn REPLACE_WITH platform/` must return
+   only tokens a provisioning step is proven to substitute (currently the LB controller
+   clusterName/vpcId, done by the Gitea seed job from the `platform-cluster-facts` ConfigMap). An
+   unsubstituted placeholder leaves an Application Degraded forever.
+2. **`runAsNonRoot: true` with no numeric `runAsUser`** on an image whose USER is non-numeric →
+   `CreateContainerConfigError`. Pin the image's actual uid (verify with `id` in the image). Hit on
+   vLLM, llm-guard (D18), and the openbao and gitea seed jobs.
+3. **Image `repository` that repeats the registry host** (`registry: ghcr.io` +
+   `repository: ghcr.io/...`) → a doubled path. Repository must not include the host.
+4. **A directory the container cannot traverse.** `Cannot find module '/app/...'` for a path that
+   demonstrably contains the module is a permission/ownership problem (container runs as a uid that
+   cannot read the tree), not a missing build. Backstage `/app` shipped 0700 root under `USER node`.
+5. **Hardcoded credentials that drift.** Read shared creds from one Secret (e.g. `gitea-seed-creds`),
+   never a second copy in a Job manifest.
+
+Contract tests in `tests/test_fleet_contract.py` assert all of the above; run
+`uv run --with pytest --with pyyaml python -m pytest tests/test_fleet_contract.py -q` after any
+manifest or provisioning change.
+
 ## What this repo is
 
 A GitOps-driven, AI-native Internal Developer Platform. ArgoCD reconciles everything from Git. The foundation plane is cloud-native (Backstage, the Argo stack, the observability plane, policy and secrets tooling). The AI plane adds agent infrastructure (kgateway, agentgateway, kagent, LLM Guard, OpenLLMetry, KServe with vLLM, llm-d).
