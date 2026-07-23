@@ -14,7 +14,10 @@ spec:
     # per-student demo cluster. grafana-community repo.
     repoURL: https://grafana-community.github.io/helm-charts
     chart: tempo
-    targetRevision: 2.2.3
+    # Pinned to 1.25.0 (app 2.9.0), NOT the 2.2.x/2.10 line: grafana/tempo#6436
+    # makes flushed blocks unsearchable in standalone mode, so test_trace_reaches_tempo
+    # fails. Verified 2026-07-23 that this chart passes the test.
+    targetRevision: 1.25.0
     helm:
       valuesObject:
         tempo:

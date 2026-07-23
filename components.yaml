@@ -269,14 +269,20 @@ components:
     install_method: helm
     chart_repo: https://grafana-community.github.io/helm-charts
     chart_name: tempo
-    chart_version: "2.2.3"
-    app_version: "2.10.7"
+    chart_version: "1.25.0"
+    app_version: "2.9.0"
     namespace: observability
     module: 1
     notes: >
       Single-binary tempo chart, lighter than tempo-distributed for a per-student
       demo cluster (tempo-distributed 2.25.4 is the production alternative).
       Default Tempo port is 3200, not 3100. Lands the AI-plane traces (B10).
+      Pinned to app 2.9.0 (chart 1.25.0), NOT 2.10.x: the 2.10 line has an open
+      upstream defect (grafana/tempo#6436) where queries return empty for flushed
+      blocks in standalone mode, so a trace written then queried is unsearchable
+      and test_trace_reaches_tempo fails. Verified empirically on 2026-07-23: the
+      downgrade to 2.9.0/1.25.0 makes the test pass. Do not upgrade back into the
+      2.10 line until #6436 is closed and the fix version confirmed.
 
   - name: opentelemetry-collector
     plane: foundation

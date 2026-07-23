@@ -512,3 +512,52 @@ Directions, pick one before shipping:
    Railway's edge (spoofable if the edge is not pinned).
 
 **Minimum bar:** a terminal must not be reachable by an unauthenticated, guessable URL.
+
+---
+
+## Phase-2/3 defects surfaced by students (validated 2026-07-23)
+
+Four student-reported test failures, each tested on admin1 (the full-solution cluster, all four
+Applications Synced + Healthy) and validated or refuted.
+
+### CONFIRMED: Tempo 2.10.x query returns empty (test_trace_reaches_tempo)
+
+**Symptom:** Phase 2 `test_trace_reaches_tempo` fails; a trace written to Tempo is not found on query.
+**Root cause:** upstream `grafana/tempo#6436` (open) - in standalone (single-binary) mode, queries
+return empty for blocks flushed out of the ingester. The demo Tempo flushes quickly, so even the
+test's near-immediate query hits a flushed block. Reproduced directly on admin1: POST the probe span
+straight to `tempo.observability.svc:4318` returns 200, then `/api/search` returns `{"traces":[]}`.
+**Fix (applied):** re-pin Tempo from app 2.10.7 / chart 2.2.3 to **app 2.9.0 / chart 1.25.0** in
+`components.yaml`, `versions.lock.md`, and `solution/platform/1-foundation/tempo/application.yaml`.
+2.9.0 predates the 2.10.0 regression. Verified empirically that the downgrade makes the test pass.
+Justified regression: the bug is open in 2.10.x, there is no 2.11 patch, and 3.0 removes ingesters
+(wrong shape for the single-binary chart). Do not upgrade back into 2.10.x until #6436 is fixed.
+
+### CONFIRMED: OTel collector has no Service in daemonset mode (test ingest path)
+
+**Symptom:** the same Phase 2 test's ingest step targets `opentelemetry-collector.observability.svc:4318`.
+**Root cause:** the solution deploys the collector as `mode: daemonset`
+(`solution/platform/1-foundation/opentelemetry-collector/application.yaml`). In daemonset mode the
+opentelemetry-collector chart creates the `opentelemetry-collector-agent` DaemonSet but NO ClusterIP
+Service, so `opentelemetry-collector.observability.svc` does not resolve. Confirmed on admin1
+(collector app Synced + Healthy, DaemonSet 1/1 Running, zero collector Services). A student who
+generated the collector as `mode: deployment` gets a Service and passes, which is why the reference
+path fails but some student builds do not.
+**Fix (direction, not yet applied - verify chart values first):** either switch the collector to
+`mode: deployment`, or keep the DaemonSet and add a ClusterIP Service exposing 4317/4318 selecting the
+agent pods and named so `opentelemetry-collector.observability.svc` resolves (or update the test/spec
+to the actual ingest path). Verify the exact opentelemetry-collector chart `service`/`mode` values
+against the pinned chart version before committing.
+
+### REFUTED on the baseline: Backstage /app/examples/ and NotAllowedError
+
+Two Phase 3 reports (catalog returns 0 entities with `ls: /app/examples/ No such file`, and
+`NotAllowedError` fetching `catalog-info.yaml` from Gitea despite `backend.reading.allow`). Neither
+reproduces on the solution baseline: admin1's Backstage (Synced + Healthy, image's baked app-config,
+no override) returns `401 AuthenticationError` on `/api/catalog/entities` and logs NO `NotAllowedError`
+and NO `/app/examples/` error. The symptoms come from the student's OWN generated app-config (they
+wired `catalog.locations -> /app/examples/` and a Gitea URL allowlist that does not match the location
+host). Guidance/spec item, not a solution manifest defect.
+**Separate observation to verify:** the solution catalog is auth-gated (401 without credentials), so
+`test_backstage_catalog_returns_entities` doing an unauthenticated in-cluster curl may itself need
+auth or an allowed unauthenticated read. Worth a dedicated check; distinct from the student reports.
