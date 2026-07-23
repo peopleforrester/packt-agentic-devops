@@ -38,22 +38,6 @@ spec:
                       storage: 10Gi
         grafana:
           enabled: true
-          # WORKSHOP FIXTURE for P03/B03, the one sanctioned on-screen failure.
-          #
-          # This tag does not exist. Grafana's pod goes ImagePullBackOff, this Application sits
-          # Degraded in the ArgoCD UI, and the error names the tag, so the root cause is
-          # discoverable from the UI alone. The correct tag is 13.0.2, the appVersion of the
-          # grafana sub-chart (12.4.8) vendored inside kube-prometheus-stack 86.3.2.
-          #
-          # The fix a student makes: change the tag below to "13.0.2" and commit. ArgoCD is on
-          # automated sync with selfHeal, and because the fault lives in Git rather than in the
-          # cluster, selfHeal will NOT paper over it: it stays broken until Git is corrected,
-          # which is precisely the lesson. Deleting the pod does not fix it either.
-          #
-          # Do NOT "fix" this in the repo. It is load-bearing for the workshop, and
-          # tests/test_fleet_contract.py asserts it is still here.
-          image:
-            tag: "13.0.2-hotfix"
   destination:
     server: https://kubernetes.default.svc
     namespace: observability
