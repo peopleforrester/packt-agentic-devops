@@ -133,7 +133,7 @@ main() {
     # provisioning time, so without this the PVC (and the pod) hang Pending on a fresh cluster. Same file
     # the platform bootstrap uses, so re-applying it in phase 1 is a no-op.
     printf 'Applying the default gp3 StorageClass...\n' >&2
-    kubectl apply -f "${SCRIPT_DIR}/../../../platform/0-bootstrap/gp3-storageclass.yaml"
+    kubectl apply -f "${SCRIPT_DIR}/../../../solution/platform/0-bootstrap/gp3-storageclass.yaml"
 
     bootstrap_gitea
 

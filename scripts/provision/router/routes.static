@@ -3,5 +3,4 @@
 #
 # The instructor's standalone cluster: separate account (kcd-instructor), name outside the
 # fleet's ^student[0-9]+$ range, state outside fleet/states. Fleet teardown cannot reach it.
-instructor.packt.ai-enhanced-devops.com k8s-workshop-webtermi-80e24e3084-ddfa069aba3d9c35.elb.us-west-2.amazonaws.com:80
-rehearsal.packt.ai-enhanced-devops.com k8s-workshop-webtermi-d7ae2c9d21-d053cb905297a204.elb.us-west-2.amazonaws.com:80
+admin2.packt.ai-enhanced-devops.com k8s-workshop-webtermi-d32e9d6b47-d58b7ec27cb9db0d.elb.us-west-2.amazonaws.com:80

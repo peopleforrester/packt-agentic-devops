@@ -94,7 +94,7 @@ spec:
               # crash-loop and the Application sit Degraded forever. Done here, after the pull, so
               # a refresh to current main cannot reintroduce the placeholders. Fail loudly rather
               # than seed a manifest that would silently degrade.
-              lbc=platform/1-foundation/aws-load-balancer-controller/application.yaml
+              lbc=solution/platform/1-foundation/aws-load-balancer-controller/application.yaml
               : "${CLUSTER_NAME:?cluster name not provided}" "${VPC_ID:?vpc id not provided}"
               sed -i "s/REPLACE_WITH_CLUSTER_NAME/${CLUSTER_NAME}/; s/REPLACE_WITH_VPC_ID/${VPC_ID}/" "${lbc}"
               if grep -q 'REPLACE_WITH_' "${lbc}"; then
