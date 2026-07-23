@@ -40,6 +40,17 @@ Contract tests in `tests/test_fleet_contract.py` assert all of the above; run
 `uv run --with pytest --with pyyaml python -m pytest tests/test_fleet_contract.py -q` after any
 manifest or provisioning change.
 
+## GO-LIVE BLOCKER: web terminals have no authentication
+
+Confirmed live on 2026-07-23: a student reached the instructor's admin cluster through its terminal
+URL. Every VTT terminal is served at a predictable, unauthenticated public URL (`studentN` is
+sequential and enumerable; plus `admin1`/`admin2`), and each is a `sudo`-capable cluster-admin shell
+with the cluster's EKS Pod Identity AWS reach. Anyone with a URL can open another student's or the
+admin's terminal and destroy it. **Do not run this workshop again until terminals require
+authentication.** IP allow-listing at the NLB does NOT work (it blocks the Caddy router, the only
+thing the NLB sees); the browser's real IP is visible only at the router via `X-Forwarded-For`. Fix
+directions and full write-up: `docs/fleet/09-lessons-learned.md` (final section).
+
 ## Railway and the claim portal (read before any `railway` command)
 
 Full detail in `scripts/provision/distribution/RAILWAY-OPS.md`. The critical facts:

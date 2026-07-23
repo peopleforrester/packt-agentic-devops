@@ -477,3 +477,38 @@ Foundation + AI plane: **36 Applications Healthy**, plus `kube-prometheus-stack`
 intentional P03 fault, which a fresh cluster carries until the student fixes it) and `vllm`
 Progressing (the cosmetic IngressReady). Every fix is in code on `main` and covered by a contract
 test. Run 2 proved the same set converges from a cold provision with zero manual steps.
+
+---
+
+## GO-LIVE BLOCKER: the web terminals have no authentication (found live, 2026-07-23)
+
+**Symptom:** during the live workshop a student reached the instructor's admin cluster through its
+terminal URL. It showed up as "someone hopped into my session." The student had a full shell on a
+cluster that was not theirs and could have destroyed it.
+
+**Cause:** every VTT web terminal is served at a predictable, unauthenticated public URL:
+`studentN.packt.ai-enhanced-devops.com` (sequential, so trivially enumerable), plus `admin1` and
+`admin2`. The path is Railway edge -> Caddy router (`packt-router`) -> cluster NLB -> nginx -> ttyd,
+and nothing on it checks who the caller is. Anyone who opens a URL gets an interactive shell that
+runs with `allowPrivilegeEscalation: true` and working `sudo`, has kubectl as cluster-admin on that
+cluster, and carries the cluster's EKS Pod Identity AWS reach. So a student can open another
+student's terminal, or the admin terminal, and wreck it.
+
+**Why the obvious fix fails:** IP allow-listing at the NLB (`loadBalancerSourceRanges`) blocks the
+Caddy router itself, because the only source IP the NLB ever sees is the router's, not the browser's
+(admin1 went to 502 for everyone the moment the range was applied; reverted immediately). The same
+is true at nginx. The browser's real IP is visible ONLY at the Caddy router via `X-Forwarded-For`.
+
+**This blocks the next run.** Do not go live again until a terminal requires authentication.
+Directions, pick one before shipping:
+
+1. **Non-enumerable per-terminal URL.** The claim portal issues `https://<random-token>.packt...`
+   (or a `/t/<token>` path); the router/nginx serves only that token. Removes URL guessing and binds
+   a URL to one claimant.
+2. **Per-terminal secret / basic auth**, issued at claim time. `console-conf` is a patchable
+   ConfigMap, so basic auth can live at the terminal, isolated per cluster, not spoofable,
+   network-independent. Most robust; recommended default.
+3. **Router-level auth**: a session cookie/token, or an `X-Forwarded-For` IP binding pinned to
+   Railway's edge (spoofable if the edge is not pinned).
+
+**Minimum bar:** a terminal must not be reachable by an unauthenticated, guessable URL.
