@@ -300,3 +300,33 @@ def test_openbao_seed_job_runs_as_the_image_uid():
     doc = yaml.safe_load(_read(job))
     sc = doc["spec"]["template"]["spec"]["securityContext"]
     assert sc.get("runAsUser") == 100, "the OpenBao seed job needs an explicit numeric runAsUser"
+
+
+def test_no_image_repository_doubles_the_registry_host():
+    # The Backstage chart builds the image ref as registry/repository. A repository that repeats the
+    # host (repository: ghcr.io/... with registry: ghcr.io) yields ghcr.io/ghcr.io/..., a different
+    # path that pulled a broken image and crash-looped. No component may repeat a registry host in
+    # its repository field.
+    import glob
+    bad = []
+    for f in glob.glob(os.path.join(REPO_ROOT, "platform", "**", "application.yaml"), recursive=True):
+        for docd in yaml.safe_load_all(_read(f)):
+            if not isinstance(docd, dict):
+                continue
+            for repo in _find_repositories(docd):
+                if re.search(r"\b(ghcr\.io|docker\.io|quay\.io|public\.ecr\.aws)/", repo):
+                    bad.append(f"{os.path.relpath(f, REPO_ROOT)}: repository={repo}")
+    assert not bad, "image repository must not include the registry host:\n" + "\n".join(bad)
+
+
+def _find_repositories(obj):
+    # Yield every image.repository value anywhere in a nested Helm valuesObject.
+    if isinstance(obj, dict):
+        img = obj.get("image")
+        if isinstance(img, dict) and isinstance(img.get("repository"), str) and img.get("registry"):
+            yield img["repository"]
+        for v in obj.values():
+            yield from _find_repositories(v)
+    elif isinstance(obj, list):
+        for v in obj:
+            yield from _find_repositories(v)
