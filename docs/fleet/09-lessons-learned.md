@@ -438,3 +438,42 @@ expected so vLLM reading not-Ready in the ArgoCD UI does not look like a failure
   rebuilt, not a manifest change. Affects the B04 finale on every cluster.
 - **vLLM IngressReady=False** is expected (workshop uses the in-cluster endpoint) but should be
   documented so it does not read as a failure.
+
+---
+
+## Backstage: two bugs, neither a broken image build (2026-07-23)
+
+Backstage stayed Degraded through a chain of misdiagnosis worth recording, because the surface
+error pointed away from the real cause every time.
+
+1. **Doubled registry host.** The Application set `registry: ghcr.io` and
+   `repository: ghcr.io/peopleforrester/backstage`. The chart builds the ref as
+   `registry/repository`, so it read `ghcr.io/ghcr.io/peopleforrester/backstage`. Fixed the
+   repository to `peopleforrester/backstage`. A contract test now rejects any repository that
+   repeats a registry host. (Both paths happened to resolve to the same digest, so this was not
+   the crash cause, but it was a real bug.)
+
+2. **`/app` was mode 0700 root, the container runs as non-root `node`.** The real crash. The
+   image's `WORKDIR /app` came out `drwx------ root root`, and with `USER node` the process could
+   not traverse `/app`, so `node packages/backend` failed with
+   `Cannot find module '/app/packages/backend'`. Everything *under* `/app` was already 0755, so
+   only the top directory was at fault. The error names the module, which sends you hunting for a
+   missing bundle; the bundle was present and correct all along.
+
+Fix, deterministic and no local Docker (this host has none): the Dockerfile now
+`chmod 0755 /app` before dropping to `node`, and for the already-built image a crane-appended
+layer sets `/app` to 0755, published as tag `2026-07-23-2` which the manifest points at. Backstage
+then serves HTTP 200 with its catalog UI. On a cold cluster the bundled PostgreSQL comes up clean
+from the fixed manifest; the stuck postgres-0 seen here was a hot-patch artifact (a StatefulSet pod
+predating the existingSecret fix).
+
+Lesson: `Cannot find module <dir>` for a directory that demonstrably contains the module is almost
+always a permission or ownership problem on the path, not a missing file. Check who the container
+runs as against who owns the tree before assuming the build is broken.
+
+## Final validated state (rehearsal, 2026-07-23)
+
+Foundation + AI plane: **36 Applications Healthy**, plus `kube-prometheus-stack` Degraded (the
+intentional P03 fault, which a fresh cluster carries until the student fixes it) and `vllm`
+Progressing (the cosmetic IngressReady). Every fix is in code on `main` and covered by a contract
+test. Run 2 proved the same set converges from a cold provision with zero manual steps.
