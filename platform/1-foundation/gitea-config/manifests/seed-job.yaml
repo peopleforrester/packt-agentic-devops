@@ -23,6 +23,11 @@ spec:
       serviceAccountName: gitea-seed
       securityContext:
         runAsNonRoot: true
+        # The curl image declares its user non-numerically (curl_user), so runAsNonRoot alone
+        # leaves kubelet unable to verify non-root and the pod fails CreateContainerConfigError.
+        # Pin the numeric uid/gid the image ships with (verified: uid 100 curl_user, gid 101).
+        runAsUser: 100
+        runAsGroup: 101
         seccompProfile:
           type: RuntimeDefault
       containers:
