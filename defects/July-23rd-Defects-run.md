@@ -93,3 +93,34 @@ student-authored manifests found untracked in their `platform/` (their own build
 student6, student53 (37/38 apps). Stuck at Phase 0, never started or abandoned early: student3,
 student8 (nesim, had the terminal reconnect trouble), student13 (your own test claim), student57.
 The bulk sit at Phase 2 to 3, which is exactly where the Tempo and Backstage defects live.
+
+## Session engagement metrics (T-90 snapshot, agent sessions)
+
+Quantitative only, no conversation content. 17 of 21 students had an active session (4 never
+started). Pulled read-only to a gitignored folder; a second snapshot follows near the 3pm CDT close.
+
+| Cluster | Turns | Tool calls | I/O tokens | Cache read | Active | Model | Top tools |
+|---|---|---|---|---|---|---|---|
+| student2 | 375 | 130 | 232k | 34M | 62m | sonnet-5 | Bash 92, Read 21, Write 11 |
+| student4 | 1391 | 504 | 674k | 281M | 158m | sonnet-5 | Bash 337, Read 61, Edit 33 |
+| student5 | 1477 | 524 | 735k | 346M | 154m | sonnet-5 | Bash 366, Read 70, Write 50 |
+| student6 | 1371 | 473 | 615k | 280M | 156m | sonnet-5 | Bash 385, Write 43, Read 24 |
+| student7 | 1206 | 393 | 667k | 206M | 154m | opus-4-8, sonnet-5 | Bash 296, Read 45, Edit 26 |
+| student9 | 608 | 172 | 681k | 90M | 154m | opus-4-8 | Bash 130, Edit 16, Read 15 |
+| student12 | 932 | 303 | 580k | 72M | 152m | opus-4-8, sonnet-5 | Bash 202, Read 36, Write 27 |
+| student14 | 1063 | 355 | 782k | 215M | 149m | sonnet-5 | Bash 253, Read 50, Edit 28 |
+| student15 | 1219 | 370 | 604k | 259M | 164m | sonnet-5 | Bash 295, Read 29, Monitor 16 |
+| student16 | 1707 | 574 | 1061k | 329M | 171m | sonnet-5 | Bash 425, Read 79, Write 43 |
+| student17 | 830 | 223 | 903k | 87M | 155m | opus-4-8 | Bash 158, Read 32, Write 22 |
+| student18 | 498 | 140 | 515k | 58M | 141m | opus-4-8 | Bash 112, Read 14, Edit 10 |
+| student52 | 749 | 239 | 477k | 66M | 120m | opus-4-8, sonnet-5 | Bash 180, Read 31, Write 17 |
+| student53 | 1366 | 460 | 721k | 132M | 153m | fable-5, sonnet-5 | Bash 332, Read 62, Edit 21 |
+| student54 | 498 | 161 | 277k | 22M | 101m | opus-4-8, sonnet-5 | Bash 109, Read 34, Write 11 |
+| student55 | 763 | 269 | 344k | 49M | 115m | sonnet-5 | Bash 182, Read 50, Write 10 |
+| student56 | 1591 | 549 | 635k | 362M | 112m | sonnet-5 | Bash 416, Read 48, Write 27 |
+
+**Totals: 17,644 turns, 5,839 tool calls across 17 active students.** Bash dominates everywhere
+(infrastructure work). Heaviest: student16 (1707 turns, 1.06M I/O tokens). Sessions ran 100 to 170
+active minutes, most of the workshop. Models split across sonnet-5 and opus-4-8, a couple used
+fable-5. No correlation yet between token spend and phase reached: student16 spent the most and sits
+at Phase 3, while student53 reached Phase 8 on fewer tokens.
