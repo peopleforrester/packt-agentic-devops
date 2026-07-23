@@ -299,17 +299,24 @@
     var iframe=active||document.querySelector('.tpane[data-i="0"]');
     if(!iframe || iframe.classList.contains('mappane')) return false;
     try{
-      var doc=iframe.contentDocument||(iframe.contentWindow&&iframe.contentWindow.document);
-      if(!doc) return false;
-      var ta=doc.querySelector('.xterm-helper-textarea');
-      var xt=doc.querySelector('.xterm');
-      if(!ta && !xt) return false;
+      // ttyd exposes the xterm Terminal instance as window.term, and the lab page and terminal are
+      // same-origin, so call xterm's own paste() API directly. It writes to the pty over the
+      // websocket identically in every browser. The previous synthetic-ClipboardEvent approach was
+      // wrong two ways: dispatching on two targets DOUBLE-pasted in Chrome, and Firefox strips
+      // clipboardData from a synthetic event so it did nothing there.
+      var w=iframe.contentWindow;
+      if(w && w.term && typeof w.term.paste==='function'){
+        try{ w.term.focus(); }catch(e){}
+        w.term.paste(text);
+        return true;
+      }
+      // Fallback for a ttyd build that does not expose window.term: a SINGLE synthetic paste on the
+      // helper textarea. One dispatch only, so it can never double-paste.
+      var doc=w&&w.document; if(!doc) return false;
+      var ta=doc.querySelector('.xterm-helper-textarea'); if(!ta) return false;
+      ta.focus();
       var dt=new DataTransfer(); dt.setData('text/plain', text);
-      var mkEvt=function(){ return new ClipboardEvent('paste',{clipboardData:dt,bubbles:true,cancelable:true}); };
-      // Dispatch on both targets: xterm builds listen on the helper textarea in some versions and
-      // on the .xterm root in others. Focusing first is what lets a live terminal accept the paste.
-      if(ta){ ta.focus(); ta.dispatchEvent(mkEvt()); }
-      if(xt){ xt.dispatchEvent(mkEvt()); }
+      ta.dispatchEvent(new ClipboardEvent('paste',{clipboardData:dt,bubbles:true,cancelable:true}));
       return true;
     }catch(e){ return false; }
   }
