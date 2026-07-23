@@ -8,7 +8,7 @@ The recording contract (deliverable D10). One row per beat. Recording is Michael
 - Target duration is the run-of-show time budget for that beat. A recording that runs long defeats the bail-out; keep it at or under budget.
 - Record the rehearsed, known-good run, not a first take. The recording is the safety net, so it must show the clean path.
 - Fill the recorded date and check verified-plays only after watching the file play start to finish from the backup directory.
-- Priority order to record first: the never-cut beats (B07, B08, B09), then the golden path (B15) and the sanctioned failure (B03), then the rest.
+- Priority order to record first: the never-cut beats (B07, B08, B09), then the golden path (B15), then the rest.
 
 ## Module 1: cloud-native foundation
 
@@ -16,7 +16,6 @@ The recording contract (deliverable D10). One row per beat. Recording is Michael
 |---|---|---|---|---|---|
 | B01 | P01 | `backup-B01-explain-components.mp4` | 6 min | | [ ] |
 | B02 | P02 | `backup-B02-foundation-sync.mp4` | 20 min | | [ ] |
-| B03 | P03 | `backup-B03-diagnose-heal.mp4` | 12 min | | [ ] |
 | B04 | (presenter) | `backup-B04-backstage-tour.mp4` | 8 min | | [ ] |
 
 ## Module 2: the AI plane

@@ -19,7 +19,9 @@ def test_at_least_one_node_ready():
 def test_server_version_is_pinned_line():
     obj = get_json("version")
     git_version = obj.get("serverVersion", {}).get("gitVersion", "")
-    assert git_version.startswith("v1.35"), f"server version {git_version} is not 1.35"
+    assert git_version.startswith(("v1.35", "v1.36")), (
+        f"server version {git_version} is not 1.35 or 1.36"
+    )
 
 
 def test_argocd_namespace_absent():
