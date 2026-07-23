@@ -324,3 +324,68 @@ expected, so it does not read as a failure during P02.
 A build validated with suspended, hand-patched Applications does not prove the student's
 from-scratch GitOps path. The only faithful test is a clean cluster syncing from an untouched
 repo, exactly what a student does. Every run before the event should include one.
+
+---
+
+## Module 1 fully validated on a clean cluster (2026-07-23)
+
+After fixing the bugs below, the foundation converges from scratch to **19 of 21 Applications
+Healthy**, the two exceptions being the intentional P03 fault and the separately-broken
+Backstage image. P03 then heals in **103 seconds** (student corrects the Grafana tag and commits,
+ArgoCD self-heals). Every fix is in code and covered by a contract test; none is a hand-patch.
+
+### The unsubstituted-placeholder class
+
+Three manifests shipped `REPLACE_WITH_*` placeholders that **nothing substituted**. Each left an
+Application permanently Degraded on a student's from-scratch sync, and each was masked on the
+filming build because those Applications were suspended and hand-patched.
+
+| Placeholder | Manifest | Consequence | Fix |
+|---|---|---|---|
+| `REPLACE_WITH_CLUSTER_NAME` (+ added `REPLACE_WITH_VPC_ID`) | aws-load-balancer-controller | controller crash-loops on an IMDS VPC-id timeout | seed job substitutes both from `platform-cluster-facts` |
+| `REPLACE_WITH_EMAIL` | cert-manager-issuers | ACME registration fails `invalidContact` | static workshop email (no per-cluster value) |
+
+The lesson: a `REPLACE_WITH_*` token is a landmine unless something is proven to replace it. A
+repo-wide grep for `REPLACE_WITH` should return only tokens a provisioning step is known to
+substitute, and a contract test should assert exactly that.
+
+### The runAsNonRoot-without-runAsUser class (D18, again)
+
+Three more jobs repeated the D18 defect: `runAsNonRoot: true` with no numeric `runAsUser`, on an
+image whose USER is non-numeric, which kubelet rejects with `CreateContainerConfigError`.
+
+| Job | Image user | Fix |
+|---|---|---|
+| openbao-config seed | uid 100 (openbao) | `runAsUser: 100`, `runAsGroup: 1000` |
+| gitea-config seed | uid 100 (curl_user), gid 101 | `runAsUser: 100`, `runAsGroup: 101` (verified by running `id` in the image) |
+
+D18 fixed this for vLLM and llm-guard but the two foundation seed jobs were never swept for the
+same pattern. Any pod with `runAsNonRoot` and no `runAsUser` is suspect; verify the image's uid
+rather than guessing.
+
+### Credential drift, the exact failure the code already warned about
+
+The gitea-config seed job hardcoded `ADMIN_PASS: workshop-dev-only` while the chart's real
+password is `Workshop-Dev-Only1!`, so every API call 401'd. The **platform** seed job carries a
+comment describing this precise drift and reads its creds from the `gitea-seed-creds` Secret
+instead, but the gitea-config job was never given the same treatment. Both now read from that one
+Secret, so they cannot disagree. When one instance of a class is fixed with "read from the single
+source," grep for every other instance of the class.
+
+### Still open: the Backstage custom image is broken
+
+`backstage` stays Degraded for a reason no manifest fixes: the custom image
+`ghcr.io/peopleforrester/backstage:2026-07-23` crashes with
+`Error: Cannot find module '/app/packages/backend'`. The image build (`internal/images/backstage/
+build-and-push.sh`) produced an image with no backend package, so the pod cannot start. The
+PostgreSQL secret fix above was necessary but not sufficient. Backstage is the Module 1 finale
+(B04, a presenter action, cuttable in the run-of-show), so this does not block P01–P03, but the
+"Backstage in the browser" beat fails until the image is rebuilt correctly. Tracked as a
+follow-up; it needs the image rebuilt and pushed, not a manifest change.
+
+### ArgoCD cache when hot-patching (rehearsal only, not a workshop issue)
+
+Hot-patching an already-synced Application meant fighting the repo-server manifest cache: a
+`refresh=hard` annotation was not always enough, and a `rollout restart` of the repo-server was
+sometimes needed before ArgoCD re-read the pushed revision. This is an artifact of iterating on a
+live cluster; a from-cold build seeds the fixed manifests once and never hits it.
