@@ -37,10 +37,15 @@ spec:
           env:
             - name: GITEA
               value: "http://gitea-http.gitea.svc:3000"
+            # Read from the same Secret apply.sh derives from gitea/values.yaml, never a second
+            # hardcoded copy. This job had ADMIN_PASS: workshop-dev-only while the real password
+            # was Workshop-Dev-Only1!, so every API call 401'd: the exact drift the platform seed
+            # job's comment warns about. secretKeyRef makes the two physically incapable of
+            # disagreeing.
             - name: ADMIN_USER
-              value: "gitea_admin"
+              valueFrom: { secretKeyRef: { name: gitea-seed-creds, key: username } }
             - name: ADMIN_PASS
-              value: "workshop-dev-only"
+              valueFrom: { secretKeyRef: { name: gitea-seed-creds, key: password } }
             - name: ORG
               value: "agents"
             - name: TOKEN_NAME
