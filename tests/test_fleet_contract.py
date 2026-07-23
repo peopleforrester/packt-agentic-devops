@@ -227,34 +227,16 @@ def test_sweep_finds_csi_volumes_that_predate_the_storageclass_tags():
     )
 
 
-# --- The P03 workshop fixture -----------------------------------------------------------------
+# --- No manufactured failures -----------------------------------------------------------------
 
-def test_p03_seeded_fault_exists():
-    # P03 is the single sanctioned on-screen failure: "one Application is failing to sync, find
-    # it and fix the root cause in its values". The prompt library documented a pre-seeded bad
-    # Grafana image tag, but no such fault existed anywhere in the platform tree, so Claude would
-    # have correctly reported everything healthy and the demo beat would have had nothing to do.
-    # This test exists so the fixture cannot silently disappear again.
+def test_grafana_ships_no_broken_image_override():
+    # There is no seeded fault. The workshop must not manufacture a failure; students hit enough
+    # real ones. Grafana uses the chart default image, with no tag override that could break the pull.
     app = os.path.join(REPO_ROOT, "platform", "1-foundation", "kube-prometheus-stack",
                        "application.yaml")
     doc = yaml.safe_load(_read(app))
     grafana = doc["spec"]["source"]["helm"]["valuesObject"]["grafana"]
-    tag = grafana.get("image", {}).get("tag")
-    assert tag, "P03 needs a deliberately broken Grafana image tag; none is set"
-    assert tag != "13.0.2", (
-        "the Grafana tag has been 'fixed' in the repo. P03 depends on it being broken; "
-        "13.0.2 is the value the STUDENT supplies during the workshop"
-    )
-
-
-def test_p03_fault_documents_the_correct_value():
-    # A fixture nobody can repair is a liability. The correct tag must be discoverable from the
-    # file itself, so a presenter recovering live does not have to go spelunking in a chart.
-    app = os.path.join(REPO_ROOT, "platform", "1-foundation", "kube-prometheus-stack",
-                       "application.yaml")
-    body = _read(app)
-    assert "13.0.2" in body, "the correct Grafana tag must be documented alongside the fault"
-    assert "P03" in body, "the fixture must say which prompt depends on it"
+    assert "image" not in grafana, "grafana must not override its image; no seeded fault"
 
 
 # --- Per-cluster substitution: the LB controller placeholders ---------------------------------
