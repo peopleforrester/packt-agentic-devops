@@ -45,6 +45,13 @@ spec:
             - { name: ORG,  value: "platform" }
             - { name: REPO, value: "packt-agentic-devops" }
             - { name: HOME, value: "/tmp" }
+            # Per-cluster facts apply.sh resolved from the AWS API. Substituted into the manifests
+            # below so the AWS Load Balancer Controller Application carries this cluster's real name
+            # and VPC id instead of the placeholders it ships with.
+            - name: CLUSTER_NAME
+              valueFrom: { configMapKeyRef: { name: platform-cluster-facts, key: cluster_name } }
+            - name: VPC_ID
+              valueFrom: { configMapKeyRef: { name: platform-cluster-facts, key: vpc_id } }
           command: ["/bin/bash", "-c"]
           args:
             - |
@@ -80,6 +87,22 @@ spec:
               cp -a /home/student/workshop/. /tmp/seed/
               cd /tmp/seed
               rm -rf .git
+
+              # Substitute this cluster's real name and VPC into the LB controller Application.
+              # It ships placeholders because neither can be hardcoded across 250 clusters, and an
+              # unsubstituted clusterName plus an IMDS VPC-id timeout makes the controller
+              # crash-loop and the Application sit Degraded forever. Done here, after the pull, so
+              # a refresh to current main cannot reintroduce the placeholders. Fail loudly rather
+              # than seed a manifest that would silently degrade.
+              lbc=platform/1-foundation/aws-load-balancer-controller/application.yaml
+              : "${CLUSTER_NAME:?cluster name not provided}" "${VPC_ID:?vpc id not provided}"
+              sed -i "s/REPLACE_WITH_CLUSTER_NAME/${CLUSTER_NAME}/; s/REPLACE_WITH_VPC_ID/${VPC_ID}/" "${lbc}"
+              if grep -q 'REPLACE_WITH_' "${lbc}"; then
+                echo "ERROR: placeholder left unsubstituted in ${lbc}" >&2
+                grep -n 'REPLACE_WITH_' "${lbc}" >&2
+                exit 1
+              fi
+              echo "  LB controller pinned to cluster=${CLUSTER_NAME} vpc=${VPC_ID}"
               git init -q -b main
               git config user.email "provisioning@platform.local"
               git config user.name  "Workshop Provisioning"

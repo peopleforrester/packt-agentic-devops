@@ -97,6 +97,23 @@ bootstrap_gitea() {
         --from-literal=username="${gu}" --from-literal=password="${gp}" \
         --dry-run=client -o yaml | kubectl apply -f - >/dev/null
 
+    # Per-cluster facts the seed job substitutes into the manifests before pushing to Gitea. The
+    # AWS Load Balancer Controller Application ships clusterName and vpcId as placeholders because
+    # neither can be hardcoded (every cluster is a different EKS name in a different VPC), and
+    # leaving vpcId to IMDS makes the controller crash-loop on a metadata timeout under prefix
+    # delegation. Resolved here from the AWS API, the single source of truth.
+    local cluster region vpc
+    cluster="$(kubectl config current-context | sed 's|.*/||')"
+    region="${AWS_REGION:-us-west-2}"
+    vpc="$(aws eks describe-cluster --name "${cluster}" --region "${region}" \
+        --query 'cluster.resourcesVpcConfig.vpcId' --output text 2>/dev/null)"
+    [[ -n "${vpc}" && "${vpc}" != None ]] \
+        || { printf 'could not resolve VPC for %s; cannot seed cluster facts\n' "${cluster}" >&2; return 1; }
+    printf 'Recording cluster facts for the seed job (cluster=%s vpc=%s)\n' "${cluster}" "${vpc}" >&2
+    kubectl -n gitea create configmap platform-cluster-facts \
+        --from-literal=cluster_name="${cluster}" --from-literal=vpc_id="${vpc}" \
+        --dry-run=client -o yaml | kubectl apply -f - >/dev/null
+
     printf 'Seeding Gitea with the platform manifests...\n' >&2
     kubectl -n gitea delete job gitea-seed-platform --ignore-not-found >/dev/null 2>&1 || true
     kubectl apply -f "${SCRIPT_DIR}/gitea/seed-platform-job.yaml" >&2

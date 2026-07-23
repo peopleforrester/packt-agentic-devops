@@ -255,3 +255,48 @@ def test_p03_fault_documents_the_correct_value():
     body = _read(app)
     assert "13.0.2" in body, "the correct Grafana tag must be documented alongside the fault"
     assert "P03" in body, "the fixture must say which prompt depends on it"
+
+
+# --- Per-cluster substitution: the LB controller placeholders ---------------------------------
+
+def test_lb_controller_ships_substitutable_placeholders():
+    # clusterName and vpcId cannot be hardcoded across 250 clusters. They ship as placeholders and
+    # are substituted at seed time. An unsubstituted clusterName plus an IMDS VPC-id timeout makes
+    # the controller crash-loop and its Application sit Degraded forever (found in a clean-room run).
+    app = os.path.join(PROVISION, "..", "..", "platform", "1-foundation",
+                       "aws-load-balancer-controller", "application.yaml")
+    body = _read(app)
+    assert "REPLACE_WITH_CLUSTER_NAME" in body, "clusterName must be a substitutable placeholder"
+    assert "REPLACE_WITH_VPC_ID" in body, (
+        "vpcId must be templated, not left to IMDS: the metadata fetch times out under prefix "
+        "delegation and the controller crash-loops"
+    )
+
+
+def test_provisioning_records_the_cluster_facts():
+    # apply.sh resolves cluster name and VPC from the AWS API and hands them to the seed job.
+    body = _code(os.path.join(PROVISION, "vtt", "apply.sh"))
+    assert "platform-cluster-facts" in body, "apply.sh must write the cluster facts the seed reads"
+    assert "cluster_name" in body and "vpc_id" in body
+
+
+def test_seed_job_substitutes_and_verifies_no_placeholder_survives():
+    body = _read(os.path.join(PROVISION, "vtt", "gitea", "seed-platform-job.yaml"))
+    assert "platform-cluster-facts" in body, "the seed job must read the cluster facts ConfigMap"
+    assert "REPLACE_WITH_CLUSTER_NAME" in body and "REPLACE_WITH_VPC_ID" in body, (
+        "the seed job must substitute both placeholders"
+    )
+    # It must fail loudly if a placeholder survives, rather than seed a manifest that degrades.
+    assert re.search(r"grep -q 'REPLACE_WITH_'", body), (
+        "the seed job must assert no placeholder survived and exit non-zero if one did"
+    )
+
+
+def test_openbao_seed_job_runs_as_the_image_uid():
+    # runAsNonRoot without a numeric runAsUser fails with CreateContainerConfigError because kubelet
+    # cannot verify non-root from the image's non-numeric user (uid 100 openbao). D18 pattern.
+    job = os.path.join(PROVISION, "..", "..", "platform", "1-foundation", "openbao-config",
+                       "manifests", "seed-job.yaml")
+    doc = yaml.safe_load(_read(job))
+    sc = doc["spec"]["template"]["spec"]["securityContext"]
+    assert sc.get("runAsUser") == 100, "the OpenBao seed job needs an explicit numeric runAsUser"

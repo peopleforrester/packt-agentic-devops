@@ -17,12 +17,17 @@ spec:
     targetRevision: 3.4.0
     helm:
       valuesObject:
+        # clusterName and vpcId are per-cluster and CANNOT be hardcoded (every cluster is a
+        # different EKS name in a different VPC). Both are placeholders substituted at provisioning
+        # by the Gitea seed job, which reads the real values from the platform-cluster-facts
+        # ConfigMap that apply.sh writes. See scripts/provision/vtt/gitea/seed-platform-job.yaml.
+        #
+        # vpcId is templated rather than left to IMDS on purpose: the controller pod's IMDS fetch
+        # times out under prefix delegation ("failed to fetch VPC ID from instance metadata:
+        # context deadline exceeded") and the pod crash-loops, which leaves this Application
+        # Degraded forever while the provisioning-time helm install quietly carries the cluster.
         clusterName: REPLACE_WITH_CLUSTER_NAME
-        # Region is pinned so the controller does not need an IMDS round-trip for it. vpcId is deliberately
-        # NOT set: each cluster's Terraform creates its own VPC, so a hardcoded id is wrong the moment the
-        # cluster is rebuilt. The EKS module's default metadata_options allow a hop limit of 2, so the
-        # controller can read the VPC id from IMDS. If a cluster ever fails with "failed to fetch VPC ID
-        # from instance metadata", template vpcId at provisioning the same way clusterName is templated.
+        vpcId: REPLACE_WITH_VPC_ID
         region: us-west-2
         # Disable the cluster-wide Service mutating webhook. By default the controller
         # registers mservice.elbv2.k8s.aws with failurePolicy=Fail on ALL Services, so
