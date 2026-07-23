@@ -20,6 +20,13 @@ spec:
       automountServiceAccountToken: false
       securityContext:
         runAsNonRoot: true
+        # The bao image declares its user non-numerically (uid 100 "openbao"), so runAsNonRoot
+        # alone leaves kubelet unable to verify non-root and the container fails with
+        # CreateContainerConfigError. Pin the explicit numeric uid/gid the image ships with,
+        # matching what the OpenBao server StatefulSet itself runs as (D18 pattern).
+        runAsUser: 100
+        runAsGroup: 1000
+        fsGroup: 1000
         seccompProfile:
           type: RuntimeDefault
       containers:
