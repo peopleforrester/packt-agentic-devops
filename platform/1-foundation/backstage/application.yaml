@@ -26,10 +26,13 @@ spec:
             repository: ghcr.io/peopleforrester/backstage
             tag: 2026-07-23
         # Bundled PostgreSQL for the demo. Production backs the catalog with RDS.
+        # No existingSecret: it named backstage-postgresql, which nothing created, so both the
+        # database pod and the Backstage backend failed with "secret backstage-postgresql not
+        # found" and the whole app stayed Degraded. Unset, the bundled chart generates its own
+        # password secret and the Backstage backend wires to it, which is the chart's happy path
+        # and correct for a throwaway cluster whose catalog DB is ephemeral.
         postgresql:
           enabled: true
-          auth:
-            existingSecret: backstage-postgresql
         service:
           type: ClusterIP
   destination:
