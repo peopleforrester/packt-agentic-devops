@@ -8,22 +8,25 @@ Wait commands block until the plane is Healthy. If one times out, open the ArgoC
 
 ## Module 0: start state
 
-Your environment lands at `checkpoint/module-0-start`: cluster up, ArgoCD installed, this repo cloned, nothing else synced. Confirm it:
+Your environment is a **bare** cluster: Kubernetes is up with the EKS add-ons (vpc-cni,
+kube-proxy, coredns, the EBS CSI driver), the default gp3 StorageClass, the AWS Load Balancer
+Controller, in-cluster Gitea seeded with this repo, and your terminal. The platform itself is not
+installed. Confirm the starting state:
 
 ```bash
-# ArgoCD is up
-kubectl get pods -n argocd
+# The cluster is up
+kubectl get nodes
 
-# Nothing synced yet (no platform Applications)
-kubectl get applications -n argocd
+# ArgoCD is NOT installed yet, and no platform Applications exist
+kubectl get pods -n argocd 2>/dev/null || echo "argocd not installed (expected)"
 ```
 
-If ArgoCD is not installed (you started from a bare cluster), install it once. This is the only direct install; everything after flows through ArgoCD.
+Install ArgoCD once. This is the only direct install; everything after flows through ArgoCD.
 
 ```bash
 helm upgrade --install argo-cd argo-cd \
   --repo https://argoproj.github.io/argo-helm \
-  --version 9.5.21 \
+  --version 9.5.22 \
   --namespace argocd --create-namespace \
   --set crds.install=true
 

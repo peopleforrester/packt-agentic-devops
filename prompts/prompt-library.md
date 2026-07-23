@@ -51,22 +51,7 @@ Argo extensions -> Backstage.
 **Known failure modes:** Image pull pressure delays a wave. Backstage is last and slowest. A
 component flaps Progressing before Healthy.
 **Recovery move:** Sync waves are tuned; give it the budgeted time. If a non-Backstage app
-hangs past budget, it is a candidate for the recorded backup; do not live-debug here (B03 is
-the only sanctioned on-screen failure).
-
-### P03 (B03) — Diagnose and heal the scripted sync failure
-**Prompt:**
-> One Application is failing to sync. Find which one from the ArgoCD status, read the error,
-> and fix the root cause in its values. Commit the fix and watch ArgoCD heal it.
-
-**Expected behavior:** Identifies the pre-seeded fault (a bad Grafana image tag), opens the
-values file, corrects the tag to the pinned version, commits to Git. ArgoCD self-heals and
-the app goes Healthy. This is the rehearsed-until-boring recovery beat.
-**Known failure modes:** Claude fixes a symptom (deletes the pod) instead of the values root
-cause. It changes more than the one bad field.
-**Recovery move:** If it strays, redirect: "fix it in the values file and commit, do not touch
-the cluster directly." The fault and its fix are fixed fixtures; if config drifts, the reset
-script restores the known-good seeded fault.
+hangs past budget, it is a candidate for the recorded backup.
 
 *(B04, Backstage opening in the browser, is a presenter action, not a Claude prompt.)*
 

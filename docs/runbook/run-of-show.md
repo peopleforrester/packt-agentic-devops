@@ -4,7 +4,7 @@ The per-beat delivery runbook (deliverable D9). Built in Phase 6 and corrected a
 
 Each beat row carries: clock time, beat ID, what is on screen, Michael's cues (bullets, not a script), what Claude Code does (prompt ID), success signal, time budget, bail-out action, recovery action.
 
-Hard rule: any beat that exceeds its budget by 50 percent triggers its bail-out immediately. No live debugging beyond the one rehearsed failure beat (B03). The audience never watches unrehearsed troubleshooting.
+Hard rule: any beat that exceeds its budget by 50 percent triggers its bail-out immediately. There are no scripted failures. If a real issue surfaces, the agent diagnoses and fixes it live within the beat's budget; past that, cut to the recording rather than debug on air.
 
 ## Timeline
 
@@ -51,16 +51,8 @@ Michael says:
 - Michael says: this is the bootstrap exception, the one direct apply; everything after flows through Git. Watch the waves: cert-manager first, Backstage last.
 - Agent: applies `root-app.yaml` (approval prompt approved on screen), watches to all-green.
 - Success signal: foundation plane all Healthy. Validated path: green in well under the 12 min gate; the budget holds narration room.
-- Bail-out (past 30 min, non-Backstage app stuck): play the foundation-green recording, pick up at B03.
-- Recovery: do not live-debug; B03 is the only sanctioned failure.
-
-### B03 · 0:43 · budget 12 min · prompt P03
-- On screen: the one failing Application in ArgoCD, then the values fix and the heal.
-- Michael says: this is what platform engineering actually feels like; watch the agent diagnose from status, fix the root cause, and let GitOps heal it.
-- Agent: finds the seeded bad Grafana tag, fixes the values file, commits; ArgoCD self-heals.
-- Success signal: the app returns to Healthy after the commit, no direct cluster edit.
-- Bail-out (past 18 min): play the B03 recording.
-- Recovery: if config drifted, the reset script restores the known-good seeded fault before the beat.
+- Bail-out (past 30 min, non-Backstage app stuck): play the foundation-green recording, pick up at B04.
+- Recovery: if a real issue surfaces, the agent diagnoses it from ArgoCD status and fixes the root cause in the values, live. There is no scripted failure; if it eats time, cut to the recording.
 
 ### B04 · 0:55 · budget 8 min · no prompt (presenter)
 - On screen: Backstage in the browser, catalog populated, TechDocs rendered, ArgoCD plugin showing live sync.

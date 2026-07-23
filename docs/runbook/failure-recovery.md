@@ -5,7 +5,7 @@ What to do when a beat goes wrong on screen.
 ## Principles
 
 - Every beat has three safety layers: a checkpoint to reset to, a reset script under 5 minutes, and a recorded backup of the exact beat.
-- The only sanctioned on-screen failure is B03, the scripted Grafana sync error. It is rehearsed until boring.
+- There are no scripted failures. If a real issue surfaces during a build beat, the agent diagnoses it from ArgoCD status and fixes the root cause in Git within budget; past budget, cut to the recording.
 - Any beat over budget by 50 percent triggers its bail-out. Play the recording, verify the cluster between beats, move on. The audience never watches unrehearsed troubleshooting.
 
 ## Recovery paths (the three moves)
@@ -16,9 +16,9 @@ What to do when a beat goes wrong on screen.
 
 ## Per-failure playbooks
 
-### A foundation or AI-plane app will not sync (not B03)
+### A foundation or AI-plane app will not sync
 - Symptom: an Application stuck Progressing or Degraded past its budget.
-- Decision: this is not the rehearsed failure; do not debug live.
+- Decision: diagnose from ArgoCD status within the beat's budget; past budget, cut to the recording rather than debug on air.
 - Action: at 50 percent over budget, play the plane-green recording and pick up at the next beat. Between modules, reset to the last checkpoint and re-sync.
 
 ### vLLM inference is cold or slow (B11)
