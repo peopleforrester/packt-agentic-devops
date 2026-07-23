@@ -23,6 +23,54 @@ These bind your agent for the whole build.
 5. **Two model roles, do not confuse them.** Your agentic CLI is the builder doing platform engineering. The model the deployed platform agents call is the small in-cluster vLLM served in Phase 6, over an OpenAI-compatible endpoint. There is no external LLM in the platform and no external API spend.
 6. **No secrets in Git.** OpenBao (dev mode) and External Secrets Operator handle the in-cluster story.
 
+## Sourcing
+
+You are given the sources so you do not hunt for them or guess.
+
+- **Charts** come from the pinned Helm repositories in `components.yaml`, vendored under
+  `charts-vendor/` so nothing waits on the network.
+- **Images**: pull from in-region ECR (the AWS-managed EKS add-on registry), `public.ecr.aws`, or
+  the workshop GHCR namespace. **Never reference `docker.io` in a manifest.** Docker Hub
+  rate-limits anonymous pulls and stalls the build. If a chart defaults to Docker Hub, override the
+  image to the mirrored copy.
+- **The App-of-Apps is a pattern, not a file to copy.** Generate a root `Application` per plane
+  that points ArgoCD at that plane's directory and recurses for the per-component manifests, ordered
+  by sync waves: cert-manager first, Backstage last.
+
+## Build rules: avoid these known failures
+
+Each rule prevents a specific failure that will otherwise leave an Application `Degraded` with a
+confusing error. Follow them when you generate manifests.
+
+1. **Per-cluster values are parameters, never hardcodes.** Anything that differs per cluster (the
+   cluster name, the VPC id) is templated and substituted at provisioning. The AWS Load Balancer
+   Controller needs both `clusterName` and `vpcId` set explicitly; do not leave `vpcId` to instance
+   metadata, because under VPC-CNI prefix delegation that IMDS fetch times out and the controller
+   crash-loops.
+2. **`runAsNonRoot: true` always pairs with a numeric `runAsUser`.** On an image whose user is
+   non-numeric, kubelet cannot verify non-root and the pod fails `CreateContainerConfigError`. Pin
+   the image's actual numeric uid (find it: run `id` in the image). This bites seed Jobs especially.
+3. **An image `repository` must not repeat the registry host.** Charts build the ref as
+   `registry/repository`; `registry: ghcr.io` with `repository: ghcr.io/org/name` yields
+   `ghcr.io/ghcr.io/org/name`, a wrong path. Use `repository: org/name`.
+4. **The container's runtime user must be able to traverse its working directory.** `Cannot find
+   module '/app/...'` for a path that clearly contains the module is a permission problem, not a
+   missing file. A `WORKDIR` of `0700 root` under a non-root user cannot be entered.
+5. **Read shared credentials from one source.** Never hardcode a password that also lives in a
+   chart's values; they drift and every authenticated call then 401s. Reference the one Secret the
+   platform creates.
+6. **Install first, enforce last.** Every Kyverno policy ships with `failureAction: Audit`. An
+   admission guardrail set to Enforce before the software it governs is installed rejects that
+   software's own pods and stalls the build. The one sanctioned flip to Enforce is the governance
+   demo (Phase 8) on the AI-plane set, after the platform is healthy.
+7. **Validate before you apply.** A manifest that does not parse wastes a sync cycle. Round-trip
+   the YAML (or `kubectl apply --dry-run=client`), and `helm template`/`helm lint` the chart with
+   your values before committing.
+
+When something does not converge, diagnose from ArgoCD status and the pod events, fix the root
+cause **in the values file**, and commit. Deleting a pod does not fix a Git-sourced fault; ArgoCD
+recreates it from Git. Fix Git.
+
 ## Completion gate per phase
 
 A phase is done when its test passes and you have committed the phase's files. Output the phase completion promise, then stop and wait for the user.
