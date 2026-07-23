@@ -130,9 +130,12 @@
       <div class="step">
         <div class="h"><div class="num">1</div><div class="t">Phase 1 — GitOps bootstrap and core foundation</div></div>
         <div class="b">
-          <p class="goal">Install ArgoCD, point it at the repo, and let the App-of-Apps bring up cert-manager, OpenBao, External Secrets, and Kyverno.</p>
-          <div class="cmd prompt" onclick="cp(this)"><span class="tag">in Claude</span><button class="cp">paste</button>Read components.yaml and platform/0-bootstrap/root-app.yaml. In a few sentences, explain how the App-of-Apps pattern deploys this platform: what the root Application points at, how the per-component Applications are discovered, and how sync waves order the rollout. Do not apply anything yet.</div>
-          <div class="cmd prompt" onclick="cp(this)"><span class="tag">in Claude</span><button class="cp">paste</button>Apply the foundation App-of-Apps at platform/0-bootstrap/root-app.yaml into the argocd namespace. This is the bootstrap exception to the GitOps rule. Then watch the ArgoCD sync waves cascade and tell me when the foundation plane is all green.</div>
+          <p class="goal">Install ArgoCD, then build the core foundation from the spec: cert-manager, OpenBao, External Secrets, and Kyverno, all through Git.</p>
+          <p class="lede"><b>Build it.</b> This is the primary path: your agent reads the phase spec and builds it.</p>
+          <div class="cmd prompt" onclick="cp(this)"><span class="tag">in Claude — build</span><button class="cp">paste</button>Read spec/phases/phase-1-foundation.md and components.yaml, then build that phase. Install ArgoCD with server-side apply (the one allowed direct install), then generate the App-of-Apps and the cert-manager, OpenBao, External Secrets, and Kyverno manifests from the spec, following the build rules in spec/WORKSHOP-SPEC.md. Write the phase test first and confirm it fails, build through Git so ArgoCD syncs, confirm it passes, commit, output the completion promise, then stop.</div>
+          <div class="tip"><b>Trouble getting the agent to build it right, or want to catch up?</b> Fall back to the reference build: have the agent read the finished manifests and apply them, then compare with what it generated.</div>
+          <div class="cmd prompt" onclick="cp(this)"><span class="tag">catch-up</span><button class="cp">paste</button>Read components.yaml and platform/0-bootstrap/root-app.yaml. In a few sentences, explain how the App-of-Apps pattern deploys this platform: what the root Application points at, how the per-component Applications are discovered, and how sync waves order the rollout. Do not apply anything yet.</div>
+          <div class="cmd prompt" onclick="cp(this)"><span class="tag">catch-up</span><button class="cp">paste</button>Apply the foundation App-of-Apps at platform/0-bootstrap/root-app.yaml into the argocd namespace. This is the bootstrap exception to the GitOps rule. Then watch the ArgoCD sync waves cascade and tell me when the foundation plane is all green.</div>
         </div>
       </div>
 
@@ -140,7 +143,10 @@
         <div class="h"><div class="num">2</div><div class="t">Phase 2 — Observability plane</div></div>
         <div class="b">
           <p class="goal">kube-prometheus-stack, Loki, Tempo, and the OpenTelemetry Collector and Operator, all through Git.</p>
-          <div class="cmd prompt" onclick="cp(this)"><span class="tag">in Claude</span><button class="cp">paste</button>Read spec/phases/phase-2-observability.md and build that phase. Write the phase test first and confirm it fails, add the components through Git so ArgoCD syncs them, confirm the test passes, commit, output the completion promise, then stop.</div>
+          <p class="lede"><b>Build it.</b> Your agent reads the phase spec and builds it.</p>
+          <div class="cmd prompt" onclick="cp(this)"><span class="tag">in Claude — build</span><button class="cp">paste</button>Read spec/phases/phase-2-observability.md and build that phase, following the build rules in spec/WORKSHOP-SPEC.md. Write the phase test first and confirm it fails, add the components through Git so ArgoCD syncs them, confirm the test passes, commit, output the completion promise, then stop.</div>
+          <div class="tip"><b>Trouble getting the agent to build it right, or want to catch up?</b> Fall back to the reference build.</div>
+          <div class="cmd prompt" onclick="cp(this)"><span class="tag">catch-up</span><button class="cp">paste</button>The reference foundation App-of-Apps at platform/0-bootstrap/root-app.yaml includes the observability components. Apply it (or, if it is already applied, re-sync), then confirm kube-prometheus-stack, Loki, Tempo, and the OpenTelemetry Collector and Operator are Synced and Healthy. Then show me the difference between the reference manifests and what I generated.</div>
         </div>
       </div>
 
@@ -148,7 +154,10 @@
         <div class="h"><div class="num">3</div><div class="t">Phase 3 — Developer portal</div></div>
         <div class="b">
           <p class="goal">Backstage (catalog, TechDocs, scaffolder, ArgoCD plugin), KEDA, and the Argo extensions. End of Module 1: a working IDP.</p>
-          <div class="cmd prompt" onclick="cp(this)"><span class="tag">in Claude</span><button class="cp">paste</button>Read spec/phases/phase-3-portal.md and build that phase: test first, build through Git, confirm green, commit, output the completion promise, then stop.</div>
+          <p class="lede"><b>Build it.</b> Your agent reads the phase spec and builds it.</p>
+          <div class="cmd prompt" onclick="cp(this)"><span class="tag">in Claude — build</span><button class="cp">paste</button>Read spec/phases/phase-3-portal.md and build that phase, following the build rules in spec/WORKSHOP-SPEC.md: test first, build through Git, confirm green, commit, output the completion promise, then stop.</div>
+          <div class="tip"><b>Trouble getting the agent to build it right, or want to catch up?</b> Fall back to the reference build.</div>
+          <div class="cmd prompt" onclick="cp(this)"><span class="tag">catch-up</span><button class="cp">paste</button>The reference foundation App-of-Apps at platform/0-bootstrap/root-app.yaml includes Backstage, KEDA, and the Argo extensions. Apply it (or re-sync), then confirm they are Synced and Healthy. Then show me the difference between the reference manifests and what I generated.</div>
           <div class="tip">Open Backstage when Claude reports it Healthy. That is your golden-path portal for the rest of the workshop.</div>
         </div>
       </div>
@@ -159,7 +168,10 @@
         <div class="h"><div class="num">4</div><div class="t">Phase 4 — AI gateway plane</div></div>
         <div class="b">
           <p class="goal">Gateway API CRDs, kgateway, and agentgateway with mTLS and audit logging. The AI-plane Kyverno policies land here in audit mode, so the plane is governed from birth.</p>
-          <div class="cmd prompt" onclick="cp(this)"><span class="tag">in Claude</span><button class="cp">paste</button>Apply the AI-plane App-of-Apps at platform/0-bootstrap/ai-plane-app.yaml. Once kgateway is Healthy, show me the Gateway API resources it created and explain what the Gateway and GatewayClass represent here.</div>
+          <p class="lede"><b>Build it.</b> Your agent reads the phase spec and builds it.</p>
+          <div class="cmd prompt" onclick="cp(this)"><span class="tag">in Claude — build</span><button class="cp">paste</button>Read spec/phases/phase-4-ai-gateway.md and build that phase, following the build rules in spec/WORKSHOP-SPEC.md: generate the Gateway API CRDs, kgateway, agentgateway with mTLS and audit logging, and the AI-plane Kyverno policies in audit mode. Test first, build through Git so ArgoCD syncs, confirm green, commit, output the completion promise, then stop.</div>
+          <div class="tip"><b>Trouble getting the agent to build it right, or want to catch up?</b> Fall back to the reference build.</div>
+          <div class="cmd prompt" onclick="cp(this)"><span class="tag">catch-up</span><button class="cp">paste</button>Apply the AI-plane App-of-Apps at platform/0-bootstrap/ai-plane-app.yaml. Once kgateway is Healthy, show me the Gateway API resources it created and explain what the Gateway and GatewayClass represent here. Then show me the difference between the reference manifests and what I generated.</div>
           <div class="cmd prompt" onclick="cp(this)"><span class="tag">in Claude</span><button class="cp">paste</button>agentgateway is deployed as the agentic data plane. Show me its routing configuration: how it mediates LLM, MCP, and A2A traffic, and confirm mTLS and audit logging are on by default.</div>
         </div>
       </div>
@@ -168,6 +180,10 @@
         <div class="h"><div class="num">5</div><div class="t">Phase 5 — Agent runtime and safety</div></div>
         <div class="b">
           <p class="goal">kagent and an Agent CRD, LLM Guard, and OpenLLMetry. The agent calls an MCP server through agentgateway; a prompt-injection attempt is blocked.</p>
+          <p class="lede"><b>Build it.</b> First build the runtime, then the beats below run on it.</p>
+          <div class="cmd prompt" onclick="cp(this)"><span class="tag">in Claude — build</span><button class="cp">paste</button>Read spec/phases/phase-5-agent-runtime.md and build that phase, following the build rules in spec/WORKSHOP-SPEC.md: kagent, LLM Guard, and the OpenLLMetry wiring. Test first, build through Git so ArgoCD syncs, confirm green, commit, output the completion promise, then stop.</div>
+          <div class="tip"><b>Trouble getting the agent to build it right, or want to catch up?</b> Fall back to the reference build.</div>
+          <div class="cmd prompt" onclick="cp(this)"><span class="tag">catch-up</span><button class="cp">paste</button>Apply the AI-plane App-of-Apps at platform/0-bootstrap/ai-plane-app.yaml if it is not already applied; it includes kagent and LLM Guard. Confirm they are Synced and Healthy, then show me the difference between the reference manifests and what I generated.</div>
           <div class="cmd prompt" onclick="cp(this)"><span class="tag">in Claude</span><button class="cp">paste</button>Write a kagent Agent that acts as a platform helper: it answers questions about this platform's components and golden paths, keeps answers short and concrete, and says so when it does not know. Route it at the in-cluster vLLM through a ModelConfig, not any external provider. Put it in the kagent namespace, commit it under platform/2-ai-plane/demo-agent/manifests/, and let ArgoCD reconcile it.</div>
           <div class="cmd prompt" onclick="cp(this)"><span class="tag">in Claude</span><button class="cp">paste</button>Have the platform-helper agent call the MCP server through agentgateway, then show me the audit log entry for that call.</div>
           <div class="cmd prompt" onclick="cp(this)"><span class="tag">in Claude</span><button class="cp">paste</button>Send the prompt-injection test fixture at the agent. Show me LLM Guard intercepting and blocking it, and the blocked request in the audit log.</div>
@@ -179,6 +195,10 @@
         <div class="h"><div class="num">6</div><div class="t">Phase 6 — Model serving</div></div>
         <div class="b">
           <p class="goal">KServe with a small in-cluster vLLM model, llm-d shown as the scheduling layer. The agent trace lands in Tempo. End of Module 2: AI-native.</p>
+          <p class="lede"><b>Build it.</b> First serve the model, then the beats below run on it.</p>
+          <div class="cmd prompt" onclick="cp(this)"><span class="tag">in Claude — build</span><button class="cp">paste</button>Read spec/phases/phase-6-model-serving.md and build that phase, following the build rules in spec/WORKSHOP-SPEC.md: KServe, the in-cluster vLLM InferenceService, and llm-d. Test first, build through Git so ArgoCD syncs, confirm green (note: the InferenceService may read Ready=False on IngressReady while the predictor is up and serving; the workshop uses the in-cluster endpoint), commit, output the completion promise, then stop.</div>
+          <div class="tip"><b>Trouble getting the agent to build it right, or want to catch up?</b> Fall back to the reference build.</div>
+          <div class="cmd prompt" onclick="cp(this)"><span class="tag">catch-up</span><button class="cp">paste</button>Apply the AI-plane App-of-Apps at platform/0-bootstrap/ai-plane-app.yaml if it is not already applied; it includes KServe, the vLLM InferenceService, and llm-d. Confirm vLLM is serving, then show me the difference between the reference manifests and what I generated.</div>
           <div class="cmd prompt" onclick="cp(this)"><span class="tag">in Claude</span><button class="cp">paste</button>Open the trace from the agent's MCP call in Tempo. Walk the spans and point out the GenAI semantic-convention attributes: model, token counts, tool calls. Then load the AI-plane Grafana dashboard.</div>
           <div class="cmd prompt" onclick="cp(this)"><span class="tag">in Claude</span><button class="cp">paste</button>Send one inference request to the vLLM model through its OpenAI-compatible endpoint and show me the response.</div>
         </div>
@@ -190,8 +210,10 @@
         <div class="h"><div class="num">7</div><div class="t">Phase 7 — Self-service golden path</div></div>
         <div class="b">
           <p class="goal">A Backstage scaffolder template for an agent-service and the ArgoCD ApplicationSet that watches for it. The golden path fires end to end.</p>
-          <div class="cmd prompt" onclick="cp(this)"><span class="tag">in Claude</span><button class="cp">paste</button>Write a Backstage scaffolder template for an agent-service. The form takes an agent name, purpose, model route, and the MCP tools it is allowed. On submit it generates a repo containing a kagent Agent CRD, an agentgateway route, an LLM Guard policy reference, and OTel instrumentation defaults. Commit it under platform/3-self-service/agent-service/.</div>
-          <div class="cmd prompt" onclick="cp(this)"><span class="tag">in Claude</span><button class="cp">paste</button>Write the ApplicationSet that watches the in-cluster Gitea for repos generated by this template and auto-creates an ArgoCD Application for each. Commit it at platform/3-self-service/applicationset.yaml.</div>
+          <p class="lede"><b>Build it.</b> Build the template and the ApplicationSet, then fire the golden path.</p>
+          <div class="cmd prompt" onclick="cp(this)"><span class="tag">in Claude — build</span><button class="cp">paste</button>Read spec/phases/phase-7-self-service.md and build that phase, following the build rules in spec/WORKSHOP-SPEC.md: a Backstage scaffolder template for an agent-service (form takes agent name, purpose, model route, allowed MCP tools; on submit it generates a repo with a kagent Agent CRD, an agentgateway route, an LLM Guard policy reference, and OTel defaults) and the ApplicationSet that watches the in-cluster Gitea for the generated repos. Test first, build through Git, confirm green, commit, output the completion promise, then stop.</div>
+          <div class="tip"><b>Trouble getting the agent to build it right, or want to catch up?</b> Fall back to the reference build.</div>
+          <div class="cmd prompt" onclick="cp(this)"><span class="tag">catch-up</span><button class="cp">paste</button>Apply the reference self-service at platform/0-bootstrap/self-service-app.yaml, which brings up the agent-service template and the ApplicationSet. Confirm they are Synced and Healthy, then show me the difference between the reference and what I generated.</div>
           <div class="cmd prompt" onclick="cp(this)"><span class="tag">in Claude</span><button class="cp">paste</button>Through the Backstage portal, request a new agent: fill the form and submit. Then watch the chain: scaffolder generates the repo, the ApplicationSet creates the Application, ArgoCD syncs it, the agent runs, and the first trace lands in Tempo.</div>
         </div>
       </div>
@@ -202,6 +224,10 @@
         <div class="h"><div class="num">8</div><div class="t">Phase 8 — Governance, attribution, and your commitment</div></div>
         <div class="b">
           <p class="goal">Flip the AI-plane Kyverno policies from audit to enforce with a live denial, then show per-agent attribution in Loki.</p>
+          <p class="lede"><b>Build it.</b> Complete the governance phase, then the denial and attribution beats run.</p>
+          <div class="cmd prompt" onclick="cp(this)"><span class="tag">in Claude — build</span><button class="cp">paste</button>Read spec/phases/phase-8-governance.md and complete that phase, following the build rules in spec/WORKSHOP-SPEC.md: flip the AI-plane Kyverno policies from audit to enforce, and wire per-agent attribution in Loki. Test first, commit, output the completion promise, then stop.</div>
+          <div class="tip"><b>Trouble getting the agent to build it right, or want to catch up?</b> Fall back to the reference build.</div>
+          <div class="cmd prompt" onclick="cp(this)"><span class="tag">catch-up</span><button class="cp">paste</button>The reference AI-plane policies are at platform/2-ai-plane/ai-policies. Set them to enforce as the reference does, then show me the difference between the reference and what I applied.</div>
           <div class="cmd prompt" onclick="cp(this)"><span class="tag">in Claude</span><button class="cp">paste</button>Flip the AI-plane Kyverno policies from audit to enforce. Then try to apply the violating agent fixture with no LLM Guard reference and show Kyverno denying it.</div>
           <div class="cmd prompt" onclick="cp(this)"><span class="tag">in Claude</span><button class="cp">paste</button>Run the Loki query that shows every action in this cluster attributed to a named agent identity, including this Claude Code session's own actions from the audit hook.</div>
           <div class="tip">The agent that built the platform shows up in the platform's own audit trail. That is the point: agents are first-class, governed identities here.</div>
