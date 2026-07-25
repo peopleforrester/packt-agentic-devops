@@ -10,6 +10,15 @@ exceptions: the bootstrap (installing ArgoCD and applying the first App-of-Apps)
 B16 Kyverno denial demo. The `.claude/settings.json` allowlist enforces this; a mutating
 `kubectl` verb triggers an approval prompt on screen, which is itself a teaching beat.
 
+Cluster-access ground rule the prompts assume: the terminal's kubeconfig is already
+cluster-admin on this cluster, so the agent never needs to grant itself Kubernetes or AWS
+access. Do NOT call `eks:CreateAccessEntry`, `aws eks create-access-entry`, or any IAM
+access-entry / RBAC-grant step to "get permission" before installing the platform. Those
+are denied by design (the workshop IAM role cannot mutate EKS access entries) and they are
+unnecessary. A run that opens with an access-entry attempt stalls at the very first phase;
+this was the single most common way the July 23 run got stuck. If a step appears to need
+more access, it does not: reconcile through ArgoCD as above.
+
 The "Known failure modes" lines below are the anticipated ones, grounded in the build and
 the validation runs. Rehearsal (Phase 7) adds the observed ones and confirms the recovery
 moves. Re-verify the kagent CRD shape against the pinned chart at the July freeze.

@@ -80,6 +80,10 @@ def crd_established(name):
 def incluster_curl(url, *curl_args, ns="default", timeout=120):
     """One-shot in-cluster curl. Returns stdout (body then a trailing http code)."""
     pod = "phasetest-curl-" + str(abs(hash(url)) % 100000)
+    # The -i is required, not cosmetic: `kubectl run --rm` only streams the container's
+    # stdout back (and reliably deletes the pod) when attached. Drop it and this returns
+    # an empty string even when curl ran fine, silently breaking every check that parses
+    # the body. It is not about curl reading stdin; curl reads none.
     res = kubectl(
         "run", pod, "-n", ns, "--rm", "-i", "--restart=Never",
         "--image=curlimages/curl:8.11.0", "--command", "--",
