@@ -38,6 +38,21 @@ spec:
                       storage: 10Gi
         grafana:
           enabled: true
+          # The stack provisions Prometheus and Alertmanager as datasources but not Loki or
+          # Tempo, so logs and traces are invisible in Grafana and the phase-2 datasource
+          # check fails. Wire both to their in-cluster Services: the Loki gateway (port 80)
+          # and the Tempo query API (port 3200).
+          additionalDataSources:
+            - name: Loki
+              type: loki
+              uid: loki
+              access: proxy
+              url: http://loki-gateway.observability.svc
+            - name: Tempo
+              type: tempo
+              uid: tempo
+              access: proxy
+              url: http://tempo.observability.svc:3200
   destination:
     server: https://kubernetes.default.svc
     namespace: observability

@@ -19,6 +19,14 @@ spec:
         mode: daemonset
         image:
           repository: otel/opentelemetry-collector-k8s
+        # In daemonset mode the chart creates the DaemonSet but no Service, so
+        # opentelemetry-collector.observability.svc does not resolve and any in-cluster
+        # sender (the phase-2 trace probe, and student workloads) gets NXDOMAIN. Enabling
+        # the Service adds a ClusterIP that load-balances across the agent pods. The Helm
+        # release name is opentelemetry-collector, so the Service is named exactly
+        # opentelemetry-collector while the DaemonSet keeps the -agent suffix.
+        service:
+          enabled: true
         presets:
           kubernetesAttributes:
             enabled: true
