@@ -42,6 +42,33 @@ non-disruptively (read-only exec / kubectl get) so the running sessions were nev
 
 Corroboration worth noting: **student18 independently found the vacuous-pass contract-test bug (D5)** ("because `platform/` doesn't exist, that glob returns empty and the test passes vacuously"), and **student6/7 independently confirmed the collector no-Service defect (D2)** ("without `service.enabled: true` there was no Service at all").
 
+## Remediation status (2026-07-25)
+
+Every deferred defect was re-verified against its actual file and, where a live check was
+possible, against the standing admin1 reference cluster before any change. Two "defects" were
+refuted on the pinned versions, which is the point of verifying rather than trusting the table.
+
+| # | Disposition | Detail |
+|---|---|---|
+| D1 | Shipped (prior) | Tempo re-pinned 2.9.0 / chart 1.25.0. Confirmed live on admin1: `grafana/tempo:2.9.0`. |
+| D2 | **Shipped** | `service.enabled: true` on the collector chart. The Service is named `opentelemetry-collector` (release-name fullname), so the ingest DNS resolves. Verified live: NXDOMAIN before, resolves after, and the phase-2 trace test passes. |
+| D5 | Shipped (prior) | Contract + VTT tests repointed at `solution/platform/`. |
+| D6 | Shipped (prior) | ttyd 8Gi. |
+| D8 | Shipped (prior) | xterm `term.paste()`. |
+| D9 | Done live | Pool trimmed to the live banded clusters. |
+| D11 | **Shipped** | Probe span stamped with the current time (was 1970, outside Tempo's search window); the test now polls Tempo for the span instead of querying once, and the datasource check uses header auth + substring match. Verified live: all five phase-2 tests pass. |
+| D12 | **Shipped** | Loki and Tempo added as Grafana datasources in the kube-prometheus-stack values. Verified live on admin1: `/api/datasources` returns loki + tempo. |
+| D13 | **Shipped** | Cluster-access ground rule added to the prompt-library preamble: the terminal kubeconfig is already cluster-admin, so do not attempt `eks:CreateAccessEntry`. |
+| D14 | **Already shipped** | The vLLM InferenceService already carries the 16Gi limit + `VLLM_CPU_KVCACHE_SPACE=2` fix in the manifest. The table above listed it as pending; it was not. Corrected here. |
+| D15 | Source fixed, image build pending | `backend.auth.dangerouslyDisableDefaultAuthPolicy: true` added to the Backstage app-config. Verified the 401 live on admin1. Lands when the image is rebuilt (2026-07-25 tag) and the Application tag bumped. |
+| D16 | **Refuted** on pinned ESO 2.6.0 | The `externalsecrets.external-secrets.io` CRD has conversion strategy None and no caBundle, so the conversion-webhook drift the report blamed cannot occur. admin1 shows external-secrets Synced/Healthy with 0 out-of-sync resources. No `ignoreDifferences` added (it would be dead config). |
+| D17 | **Shipped** | `ignoreDifferences` on the CEL CRD `metadata.labels`/`metadata.annotations`. Verified live: kyverno flipped OutOfSync -> Synced/Healthy on admin1. |
+| D18 | **Refuted** | The `-i` on `kubectl run --rm` is required, not cosmetic: without it the container's stdout is never streamed back and `incluster_curl` returns an empty string even when curl succeeded. Verified live. Kept, with a comment so it is not removed again. |
+| D19 | Source fixed, image build pending | App-config repointed from `argocd-server.argocd.svc` (does not exist) to `argo-cd-argocd-server.argocd.svc` (the real Helm release Service). Lands with the D15 image rebuild. |
+| D20 | **Shipped** | Opt-in `PREBUILD_PLATFORM` flag: the reference/instructor seed mirrors the substituted `solution/platform` into `platform/` so a cold provision converges with zero manual steps; the student fleet is unchanged (students build `platform/` themselves). |
+| D21 | **Shipped** | Removed the fictional `mtls.enabled`/`audit.enabled` block. Verified against the v1.3.0 chart (helm show values): those keys do not exist. Comment and components.yaml note reconciled to the truth. |
+| D10 | Roadmap (separate PRD) | Terminal authentication go-live blocker. Its own design effort; see `prds/`. |
+
 ## Student-reported defects (aggregated from Claude sessions, read-only)
 
 No student wrote a standalone defect file; every finding lives in their Claude session history.
