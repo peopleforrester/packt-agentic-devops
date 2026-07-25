@@ -47,9 +47,18 @@ URL. Every VTT terminal is served at a predictable, unauthenticated public URL (
 sequential and enumerable; plus `admin1`/`admin2`), and each is a `sudo`-capable cluster-admin shell
 with the cluster's EKS Pod Identity AWS reach. Anyone with a URL can open another student's or the
 admin's terminal and destroy it. **Do not run this workshop again until terminals require
-authentication.** IP allow-listing at the NLB does NOT work (it blocks the Caddy router, the only
-thing the NLB sees); the browser's real IP is visible only at the router via `X-Forwarded-For`. Fix
-directions and full write-up: `docs/fleet/09-lessons-learned.md` (final section).
+authentication.** IP allow-listing at the NLB cannot allow-list *students* (it blocks the Caddy router,
+the only thing the NLB sees); the browser's real IP is visible only at the router via
+`X-Forwarded-For`. It does work as an emergency lockdown allow-listing your own address.
+
+**Verified 2026-07-25:** the cluster NLB answers on its **bare IP** with no hostname sent
+(`/terminal/token` returns `{"token": ""}`, meaning ttyd runs with no credential). So neither a
+non-enumerable hostname nor router-level auth meets the bar; only enforcement at the terminal itself,
+or removing the public Service, does. Note also that `scripts/provision/router/routes.static` commits
+NLB hostnames to this **public** repository, so the hostname is not a secret either.
+
+Fix directions and full write-up: `docs/fleet/09-lessons-learned.md` (final section, including the
+2026-07-25 addendum).
 
 ## Railway and the claim portal (read before any `railway` command)
 
