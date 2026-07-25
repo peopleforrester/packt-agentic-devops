@@ -350,8 +350,10 @@ components:
     module: 2
     notes: >
       Linux Foundation (Agentic AI Foundation), NOT CNCF. Apache-2.0. Sibling of
-      kgateway, not its data plane. Mediates LLM, MCP, and A2A traffic with mTLS and
-      audit logging. Confirm exact CRD Kind names against live docs before the freeze.
+      kgateway, not its data plane. Mediates LLM, MCP, and A2A traffic. The v1.3.0 chart
+      has no mtls or audit value keys (verified 2026-07-25 via helm show values); mTLS
+      and audit are gateway/route runtime config, not install-time Helm values. Confirm
+      exact CRD Kind names against live docs before the freeze.
 
   - name: kagent
     plane: ai
