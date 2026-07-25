@@ -513,6 +513,49 @@ Directions, pick one before shipping:
 
 **Minimum bar:** a terminal must not be reachable by an unauthenticated, guessable URL.
 
+### Addendum, verified 2026-07-25: the NLB is directly reachable, which eliminates two of the three options
+
+The path recorded above (Railway edge -> Caddy router -> cluster NLB -> nginx -> ttyd) is the path a
+learner takes. It is not the only path. Verified against a live cluster:
+
+```
+# by NLB hostname, no router involved
+curl http://<cluster-nlb>.elb.<region>.amazonaws.com/          -> 200
+
+# by the NLB's bare IP, with no hostname sent at all
+curl http://<nlb-ip>/terminal/                                 -> 200
+curl http://<nlb-ip>/terminal/token                            -> {"token": ""}
+```
+
+Three facts follow. nginx does no server-name matching, so the load balancer's IP alone is a complete
+address for the shell. `{"token": ""}` is ttyd reporting it was started with no credential. And the NLB
+hostnames are committed to `scripts/provision/router/routes.static` in this repository, which is
+public, so the hostname is not a secret either.
+
+The general principle, worth carrying forward past this workshop: **a secret URL is only a credential
+if the secret is required to reach the service.** Here it is not. Automated scanners find open ports by
+address and port, never by guessing names, so an unguessable hostname in front of an internet-facing
+load balancer protects against a person in the room typing a number and against nothing else.
+
+**Consequences for the three options above:**
+
+| Option | Verdict |
+|---|---|
+| 1. Non-enumerable per-terminal URL | **Does not meet the minimum bar.** A random hostname is not required to reach the service. Automated scanners find open ports by IP, not by name, so an unguessable URL protects only against a person in the room typing a number |
+| 2. Per-terminal secret at the terminal, via the `console-conf` ConfigMap | **Holds.** It is the only one of the three that is enforced at the thing being protected, so it survives both the direct hostname dial and the bare-IP dial. The original recommendation was right |
+| 3. Router-level auth | **Does not meet the minimum bar.** Bypassed by both commands above |
+
+**A fourth option, stronger than all three:** make the `web-terminal` Service internal, so there is no
+public address to reach, and serve the terminal from outside the cluster with a per-learner identity.
+That deletes the problem rather than guarding it. Full treatment in
+`~/repos/lab_system/architecture/design-explained.md` Parts 4 and 8.
+
+**Correction to "why the obvious fix fails":** the analysis above is right that
+`loadBalancerSourceRanges` cannot allow-list *students*, because the NLB only ever sees the router's
+IP. It does work as an **emergency lockdown**, where the allow-list is your own address and reaching
+the terminal through the router is not required. That is a valid way to take `admin1` and `admin2` out
+of reach today without destroying them.
+
 ---
 
 ## Phase-2/3 defects surfaced by students (validated 2026-07-23)
