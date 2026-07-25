@@ -17,6 +17,18 @@ spec:
   destination:
     server: https://kubernetes.default.svc
     namespace: kyverno
+  # The 3.8.1 chart renders the 11 CEL policies.kyverno.io CRDs (validatingpolicies,
+  # mutatingpolicies, their namespaced variants, policyexceptions, and so on) with
+  # hardcoded empty labels: {} and annotations: {}. The API server normalizes empty
+  # maps to absent, so ArgoCD sees a permanent diff and the app never reaches Synced.
+  # customLabels cannot fix it: the empty maps are templated unconditionally. Ignore
+  # those two metadata fields on the CRDs this app manages.
+  ignoreDifferences:
+    - group: apiextensions.k8s.io
+      kind: CustomResourceDefinition
+      jsonPointers:
+        - /metadata/labels
+        - /metadata/annotations
   syncPolicy:
     automated:
       prune: true
