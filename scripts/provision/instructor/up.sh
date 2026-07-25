@@ -76,7 +76,10 @@ main() {
     [[ "${server}" == "${expect}" ]] || die "kubeconfig endpoint does not match the AWS API"
 
     log "4/5 platform bootstrap (LB controller, gp3, Gitea, VTT)"
+    # This is the reference/instructor cluster: prebuild the reconciled platform/ tree so it
+    # converges cold with no manual solution-to-platform copy (unlike a student cluster).
     KUBECONFIG="${kc}" AWS_PROFILE="${PROFILE}" AWS_REGION="${REGION}" EXPECT_CONTEXT="${NAME}" \
+        PREBUILD_PLATFORM=true \
         "${VTT_DIR}/apply.sh" >"${LOG_DIR}/${NAME}.vtt.log" 2>&1 \
         || die "VTT bootstrap failed (see ${LOG_DIR}/${NAME}.vtt.log)"
 

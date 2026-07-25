@@ -110,8 +110,12 @@ bootstrap_gitea() {
     [[ -n "${vpc}" && "${vpc}" != None ]] \
         || { printf 'could not resolve VPC for %s; cannot seed cluster facts\n' "${cluster}" >&2; return 1; }
     printf 'Recording cluster facts for the seed job (cluster=%s vpc=%s)\n' "${cluster}" "${vpc}" >&2
+    # PREBUILD_PLATFORM (default false) tells the seed job whether to also materialize the
+    # reconciled platform/ tree. Instructor/reference clusters set it true so they converge
+    # cold; the student fleet leaves it false and builds platform/ as the workshop.
     kubectl -n gitea create configmap platform-cluster-facts \
         --from-literal=cluster_name="${cluster}" --from-literal=vpc_id="${vpc}" \
+        --from-literal=prebuild_platform="${PREBUILD_PLATFORM:-false}" \
         --dry-run=client -o yaml | kubectl apply -f - >/dev/null
 
     printf 'Seeding Gitea with the platform manifests...\n' >&2

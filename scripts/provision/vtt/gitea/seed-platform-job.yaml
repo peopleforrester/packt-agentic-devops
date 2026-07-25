@@ -52,6 +52,13 @@ spec:
               valueFrom: { configMapKeyRef: { name: platform-cluster-facts, key: cluster_name } }
             - name: VPC_ID
               valueFrom: { configMapKeyRef: { name: platform-cluster-facts, key: vpc_id } }
+            # Instructor/reference clusters set this true so the seed also materializes the
+            # reconciled platform/ tree (see the prebuild step below). Student clusters leave
+            # it unset: they build platform/ themselves, which is the workshop. optional so an
+            # older ConfigMap without the key does not fail the job.
+            - name: PREBUILD_PLATFORM
+              valueFrom:
+                configMapKeyRef: { name: platform-cluster-facts, key: prebuild_platform, optional: true }
           command: ["/bin/bash", "-c"]
           args:
             - |
@@ -103,6 +110,18 @@ spec:
                 exit 1
               fi
               echo "  LB controller pinned to cluster=${CLUSTER_NAME} vpc=${VPC_ID}"
+
+              # The App-of-Apps reconcile the platform/ path, but the repo ships the reference
+              # build at solution/platform/. A student cluster leaves platform/ empty and the
+              # student builds it (the workshop); the catch-up prompts copy solution/platform
+              # into platform/. An instructor/reference cluster instead needs platform/ present
+              # so it converges cold with zero manual steps, so mirror the substituted solution
+              # into platform/ here when asked.
+              if [[ "${PREBUILD_PLATFORM:-false}" == "true" ]]; then
+                echo "prebuilding the reconciled platform/ tree from the substituted solution"
+                mkdir -p platform
+                cp -a solution/platform/. platform/
+              fi
               git init -q -b main
               git config user.email "provisioning@platform.local"
               git config user.name  "Workshop Provisioning"
