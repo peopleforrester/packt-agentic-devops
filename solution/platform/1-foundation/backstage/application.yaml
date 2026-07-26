@@ -34,6 +34,13 @@ spec:
             # Dockerfile now chmods /app so a fresh build needs no such patch (internal/images/
             # backstage/Dockerfile); this tag carries the fix for the already-built image.
             tag: 2026-07-23-2
+        # NOTE (2026-07-26): this chart runs `node packages/backend` and loads ONLY the baked
+        # app-config.yaml, never app-config.production.yaml, so none of the workshop Backstage
+        # config (gitea, the ArgoCD plugin, the golden-path template, and the D15 auth-disable)
+        # is actually in effect, and the catalog returns 401. Fixing it is not a value tweak:
+        # the chart's appConfig replaces the base config rather than appending, and the full
+        # production config needs per-cluster env (base URL, an ArgoCD token, gitea creds).
+        # Scoped as its own effort in prds/4-backstage-config-wiring.md (subsumes D15 and D19).
         # Bundled PostgreSQL for the demo. Production backs the catalog with RDS.
         # No existingSecret: it named backstage-postgresql, which nothing created, so both the
         # database pod and the Backstage backend failed with "secret backstage-postgresql not
