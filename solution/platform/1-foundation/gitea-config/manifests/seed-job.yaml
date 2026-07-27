@@ -71,7 +71,7 @@ spec:
               resp="$(curl -fsS ${auth} -X POST \
                 "${GITEA}/api/v1/users/${ADMIN_USER}/tokens" \
                 -H 'Content-Type: application/json' \
-                -d "{\"name\":\"${TOKEN_NAME}\",\"scopes\":[\"write:organization\",\"write:repository\",\"read:repository\",\"read:user\"]}")"
+                -d "{\"name\":\"${TOKEN_NAME}\",\"scopes\":[\"write:organization\",\"write:repository\",\"read:repository\",\"read:user\",\"read:issue\"]}")"
               sha1="$(printf '%s' "${resp}" | grep -o '"sha1":"[^"]*"' | sed 's/.*"sha1":"//;s/"//')"
               [ -n "${sha1}" ] || { echo "ERROR: no token returned" >&2; exit 1; }
 

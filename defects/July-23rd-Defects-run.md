@@ -69,6 +69,27 @@ refuted on the pinned versions, which is the point of verifying rather than trus
 | D21 | **Shipped** | Removed the fictional `mtls.enabled`/`audit.enabled` block. Verified against the v1.3.0 chart (helm show values): those keys do not exist. Comment and components.yaml note reconciled to the truth. |
 | D10 | Roadmap (separate PRD) | Terminal authentication go-live blocker. Its own design effort; see `prds/`. |
 
+## Additional defects found on the standing admin1 cluster (2026-07-27)
+
+Pushing the verified fixes into admin1's in-cluster Gitea and watching every Application
+reconcile surfaced defects the filming build never showed (its apps were suspended and
+hand-patched). Six new items; four are fixed and verified live, two are captured for a
+later pass. admin1 went from 33 to 37 Applications Synced/Healthy.
+
+| # | Area | Defect | Disposition |
+|---|---|---|---|
+| D22 | Kyverno policy drift | Kyverno's webhook defaults `spec.admission`, `spec.emitWarning`, `spec.validationFailureAction`, and per-rule `skipBackgroundRequests` + `validate.allowExistingViolations` onto every ClusterPolicy, which the manifests do not set, so both policy-baseline and ai-policies sit OutOfSync forever. | **Fixed.** `ignoreDifferences` (jqPathExpressions, since the drift includes fields inside the rules array) on both Applications. Verified live: both flip to Synced/Healthy. |
+| D23 | KServe InferenceService drift | KServe rewrites the `serving.kserve.io/deploymentMode` annotation from `RawDeployment` to its current name `Standard` after apply, so vllm sits OutOfSync even though the predictor is Running and serving. | **Fixed.** `ignoreDifferences` on the annotation. Verified live: vllm Synced (health still Progressing, see D27). |
+| D24 | External Secrets drift | ESO defaults `data[].remoteRef.{conversionStrategy,decodingStrategy,metadataPolicy,nullBytePolicy}` and `target.deletionPolicy` onto the ExternalSecret, which the manifest does not set, so openbao-config sits OutOfSync (the secret itself syncs fine). | **Fixed.** `ignoreDifferences` on the defaulted fields. Verified live: Synced/Healthy. |
+| D25 | Golden path (self-service) | The `agent-services` ApplicationSet shipped `owner: REPLACE_GITEA_ORG` (an unsubstituted placeholder nothing replaces), so the SCM generator errored `GetOrgByName` and platform-self-service was Degraded. Once the org was set, the generator then failed because `gitea-scm-token` lacked the `read:issue` scope ArgoCD's Gitea SCM provider requires. The scaffolder template carried a matching `REPLACE_GITEA_HOST` placeholder. | **Fixed.** `owner: agents` (the org the gitea-config seed job creates), the token seed job now grants `read:issue`, and the template host is the in-cluster Gitea Service. Verified live: ErrorOccurred=False, platform-self-service Synced/Healthy. End-to-end publish still depends on the Backstage config in PRD 4. |
+| D26 | llm-d render | The llm-d kustomization pulls a remote git base (`github.com/llm-d/llm-d/deploy?ref=v0.7.0`), which violates the "nothing waits on the network" rule and fails to build in the repo-server, so llm-d shows Unknown and never renders. The manifest comment admits the ref was never verified. | **Captured, not fixed.** Needs the manifests vendored locally (like charts-vendor) or the base removed. Bigger, and llm-d is architecture-only (B12), Pre-1.0. |
+| D27 | vLLM health readout | The InferenceService reports `IngressReady=False` (so `Ready=False`, ArgoCD health Progressing) because KServe expects a KServe-managed ingress this platform does not use; the model serves fine in-cluster (`/v1/models` 200, `PredictorReady=True`). | **Captured, not fixed.** Cosmetic. Needs either an ArgoCD health customization for InferenceService or a KServe ingress config; the workshop uses the model in-cluster only. |
+
+Note: re-running the token seed job by hand on admin1 left gitea-config showing OutOfSync
+on the completed `gitea-seed` Job (a completed Job always diffs its manifest in ArgoCD).
+That is an artifact of the manual re-run, not a manifest defect; a fresh provision creates
+the Job once and shows it Synced.
+
 ## Student-reported defects (aggregated from Claude sessions, read-only)
 
 No student wrote a standalone defect file; every finding lives in their Claude session history.

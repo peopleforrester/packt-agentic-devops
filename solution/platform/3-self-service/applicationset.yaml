@@ -16,7 +16,12 @@ spec:
   generators:
     - scmProvider:
         gitea:
-          owner: REPLACE_GITEA_ORG
+          # The org the golden-path scaffolder publishes generated agent repos under, and
+          # that this generator scans for repos carrying a root manifests/ dir. It is the
+          # agents org the gitea-config seed job creates for self-service; nothing
+          # substitutes it, so it is a literal. An unsubstituted REPLACE_GITEA_ORG left the
+          # generator erroring "GetOrgByName" and platform-self-service Degraded.
+          owner: agents
           api: http://gitea-http.gitea.svc:3000
           allBranches: false
           tokenRef:

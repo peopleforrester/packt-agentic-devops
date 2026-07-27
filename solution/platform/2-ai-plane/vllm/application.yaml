@@ -20,6 +20,14 @@ spec:
   destination:
     server: https://kubernetes.default.svc
     namespace: kserve
+  # KServe rewrites the deploymentMode annotation from RawDeployment to its current name
+  # Standard after apply, so ArgoCD sees the annotation as drift and the app never reaches
+  # Synced even though the predictor is Running and serving. Ignore the annotation.
+  ignoreDifferences:
+    - group: serving.kserve.io
+      kind: InferenceService
+      jqPathExpressions:
+        - '.metadata.annotations."serving.kserve.io/deploymentMode"'
   syncPolicy:
     automated:
       prune: true
