@@ -67,7 +67,7 @@ refuted on the pinned versions, which is the point of verifying rather than trus
 | D19 | Root cause is deeper; scoped to PRD 4 | App-config repointed from `argocd-server.argocd.svc` (does not exist) to `argo-cd-argocd-server.argocd.svc` (the real Helm release Service), baked into the `2026-07-26` image. Confirmed live: `argocd-server` does not exist, `argo-cd-argocd-server` does. Same blocker as D15: the production config is not loaded, so this lands with the config wiring in `prds/4-backstage-config-wiring.md`. |
 | D20 | **Shipped** | Opt-in `PREBUILD_PLATFORM` flag: the reference/instructor seed mirrors the substituted `solution/platform` into `platform/` so a cold provision converges with zero manual steps; the student fleet is unchanged (students build `platform/` themselves). |
 | D21 | **Shipped** | Removed the fictional `mtls.enabled`/`audit.enabled` block. Verified against the v1.3.0 chart (helm show values): those keys do not exist. Comment and components.yaml note reconciled to the truth. |
-| D10 | Roadmap (separate PRD) | Terminal authentication go-live blocker. Its own design effort; see `prds/`. |
+| D10 | Owned by a separate project | Terminal authentication go-live blocker. As of 2026-07-27 auth/authz is handled outside this repo by a separate project, so it is not scheduled here. The finding and design options are retained in `prds/3-terminal-authentication.md`. This repo's terminals stay unauthenticated until that project lands. |
 
 ## Additional defects found on the standing admin1 cluster (2026-07-27)
 

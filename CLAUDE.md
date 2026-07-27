@@ -57,6 +57,11 @@ non-enumerable hostname nor router-level auth meets the bar; only enforcement at
 or removing the public Service, does. Note also that `scripts/provision/router/routes.static` commits
 NLB hostnames to this **public** repository, so the hostname is not a secret either.
 
+**Ownership (2026-07-27):** authentication and authorization are being handled by a separate project,
+not in this repo. This finding stands and the terminals here stay unauthenticated until that project
+lands; the fix is not scheduled in this repo. Design options are retained in
+`prds/3-terminal-authentication.md`.
+
 Fix directions and full write-up: `docs/fleet/09-lessons-learned.md` (final section, including the
 2026-07-25 addendum).
 
