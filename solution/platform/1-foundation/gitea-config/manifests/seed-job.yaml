@@ -50,6 +50,8 @@ spec:
               value: "agents"
             - name: TOKEN_NAME
               value: "scm-automation"
+            - name: ARGOCD_SERVER
+              value: "https://argo-cd-argocd-server.argocd.svc"
           command: ["/bin/sh", "-c"]
           args:
             - |
@@ -86,6 +88,36 @@ spec:
                 -H 'Content-Type: application/json' -X POST \
                 "${api}/api/v1/namespaces/argocd/secrets" \
                 -d "{\"apiVersion\":\"v1\",\"kind\":\"Secret\",\"metadata\":{\"name\":\"gitea-scm-token\"},\"stringData\":{\"token\":\"${sha1}\"}}" \
+                -o /dev/null -w '%{http_code}\n'
+
+              # Assemble the backstage-integrations Secret Backstage reads: the Gitea creds
+              # (username + the admin password, used as the integration password) and a fresh
+              # ArgoCD API token for the argo-cd plugin. The ArgoCD admin password is read from
+              # its initial-admin Secret; the token is a session token (re-minted each provision).
+              echo "minting an ArgoCD token for Backstage"
+              until curl -fsSk "${ARGOCD_SERVER}/api/version" >/dev/null 2>&1; do echo "waiting for ArgoCD API..."; sleep 5; done
+              # The k8s API returns pretty-printed JSON, so compact the whitespace before the
+              # regex (a "password": "x" with a space matched nothing otherwise). data comes
+              # before metadata in the object, so the first match is .data.password.
+              apw="$(curl -fsS --cacert "${ca}" -H "Authorization: Bearer ${ka}" \
+                "${api}/api/v1/namespaces/argocd/secrets/argocd-initial-admin-secret" \
+                | tr -d '\n\r\t ' | grep -o '"password":"[^"]*"' | head -1 \
+                | sed 's/"password":"//;s/"$//' | base64 -d)"
+              atoken="$(curl -sSk -X POST "${ARGOCD_SERVER}/api/v1/session" \
+                -H 'Content-Type: application/json' \
+                -d "{\"username\":\"admin\",\"password\":\"${apw}\"}" \
+                | tr -d '\n\r\t ' | grep -o '"token":"[^"]*"' | head -1 \
+                | sed 's/"token":"//;s/"$//')"
+              [ -n "${atoken}" ] || { echo "ERROR: no ArgoCD token returned" >&2; exit 1; }
+
+              echo "writing backstage-integrations into backstage"
+              curl -sS --cacert "${ca}" -H "Authorization: Bearer ${ka}" -X DELETE \
+                "${api}/api/v1/namespaces/backstage/secrets/backstage-integrations" \
+                -o /dev/null -w '%{http_code}\n' || true
+              curl -fsS --cacert "${ca}" -H "Authorization: Bearer ${ka}" \
+                -H 'Content-Type: application/json' -X POST \
+                "${api}/api/v1/namespaces/backstage/secrets" \
+                -d "{\"apiVersion\":\"v1\",\"kind\":\"Secret\",\"metadata\":{\"name\":\"backstage-integrations\"},\"stringData\":{\"GITEA_USERNAME\":\"${ADMIN_USER}\",\"GITEA_TOKEN\":\"${ADMIN_PASS}\",\"ARGOCD_AUTH_TOKEN\":\"argocd.token=${atoken}\"}}" \
                 -o /dev/null -w '%{http_code}\n'
               echo "seed complete"
           resources:

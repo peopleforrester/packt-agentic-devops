@@ -28,27 +28,34 @@ spec:
             # "Cannot find module '/app/packages/backend'". The correctly-pathed image is fine.
             registry: ghcr.io
             repository: peopleforrester/backstage
-            # 2026-07-23-2 adds a layer that sets /app to 0755. The base 2026-07-23 image left /app
-            # at 0700 root, and the container runs as the non-root node user, which then could not
-            # traverse /app and crashed with "Cannot find module '/app/packages/backend'". The
-            # Dockerfile now chmods /app so a fresh build needs no such patch (internal/images/
-            # backstage/Dockerfile); this tag carries the fix for the already-built image.
-            tag: 2026-07-23-2
-        # NOTE (2026-07-26): this chart runs `node packages/backend` and loads ONLY the baked
-        # app-config.yaml, never app-config.production.yaml, so none of the workshop Backstage
-        # config (gitea, the ArgoCD plugin, the golden-path template, and the D15 auth-disable)
-        # is actually in effect, and the catalog returns 401. Fixing it is not a value tweak:
-        # the chart's appConfig replaces the base config rather than appending, and the full
-        # production config needs per-cluster env (base URL, an ArgoCD token, gitea creds).
-        # Scoped as its own effort in prds/4-backstage-config-wiring.md (subsumes D15 and D19).
-        # Bundled PostgreSQL for the demo. Production backs the catalog with RDS.
-        # No existingSecret: it named backstage-postgresql, which nothing created, so both the
-        # database pod and the Backstage backend failed with "secret backstage-postgresql not
-        # found" and the whole app stayed Degraded. Unset, the bundled chart generates its own
-        # password secret and the Backstage backend wires to it, which is the chart's happy path
-        # and correct for a throwaway cluster whose catalog DB is ephemeral.
+            # 2026-07-27-3 carries the workshop app-config: guest auth-disable (D15), the
+            # argo-cd-argocd-server proxy name (D19), the catalog location pointed at the
+            # seeded platform repo, the /api argocd proxy target, and sqlite :memory:. The
+            # /app 0755 fix (from 2026-07-23-2) is in the Dockerfile, so it is baked here too.
+            tag: 2026-07-27-3
+          # The chart runs `node packages/backend`, which without args loads only the baked
+          # scaffold app-config.yaml, so none of the workshop config took effect and the
+          # catalog 401'd (this was the root of D15/D19). app-config.production.yaml is a
+          # complete config, so load it alone: loading the scaffold config too pulls in its
+          # example file locations, which are absent from the image and leave the catalog
+          # empty. Full write-up in prds/4-backstage-config-wiring.md.
+          args:
+            - "--config"
+            - "app-config.production.yaml"
+          # Static in-cluster values the production config references by env.
+          extraEnvVars:
+            - name: GITEA_HOST
+              value: gitea-http.gitea.svc:3000
+            - name: BACKSTAGE_BASE_URL
+              value: http://backstage.backstage.svc:7007
+          # Gitea creds plus a minted ArgoCD token, assembled per cluster by the gitea-config
+          # seed job (manifests/seed-job.yaml). Backstage retries until the Secret exists.
+          extraEnvVarsSecrets:
+            - backstage-integrations
+        # The catalog store is sqlite in-memory (app-config.production.yaml), so the bundled
+        # PostgreSQL is unused. Disable it rather than run an idle StatefulSet + PVC.
         postgresql:
-          enabled: true
+          enabled: false
         service:
           type: ClusterIP
   destination:
