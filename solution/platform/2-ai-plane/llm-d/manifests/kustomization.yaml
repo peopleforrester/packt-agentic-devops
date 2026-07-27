@@ -1,11 +1,22 @@
-# ABOUTME: llm-d distributed-inference scheduling layer, installed via Kustomize.
-# ABOUTME: Shown as architecture (B12), not a deep runtime demo. Pre-1.0, not production.
+# ABOUTME: llm-d distributed-inference scheduling layer, shown as architecture (beat B12).
+# ABOUTME: Vendored locally as a reference resource, not a runtime install (see below).
 #
-# llm-d is CNCF Sandbox (March 2026), backed by Red Hat, Google, IBM, CoreWeave, and
-# NVIDIA. Confirm the exact upstream kustomize ref for v0.7.0 before the freeze; the
-# remote base path below is the documented release layout and must be verified.
+# llm-d is a CNCF Sandbox project (backed by Red Hat, Google, IBM, CoreWeave, NVIDIA) for
+# distributed, GPU-accelerated LLM inference: a scheduler plus a model-service layer over
+# vLLM. As of v0.7.0 it installs through helm charts (llm-d-infra / llm-d-modelservice) and
+# the guides in the upstream repo, and it targets GPU nodes.
+#
+# The earlier manifest pulled a remote kustomize base,
+# github.com/llm-d/llm-d/deploy?ref=v0.7.0, which failed for two reasons: it violates the
+# no-live-network rule (ArgoCD's repo-server cannot fetch it), and the path does not exist
+# (v0.7.0 has no deploy/ directory). So the Application sat Unknown and never rendered.
+#
+# This workshop runs on CPU (t3.2xlarge), where the GPU runtime cannot serve, so llm-d is
+# shown as architecture: a reference ConfigMap the presenter can display. A real llm-d
+# runtime is a separate GPU deployment via the upstream charts, out of scope for the CPU
+# workshop.
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 namespace: llm-d
 resources:
-  - https://github.com/llm-d/llm-d/deploy?ref=v0.7.0
+  - architecture-reference.yaml

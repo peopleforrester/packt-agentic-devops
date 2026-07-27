@@ -1,0 +1,25 @@
+# ABOUTME: Helm values for the bootstrap ArgoCD install. Adds a health check for the KServe
+# ABOUTME: InferenceService so a serving model reads Healthy, not perpetually Progressing.
+#
+# KServe's InferenceService reports Ready=False whenever IngressReady=False, and this
+# platform runs KServe in RawDeployment mode with no KServe-managed ingress (the model is
+# reached in-cluster at qwen3-predictor.kserve.svc), so IngressReady never becomes True even
+# though the predictor is up and serving. Without this custom health check the vllm
+# Application sits Progressing forever. Treat PredictorReady=True as Healthy, which is what
+# actually matters for the workshop.
+configs:
+  cm:
+    resource.customizations.health.serving.kserve.io_InferenceService: |
+      hs = {}
+      if obj.status ~= nil and obj.status.conditions ~= nil then
+        for i, c in ipairs(obj.status.conditions) do
+          if c.type == "PredictorReady" and c.status == "True" then
+            hs.status = "Healthy"
+            hs.message = "Predictor ready and serving"
+            return hs
+          end
+        end
+      end
+      hs.status = "Progressing"
+      hs.message = "Waiting for the predictor to become ready"
+      return hs

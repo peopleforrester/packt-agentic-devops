@@ -28,6 +28,7 @@ helm upgrade --install argo-cd argo-cd \
   --repo https://argoproj.github.io/argo-helm \
   --version 9.5.22 \
   --namespace argocd --create-namespace \
+  --values solution/platform/0-bootstrap/argocd-values.yaml \
   --set crds.install=true
 
 kubectl -n argocd rollout status deploy/argo-cd-argocd-server --timeout=300s

@@ -11,8 +11,13 @@ helm install argo-cd argo-cd \
   --repo https://argoproj.github.io/argo-helm \
   --version 9.5.22 \
   --namespace argocd --create-namespace \
+  --values argocd-values.yaml \
   --set crds.install=true
 ```
+
+`argocd-values.yaml` (in this directory) adds a health check for the KServe
+InferenceService so a serving model reads Healthy rather than Progressing (see the file for
+why). Run this from the bootstrap directory, or point `--values` at the file's full path.
 
 The chart and ArgoCD CRDs install cleanly client-side at this size. For the ApplicationSet and Argo Workflows CRDs later, use server-side apply.
 
