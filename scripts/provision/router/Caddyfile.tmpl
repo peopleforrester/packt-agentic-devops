@@ -10,7 +10,11 @@
 	# Railway already terminated TLS. Leaving auto_https on makes Caddy attempt ACME for every
 	# student hostname, which both fails and burns the rate limit that forced the wildcard.
 	auto_https off
-	admin off
+	# The admin API (local only) is what `caddy reload` uses to hot-swap the routing table
+	# without restarting. It is how routes change with no redeploy: routes-reload.sh renders a
+	# new Caddyfile, uploads it to the /config volume, and reloads. Bound to localhost so it is
+	# reachable from `railway ssh` inside the container but never exposed.
+	admin localhost:2019
 }
 
 :{$PORT:8080} {

@@ -11,7 +11,7 @@ service wrong or trusting a CLI exit code cost a live-workshop hour on 2026-07-2
 | Service | Serves | Role | Deploy with |
 |---|---|---|---|
 | **packt-provisioning** | `https://packt.ai-enhanced-devops.com/` | LIVE claim/provisioning app (email to cluster). Owns the persistent volume `packt-provisioning-volume`, `DATABASE_PATH=/data/pool.db`. | `railway up --service packt-provisioning --no-gitignore` |
-| **packt-router** | `*.packt.ai-enhanced-devops.com` (`studentN`, `admin1`, `admin2`) | Caddy router, hostname to NLB table | `scripts/provision/fleet/routes.sh` |
+| **packt-router** | `*.packt.ai-enhanced-devops.com` (`studentN`, instructor clusters) | Caddy router, hostname to NLB table | routine route change: `scripts/provision/fleet/routes-reload.sh` (live reload, no redeploy). Image change: `scripts/provision/fleet/routes.sh` (`railway up`) |
 | **ai-enhanced-devops-website** | nothing live | STALE/failed sibling. Do NOT deploy the claim app here. | do not use |
 
 The tell that you are on the wrong service: `railway ssh -s <svc> -- echo ok`
@@ -34,6 +34,34 @@ returns the Railway meta-gateway JSON (account + actions) instead of `ok`.
    succeeds server-side. Verify by hitting the URLs or `railway status`, never by
    the `railway up` exit code. A failed deploy leaves the previous deploy serving
    (zero-downtime), so a redeploy cannot break what already runs.
+
+## Router routes change via live reload, not redeploy
+
+Route changes used to require `railway up`, which rebuilds the Docker image and restarts the
+container for what is only a data change (a hostname-to-NLB row). That is slow and disruptive.
+It no longer does.
+
+The router runs Caddy from `/config/Caddyfile` on a Railway volume (`packt-router-volume`), with
+Caddy's admin API enabled (localhost, in the Caddyfile global block). Changing routes is then:
+
+```bash
+scripts/provision/fleet/routes-reload.sh [--allow-empty]
+```
+
+which renders the Caddyfile from the live fleet plus `routes.static`, writes it onto the volume
+over `railway ssh`, and runs `caddy reload`. Caddy hot-swaps the config through the admin API in
+seconds with zero downtime, and no image build. If the rendered config is invalid Caddy keeps the
+old one serving, so a broken table cannot take the router down.
+
+- **Use `routes-reload.sh` for every routine route change** (scale up/down, an instructor cluster
+  coming or going). No redeploy.
+- **Use `routes.sh` (which does `railway up`) only when the image changes** — the Dockerfile,
+  `entrypoint.sh`, or the `srv/` 404 assets. That is the one case that needs a new image.
+- The baked Caddyfile in the image is only the seed: `entrypoint.sh` copies it to the volume on
+  first boot, then the volume copy is authoritative and the reload path owns it.
+
+Verified 2026-07-27: a test route pushed via `routes-reload.sh`'s path (`railway ssh` write plus
+`caddy reload`) went live and was then removed, both without a `railway up`.
 
 ## The claim pool (packt-provisioning `/data/pool.db`)
 
