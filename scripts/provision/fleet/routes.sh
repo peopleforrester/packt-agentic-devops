@@ -1,9 +1,11 @@
 #!/usr/bin/env bash
-# ABOUTME: Regenerates the router's hostname-to-NLB table from the live fleet and deploys it, so
-# ABOUTME: every student reaches their cluster over HTTPS at studentN.packt.ai-enhanced-devops.com.
+# ABOUTME: Renders the router's hostname-to-NLB table (Caddyfile) from the live fleet plus
+# ABOUTME: routes.static. Render only: it does not deploy or reload. This is the shared engine.
 #
-# Run after every scale change. A routing table that describes a fleet which no longer exists sends
-# students to a dead NLB, and that failure is invisible from the cluster side.
+# To apply routes, use routes-reload.sh (renders via this script, then live-reloads the running
+# router with no redeploy). To ship a new router image (Dockerfile / entrypoint / 404 assets),
+# use router-image-deploy.sh. Splitting render from apply keeps a route change (data) off the
+# redeploy path (code), which is the whole point of the volume + reload setup.
 set -euo pipefail
 
 # shellcheck source=lib.sh
@@ -13,28 +15,25 @@ ROUTER_DIR="${PROVISION_DIR}/router"
 ROUTES_MAP="${ROUTER_DIR}/routes.map"
 CADDYFILE="${ROUTER_DIR}/Caddyfile"
 readonly ROUTER_DIR ROUTES_MAP CADDYFILE
-readonly ROUTER_SERVICE="packt-router"
 
-DEPLOY=1
 ALLOW_EMPTY=""
 
 usage() {
     cat >&2 <<EOF
-Usage: ${0##*/} [--no-deploy] [--allow-empty]
+Usage: ${0##*/} [--allow-empty]
 
-Reads every known cluster's LoadBalancer hostname, writes routes.map and the rendered Caddyfile,
-and deploys the ${ROUTER_SERVICE} Railway service.
+Reads every known cluster's LoadBalancer hostname and writes routes.map and the rendered
+Caddyfile. Does NOT deploy: apply with routes-reload.sh, or rebuild the image with
+router-image-deploy.sh.
 
-  --no-deploy     stop after rendering
-  --allow-empty   permit a table with zero routes (bootstrapping the service before any cluster
-                  exists; every hostname then serves the 404 page, which is correct pre-fleet)
+  --allow-empty   permit a table with zero routes (bootstrapping before any cluster exists;
+                  every hostname then serves the 404 page, which is correct pre-fleet)
 EOF
     exit 2
 }
 
 while [[ $# -gt 0 ]]; do
     case "$1" in
-        --no-deploy) DEPLOY=""; shift ;;
         --allow-empty) ALLOW_EMPTY=1; shift ;;
         -h|--help) usage ;;
         *) printf 'unknown arg: %s\n' "$1" >&2; usage ;;
@@ -62,9 +61,9 @@ main() {
         done < <(known_clusters "${account}")
     done < <(accounts_list)
 
-    # Static routes for hosts the fleet driver does not manage, currently the instructor's
-    # standalone cluster. Without this they would be silently dropped from the table on the next
-    # scale change, because the table is rebuilt from the fleet inventory each time.
+    # Static routes for hosts the fleet driver does not manage (instructor standalone clusters).
+    # Without this they would be silently dropped from the table on the next scale change, because
+    # the table is rebuilt from the fleet inventory each time.
     local static="${ROUTER_DIR}/routes.static"
     if [[ -f "${static}" ]]; then
         local shost supstream n=0
@@ -80,7 +79,7 @@ main() {
     # An empty table means every student gets a 404, so it is refused unless asked for explicitly.
     # The one legitimate case is bootstrapping the service before the first cluster exists.
     [[ "${total}" -gt 0 || -n "${ALLOW_EMPTY}" ]] \
-        || die "no clusters have a LoadBalancer hostname; refusing to deploy an empty router"
+        || die "no clusters have a LoadBalancer hostname; refusing to render an empty router"
 
     # Render the template. A cluster whose row is missing must 404 on a real page, never proxy to a
     # stale upstream, so the map's default stays empty rather than falling back to any cluster.
@@ -90,21 +89,7 @@ tmpl = pathlib.Path("${ROUTER_DIR}/Caddyfile.tmpl").read_text()
 routes = pathlib.Path("${ROUTES_MAP}").read_text().rstrip("\n")
 pathlib.Path("${CADDYFILE}").write_text(tmpl.replace("{{ROUTES}}", routes))
 PY
-    log "rendered ${CADDYFILE}"
-
-    if [[ -z "${DEPLOY}" ]]; then
-        log "--no-deploy: stopping after render"
-        return 0
-    fi
-
-    command -v railway >/dev/null 2>&1 || die "railway CLI not found"
-    log "deploying ${ROUTER_SERVICE}..."
-    # --no-gitignore is load-bearing: the rendered Caddyfile and routes.map are gitignored (they are
-    # generated), and without this flag the deploy ships a router with no routing table at all.
-    # .railwayignore is then the only ignore list.
-    ( cd "${ROUTER_DIR}" && railway up --service "${ROUTER_SERVICE}" --ci --no-gitignore ) \
-        || die "router deploy failed"
-    log "router deployed with ${total} routes"
+    log "rendered ${CADDYFILE} (not applied; use routes-reload.sh)"
 }
 
 main

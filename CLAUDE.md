@@ -72,7 +72,8 @@ Full detail in `scripts/provision/distribution/RAILWAY-OPS.md`. The critical fac
 - **The LIVE claim/provisioning app is the `packt-provisioning` service**, serving
   `https://packt.ai-enhanced-devops.com/`. It owns the persistent volume and the claim DB
   (`/data/pool.db`). Deploy the claim app ONLY here. `packt-router` (Caddy) serves the
-  `studentN.packt.ai-enhanced-devops.com` terminals and is deployed by `routes.sh`.
+  `studentN.packt.ai-enhanced-devops.com` terminals; its routes are updated by `routes-reload.sh`
+  (live reload, no redeploy). `router-image-deploy.sh` is only for image changes.
   `ai-enhanced-devops-website` is a STALE/failed sibling that serves nothing live: do not deploy
   to it. The tell you are on the wrong service is `railway ssh -s <svc> -- echo ok` returning the
   Railway meta-gateway JSON instead of `ok`.
@@ -85,8 +86,8 @@ Full detail in `scripts/provision/distribution/RAILWAY-OPS.md`. The critical fac
   NOT shrink it. Prune by editing the DB directly via `railway ssh`, or use a fresh `DATABASE_PATH`.
   The pool must contain the real banded cluster names (student1-20, 51-70, 101-120, 151-170,
   201-220), not sequential `student1-N`, or students past the first band claim clusters that were
-  never built. Regenerate with `scripts/provision/gen-pool.sh`; run `routes.sh` after every scale
-  change or the URLs 404.
+  never built. Regenerate with `scripts/provision/gen-pool.sh`; run `routes-reload.sh` after every
+  scale change or the URLs 404.
 
 ## What this repo is
 

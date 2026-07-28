@@ -102,7 +102,7 @@ main() {
     log "  cluster:   ${NAME} in ${PROFILE} (${REGION})"
     log "  kubeconfig ${kc}"
     log "  NLB        ${host}"
-    log "  HTTPS      https://${NAME}.${DOMAIN}   (after: fleet/routes.sh)"
+    log "  HTTPS      https://${NAME}.${DOMAIN}   (after: add its NLB to router/routes.static, then fleet/routes-reload.sh)"
     printf '%s\n' "${host}" > "${STATE_DIR}/${NAME}.lbhost"
 }
 

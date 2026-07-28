@@ -14,7 +14,9 @@ event lifecycle in order.
 | `cluster/` | One student cluster (the validated t3.2xlarge shape). Not run directly. |
 | `fleet/fleet.sh` | The driver. Brings each account TO a target cluster count and chains every cluster to a working HTTPS terminal. |
 | `fleet/preflight.sh` | L0 gate: identity, quotas, tools, per stage. Run before every stage. |
-| `fleet/routes.sh` | Regenerates the router's hostname table and deploys it. Run after every scale change. |
+| `fleet/routes.sh` | Renders the router's hostname table (Caddyfile) from the live fleet. Render only; does not apply. |
+| `fleet/routes-reload.sh` | Applies the routes with a live Caddy reload, no redeploy. Run after every scale change. |
+| `fleet/router-image-deploy.sh` | Builds and deploys a new router image (`railway up`). Only when the image changes. |
 | `fleet/ingest.sh` | Writes `distribution/pool.csv` from the live fleet and deploys it. |
 | `fleet/sweep.sh` | Orphan sweep: load balancers, volumes, security groups terraform does not own. |
 | `fleet/tests/` | L1–L6 assertions plus `run-gate.sh <s1\|s2\|s3>`, the stage gate. |

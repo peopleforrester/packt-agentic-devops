@@ -4,7 +4,7 @@
 set -e
 
 # The volume mounts at /config. On first boot it is empty, so seed it from the image's baked
-# Caddyfile (the last table routes.sh rendered at build time). After that the volume copy is
+# Caddyfile (the empty seed router-image-deploy.sh bakes). After that the volume copy is
 # authoritative: routes-reload.sh writes a new one and reloads Caddy in place.
 if [ ! -f /config/Caddyfile ]; then
     echo "seeding /config/Caddyfile from the baked default"

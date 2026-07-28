@@ -22,7 +22,7 @@ Usage: ${0##*/} <verb> [args]
   up <account> <n>           Bring <account> TO n clusters (additive, idempotent)
   up-fleet <n>               Bring every account to n, all accounts concurrently
   health <account|all>       Re-assert L1-L3 across known clusters
-  routes                     Regenerate routes.map from the live fleet and deploy the router
+  routes                     Reload the router's routes from the live fleet (live reload, no redeploy)
   ingest                     Write distribution/pool.csv from the live fleet
   status                     Known vs live cluster counts per account
   down <account> <name...>   Destroy named clusters                 [PACKT_APPLY=1]
@@ -478,7 +478,7 @@ cmd_reap() {
     cmd_report
 }
 
-cmd_routes() { "${FLEET_DIR}/routes.sh" "$@"; }
+cmd_routes() { "${FLEET_DIR}/routes-reload.sh" "$@"; }
 cmd_ingest() { "${FLEET_DIR}/ingest.sh" "$@"; }
 cmd_sweep() { "${FLEET_DIR}/sweep.sh" "$@"; }
 cmd_preflight() { "${FLEET_DIR}/preflight.sh" "$@"; }

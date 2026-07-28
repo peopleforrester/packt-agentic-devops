@@ -22,9 +22,9 @@ readonly ROUTER_SERVICE="packt-router"
 log() { printf '%s %s\n' "$(date -u +%H:%M:%S)" "$*" >&2; }
 die() { log "FATAL: $*"; exit 1; }
 
-# 1. Render the Caddyfile from the live fleet + routes.static, without deploying. Pass through
-#    any flags (e.g. --allow-empty) to the renderer.
-"${SCRIPT_DIR}/routes.sh" --no-deploy "$@"
+# 1. Render the Caddyfile from the live fleet + routes.static (routes.sh is render-only). Pass
+#    through any flags (e.g. --allow-empty) to the renderer.
+"${SCRIPT_DIR}/routes.sh" "$@"
 
 command -v railway >/dev/null 2>&1 || die "railway CLI not found"
 [[ -f "${CADDYFILE}" ]] || die "no rendered Caddyfile at ${CADDYFILE}"

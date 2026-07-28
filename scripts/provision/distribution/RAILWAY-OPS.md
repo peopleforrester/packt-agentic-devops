@@ -11,7 +11,7 @@ service wrong or trusting a CLI exit code cost a live-workshop hour on 2026-07-2
 | Service | Serves | Role | Deploy with |
 |---|---|---|---|
 | **packt-provisioning** | `https://packt.ai-enhanced-devops.com/` | LIVE claim/provisioning app (email to cluster). Owns the persistent volume `packt-provisioning-volume`, `DATABASE_PATH=/data/pool.db`. | `railway up --service packt-provisioning --no-gitignore` |
-| **packt-router** | `*.packt.ai-enhanced-devops.com` (`studentN`, instructor clusters) | Caddy router, hostname to NLB table | routine route change: `scripts/provision/fleet/routes-reload.sh` (live reload, no redeploy). Image change: `scripts/provision/fleet/routes.sh` (`railway up`) |
+| **packt-router** | `*.packt.ai-enhanced-devops.com` (`studentN`, instructor clusters) | Caddy router, hostname to NLB table | routine route change: `fleet/routes-reload.sh` (live reload, no redeploy). Image change: `fleet/router-image-deploy.sh` (`railway up`) |
 | **ai-enhanced-devops-website** | nothing live | STALE/failed sibling. Do NOT deploy the claim app here. | do not use |
 
 The tell that you are on the wrong service: `railway ssh -s <svc> -- echo ok`
@@ -54,11 +54,14 @@ seconds with zero downtime, and no image build. If the rendered config is invali
 old one serving, so a broken table cannot take the router down.
 
 - **Use `routes-reload.sh` for every routine route change** (scale up/down, an instructor cluster
-  coming or going). No redeploy.
-- **Use `routes.sh` (which does `railway up`) only when the image changes** — the Dockerfile,
-  `entrypoint.sh`, or the `srv/` 404 assets. That is the one case that needs a new image.
-- The baked Caddyfile in the image is only the seed: `entrypoint.sh` copies it to the volume on
-  first boot, then the volume copy is authoritative and the reload path owns it.
+  coming or going). No redeploy. It renders via `routes.sh` (render only), writes the table to the
+  volume, and reloads.
+- **Use `router-image-deploy.sh` only when the image changes** — the Dockerfile, `entrypoint.sh`,
+  or the `srv/` 404 assets. That is the one case that needs a new image, and it bakes an empty seed
+  (all 404), never live routes.
+- An image deploy does not reset routes: the volume persists, `entrypoint.sh` seeds it only when it
+  is empty, so the new container keeps reading the volume's table. Routing (data) and the image
+  (code) are fully separate.
 
 Verified 2026-07-27: a test route pushed via `routes-reload.sh`'s path (`railway ssh` write plus
 `caddy reload`) went live and was then removed, both without a `railway up`.
