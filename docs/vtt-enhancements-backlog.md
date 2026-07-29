@@ -19,11 +19,20 @@ A 1Gi `~/.claude` PVC keeps login + conversation history across a pod restart. A
 surviving a browser refresh was tried and removed; a refresh now starts a fresh shell. See
 `scripts/provision/vtt/README.md`.
 
+### 4. VS Code and Jupyter tabs — DONE
+The "+" menu's **VS Code** and **Jupyter** items are live. code-server (4.105.1) and single-user JupyterLab
+(4.6) run in the web-terminal container beside ttyd, sharing `/home/student` and the Gitea-wired
+`~/workshop`, so a file edited in any tab shows up in the others. nginx proxies `/ide/` (prefix-stripped)
+and `/jupyter/` (base_url-prefixed) with the same websocket upgrade ttyd uses; both are backgrounded restart
+loops in `entrypoint.sh`. The separate **Browser IDE** stub was folded into the VS Code tab (same thing).
+Design: `prds/5-browser-ide.md`, `prds/6-jupyter.md`. Auth stays upstream, so the terminal-auth project must
+cover `/ide/` and `/jupyter/` too.
+
 ## Still open (v2 ideas)
 
-- **"+" dropdown future tools.** The add-menu already lists them disabled: **VS Code** (code-server),
-  **Jupyter**, and a **Browser IDE**. Each is a real build: a service in the pod (or namespace) plus an
-  nginx-proxied tab, with the same per-session persistence model as the terminals.
+- **Terminal capture + AI help.** Capture the student's session and feed it to a tutor that answers when a
+  student is stuck. Design in `prds/7-terminal-capture-ai-help.md` (Option B, standalone tutor agent,
+  selected). Gated on a model-backend decision.
 - **Fleet image distribution.** Mirror the VTT image in-region for 300 clusters: an ECR pull-through
   cache, or a shared Harbor (CNCF) proxy-cache; pin by digest. Avoids GHCR burst latency at scale.
 
