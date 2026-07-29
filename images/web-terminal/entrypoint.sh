@@ -109,6 +109,36 @@ cd "$HOME/workshop" 2>/dev/null || cd "$HOME"
 eval "$(starship init bash)"
 BRC
 
+# Background workbench services: code-server (VS Code) on :8443 and JupyterLab on :8888, both bound to
+# loopback and fronted by the console nginx at /ide/ and /jupyter/. They share THIS container's home and
+# the Gitea-wired ~/workshop with the shell and the agent, so a file edited in any tab is visible in the
+# others. Auth/exposure are upstream, same as ttyd. Each runs under a restart loop so a crash self-recovers
+# without waiting for a pod restart; a pod restart still recovers everything via the ttyd liveness probe.
+run_service() {
+  local name="$1"; shift
+  while true; do
+    "$@" || printf '%s exited (%s); restarting in 2s\n' "$name" "$?" >&2
+    sleep 2
+  done
+}
+
+run_service code-server code-server \
+  --bind-addr 127.0.0.1:8443 \
+  --auth none \
+  --disable-telemetry --disable-update-check \
+  --app-name 'Workshop IDE' \
+  "$HOME/workshop" >/tmp/code-server.log 2>&1 &
+
+run_service jupyter "$HOME/.jupyter-venv/bin/jupyter" lab \
+  --no-browser \
+  --ServerApp.ip=127.0.0.1 --ServerApp.port=8888 \
+  --ServerApp.base_url=/jupyter \
+  --IdentityProvider.token='' --ServerApp.password='' \
+  --ServerApp.allow_remote_access=True \
+  --ServerApp.trust_xheaders=True \
+  --ServerApp.disable_check_xsrf=True \
+  --ServerApp.root_dir="$HOME/workshop" >/tmp/jupyter.log 2>&1 &
+
 # -W writable (interactive); -b serves under /terminal so a fronting router can proxy it on a subpath.
 # Auth/exposure are handled upstream by the per-student router; this is the student's own cluster.
 # The theme is tuned to the Packt palette (orange cursor, ink background) so the terminal matches the

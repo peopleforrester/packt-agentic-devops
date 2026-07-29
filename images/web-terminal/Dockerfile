@@ -48,6 +48,25 @@ RUN set -eux; \
     kubectl version --client; aws --version; helm version --short; eksctl version; yq --version; \
     starship --version; argocd version --client --short 2>/dev/null || argocd version --client; kustomize version
 
+# code-server (VS Code in the browser), pinned. Served under /ide/ by the console nginx; authentication and
+# exposure are handled upstream (same model as ttyd). Standalone release tarball, arch-aware, system-wide.
+# Pin, do not float: re-verify against github.com/coder/code-server/releases before a rebuild.
+RUN set -eux; \
+    arch="$(dpkg --print-architecture)"; \
+    case "$arch" in \
+      amd64) CS=amd64 ;; \
+      arm64) CS=arm64 ;; \
+      *) echo "unsupported arch $arch" >&2; exit 1 ;; \
+    esac; \
+    CS_VER=4.105.1; \
+    curl -fsSL -o /tmp/code-server.tgz \
+      "https://github.com/coder/code-server/releases/download/v${CS_VER}/code-server-${CS_VER}-linux-${CS}.tar.gz"; \
+    mkdir -p /usr/lib/code-server; \
+    tar -xzf /tmp/code-server.tgz -C /usr/lib/code-server --strip-components=1; \
+    ln -sf /usr/lib/code-server/bin/code-server /usr/local/bin/code-server; \
+    rm -f /tmp/code-server.tgz; \
+    code-server --version
+
 # The scoped student user. Numeric uid 1000 so the pod securityContext can verify runAsNonRoot.
 RUN useradd -m -u 1000 -s /bin/bash student \
  && mkdir -p /home/student/.kube /home/student/.aws /home/student/.config \
@@ -74,6 +93,16 @@ RUN curl -fsSL https://claude.ai/install.sh | bash \
 RUN curl -LsSf https://astral.sh/uv/install.sh | sh \
  && /home/student/.local/bin/uv --version \
  && /home/student/.local/bin/uvx --version
+
+# JupyterLab (single-user) in a dedicated, student-owned venv. Student-owned so a notebook `%pip install`
+# works, and separate from the phase-test uv environments so it never collides with them. Served under
+# /jupyter/ by the console nginx; auth/exposure are upstream. Pinned to the 4.6 line (JupyterLab 4.6 /
+# Notebook 7.6, current as of 2026-07); re-verify against the Jupyter releases before a rebuild.
+RUN python3 -m venv /home/student/.jupyter-venv \
+ && /home/student/.jupyter-venv/bin/pip install --no-cache-dir --upgrade pip \
+ && /home/student/.jupyter-venv/bin/pip install --no-cache-dir 'jupyterlab==4.6.*' ipykernel \
+ && /home/student/.jupyter-venv/bin/python -m ipykernel install --user --name python3 --display-name 'Python 3 (workshop)' \
+ && /home/student/.jupyter-venv/bin/jupyter lab --version
 
 # The workshop repo, pre-cloned so a student lands with the materials already present. Public repo, so
 # no credentials are needed at build or for a later `git pull`. entrypoint.sh refreshes it on start.

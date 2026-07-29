@@ -248,9 +248,8 @@
           <div class="addmenu" id="addmenu">
             <button class="ami" onclick="addTerm(); closeAddMenu()">🖥️ New terminal</button>
             <div class="ami-sep"></div>
-            <button class="ami soon" disabled>🧩 VS Code <span>soon</span></button>
-            <button class="ami soon" disabled>📓 Jupyter <span>soon</span></button>
-            <button class="ami soon" disabled>🌐 Browser IDE <span>soon</span></button>
+            <button class="ami" onclick="openPane('ide'); closeAddMenu()">🧩 VS Code</button>
+            <button class="ami" onclick="openPane('jupyter'); closeAddMenu()">📓 Jupyter</button>
           </div>
         </div>
       </div>
@@ -293,9 +292,10 @@
   // into the active terminal iframe and hand xterm a paste directly. The student never has to copy then
   // Ctrl+Shift+V; the command lands at their prompt, ready to run.
   function sendToTerminal(text){
-    // If the Blueprint tab is showing, flip to Terminal 1 so the command lands somewhere visible.
+    // If a non-terminal tab is showing (Blueprint, Endpoints, VS Code, Jupyter), flip to Terminal 1 so the
+    // command lands somewhere visible. Terminal panes have a numeric data-i; the others do not.
     var active=document.querySelector('.tpane.active');
-    if(active && active.classList.contains('mappane')){ showTerm(0); active=document.querySelector('.tpane[data-i="0"]'); }
+    if(active && (active.classList.contains('mappane') || isNaN(parseInt(active.dataset.i,10)))){ showTerm(0); active=document.querySelector('.tpane[data-i="0"]'); }
     var iframe=active||document.querySelector('.tpane[data-i="0"]');
     if(!iframe || iframe.classList.contains('mappane')) return false;
     try{
@@ -352,7 +352,7 @@
       chev.textContent=o?'▾':'▸';
     });
   });
-  // The "+" add-menu (New terminal now; VS Code / Jupyter / Browser IDE are future entries).
+  // The "+" add-menu: New terminal, plus the VS Code (/ide/) and Jupyter (/jupyter/) workbench panes.
   function toggleAddMenu(ev){ ev.stopPropagation(); document.getElementById('addmenu').classList.toggle('open'); }
   function closeAddMenu(){ var m=document.getElementById('addmenu'); if(m) m.classList.remove('open'); }
   document.addEventListener('click', closeAddMenu);
@@ -381,6 +381,32 @@
     var p=document.querySelector('.tpane[data-i="'+i+'"]'); if(p)p.remove();
     var t=document.querySelector('.ttab[data-i="'+i+'"]'); if(t)t.remove();
     var first=document.querySelector('.ttab:not(.maptab)')||document.querySelector('.ttab'); if(first)showTerm(first.dataset.i);
+  }
+
+  // Workbench panes: VS Code (/ide/) and Jupyter (/jupyter/). One instance each — a second click on the
+  // menu item just focuses the open tab rather than spawning a duplicate. Keyed by a string data-i
+  // ('ide' / 'jupyter'), which showTerm/closePane treat like any other tab id.
+  var PANE_KINDS={
+    ide:{src:'/ide/',label:'VS Code',icon:'🧩'},
+    jupyter:{src:'/jupyter/',label:'Jupyter',icon:'📓'}
+  };
+  function openPane(kind){
+    var spec=PANE_KINDS[kind]; if(!spec) return;
+    if(document.querySelector('.ttab[data-i="'+kind+'"]')){ showTerm(kind); return; }
+    var f=document.createElement('iframe'); f.className='tpane'; f.dataset.i=kind; f.src=spec.src; f.title=spec.label;
+    document.getElementById('termpanes').appendChild(f);
+    var b=document.createElement('button'); b.className='ttab'; b.dataset.i=kind;
+    b.innerHTML=spec.icon+' '+spec.label+' <span class="x">✕</span>';
+    b.addEventListener('click', function(){ showTerm(kind); });
+    b.querySelector('.x').addEventListener('click', function(ev){ ev.stopPropagation(); closePane(kind); });
+    var tabs=document.getElementById('termtabs');
+    tabs.insertBefore(b, tabs.querySelector('.tadd'));
+    showTerm(kind);
+  }
+  function closePane(kind){
+    var p=document.querySelector('.tpane[data-i="'+kind+'"]'); if(p)p.remove();
+    var t=document.querySelector('.ttab[data-i="'+kind+'"]'); if(t)t.remove();
+    showTerm(0);
   }
 </script>
 </body>
