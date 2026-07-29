@@ -1,6 +1,8 @@
 # Hosts the fleet driver does not manage (instructor standalone clusters).
 # Rebuilt tables would otherwise drop these. Format: <hostname> <upstream-host:port>
 #
-# admin1/admin2 removed 2026-07-27: the instructor clusters were torn down, so their NLBs
-# no longer exist and the routes would 502. Re-add a line here when an instructor cluster
-# is next provisioned (its NLB hostname is the final line of instructor/up.sh output).
+# admin1/admin2 re-provisioned 2026-07-29 (they were torn down 2026-07-27). Both run the
+# web-terminal image with the VS Code and Jupyter tabs. Their NLB hostnames are the final
+# line of instructor/up.sh output and are recorded in instructor/states/<name>.lbhost.
+admin1.packt.ai-enhanced-devops.com	k8s-workshop-webtermi-c724551eaa-2d4932caca22f519.elb.us-west-2.amazonaws.com:80
+admin2.packt.ai-enhanced-devops.com	k8s-workshop-webtermi-83ff18763a-71dcea7b4eb8373c.elb.us-west-2.amazonaws.com:80
