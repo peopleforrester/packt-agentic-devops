@@ -14,9 +14,10 @@ Play, clickable phase pips, keyboard arrows, `?phase=` deep link.
 platform UIs with namespace and the phase each comes online. Tapping a card prints that component's address
 on the student's own cluster into the terminal (postMessage bridge to the lab; clipboard fallback standalone).
 
-### 3. Session persistence (tmux + PVC) — DONE
-tmux keeps the shell alive across a browser refresh (ttyd `-a` + `vtt-shell` per-session attach); a 1Gi
-`~/.claude` PVC keeps login + conversation history across a pod restart. See `scripts/provision/vtt/README.md`.
+### 3. Session persistence (PVC) — DONE
+A 1Gi `~/.claude` PVC keeps login + conversation history across a pod restart. A tmux re-attach layer for
+surviving a browser refresh was tried and removed; a refresh now starts a fresh shell. See
+`scripts/provision/vtt/README.md`.
 
 ## Still open (v2 ideas)
 

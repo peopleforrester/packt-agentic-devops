@@ -21,8 +21,9 @@ metadata:
   namespace: workshop
 ---
 # Durable home for Claude Code's login and conversation history. Survives a pod restart so a student is
-# not logged out and can `claude --continue` after a reboot. tmux covers the common case (browser refresh);
-# this covers the rare pod/node restart. 1Gi is ample for credentials and session transcripts.
+# not logged out and can `claude --continue` after a reboot. This covers the pod/node restart case; a
+# browser refresh starts a fresh shell (there is no tmux re-attach layer). 1Gi is ample for credentials
+# and session transcripts.
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:

@@ -357,7 +357,8 @@
   function closeAddMenu(){ var m=document.getElementById('addmenu'); if(m) m.classList.remove('open'); }
   document.addEventListener('click', closeAddMenu);
 
-  // Multi-terminal tabs (Katacoda/KodeKloud style). Each pane is its own persistent tmux session.
+  // Multi-terminal tabs (Katacoda/KodeKloud style). Each pane is its own independent ttyd session;
+  // a browser refresh starts a fresh shell (there is no tmux re-attach layer).
   var termN=1;
   function showTerm(i){
     var key=String(i);

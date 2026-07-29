@@ -19,7 +19,7 @@ The browser terminal a student lands in from the credential-claim email. A two-p
 - `apply.sh` — generates the ConfigMaps from `web/` and rolls the deployment. Needs `KUBECONFIG` and
   `AWS_PROFILE`; set `EXPECT_CONTEXT` to guard the target cluster.
 - The image is built from `images/web-terminal/` (ttyd, kubectl, AWS CLI, helm, eksctl, k9s, yq,
-  Starship, tmux, Claude Code, the workshop repo pre-cloned) and published to
+  Starship, Claude Code, the workshop repo pre-cloned) and published to
   `ghcr.io/peopleforrester/packt-agentic-devops:web-terminal` (public).
 
 ## Session persistence
