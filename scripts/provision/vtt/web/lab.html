@@ -390,7 +390,7 @@
     b.addEventListener('click', function(){ showTerm(i); });
     b.querySelector('.x').addEventListener('click', function(ev){ ev.stopPropagation(); closeTerm(i); });
     var tabs=document.getElementById('termtabs');
-    tabs.insertBefore(b, tabs.querySelector('.tadd'));
+    tabs.insertBefore(b, tabs.querySelector('.tadd-wrap'));
     showTerm(i);
   }
   function closeTerm(i){
@@ -416,7 +416,7 @@
     b.addEventListener('click', function(){ showTerm(kind); });
     b.querySelector('.x').addEventListener('click', function(ev){ ev.stopPropagation(); closePane(kind); });
     var tabs=document.getElementById('termtabs');
-    tabs.insertBefore(b, tabs.querySelector('.tadd'));
+    tabs.insertBefore(b, tabs.querySelector('.tadd-wrap'));
     showTerm(kind);
   }
   function closePane(kind){
