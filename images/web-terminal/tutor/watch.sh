@@ -1,47 +1,58 @@
 #!/bin/bash
-# ABOUTME: Proactive tutor watch. Tails the terminal transcript for failure signatures and, rate-limited,
-# ABOUTME: asks Bedrock (Sonnet 5) for a one-line nudge that the lab page shows as a dismissible banner.
+# ABOUTME: Proactive tutor watch. Observes what is ACTUALLY going on in the cluster (crashlooping pods,
+# ABOUTME: image-pull errors, Degraded Argo CD apps) and, rate-limited, asks Bedrock for a one-line nudge.
+#
+# This watches real cluster state via the pod ServiceAccount, not the terminal transcript. A student's
+# main terminal is mostly their own agent's full-screen UI, so grepping it for errors is a noisy, weak
+# signal. The cluster is the source of truth for "is something actually broken", so that is what we watch.
 set -uo pipefail
 export HOME=/home/student
-readonly TRANSCRIPT="$HOME/.session/transcript"
+export PATH="$HOME/.local/bin:$HOME/workshop:$PATH"
 readonly NUDGE_DIR=/run/tutor
 readonly NUDGE="${NUDGE_DIR}/nudge.json"
 readonly REGION="${AWS_REGION:-us-west-2}"
 readonly MODEL="${TUTOR_MODEL:-us.anthropic.claude-sonnet-5}"
-readonly COOLDOWN="${TUTOR_NUDGE_COOLDOWN:-180}"   # at most one proactive nudge per this many seconds
+readonly COOLDOWN="${TUTOR_NUDGE_COOLDOWN:-300}"    # at most one proactive nudge per this many seconds
+readonly POLL="${TUTOR_POLL_INTERVAL:-30}"          # seconds between cluster checks
 
 mkdir -p "${NUDGE_DIR}"
 
-# Error signatures worth a proactive nudge. Deliberately specific, so benign output does not trip it.
-readonly SIGS='error:|Error:|OutOfSync|Degraded|CrashLoopBackOff|ImagePullBackOff|ErrImagePull|CreateContainerConfigError|FailedMount|no matches for kind|connection refused|Unable to connect|denied the request|is forbidden|Back-off restarting'
-
-strip_ansi() { sed -r 's/\x1b\[[0-9;?]*[a-zA-Z]//g; s/\x1b\][0-9;]*(\x07|\x1b\\)//g'; }
-
-# Wait for the transcript to exist (the capture layer creates it on first shell connect).
-for _ in $(seq 1 60); do [ -f "${TRANSCRIPT}" ] && break; sleep 2; done
-[ -f "${TRANSCRIPT}" ] || exit 0
+# The real failure signal. Pods stuck in a bad phase/waiting reason, and Argo CD apps whose HEALTH is
+# Degraded. We deliberately do NOT flag OutOfSync/Progressing: those are normal while a GitOps build
+# converges, and nudging on them would fire constantly.
+snapshot() {
+  kubectl get pods -A --no-headers 2>/dev/null | awk '
+    $4 ~ /CrashLoopBackOff|ImagePullBackOff|ErrImagePull|CreateContainerConfigError|RunContainerError|Init:Error|^Error$/ {
+      print "pod " $1 "/" $2 " " $4 }'
+  kubectl get applications -n argocd --no-headers 2>/dev/null | awk '/Degraded/ { print "argocd-app " $1 " Degraded" }'
+}
 
 last=0
-# Follow new transcript lines, strip escapes, and react on the first error signature per cooldown window.
-tail -n0 -F "${TRANSCRIPT}" 2>/dev/null | strip_ansi | grep --line-buffered -iE "${SIGS}" \
-| while IFS= read -r _hit; do
-    now=$(date +%s)
-    (( now - last < COOLDOWN )) && continue
-    last=$now
+prev=""
+while true; do
+  sleep "${POLL}"
+  cur="$(snapshot)"
+  # Nothing wrong: clear the memory so a later problem is seen fresh.
+  [ -z "${cur}" ] && { prev=""; continue; }
+  # Require the SAME failure across two consecutive polls (~POLL seconds), so transient churn during a
+  # rollout does not trigger a nudge. Only a sustained problem does.
+  if [ "${cur}" != "${prev}" ]; then prev="${cur}"; continue; fi
 
-    # Feed the recent tail (secret-scrubbed) as context for one short nudge.
-    ctx="$(tail -c 4000 "${TRANSCRIPT}" | strip_ansi | /opt/tutor/scrub.sh)"
-    read -r -d '' prompt <<EOF || true
-A workshop student is building a Kubernetes GitOps platform and just hit an error in their terminal. Recent terminal output:
+  now=$(date +%s)
+  (( now - last < COOLDOWN )) && continue
+  last=$now
 
-${ctx}
+  read -r -d '' prompt <<EOF || true
+A workshop student is building a Kubernetes GitOps platform (Argo CD, an AI plane on EKS). The cluster currently shows these SUSTAINED failures:
 
-In ONE short sentence (max 24 words), say what likely went wrong and that the Tutor tab can help. No commands, no code.
+${cur}
+
+In ONE short sentence (max 24 words), say what is most likely wrong and that the Tutor tab can help diagnose it. No commands, no code.
 EOF
-    msg="$(printf '%s' "${prompt}" | jq -Rs '[{role:"user",content:[{text:.}]}]')"
-    txt="$(aws bedrock-runtime converse --region "${REGION}" --model-id "${MODEL}" \
-             --messages "${msg}" --inference-config '{"maxTokens":80}' \
-             --query 'output.message.content[0].text' --output text 2>/dev/null || true)"
-    [ -z "${txt}" ] && continue
-    printf '{"ts":%s,"nudge":%s}\n' "${now}" "$(printf '%s' "${txt}" | jq -Rs .)" > "${NUDGE}"
+  msg="$(printf '%s' "${prompt}" | jq -Rs '[{role:"user",content:[{text:.}]}]')"
+  txt="$(aws bedrock-runtime converse --region "${REGION}" --model-id "${MODEL}" \
+           --messages "${msg}" --inference-config '{"maxTokens":80}' \
+           --query 'output.message.content[0].text' --output text 2>/dev/null || true)"
+  [ -z "${txt}" ] && continue
+  printf '{"ts":%s,"nudge":%s}\n' "${now}" "$(printf '%s' "${txt}" | jq -Rs .)" > "${NUDGE}"
 done

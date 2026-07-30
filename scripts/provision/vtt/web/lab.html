@@ -29,8 +29,12 @@
   .split{flex:1;display:flex;min-height:0}
   .split.guide-collapsed .guide{display:none}
   .guide{width:42%;max-width:600px;min-width:360px;overflow:auto;padding:20px 22px;background:var(--panel);border-right:1px solid var(--line)}
-  .paneltog{font:inherit;font-size:15px;font-weight:800;color:#aeb4c8;background:#1a1e2b;border:0;border-radius:7px;padding:5px 11px;margin-right:5px;cursor:pointer;line-height:1}
-  .paneltog:hover{color:#fff}
+  .guidebar{display:flex;justify-content:flex-end;margin:-4px 0 10px}
+  .guidebar .gt{font:inherit;font-size:12px;font-weight:700;color:var(--mid);background:transparent;border:1px solid var(--line);border-radius:8px;padding:5px 10px;cursor:pointer}
+  .guidebar .gt:hover{border-color:var(--accent);color:var(--accent)}
+  #guidereopen{position:fixed;left:0;top:96px;display:none;z-index:36;background:var(--ink);color:#fff;border:0;border-radius:0 9px 9px 0;padding:12px 8px;cursor:pointer;font-size:12px;font-weight:800;letter-spacing:.5px;writing-mode:vertical-rl;box-shadow:0 6px 18px rgba(0,0,0,.25)}
+  #guidereopen:hover{background:var(--accent)}
+  #guidereopen.show{display:block}
   .termcol{flex:1;min-width:0;background:var(--term);position:relative;display:flex;flex-direction:column}
   .guide h1{font-size:21px;margin:0 0 4px;color:var(--ink)}
   .guide .lede{color:var(--mid);font-size:14px;margin:0 0 16px;line-height:1.55}
@@ -116,6 +120,7 @@
 
   <div class="split" id="split">
     <section class="guide">
+      <div class="guidebar"><button class="gt" onclick="toggleGuide()" title="Hide the instructions panel">⟨ Hide panel</button></div>
       <h1>This cluster is yours. 🛠️</h1>
       <p class="lede">You are going to build an AI-native Internal Developer Platform on this cluster, phase by phase, with Claude Code as your platform engineer. The presenter builds the same thing in parallel and stops at each phase to explain what just happened. <b>Work one phase at a time and stop at the end of each one.</b> Tap any command or prompt and it drops straight into your terminal on the right. Press Enter to run it.</p>
 
@@ -257,7 +262,6 @@
 
     <section class="termcol">
       <div class="termtabs" id="termtabs">
-        <button class="paneltog" onclick="toggleGuide()" title="Show or hide the instructions panel" aria-label="Toggle instructions panel">⟨</button>
         <button class="ttab maptab" data-i="map" onclick="showTerm('map')">🗺 Blueprint</button>
         <button class="ttab maptab" data-i="links" onclick="showTerm('links')">🔗 Endpoints</button>
         <button class="ttab tutortab" data-i="tutor" onclick="showTutor()">🎓 Tutor</button>
@@ -280,6 +284,8 @@
       </div>
     </section>
   </div>
+
+  <button id="guidereopen" onclick="toggleGuide()" title="Show the instructions panel" aria-label="Show the instructions panel">⟩ Steps</button>
 
   <div id="toast">copied</div>
 
@@ -461,8 +467,7 @@
     var s=document.getElementById('split');
     var c=s.classList.toggle('guide-collapsed');
     localStorage.setItem('packt-guide-collapsed', c?'1':'0');
-    var b=document.querySelector('.paneltog');
-    if(b){ b.textContent=c?'⟩':'⟨'; b.title=c?'Show the instructions panel':'Hide the instructions panel'; }
+    var re=document.getElementById('guidereopen'); if(re) re.classList.toggle('show', c);
   }
   if(localStorage.getItem('packt-guide-collapsed')==='1'){ toggleGuide(); }
 </script>

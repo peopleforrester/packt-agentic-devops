@@ -21,11 +21,15 @@ export ANTHROPIC_MODEL="${TUTOR_MODEL:-us.anthropic.claude-sonnet-5}"
 SYS="$(cat /opt/tutor/system-prompt.md 2>/dev/null || true)"
 cd "$HOME/workshop" 2>/dev/null || cd "$HOME"
 
-# Pre-trust the workshop directory so the tutor does not show the first-run "trust this folder" dialog on
-# connect (it would otherwise stall a stuck student behind a prompt). Idempotent; jq is in the image.
+# Seed the tutor config so a stuck student is never stalled behind a first-run prompt: pre-trust the
+# workshop directory (no "trust this folder" dialog), pick a theme (no theme picker), and mark onboarding
+# complete. Idempotent; jq is in the image. theme uses // so a later manual change is preserved.
 CJSON="${CLAUDE_CONFIG_DIR}/.claude.json"
 [ -f "${CJSON}" ] || echo '{}' > "${CJSON}"
-if _t="$(jq --arg p "$HOME/workshop" '.projects[$p].hasTrustDialogAccepted=true' "${CJSON}" 2>/dev/null)"; then
+if _t="$(jq --arg p "$HOME/workshop" '
+      .projects[$p].hasTrustDialogAccepted=true
+      | .theme=(.theme // "dark")
+      | .hasCompletedOnboarding=true' "${CJSON}" 2>/dev/null)"; then
   printf '%s' "${_t}" > "${CJSON}"
 fi
 
