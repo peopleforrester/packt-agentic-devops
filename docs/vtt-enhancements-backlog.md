@@ -28,11 +28,18 @@ loops in `entrypoint.sh`. The separate **Browser IDE** stub was folded into the 
 Design: `prds/5-browser-ide.md`, `prds/6-jupyter.md`. Auth stays upstream, so the terminal-auth project must
 cover `/ide/` and `/jupyter/` too.
 
-## Still open (v2 ideas)
+### 5. Unified Workshop Tutor — DONE
+One read-only tutor that sees the whole workbench and helps a stuck student. It runs the agent CLI in a
+dedicated tutor posture on Amazon Bedrock (Claude Sonnet 5), authenticated by the cluster's EKS Pod
+Identity, so it is provisioned inline with the lab and keyless (the grant is in `student-aws-creds.sh`).
+It reads the shared `~/workshop` tree (the IDE's files and the Jupyter notebooks), the phase specs, the
+terminal transcript (captured via `script`), and the cluster over read-only kubectl. Surfaced as a
+prominent, lazy-loaded **Tutor** tab (ttyd on :7682, proxied at `/tutor/`), plus a proactive banner: a
+watcher tails the transcript for failures and, rate-limited and secret-scrubbed, asks Bedrock for a
+one-line nudge served at `/api/tutor-nudge`. Design: `prds/7-terminal-capture-ai-help.md`. Verified on
+admin1 and admin2 2026-07-30. Auth stays upstream, so the terminal-auth project must cover `/tutor/` too.
 
-- **Terminal capture + AI help.** Capture the student's session and feed it to a tutor that answers when a
-  student is stuck. Design in `prds/7-terminal-capture-ai-help.md` (Option B, standalone tutor agent,
-  selected). Gated on a model-backend decision.
+## Still open (v2 ideas)
 - **Fleet image distribution.** Mirror the VTT image in-region for 300 clusters: an ECR pull-through
   cache, or a shared Harbor (CNCF) proxy-cache; pin by digest. Avoids GHCR burst latency at scale.
 
