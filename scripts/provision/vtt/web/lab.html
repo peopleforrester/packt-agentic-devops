@@ -27,7 +27,10 @@
   .crumb b{color:#fff;font-family:ui-monospace,Menlo,Consolas,monospace}
   .crumb .role{font-weight:800;text-transform:uppercase;letter-spacing:.4px;font-size:11px;background:var(--accent);color:#fff;padding:2px 8px;border-radius:999px}
   .split{flex:1;display:flex;min-height:0}
+  .split.guide-collapsed .guide{display:none}
   .guide{width:42%;max-width:600px;min-width:360px;overflow:auto;padding:20px 22px;background:var(--panel);border-right:1px solid var(--line)}
+  .paneltog{font:inherit;font-size:15px;font-weight:800;color:#aeb4c8;background:#1a1e2b;border:0;border-radius:7px;padding:5px 11px;margin-right:5px;cursor:pointer;line-height:1}
+  .paneltog:hover{color:#fff}
   .termcol{flex:1;min-width:0;background:var(--term);position:relative;display:flex;flex-direction:column}
   .guide h1{font-size:21px;margin:0 0 4px;color:var(--ink)}
   .guide .lede{color:var(--mid);font-size:14px;margin:0 0 16px;line-height:1.55}
@@ -111,7 +114,7 @@
     <button class="tn-x" onclick="dismissNudge()" aria-label="Dismiss">✕</button>
   </div>
 
-  <div class="split">
+  <div class="split" id="split">
     <section class="guide">
       <h1>This cluster is yours. 🛠️</h1>
       <p class="lede">You are going to build an AI-native Internal Developer Platform on this cluster, phase by phase, with Claude Code as your platform engineer. The presenter builds the same thing in parallel and stops at each phase to explain what just happened. <b>Work one phase at a time and stop at the end of each one.</b> Tap any command or prompt and it drops straight into your terminal on the right. Press Enter to run it.</p>
@@ -254,6 +257,7 @@
 
     <section class="termcol">
       <div class="termtabs" id="termtabs">
+        <button class="paneltog" onclick="toggleGuide()" title="Show or hide the instructions panel" aria-label="Toggle instructions panel">⟨</button>
         <button class="ttab maptab" data-i="map" onclick="showTerm('map')">🗺 Blueprint</button>
         <button class="ttab maptab" data-i="links" onclick="showTerm('links')">🔗 Endpoints</button>
         <button class="ttab tutortab" data-i="tutor" onclick="showTutor()">🎓 Tutor</button>
@@ -450,6 +454,17 @@
     if(_lastNudgeTs) localStorage.setItem('packt-nudge-dismissed', String(_lastNudgeTs));
   }
   setInterval(pollNudge, 15000); pollNudge();
+
+  // Collapse/expand the left instructions panel to give the terminal, IDE, Jupyter, or Tutor full width.
+  // State persists per browser so a student who hides it stays hidden across reloads.
+  function toggleGuide(){
+    var s=document.getElementById('split');
+    var c=s.classList.toggle('guide-collapsed');
+    localStorage.setItem('packt-guide-collapsed', c?'1':'0');
+    var b=document.querySelector('.paneltog');
+    if(b){ b.textContent=c?'⟩':'⟨'; b.title=c?'Show the instructions panel':'Hide the instructions panel'; }
+  }
+  if(localStorage.getItem('packt-guide-collapsed')==='1'){ toggleGuide(); }
 </script>
 </body>
 </html>
