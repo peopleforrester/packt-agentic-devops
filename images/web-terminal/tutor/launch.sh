@@ -21,6 +21,14 @@ export ANTHROPIC_MODEL="${TUTOR_MODEL:-us.anthropic.claude-sonnet-5}"
 SYS="$(cat /opt/tutor/system-prompt.md 2>/dev/null || true)"
 cd "$HOME/workshop" 2>/dev/null || cd "$HOME"
 
+# Pre-trust the workshop directory so the tutor does not show the first-run "trust this folder" dialog on
+# connect (it would otherwise stall a stuck student behind a prompt). Idempotent; jq is in the image.
+CJSON="${CLAUDE_CONFIG_DIR}/.claude.json"
+[ -f "${CJSON}" ] || echo '{}' > "${CJSON}"
+if _t="$(jq --arg p "$HOME/workshop" '.projects[$p].hasTrustDialogAccepted=true' "${CJSON}" 2>/dev/null)"; then
+  printf '%s' "${_t}" > "${CJSON}"
+fi
+
 # Plan mode is the read-only posture: the tutor investigates (reads files, runs read-only kubectl) and
 # advises, but does not apply changes. If Bedrock is unreachable (no Pod Identity, model access off),
 # Claude Code exits and the caller's restart loop retries; the tab shows the error rather than a blank.
