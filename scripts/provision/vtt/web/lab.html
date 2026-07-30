@@ -61,6 +61,13 @@
   .tadd{font:inherit;font-size:16px;font-weight:800;color:#aeb4c8;background:transparent;border:0;cursor:pointer;padding:2px 10px}
   .tadd:hover{color:#fff}
   .ttab.maptab{color:#f0c9b4} .ttab.maptab.active{background:var(--term);color:var(--accent)}
+  .ttab.tutortab{color:#cbb4f0} .ttab.tutortab.active{background:var(--term);color:#b48ead}
+  #tutornudge{position:fixed;top:96px;right:18px;max-width:380px;display:none;align-items:flex-start;gap:9px;background:#241f2e;color:#efeaf5;border:1px solid #4a3f63;border-left:4px solid #b48ead;border-radius:11px;padding:11px 12px;font-size:13px;line-height:1.45;box-shadow:0 10px 30px rgba(0,0,0,.35);z-index:35}
+  #tutornudge.show{display:flex}
+  #tutornudge .tn-ico{font-size:16px;flex:0 0 auto}
+  #tutornudge .tn-msg{flex:1}
+  #tutornudge .tn-open{font:inherit;font-size:12px;font-weight:800;background:#b48ead;color:#191919;border:0;border-radius:7px;padding:5px 9px;cursor:pointer;white-space:nowrap}
+  #tutornudge .tn-x{font:inherit;background:transparent;border:0;color:#aa9fc0;cursor:pointer;font-size:13px;padding:2px 4px}
   .tadd-wrap{position:relative;display:inline-block}
   .addmenu{position:absolute;top:100%;left:0;margin-top:4px;background:#1a1e2b;border:1px solid #2b3040;border-radius:8px;padding:5px;min-width:184px;box-shadow:0 8px 24px rgba(0,0,0,.4);display:none;z-index:40}
   .addmenu.open{display:block}
@@ -96,6 +103,13 @@
   </header>
 
   <div class="crumb"><span class="role" id="rolechip">STUDENT</span> Cluster <b id="cl">(loading&hellip;)</b> <span id="who"></span></div>
+
+  <div id="tutornudge" role="status">
+    <span class="tn-ico">🎓</span>
+    <span class="tn-msg" id="tnmsg"></span>
+    <button class="tn-open" onclick="showTutor()">Open Tutor</button>
+    <button class="tn-x" onclick="dismissNudge()" aria-label="Dismiss">✕</button>
+  </div>
 
   <div class="split">
     <section class="guide">
@@ -242,6 +256,7 @@
       <div class="termtabs" id="termtabs">
         <button class="ttab maptab" data-i="map" onclick="showTerm('map')">🗺 Blueprint</button>
         <button class="ttab maptab" data-i="links" onclick="showTerm('links')">🔗 Endpoints</button>
+        <button class="ttab tutortab" data-i="tutor" onclick="showTutor()">🎓 Tutor</button>
         <button class="ttab active" data-i="0" onclick="showTerm(0)">Terminal 1</button>
         <div class="tadd-wrap">
           <button class="tadd" onclick="toggleAddMenu(event)" title="Add" aria-haspopup="true">＋</button>
@@ -256,6 +271,7 @@
       <div class="termpanes" id="termpanes">
         <iframe class="tpane mappane" data-i="map" src="/diagram" title="Architecture blueprint"></iframe>
         <iframe class="tpane mappane" data-i="links" src="/links" title="Component endpoints"></iframe>
+        <iframe class="tpane" data-i="tutor" title="Workshop Tutor"></iframe>
         <iframe class="tpane active" data-i="0" src="/terminal/" title="Terminal 1"></iframe>
       </div>
     </section>
@@ -408,6 +424,32 @@
     var t=document.querySelector('.ttab[data-i="'+kind+'"]'); if(t)t.remove();
     showTerm(0);
   }
+
+  // Workshop Tutor tab (Claude Code on Bedrock, read-only). Lazy: the /tutor/ session only starts on the
+  // first open, so a student who never asks for help never spins one up.
+  function showTutor(){
+    var f=document.querySelector('.tpane[data-i="tutor"]');
+    if(f && !f.getAttribute('src')) f.setAttribute('src','/tutor/');
+    dismissNudge();
+    showTerm('tutor');
+  }
+  // Proactive nudge banner: poll the watcher's nudge file and surface the latest once, dismissibly. A
+  // dismissed nudge stays dismissed (its timestamp is remembered) so it does not re-nag on every poll.
+  var _lastNudgeTs=0;
+  function pollNudge(){
+    fetch('/api/tutor-nudge',{cache:'no-store'}).then(function(r){return r.ok?r.json():null;}).then(function(d){
+      if(!d||!d.ts||!d.nudge||d.ts===_lastNudgeTs) return;
+      _lastNudgeTs=d.ts;
+      if(localStorage.getItem('packt-nudge-dismissed')===String(d.ts)) return;
+      document.getElementById('tnmsg').textContent=d.nudge;
+      document.getElementById('tutornudge').classList.add('show');
+    }).catch(function(){});
+  }
+  function dismissNudge(){
+    document.getElementById('tutornudge').classList.remove('show');
+    if(_lastNudgeTs) localStorage.setItem('packt-nudge-dismissed', String(_lastNudgeTs));
+  }
+  setInterval(pollNudge, 15000); pollNudge();
 </script>
 </body>
 </html>

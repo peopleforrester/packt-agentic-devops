@@ -66,11 +66,21 @@ else
     printf '  role created\n' >&2
 fi
 
+# The cluster read-only pair, plus Bedrock invoke for the Workshop Tutor. The tutor is Claude Code on
+# Amazon Bedrock (Sonnet 5), and it authenticates through this same Pod Identity, so the model access is
+# provisioned inline with the cluster and there is no API key to manage. Scoped to the Sonnet 5 model and
+# its inference profile only. This does widen the pod's AWS reach (the student's own shell shares this
+# role), which is acceptable on their disposable single-tenant cluster.
 read -r -d '' POLICY <<JSON || true
 {"Version":"2012-10-17","Statement":[
  {"Sid":"DescribeOwnCluster","Effect":"Allow","Action":["eks:DescribeCluster"],
   "Resource":"arn:aws:eks:${REGION}:${ACCOUNT}:cluster/${CLUSTER}"},
- {"Sid":"ListClusters","Effect":"Allow","Action":["eks:ListClusters"],"Resource":"*"}]}
+ {"Sid":"ListClusters","Effect":"Allow","Action":["eks:ListClusters"],"Resource":"*"},
+ {"Sid":"InvokeBedrockTutorModel","Effect":"Allow",
+  "Action":["bedrock:InvokeModel","bedrock:InvokeModelWithResponseStream"],
+  "Resource":[
+   "arn:aws:bedrock:*::foundation-model/anthropic.claude-sonnet-5*",
+   "arn:aws:bedrock:*:${ACCOUNT}:inference-profile/*claude-sonnet-5*"]}]}
 JSON
 aws iam put-role-policy --role-name "${ROLE}" \
     --policy-name "${POLICY_NAME}" --policy-document "${POLICY}"

@@ -12,6 +12,7 @@ FROM debian:bookworm-slim
 RUN apt-get update && apt-get install -y --no-install-recommends \
       ca-certificates curl wget unzip zip tar gzip git jq less gnupg bash procps sudo \
       python3 python3-venv \
+      bsdextrautils \
       vim nano tree file dnsutils iputils-ping openssl rsync make \
  && rm -rf /var/lib/apt/lists/* \
  && echo 'student ALL=(ALL) NOPASSWD:ALL' > /etc/sudoers.d/student \
@@ -78,6 +79,11 @@ COPY starship.toml /home/student/.config/starship.toml
 COPY entrypoint.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh \
  && chown student:student /home/student/.config/starship.toml
+
+# Workshop Tutor assets: the read-only system prompt, the Bedrock launcher (Claude Code in plan mode),
+# the proactive transcript watcher, and the secret scrubber. Read by entrypoint.sh at start.
+COPY tutor/ /opt/tutor/
+RUN chmod +x /opt/tutor/*.sh
 
 USER student
 WORKDIR /home/student

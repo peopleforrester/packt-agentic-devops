@@ -6,7 +6,7 @@ set -euo pipefail
 SA=/var/run/secrets/kubernetes.io/serviceaccount
 export HOME=/home/student
 export PATH="$HOME/.local/bin:$HOME/workshop:$PATH"
-mkdir -p "$HOME/.kube" "$HOME/.aws"
+mkdir -p "$HOME/.kube" "$HOME/.aws" "$HOME/.session"
 
 # kubectl talks to THIS cluster via the pod's own ServiceAccount token. No kubeconfig secret needed.
 # The context is named after the cluster (CLUSTER_NAME, defaulting to a friendly label) so the
@@ -139,6 +139,20 @@ run_service jupyter "$HOME/.jupyter-venv/bin/jupyter" lab \
   --ServerApp.disable_check_xsrf=True \
   --ServerApp.root_dir="$HOME/workshop" >/tmp/jupyter.log 2>&1 &
 
+# Workshop Tutor: a second ttyd on :7682 (proxied at /tutor/) serving Claude Code on Amazon Bedrock in a
+# read-only tutor posture (see /opt/tutor/launch.sh). It shares this container's filesystem, so it reads
+# the student's ~/workshop, the phase specs, the terminal transcript below, and the cluster (read-only
+# kubectl) as its context. Bedrock auth is the pod's EKS Pod Identity, so there is no key to manage.
+run_service tutor ttyd -p 7682 -W -b /tutor \
+  -t fontSize=15 \
+  -t cursorStyle=bar \
+  -t 'theme={"background":"#0f1117","foreground":"#e6e1f0","cursor":"#FA7040","cursorAccent":"#0f1117"}' \
+  /opt/tutor/launch.sh >/tmp/tutor.log 2>&1 &
+
+# Proactive watch: when the terminal transcript shows a failure, post a one-line nudge (a lab-page banner)
+# offering the Tutor tab. Rate-limited and secret-scrubbed. See /opt/tutor/watch.sh.
+run_service tutor-watch /opt/tutor/watch.sh >/tmp/tutor-watch.log 2>&1 &
+
 # -W writable (interactive); -b serves under /terminal so a fronting router can proxy it on a subpath.
 # Auth/exposure are handled upstream by the per-student router; this is the student's own cluster.
 # The theme is tuned to the Packt palette (orange cursor, ink background) so the terminal matches the
@@ -148,4 +162,4 @@ exec ttyd -p 7681 -W -b /terminal \
   -t 'fontFamily=ui-monospace, "SFMono-Regular", "JetBrains Mono", Menlo, Consolas, "Segoe UI Emoji", monospace' \
   -t cursorStyle=bar \
   -t 'theme={"background":"#0f1117","foreground":"#e6e1f0","cursor":"#FA7040","cursorAccent":"#0f1117","selectionBackground":"#FA704055","black":"#191919","brightBlack":"#4A4A4A","red":"#ff6b6b","green":"#2e9e5b","yellow":"#FFB454","blue":"#6db3f2","magenta":"#b48ead","cyan":"#5fb3b3","white":"#e6e1f0","brightWhite":"#ffffff"}' \
-  bash --rcfile "$HOME/.bashrc"
+  script -q -f -a -c "bash --rcfile $HOME/.bashrc" "$HOME/.session/transcript"

@@ -88,6 +88,10 @@ spec:
           # the truth (e.g. adwc-dev), not a placeholder. Per-cluster value in the fleet; the demo cluster here.
           env:
             - { name: CLUSTER_NAME, value: workshop-cluster }
+            # Backend for the Workshop Tutor (Claude Code on Bedrock). Region + Sonnet 5 inference profile;
+            # auth is the pod's Pod Identity, so no key here. Bedrock model access must be on in the account.
+            - { name: AWS_REGION, value: us-west-2 }
+            - { name: TUTOR_MODEL, value: us.anthropic.claude-sonnet-5 }
           # The student's own AWS keys, mounted as the DEFAULT profile inside the VTT so `aws` works with
           # no flags. Created per-cluster outside git; optional so a cluster without it still runs.
           envFrom:
@@ -98,6 +102,7 @@ spec:
             - secretRef: { name: student-git-creds, optional: true }
           volumeMounts:
             - { name: claude-home, mountPath: /home/student/.claude } # login + conversation history persist here
+            - { name: tutor, mountPath: /run/tutor } # proactive tutor nudge written here; nginx serves it
           readinessProbe:
             tcpSocket: { port: ttyd }
             initialDelaySeconds: 5
@@ -130,6 +135,7 @@ spec:
             - { name: web, mountPath: /usr/share/nginx/html, readOnly: true }
             - { name: conf, mountPath: /etc/nginx/conf.d, readOnly: true }
             - { name: status, mountPath: /run/status, readOnly: true } # serves /api/status
+            - { name: tutor, mountPath: /run/tutor, readOnly: true } # serves /api/tutor-nudge
           readinessProbe:
             httpGet: { path: /healthz, port: http }
             initialDelaySeconds: 3
@@ -169,6 +175,8 @@ spec:
         - name: conf
           configMap: { name: console-conf }
         - name: status
+          emptyDir: {}
+        - name: tutor
           emptyDir: {}
         - name: status-script
           configMap: { name: status-src, defaultMode: 0755 }
