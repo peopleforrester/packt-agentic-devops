@@ -39,6 +39,20 @@ watcher tails the transcript for failures and, rate-limited and secret-scrubbed,
 one-line nudge served at `/api/tutor-nudge`. Design: `prds/7-terminal-capture-ai-help.md`. Verified on
 admin1 and admin2 2026-07-30. Auth stays upstream, so the terminal-auth project must cover `/tutor/` too.
 
+### 6. JupyterLab power tools — DONE
+Added to the Jupyter venv: `jupyter-resource-usage` (live CPU/RAM in the toolbar, useful under the 8Gi
+cap), `jupyterlab-git` (git UI for the GitOps workshop), `jupyterlab_execute_time` (per-cell timing), and
+`ipywidgets`. All enabled and JupyterLab-4.6 compatible. From the recommendations in
+`vtt-enhancements-research-2026-07.md`.
+
+### Tutor proactive nudge — reworked and verified (2026-07-31)
+The proactive watcher now polls real cluster state (crashlooping pods, image-pull errors, Degraded Argo CD
+apps) via the pod ServiceAccount, not the terminal transcript, and only nudges on a failure sustained
+across two polls. Verified end to end on admin1: a real ImagePullBackOff produced an accurate Bedrock
+nudge served at `/api/tutor-nudge` (a umask/permission bug that had it returning 403 to the browser was
+found and fixed in the same pass). The tutor also skips the first-run theme/trust prompts, and the
+instructions panel now has a collapse control on the panel itself.
+
 ## Still open (v2 ideas)
 - **Fleet image distribution.** Mirror the VTT image in-region for 300 clusters: an ECR pull-through
   cache, or a shared Harbor (CNCF) proxy-cache; pin by digest. Avoids GHCR burst latency at scale.
