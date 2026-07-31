@@ -16,6 +16,10 @@
   *,*::before,*::after{box-sizing:border-box}
   html,body{margin:0;height:100%}
   body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;background:var(--cream);color:var(--ink);display:flex;flex-direction:column;height:100vh;overflow:hidden}
+  :root{ /* ACCENTURE FEDERAL SERVICES PALETTE — active override; delete to revert to Packt above. */
+    --accent:#A100FF;--accent-d:#7A00C2;--ink:#0A0A0A;--cream:#F6F4FA;--panel:#ffffff;--lav:#F0E4FF;
+    --line:#e6e0ee;--term:#12101A;--navy:#0A0A0A;
+  }
   header{background:var(--ink);color:#fff;padding:9px 16px;display:flex;align-items:center;gap:12px;flex:0 0 auto;border-bottom:3px solid var(--accent)}
   header .brand{display:flex;align-items:center;gap:9px;font-weight:800;font-size:15px}
   header .brand .em{font-size:18px}
