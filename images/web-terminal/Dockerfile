@@ -107,8 +107,10 @@ RUN curl -LsSf https://astral.sh/uv/install.sh | sh \
 RUN python3 -m venv /home/student/.jupyter-venv \
  && /home/student/.jupyter-venv/bin/pip install --no-cache-dir --upgrade pip \
  && /home/student/.jupyter-venv/bin/pip install --no-cache-dir 'jupyterlab==4.6.*' ipykernel \
+      jupyter-resource-usage jupyterlab-git jupyterlab_execute_time ipywidgets \
  && /home/student/.jupyter-venv/bin/python -m ipykernel install --user --name python3 --display-name 'Python 3 (workshop)' \
- && /home/student/.jupyter-venv/bin/jupyter lab --version
+ && /home/student/.jupyter-venv/bin/jupyter lab --version \
+ && /home/student/.jupyter-venv/bin/jupyter labextension list 2>&1 | grep -Ei 'resource-usage|git|execute.time' || true
 
 # The workshop repo, pre-cloned so a student lands with the materials already present. Public repo, so
 # no credentials are needed at build or for a later `git pull`. entrypoint.sh refreshes it on start.

@@ -15,6 +15,10 @@ readonly MODEL="${TUTOR_MODEL:-us.anthropic.claude-sonnet-5}"
 readonly COOLDOWN="${TUTOR_NUDGE_COOLDOWN:-300}"    # at most one proactive nudge per this many seconds
 readonly POLL="${TUTOR_POLL_INTERVAL:-30}"          # seconds between cluster checks
 
+# The nudge is served to the browser by the nginx sidecar (a different uid), so it must be readable by
+# it. entrypoint.sh leaves umask 077 (from the git-credential write), which would make the nudge 0600 and
+# nginx would 403. The nudge is a one-line hint with no secret, so write it world-readable.
+umask 022
 mkdir -p "${NUDGE_DIR}"
 
 # The real failure signal. Pods stuck in a bad phase/waiting reason, and Argo CD apps whose HEALTH is
@@ -55,4 +59,5 @@ EOF
            --query 'output.message.content[0].text' --output text 2>/dev/null || true)"
   [ -z "${txt}" ] && continue
   printf '{"ts":%s,"nudge":%s}\n' "${now}" "$(printf '%s' "${txt}" | jq -Rs .)" > "${NUDGE}"
+  chmod 0644 "${NUDGE}" 2>/dev/null || true
 done
