@@ -129,6 +129,14 @@ run_service code-server code-server \
   --app-name 'Workshop IDE' \
   "$HOME/workshop" >/tmp/code-server.log 2>&1 &
 
+# Jupyter AI (v3) talks to agent CLIs over ACP rather than calling a model API itself, so it is wired to
+# Bedrock the same way the Workshop Tutor is: the agent it spawns inherits these env vars and therefore
+# authenticates through the pod's EKS Pod Identity with no key. Exported on the Jupyter server process so
+# every ACP persona it launches inherits them. The ACP bridge lives in the student npm prefix.
+export CLAUDE_CODE_USE_BEDROCK=1
+export ANTHROPIC_MODEL="${TUTOR_MODEL:-us.anthropic.claude-sonnet-5}"
+export PATH="$HOME/.npm-global/bin:$PATH"
+
 run_service jupyter "$HOME/.jupyter-venv/bin/jupyter" lab \
   --no-browser \
   --ServerApp.ip=127.0.0.1 --ServerApp.port=8888 \

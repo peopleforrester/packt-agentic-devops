@@ -46,6 +46,10 @@ RUN set -eux; \
     install -m 0755 /tmp/argocd /usr/local/bin/argocd; rm -f /tmp/argocd; \
     curl -fsSL "https://github.com/kubernetes-sigs/kustomize/releases/download/kustomize%2Fv5.7.1/kustomize_v5.7.1_linux_${GOARCH}.tar.gz" \
       | tar -xz -C /usr/local/bin kustomize; \
+    curl -fsSL https://deb.nodesource.com/setup_22.x | bash - >/dev/null 2>&1; \
+    apt-get install -y --no-install-recommends nodejs >/dev/null; \
+    rm -rf /var/lib/apt/lists/*; \
+    node --version; npm --version; \
     kubectl version --client; aws --version; helm version --short; eksctl version; yq --version; \
     starship --version; argocd version --client --short 2>/dev/null || argocd version --client; kustomize version
 
@@ -102,15 +106,28 @@ RUN curl -LsSf https://astral.sh/uv/install.sh | sh \
 
 # JupyterLab (single-user) in a dedicated, student-owned venv. Student-owned so a notebook `%pip install`
 # works, and separate from the phase-test uv environments so it never collides with them. Served under
-# /jupyter/ by the console nginx; auth/exposure are upstream. Pinned to the 4.6 line (JupyterLab 4.6 /
-# Notebook 7.6, current as of 2026-07); re-verify against the Jupyter releases before a rebuild.
+# /jupyter/ by the console nginx; auth/exposure are upstream.
+#
+# Pinned to the 4.5 line ON PURPOSE, not 4.6. JupyterLab 4.6 ships @jupyter/ydoc 4.x, and
+# jupyter-collaboration's frontend requires ydoc <4, so its extension refuses to load on 4.6
+# ("not compatible with the current JupyterLab"). 4.5 is the newest line where collaboration and
+# jupyter-ai both load. Re-check whether collaboration supports 4.6 before moving this pin up.
 RUN python3 -m venv /home/student/.jupyter-venv \
  && /home/student/.jupyter-venv/bin/pip install --no-cache-dir --upgrade pip \
- && /home/student/.jupyter-venv/bin/pip install --no-cache-dir 'jupyterlab==4.6.*' ipykernel \
+ && /home/student/.jupyter-venv/bin/pip install --no-cache-dir 'jupyterlab==4.5.*' ipykernel \
       jupyter-resource-usage jupyterlab-git jupyterlab_execute_time ipywidgets \
+      jupyter-collaboration jupyter-ai boto3 \
  && /home/student/.jupyter-venv/bin/python -m ipykernel install --user --name python3 --display-name 'Python 3 (workshop)' \
  && /home/student/.jupyter-venv/bin/jupyter lab --version \
- && /home/student/.jupyter-venv/bin/jupyter labextension list 2>&1 | grep -Ei 'resource-usage|git|execute.time' || true
+ && /home/student/.jupyter-venv/bin/jupyter labextension list 2>&1 | grep -Ei 'resource-usage|git|execute.time|collaboration|jupyter.ai|jupyter_ai' || true
+
+# The ACP bridge Jupyter AI's Claude persona spawns. Without it the notebook's AI chat has no working
+# agent. It is a node CLI, installed into the student's own prefix (no sudo at runtime). The agent it
+# starts inherits this container's Bedrock env (see entrypoint.sh), so the notebook AI runs on Bedrock
+# through Pod Identity with no key, exactly like the Workshop Tutor.
+RUN npm config set prefix /home/student/.npm-global \
+ && npm install -g --silent @zed-industries/claude-code-acp \
+ && /home/student/.npm-global/bin/claude-code-acp --version 2>/dev/null || true
 
 # The workshop repo, pre-cloned so a student lands with the materials already present. Public repo, so
 # no credentials are needed at build or for a later `git pull`. entrypoint.sh refreshes it on start.
