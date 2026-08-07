@@ -140,5 +140,3 @@ Michael Forrester helps enterprises run agentic AI in production without getting
 - **Format:** Live virtual, Packt platform
 - **Recording:** yes, distributed to attendees
 - **Companion repo:** `agentic-devops-with-claude`, open-source under speaker's GitHub
-- **Mailing address for contract:** <redacted>
-- **Contracting entity (optional):** Performant Professionals, LLC, State of Georgia. Person-to-person also acceptable.

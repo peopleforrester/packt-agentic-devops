@@ -7,7 +7,7 @@
 **An AI-native Internal Developer Platform, built live by an agent, on Amazon EKS.**
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-FA7040.svg)](LICENSE)
-[![Components](https://img.shields.io/badge/components-71%20pinned-2e9e5b.svg)](components.yaml)
+[![Components](https://img.shields.io/badge/components-30%20pinned-2e9e5b.svg)](components.yaml)
 [![GitOps](https://img.shields.io/badge/GitOps-ArgoCD-blue.svg)](solution/platform/0-bootstrap)
 [![Fleet](https://img.shields.io/badge/fleet-250%20clusters%20validated-blue.svg)](docs/fleet/08-progressive-rollout-run.md)
 
@@ -28,7 +28,7 @@ platform themselves from the same spec the presenter used. What that took to sup
 | **250 single-tenant clusters** | provisioned and torn down cleanly across five AWS accounts, roughly 2h45m at 40-wide |
 | **39/39 ArgoCD Applications** | Synced and Healthy from a cold provision, zero manual steps |
 | **~7 minutes** | bare cluster to a converged foundation plane |
-| **71 components** | every one version-pinned in [`components.yaml`](components.yaml) before the event |
+| **30 components** | every one version-pinned in [`components.yaml`](components.yaml) and frozen before the event |
 | **Real inference** | vLLM serving an in-cluster model, no external API spend, no credentials to leak |
 
 The defects found during the live run were not quietly patched out. They are written down in
