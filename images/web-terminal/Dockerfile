@@ -63,7 +63,7 @@ RUN set -eux; \
       arm64) CS=arm64 ;; \
       *) echo "unsupported arch $arch" >&2; exit 1 ;; \
     esac; \
-    CS_VER=4.105.1; \
+    CS_VER=4.133.0; \
     curl -fsSL -o /tmp/code-server.tgz \
       "https://github.com/coder/code-server/releases/download/v${CS_VER}/code-server-${CS_VER}-linux-${CS}.tar.gz"; \
     mkdir -p /usr/lib/code-server; \
@@ -108,15 +108,27 @@ RUN curl -LsSf https://astral.sh/uv/install.sh | sh \
 # works, and separate from the phase-test uv environments so it never collides with them. Served under
 # /jupyter/ by the console nginx; auth/exposure are upstream.
 #
-# Pinned to the 4.5 line ON PURPOSE, not 4.6. JupyterLab 4.6 ships @jupyter/ydoc 4.x, and
-# jupyter-collaboration's frontend requires ydoc <4, so its extension refuses to load on 4.6
-# ("not compatible with the current JupyterLab"). 4.5 is the newest line where collaboration and
-# jupyter-ai both load. Re-check whether collaboration supports 4.6 before moving this pin up.
+# Pinned to the 4.6 line. This was 4.5 for a real reason that has since REVERSED, so read this before
+# moving it either way.
+#
+# Until roughly July 2026, JupyterLab 4.6 shipped @jupyter/ydoc 4.x while jupyter-collaboration
+# required ydoc <4, so the collaboration extension refused to load on 4.6 and 4.5 was the newest
+# working line. As of 2026-08-24 jupyter-collaboration 5.0.1 declares jupyterlab >=4.6.0,<5.0.0. The
+# constraint now points the other way: holding 4.5 resolves collaboration back to 4.4.2 and keeps both
+# packages a generation behind rather than protecting anything.
+#
+# Verified by resolving the FULL set below, not a subset, because jupyter-ai is the tighter constraint
+# here: 4.6.3 takes jupyter-ai 3.1.3, jupyter-collaboration 5.0.1 and jupyter-server-ydoc 3.0.1 with
+# every extension loading. The explicit collaboration floor is belt and braces, so a resolver can never
+# quietly satisfy this by dropping back to the 4.4 line.
+#
+# The lesson worth keeping: a version constraint is a dated observation, not a standing fact. This one
+# inverted in about four weeks. Re-resolve before trusting either direction.
 RUN python3 -m venv /home/student/.jupyter-venv \
  && /home/student/.jupyter-venv/bin/pip install --no-cache-dir --upgrade pip \
- && /home/student/.jupyter-venv/bin/pip install --no-cache-dir 'jupyterlab==4.5.*' ipykernel \
+ && /home/student/.jupyter-venv/bin/pip install --no-cache-dir 'jupyterlab==4.6.*' ipykernel \
       jupyter-resource-usage jupyterlab-git jupyterlab_execute_time ipywidgets \
-      jupyter-collaboration jupyter-ai boto3 \
+      'jupyter-collaboration>=5.0.1' jupyter-ai boto3 \
  && /home/student/.jupyter-venv/bin/python -m ipykernel install --user --name python3 --display-name 'Python 3 (workshop)' \
  && /home/student/.jupyter-venv/bin/jupyter lab --version \
  && /home/student/.jupyter-venv/bin/jupyter labextension list 2>&1 | grep -Ei 'resource-usage|git|execute.time|collaboration|jupyter.ai|jupyter_ai' || true

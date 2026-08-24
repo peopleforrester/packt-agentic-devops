@@ -20,7 +20,7 @@ surviving a browser refresh was tried and removed; a refresh now starts a fresh 
 `scripts/provision/vtt/README.md`.
 
 ### 4. VS Code and Jupyter tabs — DONE
-The "+" menu's **VS Code** and **Jupyter** items are live. code-server (4.105.1) and single-user JupyterLab
+The "+" menu's **VS Code** and **Jupyter** items are live. code-server (4.133.0) and single-user JupyterLab
 (4.6) run in the web-terminal container beside ttyd, sharing `/home/student` and the Gitea-wired
 `~/workshop`, so a file edited in any tab shows up in the others. nginx proxies `/ide/` (prefix-stripped)
 and `/jupyter/` (base_url-prefixed) with the same websocket upgrade ttyd uses; both are backgrounded restart
