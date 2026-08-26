@@ -316,3 +316,44 @@ def _find_repositories(obj):
     elif isinstance(obj, list):
         for v in obj:
             yield from _find_repositories(v)
+
+
+WEB_TERMINAL_DOCKERFILE = os.path.join(REPO_ROOT, "images", "web-terminal", "Dockerfile")
+
+
+def test_jupyterlab_pin_is_not_below_the_collaboration_floor():
+    # This pin already inverted once and shipped backwards for about four weeks.
+    #
+    # Until roughly July 2026, JupyterLab 4.6 shipped @jupyter/ydoc 4.x while jupyter-collaboration
+    # required ydoc <4, so collaboration's extension refused to load on 4.6 and 4.5 was correct.
+    # jupyter-collaboration 5.0.1 then began declaring jupyterlab >=4.6.0,<5.0.0, which reversed it:
+    # holding 4.5 resolves collaboration back to 4.4.2 and keeps both a generation behind.
+    #
+    # The failure mode is what makes this worth a static test. It is NOT a resolver conflict, so a
+    # successful `pip install` proves nothing. The extension installs and then refuses to load, and
+    # the only place that shows up is `jupyter labextension list` or a notebook tab missing a feature
+    # nobody opens during a rehearsal.
+    body = _read(WEB_TERMINAL_DOCKERFILE)
+    m = re.search(r"jupyterlab==(\d+)\.(\d+)\.", body)
+    assert m, "the JupyterLab pin must stay explicit; an unpinned lab drifts between rehearsal and delivery"
+    major, minor = int(m.group(1)), int(m.group(2))
+    assert (major, minor) >= (4, 6), (
+        f"jupyterlab is pinned to {major}.{minor}, below the >=4.6.0 floor jupyter-collaboration 5.x "
+        "declares. That silently resolves collaboration back to the 4.4 line."
+    )
+    # Belt and braces: the floor must be stated, so a resolver can never satisfy the requirement by
+    # dropping collaboration back instead of keeping the lab forward.
+    assert re.search(r"jupyter-collaboration>=5", body), (
+        "pin an explicit jupyter-collaboration floor alongside the lab version"
+    )
+
+
+def test_browser_ide_and_notebook_versions_stay_pinned():
+    # Floating either of these means the IDE or the notebook can change behaviour between the
+    # rehearsal and the delivery, which is the one thing a live workshop cannot absorb on the day.
+    body = _read(WEB_TERMINAL_DOCKERFILE)
+    assert re.search(r"CS_VER=\d+\.\d+\.\d+", body), "code-server must be pinned to an exact version"
+    assert "code-server --version" in body, (
+        "the build must assert the installed code-server version, so a bad tarball fails the build "
+        "rather than the workshop"
+    )
