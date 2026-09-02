@@ -1,8 +1,21 @@
 # versions.lock.md
 
-Pinned chart and image versions for the platform. Resolved June 15, 2026. Re-resolve once the week of July 13, 2026, then freeze. No version changes after the freeze.
+Pinned chart and image versions for the platform. Originally resolved 15 June 2026 and frozen for
+the 23 July 2026 delivery.
 
-Full sources and gotchas are in `internal/research-findings-june-2026.md`. This file is the quick lookup; `components.yaml` is the machine-readable source of truth.
+**The freeze applied to the event, not to this repository.** A four-hour live build wants versions
+that cannot move under it; a repo people read and run for years wants the opposite. Those are
+different goals and they now have different homes:
+
+| Where | Policy |
+|---|---|
+| Tag [`v1.0.0`](../../releases/tag/v1.0.0) | The frozen state. Reproduces the build exactly as delivered. Never re-pinned. |
+| `main` | Maintained. Versions move on the cadence in [`docs/version-maintenance.md`](docs/version-maintenance.md). |
+
+So if you want what was on screen, check out the tag. If you want a platform that installs against a
+current cluster, use `main` and expect these numbers to change.
+
+`components.yaml` is the machine-readable source of truth; this file is the quick lookup.
 
 | Component | App version | Chart | Chart version | Chart repo |
 |---|---|---|---|---|
@@ -60,7 +73,7 @@ Full sources and gotchas are in `internal/research-findings-june-2026.md`. This 
 | MCP demo server | mcp/everything | Streamable HTTP reference server for the agent-calls-MCP beat; mirror to GHCR. |
 | KMCP | v0.3.0 | kagent MCP server platform; bundled with kagent 0.7+ (kmcp.enabled). MCPServer is v1alpha1, RemoteMCPServer is v1alpha2. |
 | A2A | v1.0.0 | Linux Foundation Agent2Agent project; agentgateway mediates via an a2a route policy. |
-| Claude Code | v2.1.183 | The presenter's build agent. Governed via managed-settings; audit hook ships tool invocations to Loki (B17). |
+| Claude Code | v2.1.183 | The presenter's build agent. Governed via managed-settings; audit hook ships tool invocations to Loki. |
 
 ## Not used (and why)
 
