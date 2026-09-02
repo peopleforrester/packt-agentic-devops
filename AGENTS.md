@@ -1,6 +1,6 @@
 # CLAUDE.md
 
-Project memory for the Agentic DevOps with Claude workshop repo. This is the platform Claude Code builds live on Amazon EKS during the Packt workshop on July 23, 2026. Read `internal/build-spec.md` for the full build spec and `internal/research-findings-june-2026.md` for verified versions.
+Project memory for the Agentic DevOps with Claude workshop repo. This is the platform Claude Code builds live on Amazon EKS during the Packt workshop on July 23, 2026. Read `docs/reference/build-spec.md` for the full build spec and `docs/reference/research-findings-june-2026.md` for verified versions.
 
 ## Fleet provisioning and validation (read before touching provisioning or platform manifests)
 
@@ -124,10 +124,10 @@ A GitOps-driven, AI-native Internal Developer Platform. ArgoCD reconciles everyt
 ## Platform facts that are easy to get wrong (verified June 2026)
 
 - ingress-nginx is end of life and MetalLB is decorative on EKS. The ingress and LB path is the AWS Load Balancer Controller. Storage is the AWS EBS CSI driver.
-- Workload identity is EKS Pod Identity, not IRSA. Both the AWS Load Balancer Controller and the EBS CSI driver use it; the cluster sets `enable_irsa = false` so no OIDC provider is created. Pod Identity is the AWS-suggested default over IRSA as of July 2026 and avoids 300 per-cluster OIDC trust policies. The EBS CSI association is wired through the add-on's `pod_identity_association` (EKS owns the ordering); the LB controller uses a standalone association. This is a locked decision (D16). Read `docs/architecture.md` and `internal/decisions.md` before changing it, and record a superseding entry; do not silently revert to IRSA.
+- Workload identity is EKS Pod Identity, not IRSA. Both the AWS Load Balancer Controller and the EBS CSI driver use it; the cluster sets `enable_irsa = false` so no OIDC provider is created. Pod Identity is the AWS-suggested default over IRSA as of July 2026 and avoids 300 per-cluster OIDC trust policies. The EBS CSI association is wired through the add-on's `pod_identity_association` (EKS owns the ordering); the LB controller uses a standalone association. This is a locked decision (D16). Read `docs/architecture.md` and `docs/reference/decisions.md` before changing it, and record a superseding entry; do not silently revert to IRSA.
 - The kagent Agent CRD is `kagent.dev/v1alpha2`. The field is `systemMessage`, nested under `spec.type` and `spec.declarative`. Agents run on Google ADK. Do not write v1alpha1 or `systemPrompt`.
 - agentgateway is a Linux Foundation (Agentic AI Foundation) project, not CNCF. It is a sibling of kgateway, not its data plane.
-- The demo agent on attendee clusters routes to the in-cluster vLLM via an OpenAI-compatible endpoint. No external API spend, no external credentials. See `internal/build-spec.md` section 6.7.
+- The demo agent on attendee clusters routes to the in-cluster vLLM via an OpenAI-compatible endpoint. No external API spend, no external credentials. See `docs/reference/build-spec.md` section 6.7.
 - OpenTelemetry GenAI semantic conventions are Development grade. Present `gen_ai.*` attributes as current but unstable.
 
 ## Writing standards for any doc generated here

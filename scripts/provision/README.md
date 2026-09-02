@@ -9,7 +9,7 @@ event lifecycle in order.
 |---|---|
 | `../vendor-charts.sh` | Vendors every Helm chart into `charts-vendor/`. Copy, run once. |
 | `../mirror-images.sh` | **Copies** every container image the platform pulls into `ghcr.io/$GHCR_ORG`. Existing images, re-hosted so 300 clusters do not hit Docker Hub limits. |
-| `../../internal/images/backstage/build-and-push.sh` | **Builds** the one custom image that has no upstream (the Backstage app) and pushes it. |
+| Backstage image | **Prebuilt.** The one custom image with no upstream. Already published to `ghcr.io/$GHCR_ORG`, so there is nothing to build here. Its source is a standard Backstage scaffold and is not vendored into this repo, because the app tree with its dependencies is ~1.9 GB. |
 | `lab-vpc/` | The shared VPC (one `/16`, `/18` subnets, one NAT). One apply **per account**. |
 | `cluster/` | One student cluster (the validated t3.2xlarge shape). Not run directly. |
 | `fleet/fleet.sh` | The driver. Brings each account TO a target cluster count and chains every cluster to a working HTTPS terminal. |
@@ -41,8 +41,7 @@ event lifecycle in order.
 ```bash
 ./vendor-charts.sh                                  # 1. vendor charts
 GHCR_ORG=peopleforrester ../mirror-images.sh        # 2. copy images to GHCR
-GHCR_ORG=peopleforrester TAG=2026-07-23 \
-  ../../internal/images/backstage/build-and-push.sh          # 3. build + push Backstage
+# 3. Backstage image: nothing to build, it is already on GHCR (see the table above)
 # 4. (MCP "everything" image: build + push, see platform/2-ai-plane/mcp-server)
 ```
 

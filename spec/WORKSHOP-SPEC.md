@@ -2,7 +2,7 @@
 
 This is the spec your agentic CLI ingests during the workshop. It drives the build of an AI-native Internal Developer Platform on your cluster, phase by phase. The presenter builds the same thing in parallel and presents at each stop.
 
-This is different from `internal/build-spec.md`, which is the internal spec for the team building the workshop. This file is for you, the attendee, and your agent.
+This is different from [`docs/reference/build-spec.md`](../docs/reference/build-spec.md), which is the fuller spec the build team worked from. That one is published too, if you want the reasoning behind a phase; this file is the one you and your agent actually run.
 
 ## What you are building
 

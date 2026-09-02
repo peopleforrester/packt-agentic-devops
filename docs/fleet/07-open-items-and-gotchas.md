@@ -101,7 +101,7 @@ should, which is why the annotations have a test.
 
 ## The scoping finding, in one paragraph
 
-Read `internal/research-student-aws-scope-july-2026.md` for the full version with sources.
+Read [`../reference/research-student-aws-scope-july-2026.md`](../reference/research-student-aws-scope-july-2026.md) for the full version with sources.
 Short form: Pod Identity resolves by (namespace, ServiceAccount) and does not check which
 workload is using it, so a cluster-admin student can run a pod as the
 `aws-load-balancer-controller` ServiceAccount and get that role. Proven on adwc-dev. The

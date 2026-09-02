@@ -376,7 +376,7 @@ source," grep for every other instance of the class.
 
 `backstage` stays Degraded for a reason no manifest fixes: the custom image
 `ghcr.io/peopleforrester/backstage:2026-07-23` crashes with
-`Error: Cannot find module '/app/packages/backend'`. The image build (`internal/images/backstage/
+`Error: Cannot find module '/app/packages/backend'`. The image build (the Backstage image tooling, not vendored here; see scripts/provision/README.md) (`
 build-and-push.sh`) produced an image with no backend package, so the pod cannot start. The
 PostgreSQL secret fix above was necessary but not sufficient. Backstage is the Module 1 finale
 (B04, a presenter action, cuttable in the run-of-show), so this does not block P01–P03, but the

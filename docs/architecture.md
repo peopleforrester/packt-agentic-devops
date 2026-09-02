@@ -30,7 +30,7 @@ ArgoCD shards by cluster, not by app. With this component count on one cluster, 
 
 ## Demo agent model routing
 
-Attendee clusters route the kagent demo agent to the in-cluster vLLM over an OpenAI-compatible endpoint: no external API spend, no external credentials. The presenter cluster shows one real cloud route (Bedrock via Pod Identity, or Anthropic behind a LiteLLM proxy), scoped and capped. See `../internal/build-spec.md` section 6.7.
+Attendee clusters route the kagent demo agent to the in-cluster vLLM over an OpenAI-compatible endpoint: no external API spend, no external credentials. The presenter cluster shows one real cloud route (Bedrock via Pod Identity, or Anthropic behind a LiteLLM proxy), scoped and capped. See `reference/build-spec.md` section 6.7.
 
 ## Observability and the AI plane
 
