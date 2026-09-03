@@ -1,5 +1,17 @@
 # Generated route. Traffic to the agent goes through agentgateway, which applies mTLS,
 # audit logging, and the LLM Guard guardrail before it reaches the agent.
+#
+# THE BACKEND IS THE SHARED kagent CONTROLLER, NOT A PER-AGENT SERVICE.
+#
+# An earlier version routed to a Service named after the agent, on port 80. Nothing creates
+# that Service. The kagent Agent CRD (kagent.dev/v1alpha2) reconciles an agent workload; it
+# does not establish a same-named Service as a portable contract, so every generated route
+# pointed at a backend that never existed and resolved to a 503 with no obvious cause.
+#
+# Verified against the vendored chart (charts-vendor/kagent-0.9.9.tgz): the controller
+# Service is `{{ .Release.Name }}-controller`, which is `kagent-controller` for this
+# release, and controller.service.ports is {port: 8083, targetPort: 8083}. Re-check both
+# when the kagent pin moves; the chart renames Services on minor releases.
 apiVersion: gateway.networking.k8s.io/v1
 kind: HTTPRoute
 metadata:
@@ -17,5 +29,5 @@ spec:
             type: PathPrefix
             value: /agents/${{ values.name }}
       backendRefs:
-        - name: ${{ values.name }}
-          port: 80
+        - name: kagent-controller
+          port: 8083

@@ -1,0 +1,37 @@
+# ABOUTME: The agentgateway data path: the Gateway itself, the vLLM backend and route, and the
+# ABOUTME: prompt-guard policy. Separate from the agentgateway Application, which installs only the controller.
+#
+# Sync wave 3, one after the agentgateway controller (wave 2). A Gateway applied before its
+# controller exists is accepted by the API server and then sits unprogrammed, which reads as a
+# broken Gateway rather than an ordering problem.
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: agentgateway-runtime
+  namespace: argocd
+  annotations:
+    argocd.argoproj.io/sync-wave: "3"
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  project: default
+  source:
+    repoURL: http://gitea-http.gitea.svc:3000/platform/packt-agentic-devops.git
+    targetRevision: main
+    path: platform/2-ai-plane/agentgateway-runtime/manifests
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: agentgateway
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    retry:
+      limit: 5
+      backoff:
+        duration: 10s
+        factor: 2
+        maxDuration: 3m
+    syncOptions:
+      - CreateNamespace=true
+      - ServerSideApply=true

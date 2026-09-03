@@ -1,0 +1,45 @@
+# ABOUTME: The Gateway agentgateway actually serves traffic on. Installing the controller does
+# ABOUTME: not create one, so without this the AI plane has a control plane and no data path.
+#
+# The agentgateway Application installs the controller only. A controller with no Gateway
+# reconciles nothing, and the symptom is subtle: every Application is Synced and Healthy, and
+# every route sits Accepted=False with "no parent found", which reads as a route problem rather
+# than a missing Gateway.
+#
+# LISTENER NAMESPACE POLICY IS `Selector`, NOT `Same`.
+#
+# `Same` restricts attachment to routes in the Gateway's own namespace (agentgateway). The
+# generated agent routes live in `kagent`, so under `Same` every route the golden path produces
+# is silently refused: the HTTPRoute exists, the Gateway exists, and nothing joins them. The
+# selector opts a namespace in explicitly by label, which is narrower than `All` and auditable:
+# a namespace can only attach if someone labelled it.
+apiVersion: gateway.networking.k8s.io/v1
+kind: Gateway
+metadata:
+  name: agentgateway
+  namespace: agentgateway
+  labels:
+    app.kubernetes.io/part-of: agentic-platform
+spec:
+  gatewayClassName: agentgateway
+  listeners:
+    - name: http
+      protocol: HTTP
+      port: 8080
+      allowedRoutes:
+        namespaces:
+          from: Selector
+          selector:
+            matchLabels:
+              agentic-platform.io/attach-agentgateway: "true"
+---
+# The label that opts kagent in. Applied here rather than on the namespace manifest so the
+# attachment policy and the thing it permits are read together; a reader who finds the selector
+# above should not have to search for what satisfies it.
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: kagent
+  labels:
+    agentic-platform.io/attach-agentgateway: "true"
+    app.kubernetes.io/part-of: agentic-platform
