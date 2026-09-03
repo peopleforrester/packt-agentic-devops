@@ -46,6 +46,23 @@ Not referenced by the book, present here, and worth citing:
 | `scripts/verify_audit_event.py` | **Added.** Counts audit lines and how many are attributable |
 | `scripts/requirements-trace.txt` | **Added.** One pinned dependency |
 
+## Fixtures
+
+The book names `fixtures/missing-guardrail.yaml`, `fixtures/injection-fixture.yaml`,
+`tests/fixtures/agent-missing-owner.yaml` and `tests/fixtures/agent-known-good.yaml`. This repo puts
+fixtures **beside the component they exercise**, as a sibling of `manifests/`, because each
+Application syncs `manifests/` only and a fixture that exists to be rejected must never be
+reconciled.
+
+| Book says | Repo file |
+|---|---|
+| `fixtures/missing-guardrail.yaml`, `tests/fixtures/agent-missing-owner.yaml` | `solution/platform/2-ai-plane/ai-policies/fixtures/violating-agent.yaml` |
+| `tests/fixtures/agent-known-good.yaml` | `solution/platform/2-ai-plane/ai-policies/fixtures/known-good-agent.yaml` |
+| `fixtures/injection-fixture.yaml` | `solution/platform/2-ai-plane/llm-guard/fixtures/injection-fixture.yaml` |
+
+Three more exist that the book does not cite: `violating-endpoint.yaml`, `violating-otel.yaml`,
+`violating-image.yaml`, one per AI policy.
+
 Shared plumbing lives in `scripts/_cluster.py`; the pure logic is covered by `scripts/test_probes.py`,
 which needs no cluster.
 

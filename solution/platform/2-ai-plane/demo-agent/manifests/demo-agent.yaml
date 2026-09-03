@@ -45,6 +45,11 @@ metadata:
   annotations:
     # Satisfies ai-require-llm-guard-reference. agentgateway applies the guardrail.
     agentic-platform.io/llm-guard-policy: default-injection-scan
+    # Satisfies ai-require-otel-annotations, and it was missing. The generated agents from the
+    # golden path carry it, this one did not, so the reference agent violated a policy the
+    # platform enforces on the agents readers create. test_generated_agents_are_governed
+    # iterates every Agent in the namespace, so it failed here too.
+    instrumentation.opentelemetry.io/inject-python: "true"
 spec:
   type: Declarative
   declarative:
@@ -53,3 +58,27 @@ spec:
       You are the platform helper for an agentic Internal Developer Platform built on
       Kubernetes. Answer questions about the platform's components and golden paths.
       Keep answers short and concrete. If you do not know, say so.
+    # Tool binding. Without this the agent has a model and no tools, which demonstrates nothing
+    # about tool authorization: the interesting property of an agent platform is not that an agent
+    # can call a tool, it is that you decided which tools and which need a human first.
+    #
+    # Schema verified against charts-vendor/kagent-crds-0.9.9.tgz. `tools` is an array under
+    # spec.declarative, each entry is discriminated by `type` (McpServer | Agent), and a CEL rule
+    # on the CRD enforces that every requireApproval entry also appears in toolNames. Listing a
+    # tool for approval that is not allow-listed is rejected by the API server, not ignored.
+    tools:
+      - type: McpServer
+        mcpServer:
+          apiGroup: kagent.dev
+          kind: RemoteMCPServer
+          name: everything-through-gateway
+          # Allow-list, not a filter. The `everything` reference server exposes far more than
+          # these two; naming them is the authorization decision.
+          toolNames:
+            - echo
+            - add
+          # `add` mutates nothing, but it stands in for the class of tool that should pause for a
+          # human. Requiring approval on the harmless one is how the mechanism gets demonstrated
+          # without the demo needing a dangerous tool to be convincing.
+          requireApproval:
+            - add
