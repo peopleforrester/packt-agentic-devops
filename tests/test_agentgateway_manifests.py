@@ -136,8 +136,14 @@ def test_the_selector_has_something_that_satisfies_it():
 
 def test_prompt_guard_fails_closed():
     # A guardrail that fails open is one an attacker only has to knock over.
-    policies = [d for _f, d in _manifest_docs() if d["kind"] == "AgentgatewayPolicy"]
-    assert policies, "no AgentgatewayPolicy found"
+    # Scoped to policies that carry a prompt guard. An AgentgatewayPolicy may instead configure
+    # access logging, tracing or TLS parameters, and those legitimately have no guard block.
+    policies = [
+        d for _f, d in _manifest_docs()
+        if d["kind"] == "AgentgatewayPolicy"
+        and "promptGuard" in (d["spec"].get("backend", {}).get("ai", {}) or {})
+    ]
+    assert policies, "no prompt-guard AgentgatewayPolicy found"
     for policy in policies:
         guard = policy["spec"]["backend"]["ai"]["promptGuard"]
         for side in ("request", "response"):
@@ -315,4 +321,73 @@ def test_generated_applications_use_the_scoped_project():
     assert project != "default", (
         "generated Applications target the `default` project, which permits any repo, any "
         "namespace and any resource kind"
+    )
+
+
+def test_audit_logging_is_actually_configured():
+    """The claim that agentgateway applies audit logging was made in reader-facing text long before
+    anything configured it. The chart has no audit value key and no runtime policy set one, so the
+    statement was simply false. This asserts the configuration exists, so the claim and the
+    behaviour cannot drift apart again.
+    """
+    policies = [
+        d for _f, d in _manifest_docs()
+        if d["kind"] == "AgentgatewayPolicy"
+        and (d["spec"].get("frontend", {}) or {}).get("accessLog")
+    ]
+    assert policies, (
+        "no AgentgatewayPolicy configures frontend.accessLog. Reader-facing text says agent "
+        "traffic is audited; without this it is not."
+    )
+    for policy in policies:
+        otlp = policy["spec"]["frontend"]["accessLog"].get("otlp")
+        assert otlp, f"{policy['metadata']['name']} logs nowhere; accessLog needs an otlp sink"
+        assert otlp.get("backendRef", {}).get("name"), "otlp requires a backendRef name"
+
+
+def test_no_manifest_claims_mtls():
+    """mTLS is not implementable on the pinned Gateway API, so nothing here may claim it is applied.
+
+    A comment asserting a control that does not exist is worse than a missing control, because a
+    reader who finds it stops looking. Gateway API v1.5.1 standard exposes only certificateRefs,
+    mode and options on a listener; frontendValidation, which carries AllowValidOnly, is
+    experimental-channel only.
+    """
+    # A file may opt out by carrying this marker, which is how a document that DISCUSSES the
+    # absence of mTLS avoids tripping a test that greps for the word. The marker is deliberately
+    # explicit: a new file has to add it on purpose, and reviewers can see every exemption by
+    # grepping for the marker itself. A path allow-list would drift silently as files move.
+    EXEMPT_MARKER = "mtls-claim-exempt"
+
+    offenders = []
+    roots = [
+        os.path.join(REPO_ROOT, "solution", "platform"),
+        os.path.join(REPO_ROOT, "spec"),
+        os.path.join(REPO_ROOT, "prompts"),
+    ]
+    for root in roots:
+        for path in glob.glob(os.path.join(root, "**", "*"), recursive=True):
+            if not os.path.isfile(path) or not path.endswith((".yaml", ".md")):
+                continue
+            lines = open(path, errors="replace").readlines()
+            if any(EXEMPT_MARKER in line for line in lines):
+                continue
+            for lineno, line in enumerate(lines, 1):
+                if "mtls" not in line.lower():
+                    continue
+                # A line ABOUT the absence of mTLS is what we want to keep, and the negation often
+                # sits a line or two away ("an earlier draft claimed ... those keys do not exist").
+                # So judge on a small window, not the single line.
+                window = " ".join(lines[max(0, lineno - 3):lineno + 2]).lower()
+                disclaimers = (
+                    "not configured", "not implementable", "not available", "not expressible",
+                    "no mtls", "cannot", "does not exist", "do not exist", "absent",
+                    "earlier draft", "deliberately not", "is not claimed", "only the guardrail",
+                )
+                if any(w in window for w in disclaimers):
+                    continue
+                offenders.append(f"{os.path.relpath(path, REPO_ROOT)}:{lineno}: {line.strip()[:90]}")
+    assert not offenders, (
+        "these assert mTLS is applied, but it is not configured and cannot be on the pinned "
+        "Gateway API:\n  " + "\n  ".join(offenders)
     )

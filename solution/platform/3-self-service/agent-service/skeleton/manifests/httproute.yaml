@@ -1,5 +1,9 @@
-# Generated route. Traffic to the agent goes through agentgateway, which applies mTLS,
-# audit logging, and the LLM Guard guardrail before it reaches the agent.
+# Generated route. Traffic to the agent goes through agentgateway, which applies the LLM Guard
+# guardrail and an audit access-log record before it reaches the agent.
+#
+# Client-certificate mTLS is deliberately NOT claimed here. It is not configured, and it is not
+# expressible on the pinned Gateway API: v1.5.1's standard channel exposes only certificateRefs,
+# mode and options on a listener, and frontendValidation is experimental-channel only.
 #
 # THE BACKEND IS THE SHARED kagent CONTROLLER, NOT A PER-AGENT SERVICE.
 #

@@ -35,9 +35,32 @@ lives under `spec.backend.ai` and its `request`/`response` are arrays; and `fail
 `FailClosed`/`FailOpen`, not `Deny`/`Allow`. `tests/test_agentgateway_manifests.py` runs that
 validation without a cluster, so the next schema change fails a test rather than a sync.
 
-## Not here: mTLS
+<!-- mtls-claim-exempt: this section documents the ABSENCE of mTLS, so it names the word
+     without asserting the control. test_no_manifest_claims_mtls skips files carrying this
+     marker. Do not add it to a file that actually claims mTLS is applied. -->
 
-Client-certificate validation is **not** implementable on the pinned Gateway API. v1.5.1's standard
-channel exposes only `certificateRefs`, `mode` and `options` on a listener; `frontendValidation`,
-which carries `AllowValidOnly`, is experimental-channel only. See the tracking issue rather than
-assuming it was overlooked.
+## mTLS: the claim was dropped, not deferred
+
+Client-certificate validation is not configured here, and reader-facing text no longer says it is.
+
+The reason is that it cannot be configured on the pinned Gateway API. v1.5.1's standard channel
+exposes only `certificateRefs`, `mode` and `options` on a listener; `frontendValidation`, which
+carries `AllowValidOnly`, ships in the experimental channel. The `AgentgatewayPolicy` route that
+looks like an alternative is not one: its `spec.frontend.tls` carries TLS *parameters* (protocol
+versions, cipher suites), not client-certificate verification.
+
+Nine files previously stated that agentgateway "applies mTLS, audit logging, and the LLM Guard
+guardrail". One of them was a prompt instructing the agent to *confirm mTLS is on by default*,
+which would have had it assert something false out loud. A comment describing a control that does
+not exist is worse than a missing control, because a reader who finds it stops looking.
+
+`test_no_manifest_claims_mtls` fails the build if the claim comes back.
+
+## Audit: the claim was made true
+
+The same sentence claimed audit logging, and that was not configured either. Unlike mTLS it is
+expressible on the pinned CRD, and it is the half the governance story rests on: a guardrail tells
+you a bad prompt was refused, the audit record tells you who asked and when. So `audit-policy.yaml`
+configures `frontend.accessLog` to the OTel collector the observability plane already runs, and
+`test_audit_logging_is_actually_configured` keeps the claim and the configuration from drifting
+apart again.

@@ -113,7 +113,7 @@ metadata:
     policies.kyverno.io/severity: high
     policies.kyverno.io/description: >-
       Agent-namespace pods should not hardcode an external LLM endpoint. LLM, MCP, and
-      A2A traffic goes through agentgateway, which applies mTLS, audit, and guardrails.
+      A2A traffic goes through agentgateway, which applies guardrails and audit logging.
 spec:
   background: true
   rules:

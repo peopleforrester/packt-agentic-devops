@@ -7,7 +7,7 @@
 **Outputs:**
 - Gateway API standard CRDs (v1.5.1) applied with server-side apply
 - kgateway (v2.3.4) installed from its OCI charts (kgateway-crds then kgateway) into kgateway-system
-- agentgateway (v1.3.0) installed from its own native OCI charts (agentgateway-crds then agentgateway) into agentgateway-system, with mTLS and audit logging on
+- agentgateway (v1.3.0) installed from its own native OCI charts (agentgateway-crds then agentgateway) into agentgateway-system, with the prompt guardrail and audit access logging configured at runtime (client-certificate mTLS is not configured; it is not available on the pinned Gateway API standard channel)
 - The AI-plane Kyverno policies defined in audit mode: require an LLM Guard policy reference on agents, image allowlist for AI namespaces, require OTel annotations, deny agent-namespace egress to LLM endpoints that bypass agentgateway
 
 **Test criteria (tests/test_phase_4_ai_gateway.py):**

@@ -85,10 +85,10 @@ refresh resolves it once CRDs are established. Budget for the CRD wave.
 ### P06 (B06) — Review the agentgateway data plane
 **Prompt:**
 > agentgateway is deployed as the agentic data plane. Show me its routing configuration: how
-> it mediates LLM, MCP, and A2A traffic, and confirm mTLS and audit logging are on by default.
+> it mediates LLM, MCP, and A2A traffic, and show the guardrail and audit-logging policies applied to the Gateway.
 
 **Expected behavior:** Reads the agentgateway config, explains it sits as a sibling of
-kgateway mediating agent traffic, and points at the mTLS + audit-logging settings.
+kgateway mediating agent traffic, and points at the prompt-guard + audit access-log policies.
 **Known failure modes:** Claude conflates agentgateway with kgateway's data plane (it is a
 sibling, not kgateway's data plane). It overclaims maturity.
 **Recovery move:** Correct the framing live if needed: agentgateway is a Linux Foundation
