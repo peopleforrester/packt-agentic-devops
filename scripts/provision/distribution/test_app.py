@@ -5,6 +5,13 @@ import csv
 
 import pytest
 
+# This app is deployed separately and carries its own pyproject.toml and dependencies. Skip rather
+# than fail when they are absent, so running this file outside its own environment reports a skip
+# instead of aborting collection for everything else in the repo. The root pyproject.toml also
+# keeps a bare `pytest` out of this directory; this is the second line of defence, for anyone who
+# points pytest here directly.
+pytest.importorskip("requests", reason="distribution app dependency; run from its own environment")
+
 import app as app_module
 
 

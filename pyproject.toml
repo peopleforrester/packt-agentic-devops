@@ -1,0 +1,25 @@
+# ABOUTME: Root pytest configuration. Scopes a bare `pytest` to the platform suite so collection
+# ABOUTME: cannot be aborted by an unrelated app that carries its own project and dependencies.
+#
+# Why this file exists: `pytest` from the repo root used to abort during collection, because
+# scripts/provision/distribution/ is a separate application with its own pyproject.toml and its own
+# dependencies. Collection failure is not a skipped test, it stops the whole run, so a reader typing
+# the most obvious command saw zero tests execute and no sign that the platform suite was fine.
+[tool.pytest.ini_options]
+testpaths = [
+    "tests",
+    "scripts/test_probes.py",
+    "scripts/test_check_components.py",
+]
+# Belt and braces alongside testpaths: an explicitly named path still recurses, so a future
+# `pytest scripts/` would otherwise walk back into the distribution app.
+norecursedirs = [
+    "scripts/provision/distribution",
+    "charts-vendor",
+    "internal",
+    ".git",
+    "*.egg-info",
+]
+markers = [
+    "integration: needs a fully built cluster and in-cluster traffic",
+]
