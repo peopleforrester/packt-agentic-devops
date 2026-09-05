@@ -360,10 +360,15 @@ def test_no_manifest_claims_mtls():
     EXEMPT_MARKER = "mtls-claim-exempt"
 
     offenders = []
+    # docs/ was missing from this list on the first pass, and four claims survived there, including
+    # customer-facing event copy and a run-of-show line telling the presenter to confirm mTLS is on.
+    # Scoping a check to the files you happen to be editing is how a claim survives its own removal.
     roots = [
         os.path.join(REPO_ROOT, "solution", "platform"),
         os.path.join(REPO_ROOT, "spec"),
         os.path.join(REPO_ROOT, "prompts"),
+        os.path.join(REPO_ROOT, "docs"),
+        os.path.join(REPO_ROOT, "scripts"),
     ]
     for root in roots:
         for path in glob.glob(os.path.join(root, "**", "*"), recursive=True):
@@ -390,4 +395,57 @@ def test_no_manifest_claims_mtls():
     assert not offenders, (
         "these assert mTLS is applied, but it is not configured and cannot be on the pinned "
         "Gateway API:\n  " + "\n  ".join(offenders)
+    )
+
+
+# --- the component count, which must come from the thing that deploys --------------------------
+
+def test_stated_component_counts_match_components_yaml():
+    """Any prose stating how many components there are must agree with components.yaml.
+
+    Three sources previously gave three answers: components.yaml said 30, the prose enumeration
+    came to 31, and the stated total in two customer-facing documents said 33. Nothing added up to
+    33. The machine-readable file is authoritative because it is the one that actually deploys, so
+    this asserts the prose against it rather than the other way round.
+
+    Written as digits and as words, because "Thirty-three components" appeared in event copy and a
+    digit-only check would have walked straight past it.
+    """
+    import re
+
+    manifest = yaml.safe_load(open(os.path.join(REPO_ROOT, "components.yaml")))
+    actual = len(manifest["components"])
+
+    words = {
+        "twenty": 20, "twenty-five": 25, "twenty-seven": 27, "twenty-eight": 28,
+        "twenty-nine": 29, "thirty": 30, "thirty-one": 31, "thirty-two": 32,
+        "thirty-three": 33, "thirty-four": 34, "thirty-five": 35,
+    }
+    digit_re = re.compile(r"\b(\d{2})\s+components\b", re.I)
+    word_re = re.compile(r"\b(twenty|thirty)(-[a-z]+)?\s+components\b", re.I)
+
+    offenders = []
+    for root in (os.path.join(REPO_ROOT, "docs"), os.path.join(REPO_ROOT, "README.md")):
+        paths = [root] if os.path.isfile(root) else glob.glob(
+            os.path.join(root, "**", "*.md"), recursive=True)
+        for path in paths:
+            for lineno, line in enumerate(open(path, errors="replace"), 1):
+                # Historical statements about a different event are not claims about this platform.
+                if "kcd" in line.lower() or "predecessor" in line.lower():
+                    continue
+                found = []
+                for m in digit_re.finditer(line):
+                    found.append(int(m.group(1)))
+                for m in word_re.finditer(line):
+                    key = (m.group(1) + (m.group(2) or "")).lower()
+                    if key in words:
+                        found.append(words[key])
+                for n in found:
+                    if n != actual:
+                        offenders.append(
+                            f"{os.path.relpath(path, REPO_ROOT)}:{lineno} says {n}, "
+                            f"components.yaml has {actual}"
+                        )
+    assert not offenders, (
+        "stated component counts contradict components.yaml:\n  " + "\n  ".join(offenders)
     )

@@ -251,7 +251,7 @@ Each module section below defines what gets built ahead of time, what happens li
 
 **Live beats:**
 - **B05:** kgateway installed via App-of-Apps extension; Gateway API resources reviewed by Claude Code on screen. Prompt P05.
-- **B06:** agentgateway deployed as the agentic data plane. Show the routing config that mediates LLM, MCP, and A2A traffic. mTLS and audit logging on by default.
+- **B06:** agentgateway deployed as the agentic data plane. Show the routing config that mediates LLM, MCP, and A2A traffic, and the guardrail and audit access-log policies applied to it.
 - **B07:** Claude Code writes a kagent Agent CRD live from a prompt describing the agent's job (suggested: a cluster-doctor agent that reads pod events and reports). The CRD commits to Git and reconciles through ArgoCD like everything else. This is the single most important beat of the workshop: an agent, declared as a Kubernetes resource, deployed by GitOps, written by an agent. Prompt P07 gets the most rehearsal time of any prompt. Get the CRD shape exactly right (verified June 2026, kagent v0.9.9): apiVersion `kagent.dev/v1alpha2` (not v1alpha1), the field is `systemMessage` (not `systemPrompt`), nested under `spec.type` and `spec.declarative`, with `runtime` python (Google ADK, the default since the AutoGen migration) and a `modelConfig` reference. Tools attach via `type: McpServer` with a `RemoteMCPServer` reference. Re-verify the CRD against the live kagent docs at the July freeze.
 - **B08:** The kagent agent calls an MCP server through agentgateway. The audit log entry appears on screen.
 - **B09:** Prompt injection demo. A scripted malicious prompt goes at the agent; LLM Guard intercepts and blocks. The blocked request appears in the audit log. The exact injection string lives in the repo as a test fixture so attendees can reproduce it. Expected result is deterministic; if LLM Guard config drifts, the reset script restores known-good config.
@@ -318,7 +318,8 @@ The attendee catch-up artifact. Rules:
 ### 8.3 Preflight and smoke test
 
 - `preflight.sh` runs at 9:30 AM EDT on event day: both clusters healthy, all images cached, all checkpoints reachable, ArgoCD green at `module-0-start`, model server warm, OBS scenes listed (manual check item), API key env vars present (checks existence, never prints values), backup video files present at expected paths.
-- `smoke-test.sh` validates the full final state: 33 components healthy, one golden-path run, one guarded inference, one Kyverno denial, one Tempo trace query. This is also the gate script for rehearsals.
+- `smoke-test.sh` validates the full final state: every component Synced and Healthy (it asserts
+  no fixed count, so adding a component cannot silently stop being checked), one golden-path run, one guarded inference, one Kyverno denial, one Tempo trace query. This is also the gate script for rehearsals.
 
 ### 8.4 Backup video checklist
 

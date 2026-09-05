@@ -74,9 +74,9 @@ Michael says:
 - Recovery: on a CRD race, refresh once CRDs are established.
 
 ### B06 · 1:33 · budget 6 min · prompt P06
-- On screen: agentgateway routing config; mTLS and audit-logging settings.
+- On screen: agentgateway routing config; the prompt-guard and audit access-log policies.
 - Michael says: this is the agentic data plane, a sibling of kgateway, mediating LLM, MCP, and A2A traffic.
-- Agent: shows the routing config, confirms mTLS and audit logging on by default.
+- Agent: shows the routing config and the guardrail and audit policies applied to the Gateway.
 - Success signal: routing config and the two security defaults shown.
 - Bail-out (past 9 min): state the role, move on.
 - Recovery: correct any sibling-vs-data-plane or maturity overclaim live.

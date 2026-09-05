@@ -64,7 +64,7 @@ Platform engineers, DevOps engineers, SREs, cloud engineers, architects, tech le
 Not "here is how to add AI to your platform." Not "here are some agentic patterns." Claude Code, the agent, sits at the keyboard and scaffolds Helm values, generates Backstage scaffolder templates, writes the ArgoCD App-of-Apps wiring, defines kagent Agent CRDs, and resolves ArgoCD sync issues live. The workshop demonstrates what agentic DevOps actually looks like by doing it.
 
 **The whole platform, deployed in four hours.**
-Thirty-three components on a real Kubernetes cluster, GitOps-driven, observable, and governed by the end of the session. Attendees leave with a running system, not a slide deck.
+Thirty components on a real Kubernetes cluster, GitOps-driven, observable, and governed by the end of the session. Attendees leave with a running system, not a slide deck.
 
 **AI as part of the platform, not a bolt-on.**
 kgateway, agentgateway, and kagent compose with Backstage, ArgoCD, and Kyverno through the same GitOps path everything else uses. AI-native does not require platform replacement; it requires platform extension.
