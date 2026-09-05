@@ -10,9 +10,16 @@
 [![Components](https://img.shields.io/badge/components-30%20pinned-2e9e5b.svg)](components.yaml)
 [![GitOps](https://img.shields.io/badge/GitOps-ArgoCD-blue.svg)](solution/platform/0-bootstrap)
 [![Fleet](https://img.shields.io/badge/fleet-250%20clusters%20validated-blue.svg)](docs/fleet/08-progressive-rollout-run.md)
+[![tests](https://github.com/peopleforrester/packt-agentic-devops/actions/workflows/tests.yml/badge.svg)](https://github.com/peopleforrester/packt-agentic-devops/actions/workflows/tests.yml)
 
-This is the companion repo for the Packt workshop delivered on 23 July 2026. Every component the
-agent built on screen is here, pinned and reproducible. Nothing was demoed from a slide.
+A complete, reproducible platform you can build on your own cluster, one phase at a time, at
+whatever pace suits you. Every component is here, version-pinned, with a test that proves each phase
+landed.
+
+It was first built live, by an agent, in front of an audience at a Packt workshop on 23 July 2026,
+and then across 250 clusters. That is where the numbers below come from, and it is why the defects
+are written down rather than quietly patched: they were found in front of people. Nothing here was
+demoed from a slide.
 
 > "Tools don't transform organizations. People do."
 
@@ -85,6 +92,11 @@ If you are skimming this as a portfolio piece, these are the parts with real dec
 - [`docs/`](docs) attendee docs, the architecture record, the runbook, and the fleet documentation set.
 - [`tests/`](tests) the contract tests and one pytest file per build phase.
 - [`defects/`](defects) what broke live, and what was learned.
+- [`docs/reference/`](docs/reference) the primary-source trail: the build spec, the version research
+  with its sources, and the locked architectural decisions including the ones later reversed.
+- [`images/`](images) the container images with no upstream. The web terminal in there is workshop
+  distribution machinery with a known security finding, and its README says so before you read the
+  Dockerfile.
 
 ## Running it yourself
 
@@ -92,9 +104,29 @@ You need an EKS cluster, an agentic CLI on your own plan, and the prerequisites 
 [`docs/prerequisites.md`](docs/prerequisites.md). Point your agent at
 [`spec/WORKSHOP-SPEC.md`](spec/WORKSHOP-SPEC.md) and let it build, one phase at a time.
 
-If a phase breaks or you want to skip ahead, [`copy-paste-commands.md`](copy-paste-commands.md) is the
-catch-up path: run a module's block and you are current. The reference build in `solution/platform/`
-is always the answer key.
+Each phase has a test that tells you whether it actually landed, in [`tests/`](tests), named for the
+phase it gates. Run `pytest` for the checks that need no cluster; set `KUBECONFIG_FILE` and
+`EXPECTED_CONTEXT` for the ones that do. Those two variables are deliberate: nothing here reads your
+default kubeconfig, so a test cannot touch a cluster you did not name.
+
+If a phase breaks, or you would rather jump straight to a later one,
+[`copy-paste-commands.md`](copy-paste-commands.md) runs a whole phase in one block. The reference
+build in `solution/platform/` is always the answer key.
+
+### Which ref to use
+
+| | |
+|---|---|
+| **Tag [`v1.0.0`](../../releases/tag/v1.0.0)** | Reproduces the build exactly as delivered on 23 July 2026. Frozen; never re-pinned. |
+| **`main`** | Maintained. Versions move on the cadence in [`docs/version-maintenance.md`](docs/version-maintenance.md), so it installs against a current cluster. |
+
+The pins in `versions.lock.md` were frozen for a four-hour live event, which is the right policy for
+a live event and the wrong one for a repo people run for years. So the freeze belongs to the tag and
+`main` is maintained.
+
+**Kubernetes 1.34 or newer.** The Phase 0 gate asserts a floor rather than an allow-list of exact
+minors, so a newer cluster is fine; that gate broke every reader on the day 1.37 shipped, and
+[`tests/test_version_gate.py`](tests/test_version_gate.py) now fails the build if anyone reverts it.
 
 ## Honest framing
 
