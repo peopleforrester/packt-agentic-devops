@@ -353,11 +353,37 @@ def test_no_manifest_claims_mtls():
     mode and options on a listener; frontendValidation, which carries AllowValidOnly, is
     experimental-channel only.
     """
-    # A file may opt out by carrying this marker, which is how a document that DISCUSSES the
-    # absence of mTLS avoids tripping a test that greps for the word. The marker is deliberately
-    # explicit: a new file has to add it on purpose, and reviewers can see every exemption by
-    # grepping for the marker itself. A path allow-list would drift silently as files move.
+    # A SECTION may opt out by carrying this marker, which is how a document that DISCUSSES the
+    # absence of mTLS avoids tripping a test that greps for the word.
+    #
+    # Scoped to the section, not the file, and that distinction was found by testing it: a
+    # file-level exemption meant a genuine claim added anywhere in an exempted document went
+    # undetected, which is precisely the failure this test exists to prevent. The exemption now
+    # runs from the marker to the next Markdown heading, so a claim in a later section still trips.
     EXEMPT_MARKER = "mtls-claim-exempt"
+
+    def exempt_lines(lines):
+        """Line numbers (1-based) covered by a marker, ending at the section's own next heading.
+
+        The marker is written directly above the heading of the section it exempts, so the FIRST
+        heading after it is that section's title and must stay covered; the second heading starts a
+        new section and ends the exemption. An earlier version looked back a fixed number of lines
+        from each heading to decide, which broke as soon as the marker comment ran to more than one
+        line: the heading fell outside the window and the region ended immediately.
+        """
+        covered, active, own_heading_seen = set(), False, False
+        for i, line in enumerate(lines, 1):
+            stripped = line.lstrip()
+            if EXEMPT_MARKER in line:
+                active, own_heading_seen = True, False
+            elif active and stripped.startswith("#") and not stripped.startswith("#!"):
+                if own_heading_seen:
+                    active = False
+                else:
+                    own_heading_seen = True
+            if active:
+                covered.add(i)
+        return covered
 
     offenders = []
     # docs/ was missing from this list on the first pass, and four claims survived there, including
@@ -375,9 +401,10 @@ def test_no_manifest_claims_mtls():
             if not os.path.isfile(path) or not path.endswith((".yaml", ".md")):
                 continue
             lines = open(path, errors="replace").readlines()
-            if any(EXEMPT_MARKER in line for line in lines):
-                continue
+            exempt = exempt_lines(lines)
             for lineno, line in enumerate(lines, 1):
+                if lineno in exempt:
+                    continue
                 if "mtls" not in line.lower():
                     continue
                 # A line ABOUT the absence of mTLS is what we want to keep, and the negation often

@@ -277,12 +277,23 @@ components:
       Single-binary tempo chart, lighter than tempo-distributed for a per-student
       demo cluster (tempo-distributed 2.25.4 is the production alternative).
       Default Tempo port is 3200, not 3100. Lands the AI-plane traces (B10).
-      Pinned to app 2.9.0 (chart 1.25.0), NOT 2.10.x: the 2.10 line has an open
-      upstream defect (grafana/tempo#6436) where queries return empty for flushed
-      blocks in standalone mode, so a trace written then queried is unsearchable
-      and test_trace_reaches_tempo fails. Verified empirically on 2026-07-23: the
-      downgrade to 2.9.0/1.25.0 makes the test pass. Do not upgrade back into the
-      2.10 line until #6436 is closed and the fix version confirmed.
+      Pinned to app 2.9.0 (chart 1.25.0), NOT 2.10.x. Verified empirically on
+      2026-07-23: on 2.10 a trace written then queried came back empty in
+      standalone mode and test_trace_reaches_tempo failed; the downgrade makes it
+      pass. That observation is the reason for the pin and it still stands.
+
+      grafana/tempo#6436 was cited as the likely upstream cause. KEEP THE PIN
+      ANYWAY: rechecked 2026-09-05, the issue is closed, but it was closed by the
+      reporter resolving their own configuration (they added Kafka and
+      partition_ring_live_store), not by a Tempo fix. So its closure says nothing
+      about whether 2.10 behaves here, and the original note's condition, "until
+      #6436 is closed and the fix version confirmed", is only half satisfied.
+      There is no fix version to confirm.
+
+      Lifting this pin therefore needs the empirical test rerun on a current 2.10
+      release, not an issue-tracker check. Anyone bumping it mechanically because
+      the linked issue went green will reintroduce a failure the repo already
+      paid to find.
 
   - name: opentelemetry-collector
     plane: foundation
@@ -382,7 +393,15 @@ components:
     module: 2
     notes: >
       MIT. Protect AI (now Palo Alto Networks). Python library, optional API image
-      laiyer/llm-guard-api, no Helm chart. Dormant since Sept 2025: pin and vendor the
+      laiyer/llm-guard-api, no Helm chart. ARCHIVED UPSTREAM, not merely dormant:
+      GitHub reports archived=true with the last push 2026-07-08, and PyPI 0.3.16
+      dates from 2025-05-19 with 38 issues left open. Rechecked 2026-09-05.
+
+      An archived repository is read-only, so no CVE in this dependency will ever
+      be fixed upstream. That matters more here than for a typical pin, because
+      this is the prompt-injection scanner: the component whose job is to be
+      attacked. Treat a disclosed vulnerability in it as unpatchable and plan the
+      swap now rather than at disclosure. Pin and vendor the
       known-good config, treat as a fixed dependency. Powers the injection block (B09).
 
   - name: openllmetry

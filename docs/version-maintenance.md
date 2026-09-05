@@ -57,10 +57,13 @@ Two standing checks:
 
 - **Argo CD.** From 3.5 onward it renders Helm with the **v4 binary**. Re-test every chart render
   after that jump; it is the bump most likely to surface unrelated breakage.
-- **Tempo.** The 2.9.0 pin is a deliberate downgrade, not neglect. Upstream issue
-  [grafana/tempo#6436](https://github.com/grafana/tempo/issues/6436) leaves flushed blocks
-  unsearchable in standalone mode. Re-test each quarter and lift the pin only when upstream
-  confirms a fix.
+- **Tempo.** The 2.9.0 pin is a deliberate downgrade, not neglect, and the tracking issue is a
+  trap. [grafana/tempo#6436](https://github.com/grafana/tempo/issues/6436) is **closed**, but it was
+  closed by the reporter fixing their own configuration rather than by a Tempo fix, so its state
+  says nothing about whether 2.10 works here. What justifies the pin is this repo's own measurement
+  on 2026-07-23: on 2.10 a trace written then queried came back empty and the phase test failed.
+  Lift it only when that test passes on a current 2.10 build. Do not lift it because the issue went
+  green.
 
 ### Event-driven
 
@@ -72,6 +75,12 @@ Two standing checks:
 
 - **LLM Guard.** Effectively frozen upstream. Watch for CVEs, and keep a maintained replacement
   scanner pre-selected so a swap is a decision already made rather than an emergency.
+
+## The current survey
+
+[`version-drift-2026-09.md`](version-drift-2026-09.md) records how far every pin had drifted as of
+2026-09-05, measured against upstream rather than read off a report, with a suggested order for
+moving them and the three findings that are not just numbers.
 
 ## What "verified" means here
 
