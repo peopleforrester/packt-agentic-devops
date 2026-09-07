@@ -76,6 +76,20 @@ Two standing checks:
 - **LLM Guard.** Effectively frozen upstream. Watch for CVEs, and keep a maintained replacement
   scanner pre-selected so a swap is a decision already made rather than an emergency.
 
+## The automation
+
+`scripts/version_sweep.py` compares every pin against upstream: Helm index files for charts, the
+GitHub releases API for the rest, pre-releases excluded. `.github/workflows/version-sweep.yml` runs
+it on the 1st of each month and opens an issue with the table.
+
+It **does not fail on drift**, on purpose. This platform pins deliberately and holds two pins for
+measured reasons, so a job that went red every month would be ignored within two months and then
+mean nothing. Making drift visible is the job; deciding what to do about it is a person's.
+
+Held pins are reported separately with their reason attached, and that includes ones with no
+upstream release at all: llm-guard is archived, so the releases API returns nothing, and letting it
+fall into an "unresolved" bucket would bury the note that matters most about it.
+
 ## The current survey
 
 [`version-drift-2026-09.md`](version-drift-2026-09.md) records how far every pin had drifted as of
