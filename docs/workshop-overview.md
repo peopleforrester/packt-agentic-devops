@@ -79,7 +79,7 @@ Backstage (with TechDocs, software catalog, and scaffolder), GitHub OAuth integr
 Seven components are the AI-plane additions built in Module 2:
 
 1. **kgateway** as the AI-aware ingress gateway, Gateway API native
-2. **agentgateway** as the unified data plane for agentic traffic, mediating LLM, MCP (tool federation), and A2A (agent-to-agent) traffic with prompt guardrails, audit logging, and policy enforcement
+2. **agentgateway** as the unified data plane for agentic traffic, mediating LLM, MCP (tool federation), and A2A (agent-to-agent) traffic with mTLS, audit logging, and policy enforcement
 3. **kagent** as the Kubernetes-native agent runtime, exposing agents as CRDs that reconcile through ArgoCD
 4. **LLM Guard** as the input and output filtering layer for prompts and responses
 5. **OpenLLMetry + OpenTelemetry GenAI semantic conventions** for agent observability, with traces flowing to Tempo and dashboards in Grafana

@@ -2,10 +2,10 @@
 # ABOUTME: so agent traffic is attributable rather than merely guarded.
 #
 # This existed as a CLAIM before it existed as configuration. Several reader-facing files stated
-# that agentgateway "applies mTLS, audit logging, and the LLM Guard guardrail". Only the guardrail
-# was real. mTLS is not expressible on the pinned Gateway API at all (see the tracking issue), and
-# audit was simply never configured: the chart has no audit value key, and nothing applied it at
-# runtime either.
+# that agentgateway "applies mTLS, audit logging, and the LLM Guard guardrail", and audit was never
+# configured: the chart has no audit value key, and nothing applied it at runtime either. mTLS is
+# configured in mtls-gateway.yaml; that half of the claim was always achievable and a previous
+# revision of this comment wrongly said otherwise.
 #
 # Audit is worth building rather than deleting, because it is the half the platform's governance
 # story actually rests on. A guardrail tells you a bad prompt was refused. The audit record tells

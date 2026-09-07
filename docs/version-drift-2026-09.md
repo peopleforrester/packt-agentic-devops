@@ -44,7 +44,7 @@ an unverified one, which is the opposite of what pinning is for.
 | agentgateway | v1.3.0 | **v1.5.0** | CRD schemas must be re-verified; the manifests are validated against the vendored v1.3.0 CRDs |
 | kagent | v0.9.9 | **v0.10.0** | released 2026-09-04, one day before this survey |
 | llm-d | v0.7.0 | v0.9.0 | shipped as an architecture reference, not a runtime install |
-| gateway-api | v1.5.1 | v1.6.2 | checked: v1.6.2 standard still has no client-cert validation, so the bump does not unblock the dropped claim |
+| gateway-api | v1.5.1 | v1.6.2 | routine. Client-cert mTLS is already available at v1.5.1 via `spec.tls.frontend` |
 | openllmetry | 0.61.0 | 0.62.3 | |
 | score-k8s | 0.14.0 | 0.17.0 | **orphan**: pinned but used nowhere in the build. Remove the pin or add the content |
 | llm-guard | 0.3.16 | 0.3.16 | **archived upstream**, see below |
@@ -93,6 +93,40 @@ in the manifests does not change.
 
 The order is: confirm kagent v0.10.0's MCP client revision, confirm an `everything` server image
 that speaks 2026-07-28, then move all three together.
+
+## Suggested order when a cluster is available
+
+1. **Patch and minor bumps with no known behaviour change**: argo-events, argo-rollouts, keda,
+   openbao, gitea, aws-load-balancer-controller, aws-ebs-csi-driver, opentelemetry-operator. Low
+   risk, and clears most of the table.
+2. **kube-prometheus-stack, opentelemetry-collector, loki**. Larger jumps, and the observability
+   plane has its own phase test to prove them.
+3. **argo-cd 9.5.22 to 10.8.0.** Deliberately late. From Argo CD 3.5 the Helm renderer is the v4
+   binary, so this is the bump most likely to surface breakage in charts that have nothing to do
+   with Argo CD. Re-render everything after it.
+4. **argo-workflows 1.0.16 to 2.0.4**, a major chart jump, on its own.
+5. **agentgateway and kagent together**, re-vendoring the CRDs first, because
+   `tests/test_agentgateway_manifests.py` validates the custom resources against the vendored
+   schemas and will fail loudly if a field moved. That test is the reason this bump is safe to
+   attempt at all.
+6. **vLLM and KServe**, then rerun `inference_probe.py` and `benchmark_inference.py`.
+7. **Leave Tempo and llm-guard**, for the reasons above.
+
+## Correction: mTLS is available and always was
+
+An earlier revision of this file reported that client-certificate mTLS could not be configured on
+the pinned Gateway API. **That was wrong.** It came from checking
+`listeners[].tls.frontendValidation`, which was removed in v1.4.0, and not checking
+`spec.tls.frontend`, which is where client validation lives and which is in the standard channel at
+v1.5.1:
+
+```
+spec.tls.frontend.default.validation.mode enum: ['AllowValidOnly', 'AllowInsecureFallback']
+                              .caCertificateRefs: [group, kind, name, namespace]
+```
+
+Bumping gateway-api changes nothing here, in either direction. The capability is present at the
+pinned version, so the drift table's gateway-api row is a routine bump with no bearing on mTLS.
 
 ## Suggested order when a cluster is available
 

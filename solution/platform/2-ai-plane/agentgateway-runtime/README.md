@@ -35,26 +35,29 @@ lives under `spec.backend.ai` and its `request`/`response` are arrays; and `fail
 `FailClosed`/`FailOpen`, not `Deny`/`Allow`. `tests/test_agentgateway_manifests.py` runs that
 validation without a cluster, so the next schema change fails a test rather than a sync.
 
-<!-- mtls-claim-exempt: this section documents the ABSENCE of mTLS, so it names the word
-     without asserting the control. test_no_manifest_claims_mtls skips files carrying this
-     marker. Do not add it to a file that actually claims mTLS is applied. -->
+## mTLS
 
-## mTLS: the claim was dropped, not deferred
+`mtls-gateway.yaml` validates client certificates at the edge: a workload without a certificate
+signed by `agentgateway-client-ca` cannot complete the handshake, so it is refused before any
+application policy runs.
 
-Client-certificate validation is not configured here, and reader-facing text no longer says it is.
+**Client validation is Gateway-wide, through `spec.tls.frontend`, not per-listener.** That matters
+because there is an older spelling that looks like the answer and is not.
+`listeners[].tls.frontendValidation` existed in Gateway API v1.3.0's experimental channel and was
+removed in v1.4.0, when the capability moved to `spec.tls.frontend` in the **standard** channel.
 
-The reason is that it cannot be configured on the pinned Gateway API. v1.5.1's standard channel
-exposes only `certificateRefs`, `mode` and `options` on a listener; `frontendValidation`, which
-carries `AllowValidOnly`, ships in the experimental channel. The `AgentgatewayPolicy` route that
-looks like an alternative is not one: its `spec.frontend.tls` carries TLS *parameters* (protocol
-versions, cipher suites), not client-certificate verification.
+Searching a current release for `frontendValidation` therefore finds nothing, which invites the
+conclusion that Gateway API cannot do client-cert mTLS. It can, and this repo previously recorded
+the opposite as settled fact and removed the mTLS claim from nine files on the strength of it. The
+error was checking one plausible field, finding it absent, and reporting a capability gap without
+checking whether the capability had moved.
 
-Nine files previously stated that agentgateway "applies mTLS, audit logging, and the LLM Guard
-guardrail". One of them was a prompt instructing the agent to *confirm mTLS is on by default*,
-which would have had it assert something false out loud. A comment describing a control that does
-not exist is worse than a missing control, because a reader who finds it stops looking.
+`mode: AllowValidOnly` is load-bearing. `AllowInsecureFallback` accepts clients with no valid
+certificate and defeats the control.
 
-`test_no_manifest_claims_mtls` fails the build if the claim comes back.
+Two tests hold this: one asserts the validation block exists with the right mode and a CA, the other
+fails if anyone reintroduces `frontendValidation`, which the API server prunes silently rather than
+rejecting, so mTLS would disappear with every Application still green.
 
 ## Audit: the claim was made true
 

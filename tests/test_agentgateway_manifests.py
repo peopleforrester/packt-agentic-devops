@@ -345,83 +345,54 @@ def test_audit_logging_is_actually_configured():
         assert otlp.get("backendRef", {}).get("name"), "otlp requires a backendRef name"
 
 
-def test_no_manifest_claims_mtls():
-    """mTLS is not implementable on the pinned Gateway API, so nothing here may claim it is applied.
+def test_mtls_gateway_validates_client_certificates():
+    """The mTLS Gateway must validate client certs, and must do it the way the current API expects.
 
-    A comment asserting a control that does not exist is worse than a missing control, because a
-    reader who finds it stops looking. Gateway API v1.5.1 standard exposes only certificateRefs,
-    mode and options on a listener; frontendValidation, which carries AllowValidOnly, is
-    experimental-channel only.
+    This replaces a test that asserted the OPPOSITE. That test was written after checking
+    listeners[].tls.frontendValidation, finding it absent from current Gateway API releases, and
+    concluding client-cert mTLS was impossible. It is not: frontendValidation was the v1.3.0
+    experimental spelling, removed in v1.4.0 because the capability moved to a Gateway-wide
+    spec.tls.frontend, which is in the STANDARD channel. Checking one plausible field and reporting
+    its absence as a capability gap cost a correct chapter's worth of claims.
+
+    So this asserts the thing that is true rather than forbidding the thing that looked false.
     """
-    # A SECTION may opt out by carrying this marker, which is how a document that DISCUSSES the
-    # absence of mTLS avoids tripping a test that greps for the word.
-    #
-    # Scoped to the section, not the file, and that distinction was found by testing it: a
-    # file-level exemption meant a genuine claim added anywhere in an exempted document went
-    # undetected, which is precisely the failure this test exists to prevent. The exemption now
-    # runs from the marker to the next Markdown heading, so a claim in a later section still trips.
-    EXEMPT_MARKER = "mtls-claim-exempt"
+    gateways = [d for _f, d in _manifest_docs()
+                if d["kind"] == "Gateway" and (d["spec"].get("tls") or {}).get("frontend")]
+    assert gateways, (
+        "no Gateway configures spec.tls.frontend. Reader-facing text says agent traffic is "
+        "mTLS-protected; without this it is not."
+    )
+    for gw in gateways:
+        validation = gw["spec"]["tls"]["frontend"]["default"]["validation"]
+        assert validation["mode"] == "AllowValidOnly", (
+            f"{gw['metadata']['name']} uses mode {validation['mode']!r}. AllowInsecureFallback "
+            "accepts clients with no valid certificate, which defeats the control entirely."
+        )
+        refs = validation.get("caCertificateRefs") or []
+        assert refs, "client validation needs a CA to validate against"
+        for ref in refs:
+            assert ref.get("name"), "each caCertificateRef needs a name"
 
-    def exempt_lines(lines):
-        """Line numbers (1-based) covered by a marker, ending at the section's own next heading.
 
-        The marker is written directly above the heading of the section it exempts, so the FIRST
-        heading after it is that section's title and must stay covered; the second heading starts a
-        new section and ends the exemption. An earlier version looked back a fixed number of lines
-        from each heading to decide, which broke as soon as the marker comment ran to more than one
-        line: the heading fell outside the window and the region ended immediately.
-        """
-        covered, active, own_heading_seen = set(), False, False
-        for i, line in enumerate(lines, 1):
-            stripped = line.lstrip()
-            if EXEMPT_MARKER in line:
-                active, own_heading_seen = True, False
-            elif active and stripped.startswith("#") and not stripped.startswith("#!"):
-                if own_heading_seen:
-                    active = False
-                else:
-                    own_heading_seen = True
-            if active:
-                covered.add(i)
-        return covered
+def test_mtls_uses_the_current_field_not_the_removed_one():
+    """Guard against reintroducing listeners[].tls.frontendValidation.
 
+    It was removed in Gateway API v1.4.0. A manifest using it is not rejected: unknown fields are
+    pruned by the API server against a structural schema, so the mTLS configuration would silently
+    vanish and the Gateway would serve without client validation while every Application stayed
+    green. Silent is the whole problem.
+    """
     offenders = []
-    # docs/ was missing from this list on the first pass, and four claims survived there, including
-    # customer-facing event copy and a run-of-show line telling the presenter to confirm mTLS is on.
-    # Scoping a check to the files you happen to be editing is how a claim survives its own removal.
-    roots = [
-        os.path.join(REPO_ROOT, "solution", "platform"),
-        os.path.join(REPO_ROOT, "spec"),
-        os.path.join(REPO_ROOT, "prompts"),
-        os.path.join(REPO_ROOT, "docs"),
-        os.path.join(REPO_ROOT, "scripts"),
-    ]
-    for root in roots:
-        for path in glob.glob(os.path.join(root, "**", "*"), recursive=True):
-            if not os.path.isfile(path) or not path.endswith((".yaml", ".md")):
-                continue
-            lines = open(path, errors="replace").readlines()
-            exempt = exempt_lines(lines)
-            for lineno, line in enumerate(lines, 1):
-                if lineno in exempt:
-                    continue
-                if "mtls" not in line.lower():
-                    continue
-                # A line ABOUT the absence of mTLS is what we want to keep, and the negation often
-                # sits a line or two away ("an earlier draft claimed ... those keys do not exist").
-                # So judge on a small window, not the single line.
-                window = " ".join(lines[max(0, lineno - 3):lineno + 2]).lower()
-                disclaimers = (
-                    "not configured", "not implementable", "not available", "not expressible",
-                    "no mtls", "cannot", "does not exist", "do not exist", "absent",
-                    "earlier draft", "deliberately not", "is not claimed", "only the guardrail",
-                )
-                if any(w in window for w in disclaimers):
-                    continue
-                offenders.append(f"{os.path.relpath(path, REPO_ROOT)}:{lineno}: {line.strip()[:90]}")
+    for filename, doc in _manifest_docs():
+        if doc["kind"] != "Gateway":
+            continue
+        for listener in doc["spec"].get("listeners", []):
+            if "frontendValidation" in (listener.get("tls") or {}):
+                offenders.append(f"{filename}: listener {listener.get('name')}")
     assert not offenders, (
-        "these assert mTLS is applied, but it is not configured and cannot be on the pinned "
-        "Gateway API:\n  " + "\n  ".join(offenders)
+        "these use listeners[].tls.frontendValidation, removed in Gateway API v1.4.0. It is pruned "
+        "silently rather than rejected, so mTLS would be absent with no error: " + ", ".join(offenders)
     )
 
 

@@ -1,0 +1,56 @@
+# ABOUTME: The mutual-TLS Gateway. Client certificates are validated at the edge, so an unauthorized
+# ABOUTME: workload is refused during the TLS handshake rather than at an application policy later.
+#
+# Client validation is configured Gateway-wide through spec.tls.frontend, NOT per-listener. That is
+# the part worth knowing, because there is an older, removed spelling that looks like the answer and
+# is not: listeners[].tls.frontendValidation existed in Gateway API v1.3.0's experimental channel and
+# was removed in v1.4.0. Searching for it on a current release finds nothing and invites the wrong
+# conclusion, which is that Gateway API cannot do client-cert mTLS at all. It can. The capability
+# moved to spec.tls.frontend and is in the STANDARD channel.
+#
+# Verified against the vendored CRD (gateway-api/manifests, bundle v1.5.1, channel standard):
+# spec.tls.frontend.default.validation takes mode and caCertificateRefs, and mode enumerates
+# AllowValidOnly and AllowInsecureFallback. tests/test_agentgateway_manifests.py validates this file
+# against that CRD, so a schema change fails a test rather than a sync.
+#
+# AllowValidOnly is the whole point: a client without a certificate signed by the configured CA
+# cannot complete the handshake. AllowInsecureFallback would accept them and defeat the control.
+#
+# Prerequisites, created outside this manifest: the Secret agentgateway-server-tls (the Gateway's own
+# certificate, from cert-manager) and the ConfigMap agentgateway-client-ca (the CA that signs client
+# certificates). This Gateway will not program until both exist.
+apiVersion: gateway.networking.k8s.io/v1
+kind: Gateway
+metadata:
+  name: agentgateway-mtls
+  namespace: agentgateway
+  labels:
+    app.kubernetes.io/part-of: agentic-platform
+spec:
+  gatewayClassName: agentgateway
+  tls:
+    frontend:
+      default:
+        validation:
+          mode: AllowValidOnly
+          caCertificateRefs:
+            - name: agentgateway-client-ca
+              kind: ConfigMap
+              group: ""
+  listeners:
+    - name: https
+      protocol: HTTPS
+      port: 8443
+      tls:
+        mode: Terminate
+        certificateRefs:
+          - name: agentgateway-server-tls
+            kind: Secret
+      allowedRoutes:
+        namespaces:
+          # Selector, matching the plaintext Gateway: the generated agent routes live in kagent, and
+          # `Same` would silently refuse every one of them.
+          from: Selector
+          selector:
+            matchLabels:
+              agentic-platform.io/attach-agentgateway: "true"

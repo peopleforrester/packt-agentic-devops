@@ -7,6 +7,11 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 REPO_ROOT="$(cd "${SCRIPT_DIR}/.." && pwd)"
 readonly SCRIPT_DIR REPO_ROOT
 readonly VENDOR_DIR="${REPO_ROOT}/charts-vendor"
+# The reference build moved from platform/ to solution/platform/ when the student's empty
+# platform/ was split out. This path did not move with it, so `find` matched nothing and the
+# script vendored zero charts while exiting successfully. Anything already in charts-vendor/
+# predates the move, which is why the breakage was invisible.
+readonly PLATFORM_DIR="${REPO_ROOT}/solution/platform"
 
 log() { printf '%s\n' "$*" >&2; }
 
@@ -25,7 +30,7 @@ extract_charts() {
         rev="$(grep -E "targetRevision:" "${f}" | head -1 \
                | sed -E 's/.*targetRevision:[[:space:]]*//; s/"//g' || true)"
         printf '%s\t%s\t%s\n' "${repo}" "${chart}" "${rev}"
-    done < <(find "${REPO_ROOT}/platform" -name application.yaml)
+    done < <(find "${PLATFORM_DIR}" -name application.yaml)
 }
 
 pull_one() {
@@ -39,8 +44,20 @@ pull_one() {
 }
 
 main() {
+    [[ -d "${PLATFORM_DIR}" ]] || {
+        log "platform directory not found: ${PLATFORM_DIR}"
+        log "If the reference build has moved again, update PLATFORM_DIR."
+        exit 1
+    }
     local rows; mapfile -t rows < <(extract_charts | sort -u)
     local total="${#rows[@]}" i=0 failed=0 repo chart rev
+    # Vendoring nothing is a failure, not a no-op. Exiting 0 having done nothing is how this
+    # script hid a broken path for as long as it did.
+    [[ "${total}" -gt 0 ]] || {
+        log "found no Applications with a chart under ${PLATFORM_DIR}"
+        log "That is a bug in this script or a moved tree, not an empty platform."
+        exit 1
+    }
     log "Vendoring ${total} charts into ${VENDOR_DIR#"${REPO_ROOT}"/}"
     for row in "${rows[@]}"; do
         IFS=$'\t' read -r repo chart rev <<<"${row}"
