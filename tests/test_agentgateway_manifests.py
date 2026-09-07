@@ -447,3 +447,57 @@ def test_stated_component_counts_match_components_yaml():
     assert not offenders, (
         "stated component counts contradict components.yaml:\n  " + "\n  ".join(offenders)
     )
+
+
+# --- the drift policy, whose failure modes are all silent ----------------------------------------
+
+def test_drift_policy_matches_on_the_tracking_annotation():
+    """The drift policy must scope on ArgoCD's tracking ANNOTATION, not a label.
+
+    ArgoCD here uses annotation tracking, so managed resources never carry
+    app.kubernetes.io/instance. A label-based selector makes the policy inert: it loads, reports
+    healthy, matches nothing, and anything can drift. That is the failure this asserts against,
+    and it was found on a live cluster only because someone dry-ran a patch that should have been
+    refused and was not.
+    """
+    path = os.path.join(
+        REPO_ROOT, "solution", "platform", "1-foundation", "policy-baseline",
+        "manifests", "block-argocd-drift.yaml")
+    policy = yaml.safe_load(open(path))
+    rule = policy["spec"]["rules"][0]
+    preconditions = str(rule.get("preconditions"))
+    assert "argocd.argoproj.io/tracking-id" in preconditions, (
+        "the drift policy does not gate on the tracking-id annotation, so it either matches "
+        "nothing or matches ArgoCD's own bootstrap components"
+    )
+    for res in rule["match"]["any"]:
+        selector = str(res.get("resources", {}).get("selector", ""))
+        assert "app.kubernetes.io/instance" not in selector, (
+            "label-based selection makes this policy inert under annotation tracking"
+        )
+
+
+def test_drift_policy_cannot_block_the_controllers_it_protects():
+    """Excluding the reconcilers is load-bearing, not defensive tidiness.
+
+    Denying every non-ArgoCD principal on UPDATE/DELETE also blocks kubelet and the built-in
+    controllers from maintaining the object, and blocks kagent from reconciling the Deployments it
+    generates, which inherit the Agent's tracking-id. In the sibling repo that silently froze agent
+    OTel configuration with no error naming a policy.
+    """
+    path = os.path.join(
+        REPO_ROOT, "solution", "platform", "1-foundation", "policy-baseline",
+        "manifests", "block-argocd-drift.yaml")
+    rule = yaml.safe_load(open(path))["spec"]["rules"][0]
+    subjects = rule["exclude"]["any"][0]["subjects"]
+    names = {s.get("name") for s in subjects}
+    for required in ("argocd-application-controller", "kagent-controller",
+                     "system:serviceaccounts:kube-system", "system:nodes"):
+        assert required in names, f"drift policy does not exclude {required}"
+
+    # background scans carry no userInfo, so a background evaluation would ignore every exclude
+    # above and match everything.
+    policy = yaml.safe_load(open(path))
+    assert policy["spec"]["background"] is False, (
+        "background must be false: userInfo-based excludes are unavailable to background scans"
+    )
