@@ -73,7 +73,7 @@ current cluster, use `main` and expect these numbers to change.
 | MCP demo server | mcp/everything | Streamable HTTP reference server for the agent-calls-MCP beat; mirror to GHCR. |
 | KMCP | v0.3.0 | kagent MCP server platform; bundled with kagent 0.7+ (kmcp.enabled). MCPServer is v1alpha1, RemoteMCPServer is v1alpha2. |
 | A2A | v1.0.0 | Linux Foundation Agent2Agent project; agentgateway mediates via an a2a route policy. |
-| Claude Code | v2.1.183 | The presenter's build agent. Governed by the project's `.claude/settings.json` (allow/ask/deny plus PreToolUse and PostToolUse hooks), not by managed settings; audit hook ships tool invocations to Loki. |
+| Claude Code | v2.1.183 | The presenter's build agent. Governed by the project's `.claude/settings.json` (allow/ask/deny plus PreToolUse and PostToolUse hooks), not by managed settings. The shipped file sets no `defaultMode`, so the `ask` rules actually prompt; an unprompted mode belongs in the gitignored `settings.local.json`. Audit hook ships tool invocations to Loki. |
 
 ## Not used (and why)
 
