@@ -1,17 +1,21 @@
 # Generated route. Traffic to the agent goes through agentgateway, which applies client-certificate
 # mTLS, the LLM Guard guardrail, and an audit access-log record before it reaches the agent.
 #
-# THE BACKEND IS THE SHARED kagent CONTROLLER, NOT A PER-AGENT SERVICE.
+# THE BACKEND IS THE AGENT'S OWN SERVICE, NAMED AFTER THE AGENT, ON PORT 8080.
 #
-# An earlier version routed to a Service named after the agent, on port 80. Nothing creates
-# that Service. The kagent Agent CRD (kagent.dev/v1alpha2) reconciles an agent workload; it
-# does not establish a same-named Service as a portable contract, so every generated route
-# pointed at a backend that never existed and resolved to a 503 with no obvious cause.
+# kagent creates it. Not the Helm chart, the controller: when it reconciles an Agent CR it builds a
+# Deployment AND a Service, both named after the agent, in the agent's namespace. Verified in
+# kagent v0.9.9 source, go/core/internal/controller/translator/agent/manifest_builder.go
+# (buildWorkloadObjects returns both, with objectMeta() taking Name from m.agent.GetName()) and
+# deployments.go, where the port is `port := int32(8080)` for both the container and the Service.
 #
-# Verified against the vendored chart (charts-vendor/kagent-0.9.9.tgz): the controller
-# Service is `{{ .Release.Name }}-controller`, which is `kagent-controller` for this
-# release, and controller.service.ports is {port: 8083, targetPort: 8083}. Re-check both
-# when the kagent pin moves; the chart renames Services on minor releases.
+# An earlier revision of this file routed to the shared kagent-controller on 8083, on the reasoning
+# that "nothing creates a per-agent Service". That was wrong, and wrong in an instructive way: it
+# came from reading the Helm chart, which ships only the controller's own Service. A Service created
+# by a controller at reconcile time never appears in the chart that installs the controller. The
+# chart was the wrong artifact to answer the question.
+#
+# The revision before that had the right Service name and the wrong port, 80 rather than 8080.
 apiVersion: gateway.networking.k8s.io/v1
 kind: HTTPRoute
 metadata:
@@ -29,5 +33,5 @@ spec:
             type: PathPrefix
             value: /agents/${{ values.name }}
       backendRefs:
-        - name: kagent-controller
-          port: 8083
+        - name: ${{ values.name }}
+          port: 8080

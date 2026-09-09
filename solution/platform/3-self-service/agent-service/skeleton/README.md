@@ -27,7 +27,7 @@ They assert four things: the Agent, the route, the route path and the catalog en
 agree on one name; the platform `part-of` label is present; no scaffolder placeholder
 survived generation; and the controls the platform requires are intact, meaning the LLM
 Guard annotation, OpenTelemetry injection, an agentgateway parent, and the shared
-`kagent-controller` backend.
+backend, which is the Service kagent creates named after this agent, on port 8080.
 
 If they pass and the Application is still unhealthy, the problem is in the cluster rather
 than in this repository, which is the point of running them first.

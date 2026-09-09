@@ -38,10 +38,16 @@ OTEL_ANNOTATION = "instrumentation.opentelemetry.io/inject-python"
 PART_OF_LABEL = "app.kubernetes.io/part-of"
 PART_OF_VALUE = "agentic-platform"
 
-# The shared kagent controller Service. Not a per-agent Service: nothing creates one.
-# Verified against charts-vendor/kagent-0.9.9.tgz; re-check when the kagent pin moves.
-CONTROLLER_SERVICE = "kagent-controller"
-CONTROLLER_PORT = 8083
+# The agent's OWN Service, which kagent's controller creates when it reconciles the Agent CR: a
+# Deployment and a Service, both named after the agent, in the agent's namespace, on port 8080.
+#
+# Verified in kagent v0.9.9 source rather than in the chart, which is the mistake a previous
+# revision of this file made. manifest_builder.go buildWorkloadObjects returns both objects with
+# objectMeta() taking Name from m.agent.GetName(); deployments.go sets `port := int32(8080)` for the
+# container and the Service alike. The Helm chart ships only the controller's own Service, so a
+# Service the controller creates at reconcile time is simply not in it. Re-check both when the
+# kagent pin moves.
+AGENT_SERVICE_PORT = 8080
 
 
 def _load(name):
@@ -137,7 +143,12 @@ def test_required_controls_survived_generation(agent, route):
         for rule in route["spec"]["rules"]
         for backend in rule.get("backendRefs", [])
     ]
-    assert (CONTROLLER_SERVICE, CONTROLLER_PORT) in backends, (
-        f"route backend is {backends}, expected ('{CONTROLLER_SERVICE}', {CONTROLLER_PORT}). "
-        "A per-agent Service is never created, so any other backend resolves to a 503."
+    # In the generated repository the scaffolder has already rendered the agent's name, and the
+    # route and its backend both carry it, so they must agree without this test needing to know
+    # what the name is.
+    agent_name = route["metadata"]["name"]
+    assert (agent_name, AGENT_SERVICE_PORT) in backends, (
+        f"route backend is {backends}, expected ('{agent_name}', {AGENT_SERVICE_PORT}). "
+        "kagent creates a Service named after the agent on 8080; routing anywhere else, including "
+        "to the shared controller, does not reach the agent."
     )
