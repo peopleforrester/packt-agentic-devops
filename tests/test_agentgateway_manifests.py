@@ -501,3 +501,72 @@ def test_drift_policy_cannot_block_the_controllers_it_protects():
     assert policy["spec"]["background"] is False, (
         "background must be false: userInfo-based excludes are unavailable to background scans"
     )
+
+
+# --- committed but unreconciled: the silent kind of dead manifest -------------------------------
+
+def test_every_committed_manifest_is_actually_synced_by_something():
+    """A manifest nothing reconciles is invisible: no error, no Degraded app, just absent behaviour.
+
+    This caught a real one. The self-service Application used include: "applicationset.yaml", so a
+    committed AppProject was never applied while the ApplicationSet pointed its generated
+    Applications at that very project. Every generated Application would have failed with "project
+    does not exist" and the parent Application would have stayed Synced and Healthy throughout.
+
+    The check is deliberately narrow: for each Application that pins an `include` filter, assert
+    every top-level manifest in the directory it syncs is matched by that filter. Directories
+    synced without a filter take everything and need no assertion.
+    """
+    import fnmatch
+
+    problems = []
+    for app_file in glob.glob(
+        os.path.join(REPO_ROOT, "solution", "platform", "**", "*.yaml"), recursive=True
+    ):
+        for doc in yaml.safe_load_all(open(app_file)):
+            if not isinstance(doc, dict) or doc.get("kind") != "Application":
+                continue
+            source = doc.get("spec", {}).get("source", {}) or {}
+            include = (source.get("directory") or {}).get("include")
+            path = source.get("path")
+            if not include or not path:
+                continue
+            # Application paths are repo-relative under platform/; the reference build is at
+            # solution/platform/.
+            local = os.path.join(REPO_ROOT, "solution", path)
+            if not os.path.isdir(local):
+                continue
+            # Brace globs: ArgoCD accepts {a,b}; fnmatch does not, so expand them.
+            patterns = [include]
+            if include.startswith("{") and include.endswith("}"):
+                patterns = [p.strip() for p in include[1:-1].split(",")]
+            for entry in sorted(os.listdir(local)):
+                full = os.path.join(local, entry)
+                if not os.path.isfile(full) or not entry.endswith((".yaml", ".yml")):
+                    continue
+                if not any(fnmatch.fnmatch(entry, pat) for pat in patterns):
+                    problems.append(
+                        f"{doc['metadata']['name']}: {path}/{entry} is committed but excluded by "
+                        f"include={include!r}, so nothing applies it"
+                    )
+    assert not problems, "committed manifests that no Application syncs:\n  " + "\n  ".join(problems)
+
+
+def test_appproject_is_created_before_the_applicationset_that_uses_it():
+    base = os.path.join(REPO_ROOT, "solution", "platform", "3-self-service")
+    project = yaml.safe_load(open(os.path.join(base, "appproject.yaml")))
+    appset = yaml.safe_load(open(os.path.join(base, "applicationset.yaml")))
+
+    target = appset["spec"]["template"]["spec"]["project"]
+    assert target == project["metadata"]["name"], (
+        f"the ApplicationSet generates into project {target!r} but the committed AppProject is "
+        f"{project['metadata']['name']!r}"
+    )
+
+    def wave(doc):
+        return int(doc["metadata"].get("annotations", {}).get("argocd.argoproj.io/sync-wave", 0))
+
+    assert wave(project) < wave(appset), (
+        "the AppProject must sync before the ApplicationSet; an Application naming a project that "
+        "does not exist yet is rejected and the set retries"
+    )

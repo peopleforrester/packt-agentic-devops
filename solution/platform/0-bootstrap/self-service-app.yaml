@@ -19,7 +19,11 @@ spec:
     path: platform/3-self-service
     directory:
       recurse: false
-      include: "applicationset.yaml"
+      # Both, and the brace glob is load-bearing. This included only applicationset.yaml, so the
+      # AppProject the generated Applications target was never applied and every one of them would
+      # have failed with "project does not exist" while this Application stayed Synced and Healthy.
+      # A manifest that is committed but not in the include list is invisible: nothing reports it.
+      include: "{applicationset.yaml,appproject.yaml}"
   destination:
     server: https://kubernetes.default.svc
     namespace: argocd

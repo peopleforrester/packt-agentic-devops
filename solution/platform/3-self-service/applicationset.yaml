@@ -8,6 +8,9 @@ apiVersion: argoproj.io/v1alpha1
 kind: ApplicationSet
 metadata:
   name: agent-services
+  annotations:
+    # After the AppProject it generates into.
+    argocd.argoproj.io/sync-wave: "1"
   namespace: argocd
 spec:
   goTemplate: true
