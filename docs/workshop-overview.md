@@ -46,7 +46,7 @@ Platform engineers, DevOps engineers, SREs, cloud engineers, architects, and tec
 
 **Claude Code builds the platform.** Not "here is how to add AI to your platform." Not "here are some agentic patterns." Claude Code, the agent, sits in front of attendees and scaffolds Helm values, generates Backstage scaffolder templates, writes the ArgoCD App-of-Apps wiring, defines kagent Agent CRDs, and resolves ArgoCD sync issues live. The workshop demonstrates what agentic DevOps actually looks like by doing it.
 
-**The whole platform, deployed in four hours.** Thirty components on a real Kubernetes cluster, GitOps-driven, observable, and governed by the end of the session. Attendees leave with a running system, not a slide deck.
+**The whole platform, deployed in four hours.** Twenty-nine components on a real Kubernetes cluster, GitOps-driven, observable, and governed by the end of the session. Attendees leave with a running system, not a slide deck.
 
 **AI as part of the platform, not a bolt-on.** kgateway, agentgateway, and kagent compose with Backstage, ArgoCD, and Kyverno through the same GitOps path everything else uses. AI-native does not require platform replacement; it requires platform extension.
 
@@ -86,7 +86,7 @@ Seven components are the AI-plane additions built in Module 2:
 6. **KServe + vLLM** as the model serving runtime, demonstrated live with a small CPU-mode model so the workshop runs on standard clusters; GPU acceleration and Amazon Bedrock are documented in the companion repo as alternative paths
 7. **llm-d** for distributed inference scheduling, showing where the platform layer for LLM serving sits
 
-Total: 30 components, as pinned in `components.yaml`: 19 foundation, 9 AI plane, 2 self-service.
+Total: 29 components, as pinned in `components.yaml`: 18 foundation, 9 AI plane, 2 self-service.
 The list above names the headline projects rather than enumerating every entry, so it is shorter
 than the total; `components.yaml` is the count that matters because it is the one that deploys.
 

@@ -25,7 +25,7 @@ spec:
   source:
     repoURL: ghcr.io/kagent-dev/kagent/helm
     chart: kagent
-    targetRevision: "0.9.9"
+    targetRevision: "0.10.0"
     helm:
       valuesObject:
         k8s-agent: { enabled: false }

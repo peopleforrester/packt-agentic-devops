@@ -9,7 +9,7 @@ ArgoCD is installed via its Helm chart, pinned to the version in `versions.lock.
 ```bash
 helm install argo-cd argo-cd \
   --repo https://argoproj.github.io/argo-helm \
-  --version 9.5.22 \
+  --version 10.8.4 \
   --namespace argocd --create-namespace \
   --values argocd-values.yaml \
   --set crds.install=true

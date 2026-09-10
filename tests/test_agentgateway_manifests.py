@@ -15,7 +15,19 @@ jsonschema = pytest.importorskip("jsonschema")
 
 from conftest import REPO_ROOT
 
-CRD_CHART = os.path.join(REPO_ROOT, "charts-vendor", "agentgateway-crds-v1.3.0.tgz")
+def _vendored_crd_chart():
+    """Locate the vendored agentgateway CRD chart by pattern, not by a pinned filename.
+
+    This named agentgateway-crds-v1.3.0.tgz literally, so bumping the pin broke the test with a
+    missing-file error rather than a schema failure, which reads like the test is broken instead of
+    like the version moved. Globbing follows the pin; if more than one is vendored the newest wins,
+    because a stale tarball left behind should not silently become the thing under test.
+    """
+    matches = sorted(glob.glob(os.path.join(REPO_ROOT, "charts-vendor", "agentgateway-crds-*.tgz")))
+    return matches[-1] if matches else ""
+
+
+CRD_CHART = _vendored_crd_chart()
 MANIFEST_GLOB = os.path.join(
     REPO_ROOT, "solution", "platform", "2-ai-plane", "agentgateway-runtime", "manifests", "*.yaml"
 )
