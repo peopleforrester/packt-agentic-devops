@@ -32,8 +32,18 @@ spec:
   apiKeySecret: vllm-openai-key
   apiKeySecretKey: OPENAI_API_KEY
   openAI:
-    # RawDeployment exposes the predictor as <name>-predictor on port 80 -> 8000.
-    baseUrl: http://qwen3-predictor.kserve.svc.cluster.local/v1
+    # THROUGH THE GATEWAY, not straight at the predictor.
+    #
+    # This pointed at qwen3-predictor.kserve.svc directly, which reaches the model and skips every
+    # control the AI plane exists to apply. The prompt-injection scan is attached to the
+    # vllm-qwen3 AgentgatewayBackend, so a direct call never crosses it: the guardrail was
+    # installed, healthy, and inert for the one agent this platform ships.
+    #
+    # The gateway listens on 8080 and its /v1 route forwards to that backend, so this path is the
+    # same model with the scan, the audit access log, and the gen_ai spans attached. The predictor
+    # Service (RawDeployment exposes <name>-predictor on 80 -> 8000) is still what the backend
+    # points at; it is simply no longer what the agent points at.
+    baseUrl: http://agentgateway.agentgateway.svc.cluster.local:8080/v1
 ---
 apiVersion: kagent.dev/v1alpha2
 kind: Agent

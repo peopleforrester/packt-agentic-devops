@@ -570,3 +570,96 @@ def test_appproject_is_created_before_the_applicationset_that_uses_it():
         "the AppProject must sync before the ApplicationSet; an Application naming a project that "
         "does not exist yet is rejected and the set retries"
     )
+
+
+# --- the guardrail must actually be on the path the agents use ---------------------------------
+
+def test_shipped_agents_route_inference_through_the_gateway():
+    """An agent that calls the predictor directly skips every control the AI plane applies.
+
+    This is the failure that is hardest to see, because nothing breaks. The scan is attached to the
+    vllm-qwen3 backend, the Application is Synced and Healthy, and the model answers. It answers
+    without being scanned, without an audit record, and without gen_ai spans, because the request
+    never crossed the mediation point.
+
+    ai-deny-llm-endpoint-bypass exists for exactly this, and its message permits either the gateway
+    or the vLLM Service, so the policy alone does not catch it. This does.
+    """
+    import glob as _glob
+
+    offenders = []
+    for path in _glob.glob(
+        os.path.join(REPO_ROOT, "solution", "platform", "**", "*.yaml"), recursive=True
+    ):
+        if os.sep + "fixtures" + os.sep in path:
+            continue
+        for doc in yaml.safe_load_all(open(path)):
+            if not isinstance(doc, dict) or doc.get("kind") != "ModelConfig":
+                continue
+            base = ((doc.get("spec") or {}).get("openAI") or {}).get("baseUrl", "")
+            if not base:
+                continue
+            if "agentgateway" not in base:
+                offenders.append(
+                    f"{os.path.relpath(path, REPO_ROOT)}: {doc['metadata']['name']} "
+                    f"sends inference to {base}, which does not traverse the gateway"
+                )
+    assert not offenders, (
+        "these bypass the prompt-injection scan, the audit log and the gen_ai spans:\n  "
+        + "\n  ".join(offenders)
+    )
+
+
+def test_the_gateway_route_that_agents_depend_on_exists():
+    """The agent path is only safe if a /v1 route actually forwards to the guarded backend."""
+    guarded = {
+        p["spec"]["targetRefs"][0]["name"]
+        for _f, p in _manifest_docs()
+        if p["kind"] == "AgentgatewayPolicy"
+        and "promptGuard" in (p["spec"].get("backend", {}).get("ai", {}) or {})
+    }
+    assert guarded, "no backend carries a prompt guard"
+
+    routed = set()
+    for _f, doc in _manifest_docs():
+        if doc["kind"] != "HTTPRoute":
+            continue
+        for rule in doc["spec"].get("rules", []):
+            paths = [m.get("path", {}).get("value") for m in rule.get("matches", [])]
+            if "/v1" not in paths:
+                continue
+            for backend in rule.get("backendRefs", []):
+                routed.add(backend["name"])
+    missing = guarded - routed
+    assert not missing, (
+        f"guarded backend(s) {sorted(missing)} have no /v1 route, so an agent pointed at the "
+        "gateway would not reach the model at all"
+    )
+
+
+def test_gateways_are_not_left_to_provision_a_public_load_balancer():
+    """Every Gateway must name who provisions its Service and on which scheme.
+
+    The deployer renders `type: LoadBalancer` per Gateway and that is not configurable. What is
+    configurable is who claims the Service, and the default answer here is the worst one: the load
+    balancer controller runs with enableServiceMutatorWebhook false, so an unannotated Service is
+    ignored by it and falls through to the in-tree cloud provider, which builds a CLASSIC load
+    balancer that is internet-facing by default, on subnets the lab VPC tags for public use.
+
+    Nothing errors and nothing reports Degraded. The lab path just acquires a public address.
+    """
+    scheme_key = "service.beta.kubernetes.io/aws-load-balancer-scheme"
+    type_key = "service.beta.kubernetes.io/aws-load-balancer-type"
+
+    gateways = [(f, d) for f, d in _manifest_docs() if d["kind"] == "Gateway"]
+    assert gateways, "no Gateway manifests found"
+    for filename, gateway in gateways:
+        annotations = (gateway["spec"].get("infrastructure") or {}).get("annotations") or {}
+        assert annotations.get(type_key) == "external", (
+            f"{filename}: {gateway['metadata']['name']} does not set {type_key}=external, so the "
+            "load balancer controller will not claim its Service and the in-tree provider will"
+        )
+        assert annotations.get(scheme_key) == "internal", (
+            f"{filename}: {gateway['metadata']['name']} has scheme "
+            f"{annotations.get(scheme_key)!r}; the lab path must not be internet-facing"
+        )

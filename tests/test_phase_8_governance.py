@@ -69,10 +69,24 @@ def test_good_agent_admitted():
 
 
 @pytest.mark.integration
-def test_loki_has_agent_tool_invocations():
+def test_loki_has_attributable_agent_tool_invocations():
     body = incluster_curl(
         "http://loki.observability.svc:3100/loki/api/v1/query",
-        "--get", "--data-urlencode", 'query={namespace="kagent"} |~ "tool"',
+        # The stream scripts/ship-audit-to-loki.sh actually writes. This queried
+        # {namespace="kagent"} |~ "tool", which is a third selector that nothing produces: there is
+        # no log shipper for pod logs here, and the collector defines a traces pipeline only, with
+        # otlp/tempo as its sole exporter. So the assertion could only ever pass by accident.
+        "--get", "--data-urlencode", 'query={job="claude-audit"}',
         ns="observability",
     )
-    assert '"result"' in body and '"values"' in body, "no agent tool-invocation logs in Loki"
+    assert '"result"' in body and '"values"' in body, (
+        "no audit lines under job=\"claude-audit\". Before concluding the agent was idle, check "
+        "the shipper: Loki rejects out-of-order lines within a stream, so a rejected push looks "
+        "exactly like silence."
+    )
+    # A count alone does not support the governance claim. Lines with no agent identity are worse
+    # than none, because a dashboard renders them and the trail reads as complete.
+    assert "agent_identity" in body, (
+        "audit lines are present but carry no agent_identity label, so nothing in them says who "
+        "acted; the trail is not attributable"
+    )
