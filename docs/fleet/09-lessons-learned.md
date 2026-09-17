@@ -604,3 +604,49 @@ host). Guidance/spec item, not a solution manifest defect.
 **Separate observation to verify:** the solution catalog is auth-gated (401 without credentials), so
 `test_backstage_catalog_returns_entities` doing an unauthenticated in-cluster curl may itself need
 auth or an allowed unauthenticated read. Worth a dedicated check; distinct from the student reports.
+
+## A Gateway named after its own controller cannot ever come up (2026-09-17)
+
+Found while verifying the version migration on a cold cluster. The AI plane's plain Gateway was
+named `agentgateway` in namespace `agentgateway`. So is the agentgateway chart's Helm release, and
+so is the controller Deployment that release creates.
+
+The controller materialises every Gateway into a Deployment named after the Gateway, in the
+Gateway's namespace. With both called `agentgateway`, the controller aimed its proxy Deployment at
+its own controller Deployment. `spec.selector` is immutable, so the apply failed, and kept failing:
+
+```
+Deployment.apps "agentgateway" is invalid: spec.selector: Invalid value:
+{"matchLabels":{"app.kubernetes.io/instance":"agentgateway", ...,
+"gateway.networking.k8s.io/gateway-name":"agentgateway"}}: field is immutable
+```
+
+The collision also corrupted the controller's own Service. The chart ships it as `ClusterIP` on
+9978/9093/9092; the deployer adopted it, added a `listener-8080` port and flipped it to
+`LoadBalancer`, so the xDS control plane started acquiring a load balancer of its own.
+
+**What made this expensive to find.** Every symptom pointed somewhere other than the name:
+
+- Argo CD reported the sync **succeeded**: `successfully synced (all tasks run)`. Every object had
+  applied. Only the Gateway's own `Programmed` status condition carried the reason.
+- The Application showed `Degraded` with four `OutOfSync` resources and no invalid manifest.
+- Every manifest validated against the CRDs, and the whole component had passed a 27-assertion
+  schema suite.
+- The mTLS Gateway beside it was healthy the entire time, purely because `agentgateway-mtls`
+  does not collide. A healthy sibling on the same controller reads as "the controller is fine,
+  so this must be the migration".
+
+It was found by provisioning a cluster and reading `.status.conditions` on the Gateway. Nothing
+short of that would have found it: the component had only ever been CRD-validated, never deployed.
+
+**Fix.** Rename to `agentgateway-http`, and follow it through the two route `parentRefs`, the audit
+policy `targetRef`, the demo agent `baseUrl`, the remote MCP server URL, the Backstage golden-path
+HTTPRoute template, the smoke test, and the phase 5 test.
+
+**Guard.** `tests/test_agentgateway_manifests.py::test_no_gateway_collides_with_a_helm_release_in_its_namespace`
+pairs every Gateway in the repo against the Helm releases the repo installs into that namespace.
+Verified by reintroducing the old name: it fails and names both files.
+
+**The general rule.** Any controller that materialises a custom resource into a workload named after
+that resource can collide with a Helm release in the same namespace. Do not name a Gateway, or any
+other deployer-backed resource, after the chart that installs its controller.
