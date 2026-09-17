@@ -26,6 +26,6 @@ spec:
   description: >-
     The MCP "everything" reference server, reached through agentgateway so tool calls are
     guarded, audited, and traced. Used by the demo agent to demonstrate tool authorization.
-  url: http://agentgateway-http.agentgateway.svc.cluster.local:8080/mcp
+  url: http://agentgateway-proxy.agentgateway.svc.cluster.local:8080/mcp
   protocol: STREAMABLE_HTTP
   timeout: 30s

@@ -14,7 +14,7 @@ deterministic every rehearsal.
   pinned to `0.3.16`. Its `PromptInjection` scanner is the guardrail backend.
 - **agentgateway** exposes the `platform-helper` agent and calls LLM Guard as a
   guardrail before forwarding to the in-cluster vLLM. The route is
-  `http://agentgateway-http.agentgateway.svc:8080/agents/platform-helper`.
+  `http://agentgateway-proxy.agentgateway.svc:8080/agents/platform-helper`.
 
 Because the target is in-cluster vLLM through an OpenAI-compatible endpoint,
 there is no external API spend and no external credential.

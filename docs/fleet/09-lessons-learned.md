@@ -639,7 +639,7 @@ The collision also corrupted the controller's own Service. The chart ships it as
 It was found by provisioning a cluster and reading `.status.conditions` on the Gateway. Nothing
 short of that would have found it: the component had only ever been CRD-validated, never deployed.
 
-**Fix.** Rename to `agentgateway-http`, and follow it through the two route `parentRefs`, the audit
+**Fix.** Rename to `agentgateway-proxy`, and follow it through the two route `parentRefs`, the audit
 policy `targetRef`, the demo agent `baseUrl`, the remote MCP server URL, the Backstage golden-path
 HTTPRoute template, the smoke test, and the phase 5 test.
 
