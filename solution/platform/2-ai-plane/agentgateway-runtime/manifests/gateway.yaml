@@ -1,4 +1,4 @@
-# ABOUTME: The Gateway agentgateway actually serves traffic on. Installing the controller does
+# ABOUTME: The Gateway the AI plane actually serves traffic on. Installing the controller does
 # ABOUTME: not create one, so without this the AI plane has a control plane and no data path.
 #
 # The agentgateway Application installs the controller only. A controller with no Gateway
@@ -13,10 +13,22 @@
 # is silently refused: the HTTPRoute exists, the Gateway exists, and nothing joins them. The
 # selector opts a namespace in explicitly by label, which is narrower than `All` and auditable:
 # a namespace can only attach if someone labelled it.
+# THE NAME IS `agentgateway-http`, AND IT MUST NOT BE `agentgateway`.
+#
+# The controller materialises every Gateway into a Deployment named after the Gateway, in the
+# Gateway's namespace. The agentgateway chart's own release is `agentgateway` in namespace
+# `agentgateway`, and it too creates a Deployment by that name: the controller itself. Name the
+# Gateway `agentgateway` and the controller tries to apply its proxy Deployment over its own,
+# whose spec.selector is immutable. It fails with `field is immutable`, the Gateway sits
+# Programmed=False forever, and the Application is Degraded with every manifest valid and every
+# sync task reported successful. Caught on a live cluster 2026-09-17; the mtls Gateway beside it
+# was healthy only because its name happened not to collide.
+# `tests/test_agentgateway_manifests.py::test_no_gateway_collides_with_a_helm_release_in_its_namespace`
+# fails the build on a recurrence.
 apiVersion: gateway.networking.k8s.io/v1
 kind: Gateway
 metadata:
-  name: agentgateway
+  name: agentgateway-http
   namespace: agentgateway
   labels:
     app.kubernetes.io/part-of: agentic-platform

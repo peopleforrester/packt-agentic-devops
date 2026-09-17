@@ -675,3 +675,71 @@ def test_gateways_are_not_left_to_provision_a_public_load_balancer():
             f"{filename}: {gateway['metadata']['name']} has scheme "
             f"{annotations.get(scheme_key)!r}; the lab path must not be internet-facing"
         )
+
+
+def _all_platform_docs():
+    """Every YAML document under solution/platform, as (path, doc) pairs."""
+    pattern = os.path.join(REPO_ROOT, "solution", "platform", "**", "*.yaml")
+    for path in sorted(glob.glob(pattern, recursive=True)):
+        with open(path) as handle:
+            try:
+                docs = list(yaml.safe_load_all(handle))
+            except yaml.YAMLError:
+                continue
+        for doc in docs:
+            if isinstance(doc, dict):
+                yield path, doc
+
+
+def _helm_releases():
+    """Return {(release_name, namespace): application_path} for every chart-installing Application.
+
+    Argo CD names the Helm release after the Application unless spec.source.helm.releaseName
+    overrides it, so that pair is what actually lands on the cluster.
+    """
+    releases = {}
+    for path, doc in _all_platform_docs():
+        if doc.get("kind") != "Application":
+            continue
+        source = doc.get("spec", {}).get("source", {}) or {}
+        if not source.get("chart"):
+            continue
+        helm = source.get("helm", {}) or {}
+        name = helm.get("releaseName") or doc.get("metadata", {}).get("name")
+        namespace = doc.get("spec", {}).get("destination", {}).get("namespace")
+        if name and namespace:
+            releases[(name, namespace)] = path
+    return releases
+
+
+def test_no_gateway_collides_with_a_helm_release_in_its_namespace():
+    """A Gateway must not share a name with a Helm release in the same namespace.
+
+    The agentgateway controller materialises each Gateway into a Deployment named after the
+    Gateway. An agentgateway chart release also creates a Deployment named after the release. Name
+    both `agentgateway` in namespace `agentgateway` and the controller tries to apply its proxy
+    Deployment over its own controller Deployment, whose spec.selector is immutable. The Gateway
+    then sits Programmed=False forever with `field is immutable`, the Application is Degraded, and
+    nothing about the manifests looks wrong.
+
+    Caught on a live cluster 2026-09-17: the plain Gateway was named `agentgateway`, which is the
+    agentgateway controller's own release name, so the AI-plane data path could never come up. The
+    mtls Gateway on the same cluster was healthy purely because its name did not collide.
+    """
+    releases = _helm_releases()
+    assert releases, "found no chart-installing Applications; the scan is broken, not the repo"
+
+    collisions = []
+    for path, doc in _all_platform_docs():
+        if doc.get("kind") != "Gateway":
+            continue
+        meta = doc.get("metadata", {})
+        key = (meta.get("name"), meta.get("namespace"))
+        if key in releases:
+            collisions.append(
+                f"Gateway {key[0]} in namespace {key[1]} ({os.path.relpath(path, REPO_ROOT)}) "
+                f"collides with the Helm release installed by "
+                f"{os.path.relpath(releases[key], REPO_ROOT)}"
+            )
+
+    assert not collisions, "\n".join(collisions)

@@ -6,7 +6,7 @@ from conftest import get_json, incluster_curl
 
 # The agentgateway audit-log contract and the agent route path should be confirmed
 # against the live deployment; the integration checks below assume the documented shapes.
-AGENT_URL = "http://agentgateway.agentgateway.svc:8080/agents/platform-helper"
+AGENT_URL = "http://agentgateway-http.agentgateway.svc:8080/agents/platform-helper"
 
 
 def test_agent_crd_is_v1alpha2():
