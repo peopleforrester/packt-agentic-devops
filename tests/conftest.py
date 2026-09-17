@@ -2,6 +2,7 @@
 # ABOUTME: through an explicit kubeconfig and a context guard, never the shared default.
 import json
 import os
+import re
 import subprocess
 
 import pytest
@@ -77,8 +78,30 @@ def crd_established(name):
     return any(c.get("type") == "Established" and c.get("status") == "True" for c in conds)
 
 
+# kubectl run --rm prints its deletion notice on STDOUT, appended to the container's output with
+# no separator, so a JSON body comes back as `{...}\n200pod "x" deleted from ns namespace`. Both
+# the current and older wordings are matched; the older kubectl stops at `deleted`.
+_KUBECTL_DELETION_NOTICE = re.compile(
+    r'\s*pod "[^"]+" deleted(?: from \S+ namespace)?\s*$'
+)
+
+
+def _clean_curl_output(stdout):
+    """Return `body\ncode` with kubectl's trailing noise removed.
+
+    Anchored at the end, so the same words appearing inside a real payload (a log line or an event
+    body about a deleted pod, which is exactly what some of these tests query for) are left alone.
+    """
+    return _KUBECTL_DELETION_NOTICE.sub("", stdout).rstrip("\n")
+
+
 def incluster_curl(url, *curl_args, ns="default", timeout=120):
-    """One-shot in-cluster curl. Returns stdout (body then a trailing http code)."""
+    """One-shot in-cluster curl. Returns stdout (body then a trailing http code).
+
+    kubectl's own pod-deletion notice is stripped, because it lands on stdout with no separator
+    and turns a parseable body into one that is not. A caller doing json.loads on the result got
+    `Extra data: line 2 column 1` and read as a broken endpoint when the endpoint was fine.
+    """
     pod = "phasetest-curl-" + str(abs(hash(url)) % 100000)
     # The -i is required, not cosmetic: `kubectl run --rm` only streams the container's
     # stdout back (and reliably deletes the pod) when attached. Drop it and this returns
@@ -90,4 +113,4 @@ def incluster_curl(url, *curl_args, ns="default", timeout=120):
         "curl", "-sS", "-m", "30", "-w", "\\n%{http_code}", *curl_args, url,
         check=False, timeout=timeout,
     )
-    return res.stdout
+    return _clean_curl_output(res.stdout)
