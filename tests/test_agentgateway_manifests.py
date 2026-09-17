@@ -743,3 +743,122 @@ def test_no_gateway_collides_with_a_helm_release_in_its_namespace():
             )
 
     assert not collisions, "\n".join(collisions)
+
+
+def _labelled_namespaces():
+    """Return {namespace: labels} from every source the repo uses to label a namespace.
+
+    Two sources, because the repo genuinely uses both: a Namespace manifest (kagent), and an
+    Application's syncPolicy.managedNamespaceMetadata (agentgateway, whose namespace is created by
+    CreateNamespace rather than by a manifest).
+    """
+    labels = {}
+    for _, doc in _all_platform_docs():
+        kind = doc.get("kind")
+        if kind == "Namespace":
+            name = doc.get("metadata", {}).get("name")
+            if name:
+                labels.setdefault(name, {}).update(doc["metadata"].get("labels") or {})
+        elif kind == "Application":
+            spec = doc.get("spec", {})
+            managed = (spec.get("syncPolicy", {}) or {}).get("managedNamespaceMetadata") or {}
+            name = spec.get("destination", {}).get("namespace")
+            if name and managed.get("labels"):
+                labels.setdefault(name, {}).update(managed["labels"])
+    return labels
+
+
+def _gateways():
+    """Return {(name, namespace): gateway_doc} for every Gateway the repo ships."""
+    return {
+        (doc["metadata"]["name"], doc["metadata"].get("namespace")): doc
+        for _, doc in _all_platform_docs()
+        if doc.get("kind") == "Gateway"
+    }
+
+
+def test_every_route_is_in_a_namespace_its_gateway_admits():
+    """An HTTPRoute must sit in a namespace the parent Gateway's listener actually allows.
+
+    The listeners admit routes by namespace LABEL (`from: Selector`), which is narrower than `All`
+    and auditable. The cost is that a namespace nobody labelled is refused, including the Gateway's
+    own. Caught on a live cluster 2026-09-17: vllm-qwen3 and mcp-everything sit in `agentgateway`,
+    only `kagent` carried the label, and both routes were refused by their own Gateway with
+    `hostnames matched parent hostname "", but namespace "agentgateway" is not allowed by the
+    parent` -- which reads as a hostname problem and is not one.
+
+    Skips routes whose parent is not a Gateway this repo ships (the Backstage skeleton is a
+    template, rendered per service, and its namespace does not exist until then).
+    """
+    gateways = _gateways()
+    labelled = _labelled_namespaces()
+    problems = []
+
+    for path, doc in _all_platform_docs():
+        if doc.get("kind") != "HTTPRoute":
+            continue
+        route_ns = doc.get("metadata", {}).get("namespace")
+        if not route_ns or "${{" in str(route_ns):
+            continue
+        for parent in doc.get("spec", {}).get("parentRefs", []) or []:
+            key = (parent.get("name"), parent.get("namespace") or route_ns)
+            gateway = gateways.get(key)
+            if gateway is None:
+                continue
+            for listener in gateway["spec"].get("listeners", []) or []:
+                namespaces = (listener.get("allowedRoutes", {}) or {}).get("namespaces", {}) or {}
+                if namespaces.get("from") != "Selector":
+                    continue
+                wanted = (namespaces.get("selector", {}) or {}).get("matchLabels", {}) or {}
+                have = labelled.get(route_ns, {})
+                missing = {k: v for k, v in wanted.items() if have.get(k) != v}
+                if missing:
+                    problems.append(
+                        f"{os.path.relpath(path, REPO_ROOT)}: HTTPRoute {doc['metadata']['name']} "
+                        f"in namespace {route_ns} attaches to Gateway {key[0]} listener "
+                        f"{listener.get('name')}, which admits only namespaces labelled "
+                        f"{wanted}; {route_ns} is missing {missing}"
+                    )
+
+    assert not problems, "\n".join(problems)
+
+
+def test_gateway_tls_material_is_something_the_repo_creates():
+    """Every Secret or ConfigMap a Gateway's TLS config names must be produced by this repo.
+
+    mtls-gateway.yaml named `agentgateway-server-tls` and `agentgateway-client-ca` and nothing
+    created either. The manifests validated, the Application synced, the Gateway reported
+    Programmed=True, and the listener carried `Bad TLS configuration` with zero attached routes.
+    A Gateway that claims a security control and cannot complete a handshake is worse than none.
+    """
+    produced = set()
+    for _, doc in _all_platform_docs():
+        kind = doc.get("kind")
+        if kind == "Certificate" and doc.get("apiVersion", "").startswith("cert-manager.io/"):
+            name = doc.get("spec", {}).get("secretName")
+            if name:
+                produced.add(("Secret", name, doc["metadata"].get("namespace")))
+        elif kind in ("Secret", "ConfigMap"):
+            produced.add((kind, doc["metadata"]["name"], doc["metadata"].get("namespace")))
+
+    missing = []
+    for path, doc in _all_platform_docs():
+        if doc.get("kind") != "Gateway":
+            continue
+        namespace = doc["metadata"].get("namespace")
+        refs = []
+        tls = doc.get("spec", {}).get("tls", {}) or {}
+        validation = ((tls.get("frontend", {}) or {}).get("default", {}) or {}).get("validation", {}) or {}
+        refs.extend(validation.get("caCertificateRefs", []) or [])
+        for listener in doc["spec"].get("listeners", []) or []:
+            refs.extend((listener.get("tls", {}) or {}).get("certificateRefs", []) or [])
+        for ref in refs:
+            key = (ref.get("kind", "Secret"), ref.get("name"), ref.get("namespace") or namespace)
+            if key not in produced:
+                missing.append(
+                    f"{os.path.relpath(path, REPO_ROOT)}: Gateway {doc['metadata']['name']} "
+                    f"references {key[0]} {key[1]} in namespace {key[2]}, which nothing in this "
+                    f"repo creates"
+                )
+
+    assert not missing, "\n".join(missing)
