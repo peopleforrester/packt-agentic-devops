@@ -81,8 +81,11 @@ spec:
       tls:
         mode: Terminate
         certificateRefs:
-          - name: agentgateway-server-tls
+          # group "" is the core API group and is a CRD default; written out for the same
+          # reason as the parentRef fields in the routes.
+          - group: ""
             kind: Secret
+            name: agentgateway-server-tls
       allowedRoutes:
         namespaces:
           # Selector, matching the plaintext Gateway: the generated agent routes live in kagent, and
