@@ -25,7 +25,7 @@ metadata:
     app.kubernetes.io/part-of: agentic-platform
 spec:
   parentRefs:
-    - name: agentgateway
+    - name: agentgateway-proxy
       namespace: agentgateway
   rules:
     - matches:

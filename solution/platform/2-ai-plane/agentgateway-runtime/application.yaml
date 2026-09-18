@@ -23,6 +23,17 @@ spec:
     server: https://kubernetes.default.svc
     namespace: agentgateway
   syncPolicy:
+    # The Gateway's http listener admits routes by namespace LABEL, not by name, and the routes
+    # this component ships (vllm-qwen3, mcp-everything) live in `agentgateway` itself. Without
+    # this the Gateway refuses its own namespace's routes: `hostnames matched parent hostname "",
+    # but namespace "agentgateway" is not allowed by the parent`, which reads as a hostname
+    # problem and is not one. kagent gets the same label from a Namespace manifest beside the
+    # Gateway; agentgateway gets it here because the namespace is created by CreateNamespace
+    # rather than by a manifest, and a Namespace object owned by this Application would make a
+    # prune delete the whole namespace.
+    managedNamespaceMetadata:
+      labels:
+        agentic-platform.io/attach-agentgateway: "true"
     automated:
       prune: true
       selfHeal: true

@@ -15,7 +15,19 @@ jsonschema = pytest.importorskip("jsonschema")
 
 from conftest import REPO_ROOT
 
-CRD_CHART = os.path.join(REPO_ROOT, "charts-vendor", "agentgateway-crds-v1.3.0.tgz")
+def _vendored_crd_chart():
+    """Locate the vendored agentgateway CRD chart by pattern, not by a pinned filename.
+
+    This named agentgateway-crds-v1.3.0.tgz literally, so bumping the pin broke the test with a
+    missing-file error rather than a schema failure, which reads like the test is broken instead of
+    like the version moved. Globbing follows the pin; if more than one is vendored the newest wins,
+    because a stale tarball left behind should not silently become the thing under test.
+    """
+    matches = sorted(glob.glob(os.path.join(REPO_ROOT, "charts-vendor", "agentgateway-crds-*.tgz")))
+    return matches[-1] if matches else ""
+
+
+CRD_CHART = _vendored_crd_chart()
 MANIFEST_GLOB = os.path.join(
     REPO_ROOT, "solution", "platform", "2-ai-plane", "agentgateway-runtime", "manifests", "*.yaml"
 )
@@ -663,3 +675,190 @@ def test_gateways_are_not_left_to_provision_a_public_load_balancer():
             f"{filename}: {gateway['metadata']['name']} has scheme "
             f"{annotations.get(scheme_key)!r}; the lab path must not be internet-facing"
         )
+
+
+def _all_platform_docs():
+    """Every YAML document under solution/platform, as (path, doc) pairs."""
+    pattern = os.path.join(REPO_ROOT, "solution", "platform", "**", "*.yaml")
+    for path in sorted(glob.glob(pattern, recursive=True)):
+        with open(path) as handle:
+            try:
+                docs = list(yaml.safe_load_all(handle))
+            except yaml.YAMLError:
+                continue
+        for doc in docs:
+            if isinstance(doc, dict):
+                yield path, doc
+
+
+def _helm_releases():
+    """Return {(release_name, namespace): application_path} for every chart-installing Application.
+
+    Argo CD names the Helm release after the Application unless spec.source.helm.releaseName
+    overrides it, so that pair is what actually lands on the cluster.
+    """
+    releases = {}
+    for path, doc in _all_platform_docs():
+        if doc.get("kind") != "Application":
+            continue
+        source = doc.get("spec", {}).get("source", {}) or {}
+        if not source.get("chart"):
+            continue
+        helm = source.get("helm", {}) or {}
+        name = helm.get("releaseName") or doc.get("metadata", {}).get("name")
+        namespace = doc.get("spec", {}).get("destination", {}).get("namespace")
+        if name and namespace:
+            releases[(name, namespace)] = path
+    return releases
+
+
+def test_no_gateway_collides_with_a_helm_release_in_its_namespace():
+    """A Gateway must not share a name with a Helm release in the same namespace.
+
+    The agentgateway controller materialises each Gateway into a Deployment named after the
+    Gateway. An agentgateway chart release also creates a Deployment named after the release. Name
+    both `agentgateway` in namespace `agentgateway` and the controller tries to apply its proxy
+    Deployment over its own controller Deployment, whose spec.selector is immutable. The Gateway
+    then sits Programmed=False forever with `field is immutable`, the Application is Degraded, and
+    nothing about the manifests looks wrong.
+
+    Caught on a live cluster 2026-09-17: the plain Gateway was named `agentgateway`, which is the
+    agentgateway controller's own release name, so the AI-plane data path could never come up. The
+    mtls Gateway on the same cluster was healthy purely because its name did not collide.
+    """
+    releases = _helm_releases()
+    assert releases, "found no chart-installing Applications; the scan is broken, not the repo"
+
+    collisions = []
+    for path, doc in _all_platform_docs():
+        if doc.get("kind") != "Gateway":
+            continue
+        meta = doc.get("metadata", {})
+        key = (meta.get("name"), meta.get("namespace"))
+        if key in releases:
+            collisions.append(
+                f"Gateway {key[0]} in namespace {key[1]} ({os.path.relpath(path, REPO_ROOT)}) "
+                f"collides with the Helm release installed by "
+                f"{os.path.relpath(releases[key], REPO_ROOT)}"
+            )
+
+    assert not collisions, "\n".join(collisions)
+
+
+def _labelled_namespaces():
+    """Return {namespace: labels} from every source the repo uses to label a namespace.
+
+    Two sources, because the repo genuinely uses both: a Namespace manifest (kagent), and an
+    Application's syncPolicy.managedNamespaceMetadata (agentgateway, whose namespace is created by
+    CreateNamespace rather than by a manifest).
+    """
+    labels = {}
+    for _, doc in _all_platform_docs():
+        kind = doc.get("kind")
+        if kind == "Namespace":
+            name = doc.get("metadata", {}).get("name")
+            if name:
+                labels.setdefault(name, {}).update(doc["metadata"].get("labels") or {})
+        elif kind == "Application":
+            spec = doc.get("spec", {})
+            managed = (spec.get("syncPolicy", {}) or {}).get("managedNamespaceMetadata") or {}
+            name = spec.get("destination", {}).get("namespace")
+            if name and managed.get("labels"):
+                labels.setdefault(name, {}).update(managed["labels"])
+    return labels
+
+
+def _gateways():
+    """Return {(name, namespace): gateway_doc} for every Gateway the repo ships."""
+    return {
+        (doc["metadata"]["name"], doc["metadata"].get("namespace")): doc
+        for _, doc in _all_platform_docs()
+        if doc.get("kind") == "Gateway"
+    }
+
+
+def test_every_route_is_in_a_namespace_its_gateway_admits():
+    """An HTTPRoute must sit in a namespace the parent Gateway's listener actually allows.
+
+    The listeners admit routes by namespace LABEL (`from: Selector`), which is narrower than `All`
+    and auditable. The cost is that a namespace nobody labelled is refused, including the Gateway's
+    own. Caught on a live cluster 2026-09-17: vllm-qwen3 and mcp-everything sit in `agentgateway`,
+    only `kagent` carried the label, and both routes were refused by their own Gateway with
+    `hostnames matched parent hostname "", but namespace "agentgateway" is not allowed by the
+    parent` -- which reads as a hostname problem and is not one.
+
+    Skips routes whose parent is not a Gateway this repo ships (the Backstage skeleton is a
+    template, rendered per service, and its namespace does not exist until then).
+    """
+    gateways = _gateways()
+    labelled = _labelled_namespaces()
+    problems = []
+
+    for path, doc in _all_platform_docs():
+        if doc.get("kind") != "HTTPRoute":
+            continue
+        route_ns = doc.get("metadata", {}).get("namespace")
+        if not route_ns or "${{" in str(route_ns):
+            continue
+        for parent in doc.get("spec", {}).get("parentRefs", []) or []:
+            key = (parent.get("name"), parent.get("namespace") or route_ns)
+            gateway = gateways.get(key)
+            if gateway is None:
+                continue
+            for listener in gateway["spec"].get("listeners", []) or []:
+                namespaces = (listener.get("allowedRoutes", {}) or {}).get("namespaces", {}) or {}
+                if namespaces.get("from") != "Selector":
+                    continue
+                wanted = (namespaces.get("selector", {}) or {}).get("matchLabels", {}) or {}
+                have = labelled.get(route_ns, {})
+                missing = {k: v for k, v in wanted.items() if have.get(k) != v}
+                if missing:
+                    problems.append(
+                        f"{os.path.relpath(path, REPO_ROOT)}: HTTPRoute {doc['metadata']['name']} "
+                        f"in namespace {route_ns} attaches to Gateway {key[0]} listener "
+                        f"{listener.get('name')}, which admits only namespaces labelled "
+                        f"{wanted}; {route_ns} is missing {missing}"
+                    )
+
+    assert not problems, "\n".join(problems)
+
+
+def test_gateway_tls_material_is_something_the_repo_creates():
+    """Every Secret or ConfigMap a Gateway's TLS config names must be produced by this repo.
+
+    mtls-gateway.yaml named `agentgateway-server-tls` and `agentgateway-client-ca` and nothing
+    created either. The manifests validated, the Application synced, the Gateway reported
+    Programmed=True, and the listener carried `Bad TLS configuration` with zero attached routes.
+    A Gateway that claims a security control and cannot complete a handshake is worse than none.
+    """
+    produced = set()
+    for _, doc in _all_platform_docs():
+        kind = doc.get("kind")
+        if kind == "Certificate" and doc.get("apiVersion", "").startswith("cert-manager.io/"):
+            name = doc.get("spec", {}).get("secretName")
+            if name:
+                produced.add(("Secret", name, doc["metadata"].get("namespace")))
+        elif kind in ("Secret", "ConfigMap"):
+            produced.add((kind, doc["metadata"]["name"], doc["metadata"].get("namespace")))
+
+    missing = []
+    for path, doc in _all_platform_docs():
+        if doc.get("kind") != "Gateway":
+            continue
+        namespace = doc["metadata"].get("namespace")
+        refs = []
+        tls = doc.get("spec", {}).get("tls", {}) or {}
+        validation = ((tls.get("frontend", {}) or {}).get("default", {}) or {}).get("validation", {}) or {}
+        refs.extend(validation.get("caCertificateRefs", []) or [])
+        for listener in doc["spec"].get("listeners", []) or []:
+            refs.extend((listener.get("tls", {}) or {}).get("certificateRefs", []) or [])
+        for ref in refs:
+            key = (ref.get("kind", "Secret"), ref.get("name"), ref.get("namespace") or namespace)
+            if key not in produced:
+                missing.append(
+                    f"{os.path.relpath(path, REPO_ROOT)}: Gateway {doc['metadata']['name']} "
+                    f"references {key[0]} {key[1]} in namespace {key[2]}, which nothing in this "
+                    f"repo creates"
+                )
+
+    assert not missing, "\n".join(missing)

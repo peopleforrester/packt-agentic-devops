@@ -90,6 +90,29 @@ Held pins are reported separately with their reason attached, and that includes 
 upstream release at all: llm-guard is archived, so the releases API returns nothing, and letting it
 fall into an "unresolved" bucket would bury the note that matters most about it.
 
+## After a pin moves, regenerate the lock
+
+`components.yaml` is the source of truth; `versions.lock.md` is the human lookup, and Chapter 2
+tells readers to keep the two in step. Editing a pin and stopping there breaks that in the one
+document a reader consults to check it.
+
+```bash
+python3 scripts/gen-versions-lock.py           # rewrite the table
+python3 scripts/gen-versions-lock.py --check   # exit 1 if it is stale
+```
+
+Only the component table is generated. Every other section of the lock file is written by hand and
+is left alone.
+
+`tests/test_versions_lock.py` fails when the two disagree, so CI catches a forgotten regeneration on
+the push rather than a reader catching it months later. That is not hypothetical: the 10 September
+migration moved 23 pins and left the lock untouched, and the two files then disagreed on 21 of 31
+rows while still advertising Score, which had been removed. It was found by reading the file.
+
+Each component carries a `display_name` for the table. Without one the generator falls back to the
+kebab-case identifier and `AWS Load Balancer Controller` silently becomes
+`aws-load-balancer-controller`; a test covers that too.
+
 ## The current survey
 
 [`version-drift-2026-09.md`](version-drift-2026-09.md) records how far every pin had drifted as of
