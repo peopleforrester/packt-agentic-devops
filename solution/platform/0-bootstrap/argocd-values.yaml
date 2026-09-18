@@ -1,12 +1,19 @@
-# ABOUTME: Helm values for the bootstrap ArgoCD install. Adds a health check for the KServe
-# ABOUTME: InferenceService so a serving model reads Healthy, not perpetually Progressing.
+# ABOUTME: Helm values for the bootstrap ArgoCD install. Teaches ArgoCD to assess the custom
+# ABOUTME: resources this platform runs, so the dashboard cannot report green over a dead one.
 #
-# KServe's InferenceService reports Ready=False whenever IngressReady=False, and this
-# platform runs KServe in RawDeployment mode with no KServe-managed ingress (the model is
-# reached in-cluster at qwen3-predictor.kserve.svc), so IngressReady never becomes True even
-# though the predictor is up and serving. Without this custom health check the vllm
-# Application sits Progressing forever. Treat PredictorReady=True as Healthy, which is what
-# actually matters for the workshop.
+# ArgoCD reports an Application Healthy when it cannot assess the resources inside it. That is a
+# reasonable default and a bad one to leave in place here: on 2026-09-17 the platform reported 39
+# of 39 Applications Synced and Healthy while the MCP server's init container had failed 1,584
+# times over six hours and the demo agent could load no tools at all. Nothing was lying; ArgoCD
+# had no health check for an MCPServer, so it assumed the best.
+#
+# A dashboard that cannot go red is not a dashboard. Every custom resource whose readiness the
+# platform depends on gets a check here.
+#
+# KServe's InferenceService: the model is reached in-cluster at qwen3-predictor.kserve.svc and
+# KServe creates no ingress here (see the kserve Application's disableIngressCreation, which turns
+# off an ingress reconciler that assumes Istio and Knative). PredictorReady is therefore the
+# condition that matters, and it is what the workshop depends on.
 configs:
   cm:
     resource.customizations.health.serving.kserve.io_InferenceService: |
@@ -22,4 +29,49 @@ configs:
       end
       hs.status = "Progressing"
       hs.message = "Waiting for the predictor to become ready"
+      return hs
+  # MCPServer: Ready went False the entire six hours the everything server was crash-looping,
+  # while the Application it belongs to reported Healthy. This is the check that would have said so.
+  # Progressing rather than Degraded on False, because a cold provision legitimately spends a
+  # minute or two there and a red dashboard during normal startup teaches people to ignore red.
+  # Progressing is enough: it is not Healthy, and nothing that counts green can count it.
+    resource.customizations.health.kagent.dev_MCPServer: |
+      hs = {}
+      if obj.status ~= nil and obj.status.conditions ~= nil then
+        for i, c in ipairs(obj.status.conditions) do
+          if c.type == "Ready" then
+            if c.status == "True" then
+              hs.status = "Healthy"
+              hs.message = c.message
+            else
+              hs.status = "Progressing"
+              hs.message = c.message
+            end
+            return hs
+          end
+        end
+      end
+      hs.status = "Progressing"
+      hs.message = "Waiting for the MCP server to report Ready"
+      return hs
+  # Agent: same reasoning. An Agent whose Deployment never becomes ready is the difference between
+  # a platform that answers and one that does not, and it should not read as Healthy.
+    resource.customizations.health.kagent.dev_Agent: |
+      hs = {}
+      if obj.status ~= nil and obj.status.conditions ~= nil then
+        for i, c in ipairs(obj.status.conditions) do
+          if c.type == "Ready" then
+            if c.status == "True" then
+              hs.status = "Healthy"
+              hs.message = c.message
+            else
+              hs.status = "Progressing"
+              hs.message = c.message
+            end
+            return hs
+          end
+        end
+      end
+      hs.status = "Progressing"
+      hs.message = "Waiting for the agent to report Ready"
       return hs
