@@ -650,3 +650,102 @@ Verified by reintroducing the old name: it fails and names both files.
 **The general rule.** Any controller that materialises a custom resource into a workload named after
 that resource can collide with a Helm release in the same namespace. Do not name a Gateway, or any
 other deployer-backed resource, after the chart that installs its controller.
+
+## The AI plane had never actually worked end to end (2026-09-17)
+
+Found by provisioning a cluster, converging the whole platform from Git, and then running the
+phase suite against it. Every defect below passed manifest validation, passed a 129-assertion
+cluster-free suite, and reported Synced and Healthy in ArgoCD.
+
+The headline is the last one. **ArgoCD reported 39 of 39 Applications Synced and Healthy while the
+MCP server's init container had failed 1,584 times over six hours and the demo agent could load no
+tools at all.**
+
+### KServe waited forever on an Istio ingress this platform does not run
+
+The InferenceService sat at `Ready=False` with `Predictor ingress not created` while its predictor
+pod ran 1/1 and served completions. KServe's ingress defaults assume Istio and Knative:
+`ingressClassName: istio`, `knative-serving/knative-local-gateway`. This platform runs neither, by
+decision, so the reconciler could never succeed.
+
+Nothing needs that ingress here. `kserve.controller.gateway.disableIngressCreation: true`.
+
+### Agent tracing was off, and the annotation that was supposed to enable it could not work
+
+Tempo held no `gen_ai` spans. The agent pod carried `OTEL_TRACING_ENABLED=false` and
+`OTEL_LOGGING_ENABLED=false`, the kagent chart defaults. Nothing in the repo ever set them.
+
+What the repo relied on instead was `instrumentation.opentelemetry.io/inject-python` on the Agent
+CR, which cannot work here on three separate counts:
+
+1. The agent runs `ghcr.io/kagent-dev/kagent/golang-adk`, a **Go** binary. Python instrumentation
+   does not attach to it.
+2. The kagent controller does not copy the Agent CR's annotations onto the Deployment it generates.
+   The pod template carries only `kagent.dev/config-hash`, so the OTel Operator never sees it.
+3. No `Instrumentation` resource exists in the cluster for the operator to act on in any case.
+
+A Kyverno policy requires that annotation, so the platform was certifying a control that does
+nothing. The annotation stays to satisfy the policy; kagent's native OTLP export is what produces
+the traces.
+
+### The MCP server never started, and would not have served tools if it had
+
+An A2A call to the agent returned:
+
+```
+failed to extract tools from the tool set "mcp_tool_set": failed to list MCP tools:
+failed to init MCP session: calling "initialize": rejected by transport: Internal Server Error
+```
+
+which reads as a gateway or protocol fault. agentgateway was right; its upstream was refusing
+connections. Two defects, stacked:
+
+1. **Both images in the pod run as root**, and the manifest set `runAsNonRoot` with no numeric
+   `runAsUser`, so the kubelet refused the container before it started. This is defect class 2 in
+   CLAUDE.md, hit again. The uid has to go on the **pod**, not only the container: KMCP injects a
+   `copy-binary` init container that writes its adapter into an emptyDir, and without `fsGroup` a
+   uid-1000 process cannot write there.
+2. **The stdio command was empty**, so MCP returned `fail to create relay: failed to run command
+   '""'`. A comment in the manifest asserted that KMCP falls through to the image entrypoint and no
+   `cmd`/`args` were needed. It does not. The correct value was read out of the image rather than
+   guessed: WORKDIR `/app`, `package.json` declares `start: node dist/index.js`.
+
+### A dashboard that cannot go red is not a dashboard
+
+ArgoCD reports Healthy for any resource it cannot assess. That is a sensible default and a bad one
+to leave in place for a platform whose core components are custom resources. `MCPServer` and
+`Agent` now have health checks keyed off the `Ready` condition their controllers already publish.
+The MCP server's `Ready` was `False` for the entire six hours.
+
+`tests/test_argocd_health_checks.py` asserts every kind the repo ships is either covered or
+explicitly exempt. Writing it immediately surfaced five kinds nobody had considered.
+
+### A trace test that could never have passed
+
+Phase 5 asserted `{ name =~ "gen_ai.*" }` against Tempo. No cluster, however well instrumented,
+would satisfy that. The OpenTelemetry GenAI conventions name a span for its **operation and
+target** and put `gen_ai.*` in the **attributes**. A real agent turn on this platform produces:
+
+```
+span names:  invocation, invoke_agent platform_helper, generate_content qwen3-1.7b,
+             execute_tool echo, POST /
+attributes:  gen_ai.operation.name, gen_ai.agent.name, gen_ai.tool.name,
+             gen_ai.request.model, gen_ai.usage.input_tokens, gen_ai.usage.output_tokens, ...
+```
+
+Not one span name starts with `gen_ai`. The test was asserting its own idea of the conventions
+rather than the platform's behaviour.
+
+### What the golden path looks like when it works
+
+After the fixes, one A2A call to `platform-helper` reasons on in-cluster vLLM, discovers the `echo`
+tool through agentgateway's MCP route, calls it, receives `Echo: HELLO-PLATFORM`, and emits a trace
+carrying all four spans above with fourteen `gen_ai.*` attributes. That is the first time this repo
+has done it.
+
+### The general lesson
+
+Every one of these was invisible to schema validation and to a large cluster-free suite, and
+several were actively masked by green status. A manifest test proves a manifest is well formed. It
+proves nothing about whether the thing runs. The only test that found any of this was provisioning
+a cluster and asking the agent to do its job.
