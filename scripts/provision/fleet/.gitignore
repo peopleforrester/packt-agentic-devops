@@ -1,5 +1,0 @@
-# Per-cluster state and logs are runtime artifacts, never committed.
-states/
-logs/
-*.tfstate
-*.tfstate.*

@@ -37,8 +37,6 @@ tmp/
 transcripts/
 pool.db.bak-*
 *.db.bak-*
-defects/.student-sessions/
-defects/.close/
 
 # Runtime artifacts, not source. pool.db is the distribution app's SQLite state; running its tests
 # from the repo root drops an empty one here. uv.lock appears because the root pyproject.toml (which
