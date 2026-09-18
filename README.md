@@ -9,7 +9,6 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-FA7040.svg)](LICENSE)
 [![Components](https://img.shields.io/badge/components-30%20pinned-2e9e5b.svg)](components.yaml)
 [![GitOps](https://img.shields.io/badge/GitOps-ArgoCD-blue.svg)](solution/platform/0-bootstrap)
-[![Fleet](https://img.shields.io/badge/fleet-250%20clusters%20validated-blue.svg)](docs/fleet/08-progressive-rollout-run.md)
 [![tests](https://github.com/peopleforrester/packt-agentic-devops/actions/workflows/tests.yml/badge.svg)](https://github.com/peopleforrester/packt-agentic-devops/actions/workflows/tests.yml)
 
 A complete, reproducible platform you can build on your own cluster, one phase at a time, at
@@ -33,14 +32,22 @@ platform themselves from the same spec the presenter used. What that took to sup
 | | |
 |---|---|
 | **250 single-tenant clusters** | provisioned and torn down cleanly across five AWS accounts, roughly 2h45m at 40-wide |
-| **39/39 ArgoCD Applications** | Synced and Healthy from a cold provision, zero manual steps |
+| **Every ArgoCD Application** | Synced and Healthy from a cold provision, zero manual steps. See the caveat below; that is not the same as every component working |
 | **~7 minutes** | bare cluster to a converged foundation plane |
 | **30 components** | every one version-pinned in [`components.yaml`](components.yaml) and frozen before the event |
 | **Real inference** | vLLM serving an in-cluster model, no external API spend, no credentials to leak |
 
-The defects found during the live run were not quietly patched out. They are written down in
-[`defects/July-23rd-Defects-run.md`](defects/July-23rd-Defects-run.md), remediated in the manifests,
-and the durable lessons are in [`defects/lessons-learned.md`](defects/lessons-learned.md).
+The defects found during the live run were not quietly patched out. They were remediated in the
+manifests, and the reasoning sits in a comment at the point of the fix rather than in a changelog
+nobody opens.
+
+**The caveat on that green dashboard is worth stating plainly, because it is the most useful thing
+in this repository.** ArgoCD reports an Application Healthy when it cannot assess what is inside it.
+Running this platform from cold in September 2026 produced a full board of green Applications while
+the MCP server's init container had failed over a thousand times and the demo agent could load no
+tools at all. Nothing was lying; ArgoCD simply had no health check for an `MCPServer`. A dashboard
+that cannot go red is not a dashboard, so this repo now ships health checks for the custom resources
+its readiness depends on, and a test that fails if a new kind arrives unassessed.
 
 ## What the platform contains
 
@@ -62,36 +69,41 @@ through an ArgoCD ApplicationSet so the platform deploys it without a human in t
 
 If you are skimming this as a portfolio piece, these are the parts with real decisions in them.
 
-- **[`docs/fleet/09-lessons-learned.md`](docs/fleet/09-lessons-learned.md)** is the honest record: every
-  defect class found running this at 250-cluster scale, and what fixed it. Including the ones that
-  were embarrassing.
 - **[`docs/architecture.md`](docs/architecture.md)** carries the settled decisions and why. EKS Pod
   Identity over IRSA. Audit-mode policy before enforcement. Why MetalLB and ingress-nginx are the
-  wrong answer on EKS in 2026.
-- **[`tests/test_fleet_contract.py`](tests/test_fleet_contract.py)** encodes the defect classes that
-  recur in these manifests as assertions, so the same mistake cannot ship twice. Unsubstituted
+  wrong answer on EKS in 2026. [`docs/reference/decisions.md`](docs/reference/decisions.md) is the
+  dated log of how each one was reached.
+- **[`tests/test_platform_contract.py`](tests/test_platform_contract.py)** encodes the defect classes
+  that recur in these manifests as assertions, so the same mistake cannot ship twice. Unsubstituted
   placeholders, `runAsNonRoot` without a numeric uid, registry hosts doubled into image paths.
-- **[`scripts/provision/fleet/`](scripts/provision/fleet)** is the fleet driver: provision, converge,
-  tag-audit, sweep, teardown. The converge pass is mandatory, and
-  [the rollout record](docs/fleet/08-progressive-rollout-run.md) explains why a run without it
-  reports 89% success and is wrong.
-- **A known, unfixed security finding is documented rather than hidden.** The browser terminals had
-  no authentication, a student reached the instructor cluster, and that is written up in
-  `CLAUDE.md` and the lessons file with the analysis of why the obvious fixes do not work.
+- **[`solution/platform/2-ai-plane/agentgateway-runtime/`](solution/platform/2-ai-plane/agentgateway-runtime)**
+  is the densest part. Its README explains why the Gateway cannot be named after the chart that
+  installs its controller, which is the kind of failure that reports a successful sync and a dead
+  data path at the same time.
+- **The comments are the documentation.** Where a manifest carries a value that looks arbitrary, the
+  comment above it says which symptom appeared without it. Most of them cost somebody a cluster
+  build to find.
+- **[`docs/what-is-not-included.md`](docs/what-is-not-included.md)** lists what was stripped before
+  publication and why, including a security finding that is described rather than shipped: the
+  browser terminals used at the live event had no authentication.
 
 ## Repo map
 
-- [`spec/`](spec) the attendee-facing spec the agent builds from, plus the per-phase breakdown.
+- [`spec/`](spec) the spec the agent builds from, plus a file per phase describing what that phase
+  must be true of when it finishes.
 - [`components.yaml`](components.yaml) the pinned component set and single source of truth.
-  [`versions.lock.md`](versions.lock.md) is the quick lookup.
+  [`versions.lock.md`](versions.lock.md) is the quick lookup, generated from it by
+  [`scripts/gen-versions-lock.py`](scripts/gen-versions-lock.py) and tested for drift.
 - [`solution/platform/`](solution/platform) the reference build, numbered in build order:
   `0-bootstrap` (ArgoCD and the App-of-Apps), `1-foundation`, `2-ai-plane`, `3-self-service`.
-- [`charts-vendor/`](charts-vendor) vendored Helm charts, so nothing waits on the network live.
-- [`prompts/prompt-library.md`](prompts/prompt-library.md) every live prompt, rehearsed verbatim.
-- [`scripts/`](scripts) provisioning, image mirroring, reset, preflight, smoke tests, and the fleet driver.
-- [`docs/`](docs) attendee docs, the architecture record, the runbook, and the fleet documentation set.
+- [`charts-vendor/`](charts-vendor) vendored Helm charts, so nothing waits on the network mid-build.
+  Every tarball is asserted to match its pin.
+- [`prompts/prompt-library.md`](prompts/prompt-library.md) the prompts that drive each phase.
+- [`scripts/`](scripts) image mirroring, chart vendoring, reset to a checkpoint, preflight, smoke
+  test, and the probes the phase tests use.
+- [`docs/`](docs) the architecture record, the decision log, version maintenance, and
+  [what was left out](docs/what-is-not-included.md).
 - [`tests/`](tests) the contract tests and one pytest file per build phase.
-- [`defects/`](defects) what broke live, and what was learned.
 - [`docs/reference/`](docs/reference) the primary-source trail: the build spec, the version research
   with its sources, and the locked architectural decisions including the ones later reversed.
 - [`images/`](images) the container images with no upstream. The web terminal in there is workshop
@@ -109,9 +121,10 @@ phase it gates. Run `pytest` for the checks that need no cluster; set `KUBECONFI
 `EXPECTED_CONTEXT` for the ones that do. Those two variables are deliberate: nothing here reads your
 default kubeconfig, so a test cannot touch a cluster you did not name.
 
-If a phase breaks, or you would rather jump straight to a later one,
-[`copy-paste-commands.md`](copy-paste-commands.md) runs a whole phase in one block. The reference
-build in `solution/platform/` is always the answer key.
+If a phase breaks, or you would rather skip ahead, the reference build in `solution/platform/` is
+the answer key: copy the component you are stuck on out of it, commit, and let ArgoCD reconcile.
+Each plane has its own App-of-Apps in [`solution/platform/0-bootstrap/`](solution/platform/0-bootstrap),
+applied in order, so you can jump in at the foundation, the AI plane or the self-service layer.
 
 ### Which ref to use
 
@@ -135,7 +148,9 @@ semantic conventions are current but unstable, and the repo says so rather than 
 settled. Versions were pinned and frozen before the event, nothing was built from source live, and
 every image was served from a mirror so the build stayed fast and self-contained.
 
-Where something is broken or unfinished, it is labelled. See [`docs/ROADMAP.md`](docs/ROADMAP.md).
+Where something is broken or unfinished, it is labelled at the point it matters rather than
+collected in a status page. Tempo keeps no volume and says so in its own manifest; the prompt-guard
+annotation the policy requires does not produce the traces and says so where it is set.
 
 ## License
 
