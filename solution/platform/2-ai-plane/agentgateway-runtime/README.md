@@ -67,3 +67,23 @@ you a bad prompt was refused, the audit record tells you who asked and when. So 
 configures `frontend.accessLog` to the OTel collector the observability plane already runs, and
 `test_audit_logging_is_actually_configured` keeps the claim and the configuration from drifting
 apart again.
+
+## Why the Gateway is called `agentgateway-proxy`
+
+The controller creates one Deployment per Gateway, named after the Gateway, in the Gateway's
+namespace. The chart that installs the controller is also released as `agentgateway` into namespace
+`agentgateway`, and its Deployment carries that name. A Gateway called `agentgateway` therefore
+aims the controller's proxy Deployment at the controller's own Deployment, and `spec.selector` is
+immutable, so the apply fails permanently.
+
+The failure is quiet. Argo CD reports the sync succeeded, because every manifest applied; the
+Gateway carries `Programmed=False` with `field is immutable` buried in a status condition, and the
+Application shows Degraded with no bad manifest to find. It was only caught by provisioning a
+cluster and reading the Gateway's conditions.
+
+The mTLS Gateway is `agentgateway-mtls` and never had the problem, which is what made the plain
+one's failure look like a version regression rather than a name clash.
+
+`tests/test_agentgateway_manifests.py::test_no_gateway_collides_with_a_helm_release_in_its_namespace`
+pairs every Gateway against the Helm releases this repo installs into its namespace, so a
+recurrence fails the build rather than the cluster.
