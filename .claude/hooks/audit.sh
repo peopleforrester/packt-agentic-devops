@@ -8,7 +8,7 @@ set -euo pipefail
 
 LOG_DIR="${CLAUDE_AUDIT_LOG_DIR:-${CLAUDE_PROJECT_DIR:-.}/.claude/audit}"
 LOG_FILE="${LOG_DIR}/tool-invocations.jsonl"
-AGENT_IDENTITY="${CLAUDE_AGENT_IDENTITY:-claude-code-presenter}"
+AGENT_IDENTITY="${CLAUDE_AGENT_IDENTITY:-claude-code-operator}"
 
 mkdir -p "${LOG_DIR}"
 

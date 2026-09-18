@@ -10,8 +10,8 @@
 # 2. Count of actions per agent identity over the last 5 minutes (the attribution metric).
 sum by (agent_identity) (count_over_time({job="claude-audit"} | json | agent_identity != `` [5m]))
 
-# 3. Only the presenter's actions, to show a single identity in isolation.
-{job="claude-audit"} | json | agent_identity = `claude-code-presenter`
+# 3. A single identity in isolation, to show one actor's actions without the others.
+{job="claude-audit"} | json | agent_identity = `claude-code-operator`
 
 # 4. Anything that failed to parse or record, so audit gaps are visible not swallowed.
 {job="claude-audit"} | json | audit_error != ``

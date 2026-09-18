@@ -20,8 +20,8 @@
 
 **Key decisions:**
 - Backstage uses the New Frontend System (default since v1.49.0) and the new backend system; deploy a custom pre-built image, not the chart's demo image.
-- Scaffolder templates are `scaffolder.backstage.io/v1beta3` with Nunjucks; the GitHub auth backend module is `@backstage/plugin-auth-backend-module-github-provider`. Presenter cluster uses real GitHub OAuth; attendee clusters use guest auth with the OAuth wiring present but commented.
+- Scaffolder templates are `scaffolder.backstage.io/v1beta3` with Nunjucks; the GitHub auth backend module is `@backstage/plugin-auth-backend-module-github-provider`. Guest auth is the default here, with the GitHub OAuth wiring present but commented out. Switch it on if you have an OAuth app; the catalog and scaffolder work either way.
 - Argo Workflows full CRDs install server-side (they exceed the client-side annotation limit). Argo Events needs an explicit JetStream EventBus, not the deprecated STAN.
 - KEDA is pod autoscaling, distinct from node provisioning.
 
-**Stop here.** Output the completion promise and wait. The presenter shows the working IDP: portal, catalog, live ArgoCD state.
+**Stop here.** Output the completion promise and wait. Open the portal and confirm all three: the catalog has entities, the scaffolder lists a template, and the ArgoCD tab shows live Application state.

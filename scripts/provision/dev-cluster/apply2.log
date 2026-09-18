@@ -1,0 +1,299 @@
+data.aws_availability_zones.available: Reading...
+module.eks.module.kms.data.aws_caller_identity.current[0]: Reading...
+module.eks.data.aws_partition.current[0]: Reading...
+module.eks.module.kms.data.aws_partition.current[0]: Reading...
+module.eks.data.aws_iam_policy_document.assume_role_policy[0]: Reading...
+module.eks.module.eks_managed_node_group["default"].data.aws_iam_policy_document.assume_role_policy[0]: Reading...
+module.eks.aws_cloudwatch_log_group.this[0]: Refreshing state... [id=/aws/eks/adwc-dev/cluster]
+module.eks.data.aws_caller_identity.current[0]: Reading...
+module.eks.data.aws_partition.current[0]: Read complete after 0s [id=aws]
+module.eks.data.aws_iam_policy_document.assume_role_policy[0]: Read complete after 0s [id=2830595799]
+module.eks.module.eks_managed_node_group["default"].data.aws_iam_policy_document.assume_role_policy[0]: Read complete after 0s [id=2560088296]
+module.eks.module.kms.data.aws_partition.current[0]: Read complete after 0s [id=aws]
+module.vpc.aws_vpc.this[0]: Refreshing state... [id=vpc-0d0d3c8b132458fe2]
+module.eks.module.eks_managed_node_group["default"].aws_iam_role.this[0]: Refreshing state... [id=default-eks-node-group-20260617230943534000000002]
+module.eks.aws_iam_role.this[0]: Refreshing state... [id=adwc-dev-cluster-20260617230943528000000001]
+module.eks.module.kms.data.aws_caller_identity.current[0]: Read complete after 0s [id=515966504359]
+module.eks.data.aws_caller_identity.current[0]: Read complete after 0s [id=515966504359]
+module.eks.data.aws_iam_session_context.current[0]: Reading...
+module.eks.data.aws_iam_session_context.current[0]: Read complete after 0s [id=arn:aws:iam::515966504359:user/nwuser]
+module.eks.module.eks_managed_node_group["default"].aws_iam_role_policy_attachment.this["AmazonEKSWorkerNodePolicy"]: Refreshing state... [id=default-eks-node-group-20260617230943534000000002/arn:aws:iam::aws:policy/AmazonEKSWorkerNodePolicy]
+module.eks.module.eks_managed_node_group["default"].aws_iam_role_policy_attachment.this["AmazonEKS_CNI_Policy"]: Refreshing state... [id=default-eks-node-group-20260617230943534000000002/arn:aws:iam::aws:policy/AmazonEKS_CNI_Policy]
+module.eks.module.eks_managed_node_group["default"].aws_iam_role_policy_attachment.this["AmazonEC2ContainerRegistryReadOnly"]: Refreshing state... [id=default-eks-node-group-20260617230943534000000002/arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly]
+module.eks.aws_iam_role_policy_attachment.this["AmazonEKSClusterPolicy"]: Refreshing state... [id=adwc-dev-cluster-20260617230943528000000001/arn:aws:iam::aws:policy/AmazonEKSClusterPolicy]
+module.eks.module.kms.data.aws_iam_policy_document.this[0]: Reading...
+module.eks.module.kms.data.aws_iam_policy_document.this[0]: Read complete after 0s [id=1754030484]
+module.eks.module.kms.aws_kms_key.this[0]: Refreshing state... [id=7533b18b-c344-46a7-b86d-ca0e95a38097]
+data.aws_availability_zones.available: Read complete after 0s [id=us-west-2]
+module.eks.module.kms.aws_kms_alias.this["cluster"]: Refreshing state... [id=alias/eks/adwc-dev]
+module.eks.aws_iam_policy.cluster_encryption[0]: Refreshing state... [id=arn:aws:iam::515966504359:policy/adwc-dev-cluster-ClusterEncryption20260617231005983200000008]
+module.eks.aws_iam_role_policy_attachment.cluster_encryption[0]: Refreshing state... [id=adwc-dev-cluster-20260617230943528000000001/arn:aws:iam::515966504359:policy/adwc-dev-cluster-ClusterEncryption20260617231005983200000008]
+module.vpc.aws_default_security_group.this[0]: Refreshing state... [id=sg-0e1db81dfff3c3f89]
+module.eks.aws_security_group.node[0]: Refreshing state... [id=sg-0202f0ccabee416d1]
+module.vpc.aws_default_network_acl.this[0]: Refreshing state... [id=acl-0cae37a6a93f417cf]
+module.eks.aws_security_group.cluster[0]: Refreshing state... [id=sg-0e288feb9020ee139]
+module.vpc.aws_default_route_table.default[0]: Refreshing state... [id=rtb-0ae2cf8e31ffc32fc]
+module.vpc.aws_route_table.private[0]: Refreshing state... [id=rtb-0b5f7741032a34b27]
+module.vpc.aws_subnet.private[1]: Refreshing state... [id=subnet-0c1784643603c3db2]
+module.vpc.aws_internet_gateway.this[0]: Refreshing state... [id=igw-0ea2e5f81d338a409]
+module.vpc.aws_route_table.public[0]: Refreshing state... [id=rtb-0d9db2ff62c80d662]
+module.vpc.aws_subnet.private[0]: Refreshing state... [id=subnet-029fc62ff1558d2e9]
+module.vpc.aws_subnet.public[0]: Refreshing state... [id=subnet-019f3dbedb0479f6c]
+module.vpc.aws_subnet.public[1]: Refreshing state... [id=subnet-0ccd20885ff545f6f]
+module.eks.aws_security_group_rule.cluster["ingress_nodes_443"]: Refreshing state... [id=sgrule-1389106628]
+module.eks.aws_security_group_rule.node["ingress_cluster_8443_webhook"]: Refreshing state... [id=sgrule-2804734035]
+module.eks.aws_security_group_rule.node["ingress_cluster_kubelet"]: Refreshing state... [id=sgrule-2545201462]
+module.eks.aws_security_group_rule.node["ingress_self_coredns_tcp"]: Refreshing state... [id=sgrule-1773906704]
+module.eks.aws_security_group_rule.node["ingress_self_coredns_udp"]: Refreshing state... [id=sgrule-3454273791]
+module.eks.aws_security_group_rule.node["ingress_cluster_6443_webhook"]: Refreshing state... [id=sgrule-3027297394]
+module.eks.aws_security_group_rule.node["ingress_cluster_443"]: Refreshing state... [id=sgrule-4129515779]
+module.eks.aws_security_group_rule.node["ingress_cluster_10251_webhook"]: Refreshing state... [id=sgrule-2751324493]
+module.eks.aws_security_group_rule.node["ingress_nodes_ephemeral"]: Refreshing state... [id=sgrule-1169492931]
+module.eks.aws_security_group_rule.node["egress_all"]: Refreshing state... [id=sgrule-99128491]
+module.eks.aws_security_group_rule.node["ingress_cluster_9443_webhook"]: Refreshing state... [id=sgrule-3280858008]
+module.eks.aws_security_group_rule.node["ingress_cluster_4443_webhook"]: Refreshing state... [id=sgrule-2100462564]
+module.vpc.aws_eip.nat[0]: Refreshing state... [id=eipalloc-081e1375020ce5f52]
+module.vpc.aws_route.public_internet_gateway[0]: Refreshing state... [id=r-rtb-0d9db2ff62c80d6621080289494]
+module.vpc.aws_route_table_association.private[0]: Refreshing state... [id=rtbassoc-0631cd93c9f1ddc76]
+module.vpc.aws_route_table_association.private[1]: Refreshing state... [id=rtbassoc-0c8b2cffc668e3eca]
+module.vpc.aws_route_table_association.public[1]: Refreshing state... [id=rtbassoc-096a68d6032aecc27]
+module.vpc.aws_route_table_association.public[0]: Refreshing state... [id=rtbassoc-0daa2f77ccf134616]
+module.eks.aws_eks_cluster.this[0]: Refreshing state... [id=adwc-dev]
+module.vpc.aws_nat_gateway.this[0]: Refreshing state... [id=nat-07bc8088763c8118f]
+module.vpc.aws_route.private_nat_gateway[0]: Refreshing state... [id=r-rtb-0b5f7741032a34b271080289494]
+module.eks.aws_eks_access_entry.this["cluster_creator"]: Refreshing state... [id=adwc-dev:arn:aws:iam::515966504359:user/nwuser]
+module.eks.data.tls_certificate.this[0]: Reading...
+module.eks.data.aws_eks_addon_version.this["kube-proxy"]: Reading...
+module.eks.data.aws_eks_addon_version.this["vpc-cni"]: Reading...
+module.eks.data.aws_eks_addon_version.this["coredns"]: Reading...
+module.eks.time_sleep.this[0]: Refreshing state... [id=2026-06-17T23:20:45Z]
+module.eks.module.eks_managed_node_group["default"].module.user_data.null_resource.validate_cluster_service_cidr: Refreshing state... [id=3128585452740733707]
+module.eks.module.eks_managed_node_group["default"].data.aws_ssm_parameter.ami[0]: Reading...
+module.eks.module.eks_managed_node_group["default"].aws_launch_template.this[0]: Refreshing state... [id=lt-02b1b331fca034251]
+module.eks.data.aws_eks_addon_version.this["coredns"]: Read complete after 0s [id=coredns]
+module.eks.data.aws_eks_addon_version.this["vpc-cni"]: Read complete after 0s [id=vpc-cni]
+module.eks.data.aws_eks_addon_version.this["kube-proxy"]: Read complete after 0s [id=kube-proxy]
+module.eks.data.tls_certificate.this[0]: Read complete after 0s [id=f97f646c2cd14cc0db0f757f0fccc96abbbe2af5]
+module.eks.aws_iam_openid_connect_provider.oidc_provider[0]: Refreshing state... [id=arn:aws:iam::515966504359:oidc-provider/oidc.eks.us-west-2.amazonaws.com/id/749867422718A010E250FD1115E7E097]
+module.eks.aws_eks_access_policy_association.this["cluster_creator_admin"]: Refreshing state... [id=adwc-dev#arn:aws:iam::515966504359:user/nwuser#arn:aws:eks::aws:cluster-access-policy/AmazonEKSClusterAdminPolicy]
+module.eks.module.eks_managed_node_group["default"].data.aws_ssm_parameter.ami[0]: Read complete after 0s [id=/aws/service/eks/optimized-ami/1.34/amazon-linux-2023/x86_64/standard/recommended/release_version]
+module.eks.module.eks_managed_node_group["default"].aws_eks_node_group.this[0]: Refreshing state... [id=adwc-dev:default-2026061723205180130000000b]
+
+Note: Objects have changed outside of Terraform
+
+Terraform detected the following changes made outside of Terraform since the
+last "terraform apply" which may have affected this plan:
+
+  # module.eks.module.eks_managed_node_group["default"].aws_eks_node_group.this[0] has changed
+  ~ resource "aws_eks_node_group" "this" {
+      + arn                    = "arn:aws:eks:us-west-2:515966504359:nodegroup/adwc-dev/default-2026061723205180130000000b/e0cf6bf1-99e2-6288-2546-842bfba24506"
+        id                     = "adwc-dev:default-2026061723205180130000000b"
+      + resources              = [
+          + {
+              + autoscaling_groups              = [
+                  + {
+                      + name = "eks-default-2026061723205180130000000b-e0cf6bf1-99e2-6288-2546-842bfba24506"
+                    },
+                ]
+                # (1 unchanged attribute hidden)
+            },
+        ]
+      + status                 = "CREATE_FAILED"
+        tags                   = {
+            "Name" = "default"
+        }
+        # (11 unchanged attributes hidden)
+
+        # (3 unchanged blocks hidden)
+    }
+
+
+Unless you have made equivalent changes to your configuration, or ignored the
+relevant attributes using ignore_changes, the following plan may include
+actions to undo or respond to these changes.
+
+─────────────────────────────────────────────────────────────────────────────
+
+Terraform used the selected providers to generate the following execution
+plan. Resource actions are indicated with the following symbols:
+  + create
++/- create replacement and then destroy
+
+Terraform will perform the following actions:
+
+  # module.eks.aws_eks_addon.before_compute["kube-proxy"] will be created
+  + resource "aws_eks_addon" "before_compute" {
+      + addon_name                  = "kube-proxy"
+      + addon_version               = "v1.34.6-eksbuild.13"
+      + arn                         = (known after apply)
+      + cluster_name                = "adwc-dev"
+      + configuration_values        = (known after apply)
+      + created_at                  = (known after apply)
+      + id                          = (known after apply)
+      + modified_at                 = (known after apply)
+      + preserve                    = true
+      + region                      = "us-west-2"
+      + resolve_conflicts_on_create = "NONE"
+      + resolve_conflicts_on_update = "OVERWRITE"
+      + tags_all                    = {
+          + "Ephemeral" = "true"
+          + "ManagedBy" = "terraform"
+          + "Project"   = "agentic-devops-with-claude"
+          + "Purpose"   = "phase-2-dev-validation"
+        }
+
+      + namespace_config (known after apply)
+
+      + timeouts {}
+    }
+
+  # module.eks.aws_eks_addon.before_compute["vpc-cni"] will be created
+  + resource "aws_eks_addon" "before_compute" {
+      + addon_name                  = "vpc-cni"
+      + addon_version               = "v1.22.2-eksbuild.1"
+      + arn                         = (known after apply)
+      + cluster_name                = "adwc-dev"
+      + configuration_values        = (known after apply)
+      + created_at                  = (known after apply)
+      + id                          = (known after apply)
+      + modified_at                 = (known after apply)
+      + preserve                    = true
+      + region                      = "us-west-2"
+      + resolve_conflicts_on_create = "NONE"
+      + resolve_conflicts_on_update = "OVERWRITE"
+      + tags_all                    = {
+          + "Ephemeral" = "true"
+          + "ManagedBy" = "terraform"
+          + "Project"   = "agentic-devops-with-claude"
+          + "Purpose"   = "phase-2-dev-validation"
+        }
+
+      + namespace_config (known after apply)
+
+      + timeouts {}
+    }
+
+  # module.eks.aws_eks_addon.this["coredns"] will be created
+  + resource "aws_eks_addon" "this" {
+      + addon_name                  = "coredns"
+      + addon_version               = "v1.13.2-eksbuild.11"
+      + arn                         = (known after apply)
+      + cluster_name                = "adwc-dev"
+      + configuration_values        = (known after apply)
+      + created_at                  = (known after apply)
+      + id                          = (known after apply)
+      + modified_at                 = (known after apply)
+      + preserve                    = true
+      + region                      = "us-west-2"
+      + resolve_conflicts_on_create = "NONE"
+      + resolve_conflicts_on_update = "OVERWRITE"
+      + tags_all                    = {
+          + "Ephemeral" = "true"
+          + "ManagedBy" = "terraform"
+          + "Project"   = "agentic-devops-with-claude"
+          + "Purpose"   = "phase-2-dev-validation"
+        }
+
+      + namespace_config (known after apply)
+
+      + timeouts {}
+    }
+
+  # module.eks.module.eks_managed_node_group["default"].aws_eks_node_group.this[0] is tainted, so must be replaced
++/- resource "aws_eks_node_group" "this" {
+      ~ arn                    = "arn:aws:eks:us-west-2:515966504359:nodegroup/adwc-dev/default-2026061723205180130000000b/e0cf6bf1-99e2-6288-2546-842bfba24506" -> (known after apply)
+      ~ disk_size              = 0 -> (known after apply)
+      ~ id                     = "adwc-dev:default-2026061723205180130000000b" -> (known after apply)
+      - labels                 = {} -> null
+      ~ node_group_name        = "default-2026061723205180130000000b" -> (known after apply)
+      ~ resources              = [
+          - {
+              - autoscaling_groups              = [
+                  - {
+                      - name = "eks-default-2026061723205180130000000b-e0cf6bf1-99e2-6288-2546-842bfba24506"
+                    },
+                ]
+                # (1 unchanged attribute hidden)
+            },
+        ] -> (known after apply)
+      ~ status                 = "CREATE_FAILED" -> (known after apply)
+        tags                   = {
+            "Name" = "default"
+        }
+        # (11 unchanged attributes hidden)
+
+      ~ launch_template {
+            id      = "lt-02b1b331fca034251"
+          ~ name    = "default-20260617232045371000000009" -> (known after apply)
+            # (1 unchanged attribute hidden)
+        }
+
+      ~ node_repair_config (known after apply)
+
+      ~ update_config {
+          - max_unavailable            = 0 -> null
+            # (2 unchanged attributes hidden)
+        }
+
+        # (1 unchanged block hidden)
+    }
+
+Plan: 4 to add, 0 to change, 1 to destroy.
+module.eks.aws_eks_addon.before_compute["kube-proxy"]: Creating...
+module.eks.aws_eks_addon.before_compute["vpc-cni"]: Creating...
+module.eks.module.eks_managed_node_group["default"].aws_eks_node_group.this[0]: Creating...
+module.eks.aws_eks_addon.before_compute["kube-proxy"]: Still creating... [00m10s elapsed]
+module.eks.aws_eks_addon.before_compute["vpc-cni"]: Still creating... [00m10s elapsed]
+module.eks.module.eks_managed_node_group["default"].aws_eks_node_group.this[0]: Still creating... [00m10s elapsed]
+module.eks.aws_eks_addon.before_compute["kube-proxy"]: Still creating... [00m20s elapsed]
+module.eks.aws_eks_addon.before_compute["vpc-cni"]: Still creating... [00m20s elapsed]
+module.eks.module.eks_managed_node_group["default"].aws_eks_node_group.this[0]: Still creating... [00m20s elapsed]
+module.eks.aws_eks_addon.before_compute["kube-proxy"]: Creation complete after 25s [id=adwc-dev:kube-proxy]
+module.eks.aws_eks_addon.before_compute["vpc-cni"]: Still creating... [00m30s elapsed]
+module.eks.module.eks_managed_node_group["default"].aws_eks_node_group.this[0]: Still creating... [00m30s elapsed]
+module.eks.aws_eks_addon.before_compute["vpc-cni"]: Creation complete after 35s [id=adwc-dev:vpc-cni]
+module.eks.module.eks_managed_node_group["default"].aws_eks_node_group.this[0]: Still creating... [00m40s elapsed]
+module.eks.module.eks_managed_node_group["default"].aws_eks_node_group.this[0]: Still creating... [00m50s elapsed]
+module.eks.module.eks_managed_node_group["default"].aws_eks_node_group.this[0]: Still creating... [01m00s elapsed]
+module.eks.module.eks_managed_node_group["default"].aws_eks_node_group.this[0]: Still creating... [01m10s elapsed]
+module.eks.module.eks_managed_node_group["default"].aws_eks_node_group.this[0]: Still creating... [01m20s elapsed]
+module.eks.module.eks_managed_node_group["default"].aws_eks_node_group.this[0]: Still creating... [01m30s elapsed]
+module.eks.module.eks_managed_node_group["default"].aws_eks_node_group.this[0]: Still creating... [01m40s elapsed]
+module.eks.module.eks_managed_node_group["default"].aws_eks_node_group.this[0]: Creation complete after 1m48s [id=adwc-dev:default-20260617235554809400000003]
+module.eks.aws_eks_addon.this["coredns"]: Creating...
+module.eks.aws_eks_addon.this["coredns"]: Still creating... [00m10s elapsed]
+module.eks.aws_eks_addon.this["coredns"]: Creation complete after 15s [id=adwc-dev:coredns]
+module.eks.module.eks_managed_node_group["default"].aws_eks_node_group.this[0] (deposed object a78314fa): Destroying... [id=adwc-dev:default-2026061723205180130000000b]
+module.eks.module.eks_managed_node_group["default"].aws_eks_node_group.this[0]: Still destroying... [id=adwc-dev:default-2026061723205180130000000b, 00m10s elapsed]
+module.eks.module.eks_managed_node_group["default"].aws_eks_node_group.this[0]: Still destroying... [id=adwc-dev:default-2026061723205180130000000b, 00m20s elapsed]
+module.eks.module.eks_managed_node_group["default"].aws_eks_node_group.this[0]: Still destroying... [id=adwc-dev:default-2026061723205180130000000b, 00m30s elapsed]
+module.eks.module.eks_managed_node_group["default"].aws_eks_node_group.this[0]: Still destroying... [id=adwc-dev:default-2026061723205180130000000b, 00m40s elapsed]
+module.eks.module.eks_managed_node_group["default"].aws_eks_node_group.this[0]: Still destroying... [id=adwc-dev:default-2026061723205180130000000b, 00m50s elapsed]
+module.eks.module.eks_managed_node_group["default"].aws_eks_node_group.this[0]: Still destroying... [id=adwc-dev:default-2026061723205180130000000b, 01m00s elapsed]
+module.eks.module.eks_managed_node_group["default"].aws_eks_node_group.this[0]: Still destroying... [id=adwc-dev:default-2026061723205180130000000b, 01m10s elapsed]
+module.eks.module.eks_managed_node_group["default"].aws_eks_node_group.this[0]: Still destroying... [id=adwc-dev:default-2026061723205180130000000b, 01m20s elapsed]
+module.eks.module.eks_managed_node_group["default"].aws_eks_node_group.this[0]: Still destroying... [id=adwc-dev:default-2026061723205180130000000b, 01m30s elapsed]
+module.eks.module.eks_managed_node_group["default"].aws_eks_node_group.this[0]: Still destroying... [id=adwc-dev:default-2026061723205180130000000b, 01m40s elapsed]
+module.eks.module.eks_managed_node_group["default"].aws_eks_node_group.this[0]: Still destroying... [id=adwc-dev:default-2026061723205180130000000b, 01m50s elapsed]
+module.eks.module.eks_managed_node_group["default"].aws_eks_node_group.this[0]: Still destroying... [id=adwc-dev:default-2026061723205180130000000b, 02m00s elapsed]
+module.eks.module.eks_managed_node_group["default"].aws_eks_node_group.this[0]: Still destroying... [id=adwc-dev:default-2026061723205180130000000b, 02m10s elapsed]
+module.eks.module.eks_managed_node_group["default"].aws_eks_node_group.this[0]: Still destroying... [id=adwc-dev:default-2026061723205180130000000b, 02m20s elapsed]
+module.eks.module.eks_managed_node_group["default"].aws_eks_node_group.this[0]: Still destroying... [id=adwc-dev:default-2026061723205180130000000b, 02m30s elapsed]
+module.eks.module.eks_managed_node_group["default"].aws_eks_node_group.this[0]: Still destroying... [id=adwc-dev:default-2026061723205180130000000b, 02m40s elapsed]
+module.eks.module.eks_managed_node_group["default"].aws_eks_node_group.this[0]: Still destroying... [id=adwc-dev:default-2026061723205180130000000b, 02m50s elapsed]
+module.eks.module.eks_managed_node_group["default"].aws_eks_node_group.this[0]: Still destroying... [id=adwc-dev:default-2026061723205180130000000b, 03m00s elapsed]
+module.eks.module.eks_managed_node_group["default"].aws_eks_node_group.this[0]: Still destroying... [id=adwc-dev:default-2026061723205180130000000b, 03m10s elapsed]
+module.eks.module.eks_managed_node_group["default"].aws_eks_node_group.this[0]: Still destroying... [id=adwc-dev:default-2026061723205180130000000b, 03m20s elapsed]
+module.eks.module.eks_managed_node_group["default"].aws_eks_node_group.this[0]: Still destroying... [id=adwc-dev:default-2026061723205180130000000b, 03m30s elapsed]
+module.eks.module.eks_managed_node_group["default"].aws_eks_node_group.this[0]: Still destroying... [id=adwc-dev:default-2026061723205180130000000b, 03m40s elapsed]
+module.eks.module.eks_managed_node_group["default"].aws_eks_node_group.this[0]: Still destroying... [id=adwc-dev:default-2026061723205180130000000b, 03m50s elapsed]
+module.eks.module.eks_managed_node_group["default"].aws_eks_node_group.this[0]: Still destroying... [id=adwc-dev:default-2026061723205180130000000b, 04m00s elapsed]
+module.eks.module.eks_managed_node_group["default"].aws_eks_node_group.this[0]: Destruction complete after 4m10s
+
+Apply complete! Resources: 4 added, 0 changed, 1 destroyed.
+
+Outputs:
+
+cluster_name = "adwc-dev"
+region = "us-west-2"
+update_kubeconfig = "aws eks update-kubeconfig --name adwc-dev --region us-west-2 --profile accen-dev"

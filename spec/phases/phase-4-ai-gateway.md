@@ -24,4 +24,4 @@
 - Pick one owner for the Gateway API CRDs (the upstream manifest or a controller), not both.
 - Policies start in Audit so the AI plane lands governed; Phase 8 flips them to Enforce.
 
-**Stop here.** Output the completion promise and wait. The presenter shows the routing config that mediates LLM, MCP, and A2A traffic, and the audit-mode policies already watching.
+**Stop here.** Output the completion promise and wait. Read the routing config that mediates LLM, MCP and A2A traffic, and note that the policies are already watching in Audit mode before anything enforces.

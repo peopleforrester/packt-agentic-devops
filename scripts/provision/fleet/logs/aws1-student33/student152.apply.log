@@ -1,0 +1,106 @@
+
+Warning: Deprecated flag: -state
+
+Use the "path" attribute within the "local" backend to specify a file for
+state storage
+module.ebs_csi_pod_identity.data.aws_iam_policy_document.base[0]: Reading...
+module.eks.data.aws_partition.current[0]: Reading...
+module.ebs_csi_pod_identity.data.aws_partition.current: Reading...
+module.eks.data.aws_iam_policy_document.assume_role_policy[0]: Reading...
+module.ebs_csi_pod_identity.data.aws_iam_policy_document.assume[0]: Reading...
+module.aws_lb_controller_pod_identity.data.aws_partition.current: Reading...
+module.eks.data.aws_iam_policy_document.assume_role_policy[0]: Read complete after 0s [id=2830595799]
+module.eks.module.kms.data.aws_partition.current[0]: Reading...
+module.ebs_csi_pod_identity.data.aws_partition.current: Read complete after 0s [id=aws]
+module.ebs_csi_pod_identity.data.aws_iam_policy_document.base[0]: Read complete after 0s [id=1132004489]
+module.eks.module.eks_managed_node_group["default"].data.aws_iam_policy_document.assume_role_policy[0]: Reading...
+module.eks.aws_security_group.cluster[0]: Refreshing state... [id=sg-01f212e1b2fb2d255]
+module.eks.aws_security_group.node[0]: Refreshing state... [id=sg-06391629a991d9c82]
+module.eks.module.kms.data.aws_partition.current[0]: Read complete after 0s [id=aws]
+module.eks.module.kms.data.aws_caller_identity.current[0]: Reading...
+module.eks.module.eks_managed_node_group["default"].data.aws_iam_policy_document.assume_role_policy[0]: Read complete after 0s [id=2560088296]
+module.ebs_csi_pod_identity.data.aws_iam_policy_document.assume[0]: Read complete after 0s [id=819195744]
+module.eks.data.aws_caller_identity.current[0]: Reading...
+module.aws_lb_controller_pod_identity.data.aws_iam_policy_document.base[0]: Reading...
+module.aws_lb_controller_pod_identity.data.aws_partition.current: Read complete after 0s [id=aws]
+module.eks.data.aws_partition.current[0]: Read complete after 0s [id=aws]
+module.aws_lb_controller_pod_identity.data.aws_iam_policy_document.assume[0]: Reading...
+module.aws_lb_controller_pod_identity.data.aws_iam_policy_document.base[0]: Read complete after 0s [id=1132004489]
+module.eks.module.eks_managed_node_group["default"].aws_iam_role.this[0]: Refreshing state... [id=default-eks-node-group-20260723140831108300000005]
+module.eks.aws_iam_role.this[0]: Refreshing state... [id=student152-cluster-20260723140831126700000008]
+module.ebs_csi_pod_identity.data.aws_iam_policy_document.ebs_csi[0]: Reading...
+module.aws_lb_controller_pod_identity.data.aws_iam_policy_document.assume[0]: Read complete after 0s [id=819195744]
+module.eks.module.kms.data.aws_caller_identity.current[0]: Read complete after 0s [id=250699659274]
+module.ebs_csi_pod_identity.aws_iam_role.this[0]: Refreshing state... [id=student152-ebs-csi-20260723140831119600000007]
+module.eks.data.aws_caller_identity.current[0]: Read complete after 1s [id=250699659274]
+module.aws_lb_controller_pod_identity.aws_iam_role.this[0]: Refreshing state... [id=student152-aws-lbc-20260723140831082700000002]
+module.aws_lb_controller_pod_identity.data.aws_iam_policy_document.lb_controller[0]: Reading...
+module.ebs_csi_pod_identity.data.aws_iam_policy_document.ebs_csi[0]: Read complete after 1s [id=522466792]
+module.eks.data.aws_iam_session_context.current[0]: Reading...
+module.eks.data.aws_iam_session_context.current[0]: Read complete after 0s [id=arn:aws:iam::250699659274:user/nwuser]
+module.ebs_csi_pod_identity.aws_iam_policy.ebs_csi[0]: Refreshing state... [id=arn:aws:iam::250699659274:policy/AmazonEKS_EBS_CSI-20260723140831115100000006]
+module.aws_lb_controller_pod_identity.data.aws_iam_policy_document.lb_controller[0]: Read complete after 0s [id=1541424006]
+module.aws_lb_controller_pod_identity.aws_iam_policy.lb_controller[0]: Refreshing state... [id=arn:aws:iam::250699659274:policy/AmazonEKS_LoadBalancerController-20260723140831086500000003]
+module.eks.module.eks_managed_node_group["default"].aws_iam_role_policy_attachment.this["AmazonEKS_CNI_Policy"]: Refreshing state... [id=default-eks-node-group-20260723140831108300000005/arn:aws:iam::aws:policy/AmazonEKS_CNI_Policy]
+module.eks.module.eks_managed_node_group["default"].aws_iam_role_policy_attachment.this["AmazonEC2ContainerRegistryReadOnly"]: Refreshing state... [id=default-eks-node-group-20260723140831108300000005/arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly]
+module.eks.module.eks_managed_node_group["default"].aws_iam_role_policy_attachment.this["AmazonEKSWorkerNodePolicy"]: Refreshing state... [id=default-eks-node-group-20260723140831108300000005/arn:aws:iam::aws:policy/AmazonEKSWorkerNodePolicy]
+module.ebs_csi_pod_identity.aws_iam_role_policy_attachment.ebs_csi[0]: Refreshing state... [id=student152-ebs-csi-20260723140831119600000007/arn:aws:iam::250699659274:policy/AmazonEKS_EBS_CSI-20260723140831115100000006]
+module.eks.aws_iam_role_policy_attachment.this["AmazonEKSClusterPolicy"]: Refreshing state... [id=student152-cluster-20260723140831126700000008/arn:aws:iam::aws:policy/AmazonEKSClusterPolicy]
+module.aws_lb_controller_pod_identity.aws_iam_role_policy_attachment.lb_controller[0]: Refreshing state... [id=student152-aws-lbc-20260723140831082700000002/arn:aws:iam::250699659274:policy/AmazonEKS_LoadBalancerController-20260723140831086500000003]
+module.eks.module.kms.data.aws_iam_policy_document.this[0]: Reading...
+module.eks.module.kms.data.aws_iam_policy_document.this[0]: Read complete after 0s [id=3411317137]
+module.eks.module.kms.aws_kms_key.this[0]: Refreshing state... [id=e887676a-89e5-4d3e-9556-e5b5d626d18b]
+module.eks.aws_security_group_rule.node["ingress_cluster_kubelet"]: Refreshing state... [id=sgrule-4082553859]
+module.eks.aws_security_group_rule.node["ingress_cluster_6443_webhook"]: Refreshing state... [id=sgrule-2973171391]
+module.eks.aws_security_group_rule.node["egress_all"]: Refreshing state... [id=sgrule-1931641838]
+module.eks.aws_security_group_rule.node["ingress_cluster_10251_webhook"]: Refreshing state... [id=sgrule-3340731512]
+module.eks.aws_security_group_rule.node["ingress_self_coredns_tcp"]: Refreshing state... [id=sgrule-3198356918]
+module.eks.aws_security_group_rule.node["ingress_cluster_4443_webhook"]: Refreshing state... [id=sgrule-2020907305]
+module.eks.aws_security_group_rule.node["ingress_cluster_9443_webhook"]: Refreshing state... [id=sgrule-3335254357]
+module.eks.aws_security_group_rule.node["ingress_nodes_ephemeral"]: Refreshing state... [id=sgrule-3247330340]
+module.eks.aws_security_group_rule.node["ingress_cluster_443"]: Refreshing state... [id=sgrule-3386586360]
+module.eks.aws_security_group_rule.node["ingress_cluster_8443_webhook"]: Refreshing state... [id=sgrule-2724905630]
+module.eks.aws_security_group_rule.node["ingress_self_coredns_udp"]: Refreshing state... [id=sgrule-452767321]
+module.eks.aws_security_group_rule.cluster["ingress_nodes_443"]: Refreshing state... [id=sgrule-600901104]
+module.eks.module.kms.aws_kms_alias.this["cluster"]: Refreshing state... [id=alias/eks/student152]
+module.eks.aws_iam_policy.cluster_encryption[0]: Refreshing state... [id=arn:aws:iam::250699659274:policy/student152-cluster-ClusterEncryption20260723140854133000000009]
+module.eks.aws_iam_role_policy_attachment.cluster_encryption[0]: Refreshing state... [id=student152-cluster-20260723140831126700000008/arn:aws:iam::250699659274:policy/student152-cluster-ClusterEncryption20260723140854133000000009]
+module.eks.aws_eks_cluster.this[0]: Refreshing state... [id=student152]
+module.eks.data.aws_eks_addon_version.this["vpc-cni"]: Reading...
+module.eks.data.aws_eks_addon_version.this["kube-proxy"]: Reading...
+module.eks.aws_eks_access_entry.this["cluster_creator"]: Refreshing state... [id=student152:arn:aws:iam::250699659274:user/nwuser]
+module.eks.time_sleep.this[0]: Refreshing state... [id=2026-07-23T14:19:53Z]
+module.eks.data.aws_eks_addon_version.this["coredns"]: Reading...
+module.eks.data.aws_eks_addon_version.this["eks-pod-identity-agent"]: Reading...
+module.eks.data.aws_eks_addon_version.this["aws-ebs-csi-driver"]: Reading...
+module.eks.module.eks_managed_node_group["default"].data.aws_ssm_parameter.ami[0]: Reading...
+module.eks.module.eks_managed_node_group["default"].module.user_data.null_resource.validate_cluster_service_cidr: Refreshing state... [id=2108884219587539384]
+module.eks.module.eks_managed_node_group["default"].module.user_data.data.cloudinit_config.al2023_eks_managed_node_group[0]: Reading...
+module.eks.module.eks_managed_node_group["default"].module.user_data.data.cloudinit_config.al2023_eks_managed_node_group[0]: Read complete after 0s [id=140799688]
+module.eks.module.eks_managed_node_group["default"].aws_launch_template.this[0]: Refreshing state... [id=lt-09cb92aa1b16a63cf]
+module.eks.data.aws_eks_addon_version.this["aws-ebs-csi-driver"]: Read complete after 0s [id=aws-ebs-csi-driver]
+module.eks.data.aws_eks_addon_version.this["eks-pod-identity-agent"]: Read complete after 0s [id=eks-pod-identity-agent]
+module.eks.data.aws_eks_addon_version.this["kube-proxy"]: Read complete after 0s [id=kube-proxy]
+module.eks.data.aws_eks_addon_version.this["vpc-cni"]: Read complete after 0s [id=vpc-cni]
+module.eks.data.aws_eks_addon_version.this["coredns"]: Read complete after 0s [id=coredns]
+module.eks.aws_eks_addon.before_compute["kube-proxy"]: Refreshing state... [id=student152:kube-proxy]
+module.eks.aws_eks_access_policy_association.this["cluster_creator_admin"]: Refreshing state... [id=student152#arn:aws:iam::250699659274:user/nwuser#arn:aws:eks::aws:cluster-access-policy/AmazonEKSClusterAdminPolicy]
+module.eks.aws_eks_addon.before_compute["vpc-cni"]: Refreshing state... [id=student152:vpc-cni]
+module.eks.module.eks_managed_node_group["default"].data.aws_ssm_parameter.ami[0]: Read complete after 0s [id=/aws/service/eks/optimized-ami/1.35/amazon-linux-2023/x86_64/standard/recommended/release_version]
+module.eks.module.eks_managed_node_group["default"].aws_eks_node_group.this[0]: Refreshing state... [id=student152:default-2026072314195999600000000f]
+module.aws_lb_controller_pod_identity.aws_eks_pod_identity_association.this["main"]: Refreshing state... [id=a-nvrkef0aa7utfawbp]
+module.eks.aws_eks_addon.this["coredns"]: Refreshing state... [id=student152:coredns]
+module.eks.aws_eks_addon.this["aws-ebs-csi-driver"]: Refreshing state... [id=student152:aws-ebs-csi-driver]
+module.eks.aws_eks_addon.this["eks-pod-identity-agent"]: Refreshing state... [id=student152:eks-pod-identity-agent]
+
+No changes. Your infrastructure matches the configuration.
+
+Terraform has compared your real infrastructure against your configuration
+and found no differences, so no changes are needed.
+
+Apply complete! Resources: 0 added, 0 changed, 0 destroyed.
+
+Outputs:
+
+cluster_name = "student152"
+kubeconfig_command = "aws eks update-kubeconfig --name student152 --region us-west-2 --profile aws1-student33 --kubeconfig /tmp/student152.kubeconfig"

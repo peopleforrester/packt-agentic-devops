@@ -1,8 +1,8 @@
-# Workshop Build Spec (attendee-facing)
+# Platform Build Spec
 
-This is the spec your agentic CLI ingests during the workshop. It drives the build of an AI-native Internal Developer Platform on your cluster, phase by phase. The presenter builds the same thing in parallel and presents at each stop.
+This is the spec your agentic CLI ingests. It drives the build of an AI-native Internal Developer Platform on your cluster, phase by phase, and each phase has a test in `tests/` that proves it landed.
 
-This is different from [`docs/reference/build-spec.md`](../docs/reference/build-spec.md), which is the fuller spec the build team worked from. That one is published too, if you want the reasoning behind a phase; this file is the one you and your agent actually run.
+For the reasoning behind a choice rather than the instruction, read [`docs/architecture.md`](../docs/architecture.md) and [`docs/reference/decisions.md`](../docs/reference/decisions.md). This file is the one you and your agent actually run.
 
 ## What you are building
 
@@ -16,7 +16,7 @@ A bare Kubernetes cluster, up, with credentials. Nothing is installed. ArgoCD is
 
 These bind your agent for the whole build.
 
-1. **Work one phase at a time, and stop at the end of each phase.** Do not start the next phase until the user confirms. The stop is where the presenter explains what just happened.
+1. **Work one phase at a time, and stop at the end of each phase.** Do not start the next phase until the user confirms. The stop is the point of the exercise: it is where you look at what was just built rather than watching it scroll past.
 2. **Test first.** For each phase, write the phase test, run it to confirm it fails, build the components, then run it to confirm it passes. No mocks, no stubs, no fallbacks.
 3. **Everything after the bootstrap flows through Git and ArgoCD.** The only direct installs are ArgoCD itself (the bootstrap) and the one scripted policy-denial demo. Use server-side apply for CRDs (`kubectl apply --server-side --force-conflicts`); the ApplicationSet and Argo Workflows CRDs exceed the client-side apply annotation limit.
 4. **Pin every version.** Use the versions in `components.yaml` and `versions.lock.md`. Do not invent versions or use what your training data remembers.

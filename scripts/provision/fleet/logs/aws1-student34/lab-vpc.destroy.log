@@ -1,0 +1,510 @@
+
+Warning: Deprecated flag: -state
+
+Use the "path" attribute within the "local" backend to specify a file for
+state storage
+data.aws_availability_zones.available: Reading...
+module.vpc.aws_vpc.this[0]: Refreshing state... [id=vpc-0aa60e3fd079df7d1]
+data.aws_availability_zones.available: Read complete after 1s [id=us-west-2]
+module.vpc.aws_default_security_group.this[0]: Refreshing state... [id=sg-0f889b7663c50c73e]
+module.vpc.aws_default_route_table.default[0]: Refreshing state... [id=rtb-006b339049f551c69]
+module.vpc.aws_internet_gateway.this[0]: Refreshing state... [id=igw-0794482f07f1d000a]
+module.vpc.aws_route_table.public[0]: Refreshing state... [id=rtb-079c4ec7ee7f13d85]
+module.vpc.aws_subnet.private[0]: Refreshing state... [id=subnet-06beb609f0a4f6b17]
+module.vpc.aws_default_network_acl.this[0]: Refreshing state... [id=acl-09a350b0a74ba6d90]
+module.vpc.aws_subnet.private[1]: Refreshing state... [id=subnet-09de4937d7ac0137d]
+module.vpc.aws_route_table.private[0]: Refreshing state... [id=rtb-029f3720174c628a9]
+module.vpc.aws_subnet.public[0]: Refreshing state... [id=subnet-04278b77b9cf18376]
+module.vpc.aws_subnet.public[1]: Refreshing state... [id=subnet-0e05721911aeef2fa]
+module.vpc.aws_eip.nat[0]: Refreshing state... [id=eipalloc-0628416338e374291]
+module.vpc.aws_route.public_internet_gateway[0]: Refreshing state... [id=r-rtb-079c4ec7ee7f13d851080289494]
+module.vpc.aws_route_table_association.private[1]: Refreshing state... [id=rtbassoc-09ce122d453c53975]
+module.vpc.aws_route_table_association.private[0]: Refreshing state... [id=rtbassoc-000a62a0afa01d132]
+module.vpc.aws_nat_gateway.this[0]: Refreshing state... [id=nat-0982605bcf769cb05]
+module.vpc.aws_route_table_association.public[1]: Refreshing state... [id=rtbassoc-0fac99f91779443c5]
+module.vpc.aws_route_table_association.public[0]: Refreshing state... [id=rtbassoc-0ed6caeca7eb1df19]
+module.vpc.aws_route.private_nat_gateway[0]: Refreshing state... [id=r-rtb-029f3720174c628a91080289494]
+
+Terraform used the selected providers to generate the following execution
+plan. Resource actions are indicated with the following symbols:
+  - destroy
+
+Terraform will perform the following actions:
+
+  # module.vpc.aws_default_network_acl.this[0] will be destroyed
+  - resource "aws_default_network_acl" "this" {
+      - arn                    = "arn:aws:ec2:us-west-2:783241407859:network-acl/acl-09a350b0a74ba6d90" -> null
+      - default_network_acl_id = "acl-09a350b0a74ba6d90" -> null
+      - id                     = "acl-09a350b0a74ba6d90" -> null
+      - owner_id               = "783241407859" -> null
+      - region                 = "us-west-2" -> null
+      - subnet_ids             = [
+          - "subnet-04278b77b9cf18376",
+          - "subnet-06beb609f0a4f6b17",
+          - "subnet-09de4937d7ac0137d",
+          - "subnet-0e05721911aeef2fa",
+        ] -> null
+      - tags                   = {
+          - "Name" = "packt-lab-vpc-default"
+        } -> null
+      - tags_all               = {
+          - "ManagedBy" = "terraform"
+          - "Name"      = "packt-lab-vpc-default"
+          - "Project"   = "packt-agentic-devops"
+          - "Purpose"   = "lab-shared-vpc"
+          - "Workshop"  = "packt"
+        } -> null
+      - vpc_id                 = "vpc-0aa60e3fd079df7d1" -> null
+
+      - egress {
+          - action          = "allow" -> null
+          - from_port       = 0 -> null
+          - icmp_code       = 0 -> null
+          - icmp_type       = 0 -> null
+          - ipv6_cidr_block = "::/0" -> null
+          - protocol        = "-1" -> null
+          - rule_no         = 101 -> null
+          - to_port         = 0 -> null
+            # (1 unchanged attribute hidden)
+        }
+      - egress {
+          - action          = "allow" -> null
+          - cidr_block      = "0.0.0.0/0" -> null
+          - from_port       = 0 -> null
+          - icmp_code       = 0 -> null
+          - icmp_type       = 0 -> null
+          - protocol        = "-1" -> null
+          - rule_no         = 100 -> null
+          - to_port         = 0 -> null
+            # (1 unchanged attribute hidden)
+        }
+
+      - ingress {
+          - action          = "allow" -> null
+          - from_port       = 0 -> null
+          - icmp_code       = 0 -> null
+          - icmp_type       = 0 -> null
+          - ipv6_cidr_block = "::/0" -> null
+          - protocol        = "-1" -> null
+          - rule_no         = 101 -> null
+          - to_port         = 0 -> null
+            # (1 unchanged attribute hidden)
+        }
+      - ingress {
+          - action          = "allow" -> null
+          - cidr_block      = "0.0.0.0/0" -> null
+          - from_port       = 0 -> null
+          - icmp_code       = 0 -> null
+          - icmp_type       = 0 -> null
+          - protocol        = "-1" -> null
+          - rule_no         = 100 -> null
+          - to_port         = 0 -> null
+            # (1 unchanged attribute hidden)
+        }
+    }
+
+  # module.vpc.aws_default_route_table.default[0] will be destroyed
+  - resource "aws_default_route_table" "default" {
+      - arn                    = "arn:aws:ec2:us-west-2:783241407859:route-table/rtb-006b339049f551c69" -> null
+      - default_route_table_id = "rtb-006b339049f551c69" -> null
+      - id                     = "rtb-006b339049f551c69" -> null
+      - owner_id               = "783241407859" -> null
+      - propagating_vgws       = [] -> null
+      - region                 = "us-west-2" -> null
+      - route                  = [] -> null
+      - tags                   = {
+          - "Name" = "packt-lab-vpc-default"
+        } -> null
+      - tags_all               = {
+          - "ManagedBy" = "terraform"
+          - "Name"      = "packt-lab-vpc-default"
+          - "Project"   = "packt-agentic-devops"
+          - "Purpose"   = "lab-shared-vpc"
+          - "Workshop"  = "packt"
+        } -> null
+      - vpc_id                 = "vpc-0aa60e3fd079df7d1" -> null
+
+      - timeouts {
+          - create = "5m" -> null
+          - update = "5m" -> null
+        }
+    }
+
+  # module.vpc.aws_default_security_group.this[0] will be destroyed
+  - resource "aws_default_security_group" "this" {
+      - arn                    = "arn:aws:ec2:us-west-2:783241407859:security-group/sg-0f889b7663c50c73e" -> null
+      - description            = "default VPC security group" -> null
+      - egress                 = [] -> null
+      - id                     = "sg-0f889b7663c50c73e" -> null
+      - ingress                = [] -> null
+      - name                   = "default" -> null
+      - owner_id               = "783241407859" -> null
+      - region                 = "us-west-2" -> null
+      - revoke_rules_on_delete = false -> null
+      - tags                   = {
+          - "Name" = "packt-lab-vpc-default"
+        } -> null
+      - tags_all               = {
+          - "ManagedBy" = "terraform"
+          - "Name"      = "packt-lab-vpc-default"
+          - "Project"   = "packt-agentic-devops"
+          - "Purpose"   = "lab-shared-vpc"
+          - "Workshop"  = "packt"
+        } -> null
+      - vpc_id                 = "vpc-0aa60e3fd079df7d1" -> null
+        # (1 unchanged attribute hidden)
+    }
+
+  # module.vpc.aws_internet_gateway.this[0] will be destroyed
+  - resource "aws_internet_gateway" "this" {
+      - arn      = "arn:aws:ec2:us-west-2:783241407859:internet-gateway/igw-0794482f07f1d000a" -> null
+      - id       = "igw-0794482f07f1d000a" -> null
+      - owner_id = "783241407859" -> null
+      - region   = "us-west-2" -> null
+      - tags     = {
+          - "Name" = "packt-lab-vpc"
+        } -> null
+      - tags_all = {
+          - "ManagedBy" = "terraform"
+          - "Name"      = "packt-lab-vpc"
+          - "Project"   = "packt-agentic-devops"
+          - "Purpose"   = "lab-shared-vpc"
+          - "Workshop"  = "packt"
+        } -> null
+      - vpc_id   = "vpc-0aa60e3fd079df7d1" -> null
+    }
+
+  # module.vpc.aws_route.private_nat_gateway[0] will be destroyed
+  - resource "aws_route" "private_nat_gateway" {
+      - destination_cidr_block      = "0.0.0.0/0" -> null
+      - id                          = "r-rtb-029f3720174c628a91080289494" -> null
+      - nat_gateway_id              = "nat-0982605bcf769cb05" -> null
+      - origin                      = "CreateRoute" -> null
+      - region                      = "us-west-2" -> null
+      - route_table_id              = "rtb-029f3720174c628a9" -> null
+      - state                       = "blackhole" -> null
+        # (14 unchanged attributes hidden)
+
+      - timeouts {
+          - create = "5m" -> null
+        }
+    }
+
+  # module.vpc.aws_route.public_internet_gateway[0] will be destroyed
+  - resource "aws_route" "public_internet_gateway" {
+      - destination_cidr_block      = "0.0.0.0/0" -> null
+      - gateway_id                  = "igw-0794482f07f1d000a" -> null
+      - id                          = "r-rtb-079c4ec7ee7f13d851080289494" -> null
+      - origin                      = "CreateRoute" -> null
+      - region                      = "us-west-2" -> null
+      - route_table_id              = "rtb-079c4ec7ee7f13d85" -> null
+      - state                       = "active" -> null
+        # (14 unchanged attributes hidden)
+
+      - timeouts {
+          - create = "5m" -> null
+        }
+    }
+
+  # module.vpc.aws_route_table.private[0] will be destroyed
+  - resource "aws_route_table" "private" {
+      - arn              = "arn:aws:ec2:us-west-2:783241407859:route-table/rtb-029f3720174c628a9" -> null
+      - id               = "rtb-029f3720174c628a9" -> null
+      - owner_id         = "783241407859" -> null
+      - propagating_vgws = [] -> null
+      - region           = "us-west-2" -> null
+      - route            = [
+          - {
+              - cidr_block                 = "0.0.0.0/0"
+              - nat_gateway_id             = "nat-0982605bcf769cb05"
+                # (12 unchanged attributes hidden)
+            },
+        ] -> null
+      - tags             = {
+          - "Name" = "packt-lab-vpc-private"
+        } -> null
+      - tags_all         = {
+          - "ManagedBy" = "terraform"
+          - "Name"      = "packt-lab-vpc-private"
+          - "Project"   = "packt-agentic-devops"
+          - "Purpose"   = "lab-shared-vpc"
+          - "Workshop"  = "packt"
+        } -> null
+      - vpc_id           = "vpc-0aa60e3fd079df7d1" -> null
+    }
+
+  # module.vpc.aws_route_table.public[0] will be destroyed
+  - resource "aws_route_table" "public" {
+      - arn              = "arn:aws:ec2:us-west-2:783241407859:route-table/rtb-079c4ec7ee7f13d85" -> null
+      - id               = "rtb-079c4ec7ee7f13d85" -> null
+      - owner_id         = "783241407859" -> null
+      - propagating_vgws = [] -> null
+      - region           = "us-west-2" -> null
+      - route            = [
+          - {
+              - cidr_block                 = "0.0.0.0/0"
+              - gateway_id                 = "igw-0794482f07f1d000a"
+                # (12 unchanged attributes hidden)
+            },
+        ] -> null
+      - tags             = {
+          - "Name" = "packt-lab-vpc-public"
+        } -> null
+      - tags_all         = {
+          - "ManagedBy" = "terraform"
+          - "Name"      = "packt-lab-vpc-public"
+          - "Project"   = "packt-agentic-devops"
+          - "Purpose"   = "lab-shared-vpc"
+          - "Workshop"  = "packt"
+        } -> null
+      - vpc_id           = "vpc-0aa60e3fd079df7d1" -> null
+    }
+
+  # module.vpc.aws_route_table_association.private[0] will be destroyed
+  - resource "aws_route_table_association" "private" {
+      - id             = "rtbassoc-000a62a0afa01d132" -> null
+      - region         = "us-west-2" -> null
+      - route_table_id = "rtb-029f3720174c628a9" -> null
+      - subnet_id      = "subnet-06beb609f0a4f6b17" -> null
+        # (1 unchanged attribute hidden)
+    }
+
+  # module.vpc.aws_route_table_association.private[1] will be destroyed
+  - resource "aws_route_table_association" "private" {
+      - id             = "rtbassoc-09ce122d453c53975" -> null
+      - region         = "us-west-2" -> null
+      - route_table_id = "rtb-029f3720174c628a9" -> null
+      - subnet_id      = "subnet-09de4937d7ac0137d" -> null
+        # (1 unchanged attribute hidden)
+    }
+
+  # module.vpc.aws_route_table_association.public[0] will be destroyed
+  - resource "aws_route_table_association" "public" {
+      - id             = "rtbassoc-0ed6caeca7eb1df19" -> null
+      - region         = "us-west-2" -> null
+      - route_table_id = "rtb-079c4ec7ee7f13d85" -> null
+      - subnet_id      = "subnet-04278b77b9cf18376" -> null
+        # (1 unchanged attribute hidden)
+    }
+
+  # module.vpc.aws_route_table_association.public[1] will be destroyed
+  - resource "aws_route_table_association" "public" {
+      - id             = "rtbassoc-0fac99f91779443c5" -> null
+      - region         = "us-west-2" -> null
+      - route_table_id = "rtb-079c4ec7ee7f13d85" -> null
+      - subnet_id      = "subnet-0e05721911aeef2fa" -> null
+        # (1 unchanged attribute hidden)
+    }
+
+  # module.vpc.aws_subnet.private[0] will be destroyed
+  - resource "aws_subnet" "private" {
+      - arn                                            = "arn:aws:ec2:us-west-2:783241407859:subnet/subnet-06beb609f0a4f6b17" -> null
+      - assign_ipv6_address_on_creation                = false -> null
+      - availability_zone                              = "us-west-2a" -> null
+      - availability_zone_id                           = "usw2-az1" -> null
+      - cidr_block                                     = "10.0.0.0/18" -> null
+      - enable_dns64                                   = false -> null
+      - enable_lni_at_device_index                     = 0 -> null
+      - enable_resource_name_dns_a_record_on_launch    = false -> null
+      - enable_resource_name_dns_aaaa_record_on_launch = false -> null
+      - id                                             = "subnet-06beb609f0a4f6b17" -> null
+      - ipv6_native                                    = false -> null
+      - map_customer_owned_ip_on_launch                = false -> null
+      - map_public_ip_on_launch                        = false -> null
+      - owner_id                                       = "783241407859" -> null
+      - private_dns_hostname_type_on_launch            = "ip-name" -> null
+      - region                                         = "us-west-2" -> null
+      - tags                                           = {
+          - "Name"                            = "packt-lab-vpc-private-us-west-2a"
+          - "kubernetes.io/role/internal-elb" = "1"
+        } -> null
+      - tags_all                                       = {
+          - "ManagedBy"                       = "terraform"
+          - "Name"                            = "packt-lab-vpc-private-us-west-2a"
+          - "Project"                         = "packt-agentic-devops"
+          - "Purpose"                         = "lab-shared-vpc"
+          - "Workshop"                        = "packt"
+          - "kubernetes.io/role/internal-elb" = "1"
+        } -> null
+      - vpc_id                                         = "vpc-0aa60e3fd079df7d1" -> null
+        # (4 unchanged attributes hidden)
+    }
+
+  # module.vpc.aws_subnet.private[1] will be destroyed
+  - resource "aws_subnet" "private" {
+      - arn                                            = "arn:aws:ec2:us-west-2:783241407859:subnet/subnet-09de4937d7ac0137d" -> null
+      - assign_ipv6_address_on_creation                = false -> null
+      - availability_zone                              = "us-west-2b" -> null
+      - availability_zone_id                           = "usw2-az2" -> null
+      - cidr_block                                     = "10.0.64.0/18" -> null
+      - enable_dns64                                   = false -> null
+      - enable_lni_at_device_index                     = 0 -> null
+      - enable_resource_name_dns_a_record_on_launch    = false -> null
+      - enable_resource_name_dns_aaaa_record_on_launch = false -> null
+      - id                                             = "subnet-09de4937d7ac0137d" -> null
+      - ipv6_native                                    = false -> null
+      - map_customer_owned_ip_on_launch                = false -> null
+      - map_public_ip_on_launch                        = false -> null
+      - owner_id                                       = "783241407859" -> null
+      - private_dns_hostname_type_on_launch            = "ip-name" -> null
+      - region                                         = "us-west-2" -> null
+      - tags                                           = {
+          - "Name"                            = "packt-lab-vpc-private-us-west-2b"
+          - "kubernetes.io/role/internal-elb" = "1"
+        } -> null
+      - tags_all                                       = {
+          - "ManagedBy"                       = "terraform"
+          - "Name"                            = "packt-lab-vpc-private-us-west-2b"
+          - "Project"                         = "packt-agentic-devops"
+          - "Purpose"                         = "lab-shared-vpc"
+          - "Workshop"                        = "packt"
+          - "kubernetes.io/role/internal-elb" = "1"
+        } -> null
+      - vpc_id                                         = "vpc-0aa60e3fd079df7d1" -> null
+        # (4 unchanged attributes hidden)
+    }
+
+  # module.vpc.aws_subnet.public[0] will be destroyed
+  - resource "aws_subnet" "public" {
+      - arn                                            = "arn:aws:ec2:us-west-2:783241407859:subnet/subnet-04278b77b9cf18376" -> null
+      - assign_ipv6_address_on_creation                = false -> null
+      - availability_zone                              = "us-west-2a" -> null
+      - availability_zone_id                           = "usw2-az1" -> null
+      - cidr_block                                     = "10.0.128.0/24" -> null
+      - enable_dns64                                   = false -> null
+      - enable_lni_at_device_index                     = 0 -> null
+      - enable_resource_name_dns_a_record_on_launch    = false -> null
+      - enable_resource_name_dns_aaaa_record_on_launch = false -> null
+      - id                                             = "subnet-04278b77b9cf18376" -> null
+      - ipv6_native                                    = false -> null
+      - map_customer_owned_ip_on_launch                = false -> null
+      - map_public_ip_on_launch                        = false -> null
+      - owner_id                                       = "783241407859" -> null
+      - private_dns_hostname_type_on_launch            = "ip-name" -> null
+      - region                                         = "us-west-2" -> null
+      - tags                                           = {
+          - "Name"                   = "packt-lab-vpc-public-us-west-2a"
+          - "kubernetes.io/role/elb" = "1"
+        } -> null
+      - tags_all                                       = {
+          - "ManagedBy"              = "terraform"
+          - "Name"                   = "packt-lab-vpc-public-us-west-2a"
+          - "Project"                = "packt-agentic-devops"
+          - "Purpose"                = "lab-shared-vpc"
+          - "Workshop"               = "packt"
+          - "kubernetes.io/role/elb" = "1"
+        } -> null
+      - vpc_id                                         = "vpc-0aa60e3fd079df7d1" -> null
+        # (4 unchanged attributes hidden)
+    }
+
+  # module.vpc.aws_subnet.public[1] will be destroyed
+  - resource "aws_subnet" "public" {
+      - arn                                            = "arn:aws:ec2:us-west-2:783241407859:subnet/subnet-0e05721911aeef2fa" -> null
+      - assign_ipv6_address_on_creation                = false -> null
+      - availability_zone                              = "us-west-2b" -> null
+      - availability_zone_id                           = "usw2-az2" -> null
+      - cidr_block                                     = "10.0.129.0/24" -> null
+      - enable_dns64                                   = false -> null
+      - enable_lni_at_device_index                     = 0 -> null
+      - enable_resource_name_dns_a_record_on_launch    = false -> null
+      - enable_resource_name_dns_aaaa_record_on_launch = false -> null
+      - id                                             = "subnet-0e05721911aeef2fa" -> null
+      - ipv6_native                                    = false -> null
+      - map_customer_owned_ip_on_launch                = false -> null
+      - map_public_ip_on_launch                        = false -> null
+      - owner_id                                       = "783241407859" -> null
+      - private_dns_hostname_type_on_launch            = "ip-name" -> null
+      - region                                         = "us-west-2" -> null
+      - tags                                           = {
+          - "Name"                   = "packt-lab-vpc-public-us-west-2b"
+          - "kubernetes.io/role/elb" = "1"
+        } -> null
+      - tags_all                                       = {
+          - "ManagedBy"              = "terraform"
+          - "Name"                   = "packt-lab-vpc-public-us-west-2b"
+          - "Project"                = "packt-agentic-devops"
+          - "Purpose"                = "lab-shared-vpc"
+          - "Workshop"               = "packt"
+          - "kubernetes.io/role/elb" = "1"
+        } -> null
+      - vpc_id                                         = "vpc-0aa60e3fd079df7d1" -> null
+        # (4 unchanged attributes hidden)
+    }
+
+  # module.vpc.aws_vpc.this[0] will be destroyed
+  - resource "aws_vpc" "this" {
+      - arn                                  = "arn:aws:ec2:us-west-2:783241407859:vpc/vpc-0aa60e3fd079df7d1" -> null
+      - assign_generated_ipv6_cidr_block     = false -> null
+      - cidr_block                           = "10.0.0.0/16" -> null
+      - default_network_acl_id               = "acl-09a350b0a74ba6d90" -> null
+      - default_route_table_id               = "rtb-006b339049f551c69" -> null
+      - default_security_group_id            = "sg-0f889b7663c50c73e" -> null
+      - dhcp_options_id                      = "dopt-0d6ce215f9e9e0911" -> null
+      - enable_dns_hostnames                 = true -> null
+      - enable_dns_support                   = true -> null
+      - enable_network_address_usage_metrics = false -> null
+      - id                                   = "vpc-0aa60e3fd079df7d1" -> null
+      - instance_tenancy                     = "default" -> null
+      - ipv6_netmask_length                  = 0 -> null
+      - main_route_table_id                  = "rtb-006b339049f551c69" -> null
+      - owner_id                             = "783241407859" -> null
+      - region                               = "us-west-2" -> null
+      - tags                                 = {
+          - "Name" = "packt-lab-vpc"
+        } -> null
+      - tags_all                             = {
+          - "ManagedBy" = "terraform"
+          - "Name"      = "packt-lab-vpc"
+          - "Project"   = "packt-agentic-devops"
+          - "Purpose"   = "lab-shared-vpc"
+          - "Workshop"  = "packt"
+        } -> null
+        # (4 unchanged attributes hidden)
+    }
+
+Plan: 0 to add, 0 to change, 17 to destroy.
+
+Changes to Outputs:
+  - private_subnet_ids = [
+      - "subnet-06beb609f0a4f6b17",
+      - "subnet-09de4937d7ac0137d",
+    ] -> null
+  - region             = "us-west-2" -> null
+  - vpc_id             = "vpc-0aa60e3fd079df7d1" -> null
+module.vpc.aws_default_security_group.this[0]: Destroying... [id=sg-0f889b7663c50c73e]
+module.vpc.aws_route_table_association.public[0]: Destroying... [id=rtbassoc-0ed6caeca7eb1df19]
+module.vpc.aws_route.private_nat_gateway[0]: Destroying... [id=r-rtb-029f3720174c628a91080289494]
+module.vpc.aws_default_network_acl.this[0]: Destroying... [id=acl-09a350b0a74ba6d90]
+module.vpc.aws_route_table_association.public[1]: Destroying... [id=rtbassoc-0fac99f91779443c5]
+module.vpc.aws_route_table_association.private[0]: Destroying... [id=rtbassoc-000a62a0afa01d132]
+module.vpc.aws_route_table_association.private[1]: Destroying... [id=rtbassoc-09ce122d453c53975]
+module.vpc.aws_default_route_table.default[0]: Destroying... [id=rtb-006b339049f551c69]
+module.vpc.aws_route.public_internet_gateway[0]: Destroying... [id=r-rtb-079c4ec7ee7f13d851080289494]
+module.vpc.aws_default_security_group.this[0]: Destruction complete after 0s
+module.vpc.aws_default_route_table.default[0]: Destruction complete after 0s
+module.vpc.aws_default_network_acl.this[0]: Destruction complete after 0s
+module.vpc.aws_route_table_association.private[0]: Destruction complete after 0s
+module.vpc.aws_route_table_association.public[1]: Destruction complete after 0s
+module.vpc.aws_route_table_association.private[1]: Destruction complete after 0s
+module.vpc.aws_subnet.private[0]: Destroying... [id=subnet-06beb609f0a4f6b17]
+module.vpc.aws_subnet.private[1]: Destroying... [id=subnet-09de4937d7ac0137d]
+module.vpc.aws_route_table_association.public[0]: Destruction complete after 0s
+module.vpc.aws_route.private_nat_gateway[0]: Destruction complete after 1s
+module.vpc.aws_subnet.public[1]: Destroying... [id=subnet-0e05721911aeef2fa]
+module.vpc.aws_route_table.private[0]: Destroying... [id=rtb-029f3720174c628a9]
+module.vpc.aws_subnet.public[0]: Destroying... [id=subnet-04278b77b9cf18376]
+module.vpc.aws_route.public_internet_gateway[0]: Destruction complete after 1s
+module.vpc.aws_internet_gateway.this[0]: Destroying... [id=igw-0794482f07f1d000a]
+module.vpc.aws_route_table.public[0]: Destroying... [id=rtb-079c4ec7ee7f13d85]
+module.vpc.aws_subnet.private[0]: Destruction complete after 1s
+module.vpc.aws_subnet.private[1]: Destruction complete after 1s
+module.vpc.aws_subnet.public[1]: Destruction complete after 0s
+module.vpc.aws_internet_gateway.this[0]: Destruction complete after 0s
+module.vpc.aws_route_table.private[0]: Destruction complete after 1s
+module.vpc.aws_subnet.public[0]: Destruction complete after 1s
+module.vpc.aws_route_table.public[0]: Destruction complete after 1s
+module.vpc.aws_vpc.this[0]: Destroying... [id=vpc-0aa60e3fd079df7d1]
+module.vpc.aws_vpc.this[0]: Destruction complete after 0s
+
+Destroy complete! Resources: 17 destroyed.

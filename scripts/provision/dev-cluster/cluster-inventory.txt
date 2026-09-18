@@ -1,0 +1,4 @@
+cluster: adwc-dev
+vpc: vpc-00c73776f977319e9
+node: i-0f467190b70d65b05
+allocatable_pods: 110

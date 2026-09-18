@@ -28,4 +28,4 @@
 - Kyverno chart is 3.8.1 (the 3.x line), app v1.18.1. Write new policies as CEL types; the AI-plane policies arrive in Phase 4.
 - OpenBao runs in dev mode (one unsealed in-memory pod, fixed root token, KV v2 at `secret/`, injector off). ESO reads it over the Vault-compatible API via the vault provider in openbao-config. This is a workshop choice, not production: in production enable OpenBao Kubernetes auth and durable storage. Vault itself was not used because it relicensed to BUSL in 2023; OpenBao is the LF/MPL-2.0 fork.
 
-**Stop here.** Output the completion promise and wait. The presenter explains the App-of-Apps reconcile and the sync waves during this stop.
+**Stop here.** Output the completion promise and wait. This is the point to read the App-of-Apps reconcile and watch the sync waves land in order, before anything else is added on top.

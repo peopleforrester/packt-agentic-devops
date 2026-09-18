@@ -1,0 +1,793 @@
+data.aws_availability_zones.available: Reading...
+module.eks.data.aws_partition.current[0]: Reading...
+module.ebs_csi_irsa.data.aws_partition.current: Reading...
+module.eks.data.aws_caller_identity.current[0]: Reading...
+module.eks.data.aws_iam_policy_document.assume_role_policy[0]: Reading...
+module.eks.module.kms.data.aws_caller_identity.current[0]: Reading...
+module.eks.module.eks_managed_node_group["default"].data.aws_iam_policy_document.assume_role_policy[0]: Reading...
+aws_resourcegroups_group.packt: Refreshing state... [id=packt-agentic-devops]
+module.vpc.aws_vpc.this[0]: Refreshing state... [id=vpc-00c73776f977319e9]
+module.eks.data.aws_partition.current[0]: Read complete after 0s [id=aws]
+module.ebs_csi_irsa.data.aws_partition.current: Read complete after 0s [id=aws]
+module.eks.data.aws_iam_policy_document.assume_role_policy[0]: Read complete after 0s [id=2830595799]
+module.eks.module.eks_managed_node_group["default"].data.aws_iam_policy_document.assume_role_policy[0]: Read complete after 0s [id=2560088296]
+module.ebs_csi_irsa.data.aws_caller_identity.current: Reading...
+module.ebs_csi_irsa.data.aws_region.current: Reading...
+module.eks.module.kms.data.aws_partition.current[0]: Reading...
+module.eks.aws_iam_role.this[0]: Refreshing state... [id=adwc-dev-cluster-20260621142047734600000002]
+module.eks.module.kms.data.aws_partition.current[0]: Read complete after 0s [id=aws]
+module.ebs_csi_irsa.data.aws_region.current: Read complete after 0s [id=us-west-2]
+module.eks.module.eks_managed_node_group["default"].aws_iam_role.this[0]: Refreshing state... [id=default-eks-node-group-20260621142047734600000001]
+module.ebs_csi_irsa.data.aws_iam_policy_document.ebs_csi[0]: Reading...
+module.ebs_csi_irsa.data.aws_iam_policy_document.ebs_csi[0]: Read complete after 0s [id=4189668531]
+module.ebs_csi_irsa.aws_iam_policy.ebs_csi[0]: Refreshing state... [id=arn:aws:iam::515966504359:policy/AmazonEKS_EBS_CSI_Policy-20260621142047735100000003]
+module.eks.data.aws_caller_identity.current[0]: Read complete after 0s [id=515966504359]
+module.eks.data.aws_iam_session_context.current[0]: Reading...
+module.eks.data.aws_iam_session_context.current[0]: Read complete after 0s [id=arn:aws:iam::515966504359:user/nwuser]
+module.eks.module.kms.data.aws_caller_identity.current[0]: Read complete after 0s [id=515966504359]
+module.eks.aws_iam_role_policy_attachment.this["AmazonEKSClusterPolicy"]: Refreshing state... [id=adwc-dev-cluster-20260621142047734600000002/arn:aws:iam::aws:policy/AmazonEKSClusterPolicy]
+module.eks.module.kms.data.aws_iam_policy_document.this[0]: Reading...
+module.eks.module.kms.data.aws_iam_policy_document.this[0]: Read complete after 0s [id=3599923485]
+module.eks.module.eks_managed_node_group["default"].aws_iam_role_policy_attachment.this["AmazonEKS_CNI_Policy"]: Refreshing state... [id=default-eks-node-group-20260621142047734600000001/arn:aws:iam::aws:policy/AmazonEKS_CNI_Policy]
+module.eks.module.eks_managed_node_group["default"].aws_iam_role_policy_attachment.this["AmazonEC2ContainerRegistryReadOnly"]: Refreshing state... [id=default-eks-node-group-20260621142047734600000001/arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly]
+module.eks.module.eks_managed_node_group["default"].aws_iam_role_policy_attachment.this["AmazonEKSWorkerNodePolicy"]: Refreshing state... [id=default-eks-node-group-20260621142047734600000001/arn:aws:iam::aws:policy/AmazonEKSWorkerNodePolicy]
+module.ebs_csi_irsa.data.aws_caller_identity.current: Read complete after 0s [id=515966504359]
+module.eks.module.kms.aws_kms_key.this[0]: Refreshing state... [id=5db80b9c-b8bd-47ea-a22c-3f2696b24184]
+data.aws_availability_zones.available: Read complete after 0s [id=us-west-2]
+module.eks.module.kms.aws_kms_alias.this["cluster"]: Refreshing state... [id=alias/eks/adwc-dev]
+module.eks.aws_iam_policy.cluster_encryption[0]: Refreshing state... [id=arn:aws:iam::515966504359:policy/adwc-dev-cluster-ClusterEncryption20260621142109976500000009]
+module.eks.aws_iam_role_policy_attachment.cluster_encryption[0]: Refreshing state... [id=adwc-dev-cluster-20260621142047734600000002/arn:aws:iam::515966504359:policy/adwc-dev-cluster-ClusterEncryption20260621142109976500000009]
+module.vpc.aws_default_security_group.this[0]: Refreshing state... [id=sg-047dd4be23bc31524]
+module.vpc.aws_default_route_table.default[0]: Refreshing state... [id=rtb-06464e2ac8c3848c1]
+module.eks.aws_security_group.cluster[0]: Refreshing state... [id=sg-0d1f7fb2e08239e18]
+module.vpc.aws_default_network_acl.this[0]: Refreshing state... [id=acl-0132105b62a31f674]
+module.vpc.aws_internet_gateway.this[0]: Refreshing state... [id=igw-0cbe6c23648e86c9f]
+module.eks.aws_security_group.node[0]: Refreshing state... [id=sg-0e4b828476ad9f448]
+module.vpc.aws_subnet.private[1]: Refreshing state... [id=subnet-074c01c3f4dcefe98]
+module.vpc.aws_subnet.private[0]: Refreshing state... [id=subnet-0d36ca91b14bc388a]
+module.vpc.aws_route_table.private[0]: Refreshing state... [id=rtb-0473634632b398327]
+module.vpc.aws_route_table.public[0]: Refreshing state... [id=rtb-0c72193152b039384]
+module.vpc.aws_subnet.public[0]: Refreshing state... [id=subnet-0874cba3061933c2c]
+module.vpc.aws_subnet.public[1]: Refreshing state... [id=subnet-048bfa79ed04fb2aa]
+module.vpc.aws_eip.nat[0]: Refreshing state... [id=eipalloc-0c035825846f9f58a]
+module.vpc.aws_route.public_internet_gateway[0]: Refreshing state... [id=r-rtb-0c72193152b0393841080289494]
+module.eks.aws_security_group_rule.cluster["ingress_nodes_443"]: Refreshing state... [id=sgrule-344354645]
+module.eks.aws_security_group_rule.node["ingress_cluster_6443_webhook"]: Refreshing state... [id=sgrule-1921196567]
+module.eks.aws_security_group_rule.node["ingress_nodes_ephemeral"]: Refreshing state... [id=sgrule-455930577]
+module.eks.aws_security_group_rule.node["ingress_cluster_443"]: Refreshing state... [id=sgrule-3736814378]
+module.eks.aws_security_group_rule.node["egress_all"]: Refreshing state... [id=sgrule-173464886]
+module.eks.aws_security_group_rule.node["ingress_cluster_9443_webhook"]: Refreshing state... [id=sgrule-92155389]
+module.eks.aws_security_group_rule.node["ingress_cluster_8443_webhook"]: Refreshing state... [id=sgrule-1642012214]
+module.eks.aws_security_group_rule.node["ingress_cluster_kubelet"]: Refreshing state... [id=sgrule-2755082082]
+module.eks.aws_security_group_rule.node["ingress_self_coredns_udp"]: Refreshing state... [id=sgrule-4100924242]
+module.eks.aws_security_group_rule.node["ingress_self_coredns_tcp"]: Refreshing state... [id=sgrule-1345355965]
+module.eks.aws_security_group_rule.node["ingress_cluster_4443_webhook"]: Refreshing state... [id=sgrule-3150005633]
+module.eks.aws_security_group_rule.node["ingress_cluster_10251_webhook"]: Refreshing state... [id=sgrule-2424203033]
+module.vpc.aws_route_table_association.private[0]: Refreshing state... [id=rtbassoc-05cf7f85b9fac612d]
+module.vpc.aws_route_table_association.private[1]: Refreshing state... [id=rtbassoc-06b2048898382b999]
+module.vpc.aws_route_table_association.public[1]: Refreshing state... [id=rtbassoc-00b804795885a64aa]
+module.vpc.aws_route_table_association.public[0]: Refreshing state... [id=rtbassoc-0bcfc742c15f3cb33]
+module.vpc.aws_nat_gateway.this[0]: Refreshing state... [id=nat-0920ce78d6ec8b76d]
+module.vpc.aws_route.private_nat_gateway[0]: Refreshing state... [id=r-rtb-0473634632b3983271080289494]
+module.eks.module.eks_managed_node_group["default"].data.aws_ssm_parameter.ami[0]: Reading...
+module.eks.module.eks_managed_node_group["default"].module.user_data.data.cloudinit_config.al2023_eks_managed_node_group[0]: Reading...
+module.eks.module.eks_managed_node_group["default"].module.user_data.data.cloudinit_config.al2023_eks_managed_node_group[0]: Read complete after 0s [id=140799688]
+module.eks.module.eks_managed_node_group["default"].data.aws_ssm_parameter.ami[0]: Read complete after 1s [id=/aws/service/eks/optimized-ami/1.35/amazon-linux-2023/x86_64/standard/recommended/release_version]
+
+Terraform used the selected providers to generate the following execution
+plan. Resource actions are indicated with the following symbols:
+  + create
+ <= read (data resources)
+
+Terraform will perform the following actions:
+
+  # module.ebs_csi_irsa.data.aws_iam_policy_document.this[0] will be read during apply
+  # (config refers to values not yet known)
+ <= data "aws_iam_policy_document" "this" {
+      + id            = (known after apply)
+      + json          = (known after apply)
+      + minified_json = (known after apply)
+
+      + statement {
+          + actions = [
+              + "sts:AssumeRoleWithWebIdentity",
+            ]
+          + effect  = "Allow"
+
+          + condition {
+              + test     = "StringEquals"
+              + values   = [
+                  + "sts.amazonaws.com",
+                ]
+              + variable = (known after apply)
+            }
+          + condition {
+              + test     = "StringEquals"
+              + values   = [
+                  + "system:serviceaccount:kube-system:ebs-csi-controller-sa",
+                ]
+              + variable = (known after apply)
+            }
+
+          + principals {
+              + identifiers = [
+                  + (known after apply),
+                ]
+              + type        = "Federated"
+            }
+        }
+    }
+
+  # module.ebs_csi_irsa.aws_iam_role.this[0] will be created
+  + resource "aws_iam_role" "this" {
+      + arn                   = (known after apply)
+      + assume_role_policy    = (known after apply)
+      + create_date           = (known after apply)
+      + force_detach_policies = true
+      + id                    = (known after apply)
+      + managed_policy_arns   = (known after apply)
+      + max_session_duration  = 3600
+      + name                  = "adwc-dev-ebs-csi"
+      + name_prefix           = (known after apply)
+      + path                  = "/"
+      + tags_all              = {
+          + "Ephemeral" = "true"
+          + "ManagedBy" = "terraform"
+          + "Project"   = "packt-agentic-devops"
+          + "Purpose"   = "agentic-devops-validation"
+          + "Workshop"  = "packt"
+        }
+      + unique_id             = (known after apply)
+
+      + inline_policy (known after apply)
+    }
+
+  # module.ebs_csi_irsa.aws_iam_role_policy_attachment.ebs_csi[0] will be created
+  + resource "aws_iam_role_policy_attachment" "ebs_csi" {
+      + id         = (known after apply)
+      + policy_arn = "arn:aws:iam::515966504359:policy/AmazonEKS_EBS_CSI_Policy-20260621142047735100000003"
+      + role       = "adwc-dev-ebs-csi"
+    }
+
+  # module.eks.data.aws_eks_addon_version.this["aws-ebs-csi-driver"] will be read during apply
+  # (depends on a resource or a module with changes pending)
+ <= data "aws_eks_addon_version" "this" {
+      + addon_name         = "aws-ebs-csi-driver"
+      + id                 = (known after apply)
+      + kubernetes_version = "1.35"
+      + most_recent        = true
+      + region             = (known after apply)
+      + version            = (known after apply)
+    }
+
+  # module.eks.data.aws_eks_addon_version.this["coredns"] will be read during apply
+  # (depends on a resource or a module with changes pending)
+ <= data "aws_eks_addon_version" "this" {
+      + addon_name         = "coredns"
+      + id                 = (known after apply)
+      + kubernetes_version = "1.35"
+      + most_recent        = true
+      + region             = (known after apply)
+      + version            = (known after apply)
+    }
+
+  # module.eks.data.aws_eks_addon_version.this["eks-pod-identity-agent"] will be read during apply
+  # (depends on a resource or a module with changes pending)
+ <= data "aws_eks_addon_version" "this" {
+      + addon_name         = "eks-pod-identity-agent"
+      + id                 = (known after apply)
+      + kubernetes_version = "1.35"
+      + most_recent        = true
+      + region             = (known after apply)
+      + version            = (known after apply)
+    }
+
+  # module.eks.data.aws_eks_addon_version.this["kube-proxy"] will be read during apply
+  # (depends on a resource or a module with changes pending)
+ <= data "aws_eks_addon_version" "this" {
+      + addon_name         = "kube-proxy"
+      + id                 = (known after apply)
+      + kubernetes_version = "1.35"
+      + most_recent        = true
+      + region             = (known after apply)
+      + version            = (known after apply)
+    }
+
+  # module.eks.data.aws_eks_addon_version.this["vpc-cni"] will be read during apply
+  # (depends on a resource or a module with changes pending)
+ <= data "aws_eks_addon_version" "this" {
+      + addon_name         = "vpc-cni"
+      + id                 = (known after apply)
+      + kubernetes_version = "1.35"
+      + most_recent        = true
+      + region             = (known after apply)
+      + version            = (known after apply)
+    }
+
+  # module.eks.data.tls_certificate.this[0] will be read during apply
+  # (config refers to values not yet known)
+ <= data "tls_certificate" "this" {
+      + certificates = (known after apply)
+      + id           = (known after apply)
+      + url          = (known after apply)
+    }
+
+  # module.eks.aws_cloudwatch_log_group.this[0] will be created
+  + resource "aws_cloudwatch_log_group" "this" {
+      + arn                         = (known after apply)
+      + deletion_protection_enabled = (known after apply)
+      + id                          = (known after apply)
+      + log_group_class             = (known after apply)
+      + name                        = "/aws/eks/adwc-dev/cluster"
+      + name_prefix                 = (known after apply)
+      + region                      = "us-west-2"
+      + retention_in_days           = 90
+      + skip_destroy                = false
+      + tags                        = {
+          + "Name" = "/aws/eks/adwc-dev/cluster"
+        }
+      + tags_all                    = {
+          + "Ephemeral" = "true"
+          + "ManagedBy" = "terraform"
+          + "Name"      = "/aws/eks/adwc-dev/cluster"
+          + "Project"   = "packt-agentic-devops"
+          + "Purpose"   = "agentic-devops-validation"
+          + "Workshop"  = "packt"
+        }
+    }
+
+  # module.eks.aws_eks_access_entry.this["cluster_creator"] will be created
+  + resource "aws_eks_access_entry" "this" {
+      + access_entry_arn  = (known after apply)
+      + cluster_name      = (known after apply)
+      + created_at        = (known after apply)
+      + id                = (known after apply)
+      + kubernetes_groups = (known after apply)
+      + modified_at       = (known after apply)
+      + principal_arn     = "arn:aws:iam::515966504359:user/nwuser"
+      + region            = "us-west-2"
+      + tags_all          = {
+          + "Ephemeral" = "true"
+          + "ManagedBy" = "terraform"
+          + "Project"   = "packt-agentic-devops"
+          + "Purpose"   = "agentic-devops-validation"
+          + "Workshop"  = "packt"
+        }
+      + type              = "STANDARD"
+      + user_name         = (known after apply)
+    }
+
+  # module.eks.aws_eks_access_policy_association.this["cluster_creator_admin"] will be created
+  + resource "aws_eks_access_policy_association" "this" {
+      + associated_at = (known after apply)
+      + cluster_name  = (known after apply)
+      + id            = (known after apply)
+      + modified_at   = (known after apply)
+      + policy_arn    = "arn:aws:eks::aws:cluster-access-policy/AmazonEKSClusterAdminPolicy"
+      + principal_arn = "arn:aws:iam::515966504359:user/nwuser"
+      + region        = "us-west-2"
+
+      + access_scope {
+          + type = "cluster"
+        }
+    }
+
+  # module.eks.aws_eks_addon.before_compute["kube-proxy"] will be created
+  + resource "aws_eks_addon" "before_compute" {
+      + addon_name                  = "kube-proxy"
+      + addon_version               = (known after apply)
+      + arn                         = (known after apply)
+      + cluster_name                = (known after apply)
+      + configuration_values        = (known after apply)
+      + created_at                  = (known after apply)
+      + id                          = (known after apply)
+      + modified_at                 = (known after apply)
+      + preserve                    = true
+      + region                      = "us-west-2"
+      + resolve_conflicts_on_create = "NONE"
+      + resolve_conflicts_on_update = "OVERWRITE"
+      + tags_all                    = {
+          + "Ephemeral" = "true"
+          + "ManagedBy" = "terraform"
+          + "Project"   = "packt-agentic-devops"
+          + "Purpose"   = "agentic-devops-validation"
+          + "Workshop"  = "packt"
+        }
+
+      + namespace_config (known after apply)
+
+      + timeouts {}
+    }
+
+  # module.eks.aws_eks_addon.before_compute["vpc-cni"] will be created
+  + resource "aws_eks_addon" "before_compute" {
+      + addon_name                  = "vpc-cni"
+      + addon_version               = (known after apply)
+      + arn                         = (known after apply)
+      + cluster_name                = (known after apply)
+      + configuration_values        = jsonencode(
+            {
+              + env = {
+                  + ENABLE_PREFIX_DELEGATION = "true"
+                  + WARM_PREFIX_TARGET       = "1"
+                }
+            }
+        )
+      + created_at                  = (known after apply)
+      + id                          = (known after apply)
+      + modified_at                 = (known after apply)
+      + preserve                    = true
+      + region                      = "us-west-2"
+      + resolve_conflicts_on_create = "NONE"
+      + resolve_conflicts_on_update = "OVERWRITE"
+      + tags_all                    = {
+          + "Ephemeral" = "true"
+          + "ManagedBy" = "terraform"
+          + "Project"   = "packt-agentic-devops"
+          + "Purpose"   = "agentic-devops-validation"
+          + "Workshop"  = "packt"
+        }
+
+      + namespace_config (known after apply)
+
+      + timeouts {}
+    }
+
+  # module.eks.aws_eks_addon.this["aws-ebs-csi-driver"] will be created
+  + resource "aws_eks_addon" "this" {
+      + addon_name                  = "aws-ebs-csi-driver"
+      + addon_version               = (known after apply)
+      + arn                         = (known after apply)
+      + cluster_name                = (known after apply)
+      + configuration_values        = (known after apply)
+      + created_at                  = (known after apply)
+      + id                          = (known after apply)
+      + modified_at                 = (known after apply)
+      + preserve                    = true
+      + region                      = "us-west-2"
+      + resolve_conflicts_on_create = "NONE"
+      + resolve_conflicts_on_update = "OVERWRITE"
+      + service_account_role_arn    = (known after apply)
+      + tags_all                    = {
+          + "Ephemeral" = "true"
+          + "ManagedBy" = "terraform"
+          + "Project"   = "packt-agentic-devops"
+          + "Purpose"   = "agentic-devops-validation"
+          + "Workshop"  = "packt"
+        }
+
+      + namespace_config (known after apply)
+
+      + timeouts {}
+    }
+
+  # module.eks.aws_eks_addon.this["coredns"] will be created
+  + resource "aws_eks_addon" "this" {
+      + addon_name                  = "coredns"
+      + addon_version               = (known after apply)
+      + arn                         = (known after apply)
+      + cluster_name                = (known after apply)
+      + configuration_values        = (known after apply)
+      + created_at                  = (known after apply)
+      + id                          = (known after apply)
+      + modified_at                 = (known after apply)
+      + preserve                    = true
+      + region                      = "us-west-2"
+      + resolve_conflicts_on_create = "NONE"
+      + resolve_conflicts_on_update = "OVERWRITE"
+      + tags_all                    = {
+          + "Ephemeral" = "true"
+          + "ManagedBy" = "terraform"
+          + "Project"   = "packt-agentic-devops"
+          + "Purpose"   = "agentic-devops-validation"
+          + "Workshop"  = "packt"
+        }
+
+      + namespace_config (known after apply)
+
+      + timeouts {}
+    }
+
+  # module.eks.aws_eks_addon.this["eks-pod-identity-agent"] will be created
+  + resource "aws_eks_addon" "this" {
+      + addon_name                  = "eks-pod-identity-agent"
+      + addon_version               = (known after apply)
+      + arn                         = (known after apply)
+      + cluster_name                = (known after apply)
+      + configuration_values        = (known after apply)
+      + created_at                  = (known after apply)
+      + id                          = (known after apply)
+      + modified_at                 = (known after apply)
+      + preserve                    = true
+      + region                      = "us-west-2"
+      + resolve_conflicts_on_create = "NONE"
+      + resolve_conflicts_on_update = "OVERWRITE"
+      + tags_all                    = {
+          + "Ephemeral" = "true"
+          + "ManagedBy" = "terraform"
+          + "Project"   = "packt-agentic-devops"
+          + "Purpose"   = "agentic-devops-validation"
+          + "Workshop"  = "packt"
+        }
+
+      + namespace_config (known after apply)
+
+      + timeouts {}
+    }
+
+  # module.eks.aws_eks_cluster.this[0] will be created
+  + resource "aws_eks_cluster" "this" {
+      + arn                           = (known after apply)
+      + bootstrap_self_managed_addons = false
+      + certificate_authority         = (known after apply)
+      + cluster_id                    = (known after apply)
+      + created_at                    = (known after apply)
+      + deletion_protection           = (known after apply)
+      + enabled_cluster_log_types     = [
+          + "api",
+          + "audit",
+          + "authenticator",
+        ]
+      + endpoint                      = (known after apply)
+      + id                            = (known after apply)
+      + identity                      = (known after apply)
+      + name                          = "adwc-dev"
+      + platform_version              = (known after apply)
+      + region                        = "us-west-2"
+      + role_arn                      = "arn:aws:iam::515966504359:role/adwc-dev-cluster-20260621142047734600000002"
+      + status                        = (known after apply)
+      + tags_all                      = {
+          + "Ephemeral" = "true"
+          + "ManagedBy" = "terraform"
+          + "Project"   = "packt-agentic-devops"
+          + "Purpose"   = "agentic-devops-validation"
+          + "Workshop"  = "packt"
+        }
+      + version                       = "1.35"
+
+      + access_config {
+          + authentication_mode                         = "API_AND_CONFIG_MAP"
+          + bootstrap_cluster_creator_admin_permissions = false
+        }
+
+      + compute_config (known after apply)
+
+      + control_plane_scaling_config (known after apply)
+
+      + encryption_config {
+          + resources = [
+              + "secrets",
+            ]
+
+          + provider {
+              + key_arn = "arn:aws:kms:us-west-2:515966504359:key/5db80b9c-b8bd-47ea-a22c-3f2696b24184"
+            }
+        }
+
+      + kubernetes_network_config {
+          + ip_family         = "ipv4"
+          + service_ipv4_cidr = (known after apply)
+          + service_ipv6_cidr = (known after apply)
+
+          + elastic_load_balancing (known after apply)
+        }
+
+      + storage_config (known after apply)
+
+      + upgrade_policy (known after apply)
+
+      + vpc_config {
+          + cluster_security_group_id = (known after apply)
+          + endpoint_private_access   = true
+          + endpoint_public_access    = true
+          + public_access_cidrs       = [
+              + "0.0.0.0/0",
+            ]
+          + security_group_ids        = [
+              + "sg-0d1f7fb2e08239e18",
+            ]
+          + subnet_ids                = [
+              + "subnet-074c01c3f4dcefe98",
+              + "subnet-0d36ca91b14bc388a",
+            ]
+          + vpc_id                    = (known after apply)
+        }
+    }
+
+  # module.eks.aws_iam_openid_connect_provider.oidc_provider[0] will be created
+  + resource "aws_iam_openid_connect_provider" "oidc_provider" {
+      + arn             = (known after apply)
+      + client_id_list  = [
+          + "sts.amazonaws.com",
+        ]
+      + id              = (known after apply)
+      + tags            = {
+          + "Name" = "adwc-dev-eks-irsa"
+        }
+      + tags_all        = {
+          + "Ephemeral" = "true"
+          + "ManagedBy" = "terraform"
+          + "Name"      = "adwc-dev-eks-irsa"
+          + "Project"   = "packt-agentic-devops"
+          + "Purpose"   = "agentic-devops-validation"
+          + "Workshop"  = "packt"
+        }
+      + thumbprint_list = (known after apply)
+      + url             = (known after apply)
+    }
+
+  # module.eks.time_sleep.this[0] will be created
+  + resource "time_sleep" "this" {
+      + create_duration = "30s"
+      + id              = (known after apply)
+      + triggers        = {
+          + "certificate_authority_data" = (known after apply)
+          + "endpoint"                   = (known after apply)
+          + "kubernetes_version"         = "1.35"
+          + "name"                       = (known after apply)
+          + "service_cidr"               = (known after apply)
+        }
+    }
+
+  # module.eks.module.eks_managed_node_group["default"].aws_eks_node_group.this[0] will be created
+  + resource "aws_eks_node_group" "this" {
+      + ami_type               = "AL2023_x86_64_STANDARD"
+      + arn                    = (known after apply)
+      + capacity_type          = "ON_DEMAND"
+      + cluster_name           = (known after apply)
+      + disk_size              = (known after apply)
+      + id                     = (known after apply)
+      + instance_types         = [
+          + "t3.2xlarge",
+        ]
+      + node_group_name        = (known after apply)
+      + node_group_name_prefix = "default-"
+      + node_role_arn          = "arn:aws:iam::515966504359:role/default-eks-node-group-20260621142047734600000001"
+      + region                 = "us-west-2"
+      + release_version        = "1.35.6-20260618"
+      + resources              = (known after apply)
+      + status                 = (known after apply)
+      + subnet_ids             = [
+          + "subnet-074c01c3f4dcefe98",
+          + "subnet-0d36ca91b14bc388a",
+        ]
+      + tags                   = {
+          + "Name" = "default"
+        }
+      + tags_all               = {
+          + "Ephemeral" = "true"
+          + "ManagedBy" = "terraform"
+          + "Name"      = "default"
+          + "Project"   = "packt-agentic-devops"
+          + "Purpose"   = "agentic-devops-validation"
+          + "Workshop"  = "packt"
+        }
+      + version                = "1.35"
+
+      + launch_template {
+          + id      = (known after apply)
+          + name    = (known after apply)
+          + version = (known after apply)
+        }
+
+      + node_repair_config (known after apply)
+
+      + scaling_config {
+          + desired_size = 1
+          + max_size     = 1
+          + min_size     = 1
+        }
+
+      + update_config {
+          + max_unavailable_percentage = 33
+        }
+    }
+
+  # module.eks.module.eks_managed_node_group["default"].aws_launch_template.this[0] will be created
+  + resource "aws_launch_template" "this" {
+      + arn                    = (known after apply)
+      + default_version        = (known after apply)
+      + description            = "Custom launch template for default EKS managed node group"
+      + id                     = (known after apply)
+      + latest_version         = (known after apply)
+      + name                   = (known after apply)
+      + name_prefix            = "default-"
+      + region                 = "us-west-2"
+      + tags_all               = {
+          + "Ephemeral" = "true"
+          + "ManagedBy" = "terraform"
+          + "Project"   = "packt-agentic-devops"
+          + "Purpose"   = "agentic-devops-validation"
+          + "Workshop"  = "packt"
+        }
+      + update_default_version = true
+      + user_data              = "Q29udGVudC1UeXBlOiBtdWx0aXBhcnQvbWl4ZWQ7IGJvdW5kYXJ5PSJNSU1FQk9VTkRBUlkiCk1JTUUtVmVyc2lvbjogMS4wDQoNCi0tTUlNRUJPVU5EQVJZDQpDb250ZW50LVRyYW5zZmVyLUVuY29kaW5nOiA3Yml0DQpDb250ZW50LVR5cGU6IGFwcGxpY2F0aW9uL25vZGUuZWtzLmF3cw0KTWltZS1WZXJzaW9uOiAxLjANCg0KYXBpVmVyc2lvbjogbm9kZS5la3MuYXdzL3YxYWxwaGExCmtpbmQ6IE5vZGVDb25maWcKc3BlYzoKICBrdWJlbGV0OgogICAgY29uZmlnOgogICAgICBtYXhQb2RzOiAxMTAKDQotLU1JTUVCT1VOREFSWS0tDQo="
+      + vpc_security_group_ids = [
+          + "sg-0e4b828476ad9f448",
+        ]
+        # (1 unchanged attribute hidden)
+
+      + metadata_options {
+          + http_endpoint               = "enabled"
+          + http_protocol_ipv6          = (known after apply)
+          + http_put_response_hop_limit = 1
+          + http_tokens                 = "required"
+          + instance_metadata_tags      = (known after apply)
+        }
+
+      + tag_specifications {
+          + resource_type = "instance"
+          + tags          = {
+              + "Name" = "default"
+            }
+        }
+      + tag_specifications {
+          + resource_type = "network-interface"
+          + tags          = {
+              + "Name" = "default"
+            }
+        }
+      + tag_specifications {
+          + resource_type = "volume"
+          + tags          = {
+              + "Name" = "default"
+            }
+        }
+    }
+
+  # module.eks.module.eks_managed_node_group["default"].module.user_data.null_resource.validate_cluster_service_cidr will be created
+  + resource "null_resource" "validate_cluster_service_cidr" {
+      + id = (known after apply)
+    }
+
+Plan: 16 to add, 0 to change, 0 to destroy.
+module.eks.aws_cloudwatch_log_group.this[0]: Creating...
+module.eks.aws_cloudwatch_log_group.this[0]: Creation complete after 1s [id=/aws/eks/adwc-dev/cluster]
+module.eks.aws_eks_cluster.this[0]: Creating...
+module.eks.aws_eks_cluster.this[0]: Still creating... [00m10s elapsed]
+module.eks.aws_eks_cluster.this[0]: Still creating... [00m20s elapsed]
+module.eks.aws_eks_cluster.this[0]: Still creating... [00m30s elapsed]
+module.eks.aws_eks_cluster.this[0]: Still creating... [00m40s elapsed]
+module.eks.aws_eks_cluster.this[0]: Still creating... [00m50s elapsed]
+module.eks.aws_eks_cluster.this[0]: Still creating... [01m00s elapsed]
+module.eks.aws_eks_cluster.this[0]: Still creating... [01m10s elapsed]
+module.eks.aws_eks_cluster.this[0]: Still creating... [01m20s elapsed]
+module.eks.aws_eks_cluster.this[0]: Still creating... [01m30s elapsed]
+module.eks.aws_eks_cluster.this[0]: Still creating... [01m40s elapsed]
+module.eks.aws_eks_cluster.this[0]: Still creating... [01m50s elapsed]
+module.eks.aws_eks_cluster.this[0]: Still creating... [02m00s elapsed]
+module.eks.aws_eks_cluster.this[0]: Still creating... [02m10s elapsed]
+module.eks.aws_eks_cluster.this[0]: Still creating... [02m20s elapsed]
+module.eks.aws_eks_cluster.this[0]: Still creating... [02m30s elapsed]
+module.eks.aws_eks_cluster.this[0]: Still creating... [02m40s elapsed]
+module.eks.aws_eks_cluster.this[0]: Still creating... [02m50s elapsed]
+module.eks.aws_eks_cluster.this[0]: Still creating... [03m00s elapsed]
+module.eks.aws_eks_cluster.this[0]: Still creating... [03m10s elapsed]
+module.eks.aws_eks_cluster.this[0]: Still creating... [03m20s elapsed]
+module.eks.aws_eks_cluster.this[0]: Still creating... [03m30s elapsed]
+module.eks.aws_eks_cluster.this[0]: Still creating... [03m40s elapsed]
+module.eks.aws_eks_cluster.this[0]: Still creating... [03m50s elapsed]
+module.eks.aws_eks_cluster.this[0]: Still creating... [04m00s elapsed]
+module.eks.aws_eks_cluster.this[0]: Still creating... [04m10s elapsed]
+module.eks.aws_eks_cluster.this[0]: Still creating... [04m20s elapsed]
+module.eks.aws_eks_cluster.this[0]: Still creating... [04m30s elapsed]
+module.eks.aws_eks_cluster.this[0]: Still creating... [04m40s elapsed]
+module.eks.aws_eks_cluster.this[0]: Still creating... [04m50s elapsed]
+module.eks.aws_eks_cluster.this[0]: Still creating... [05m00s elapsed]
+module.eks.aws_eks_cluster.this[0]: Still creating... [05m10s elapsed]
+module.eks.aws_eks_cluster.this[0]: Still creating... [05m20s elapsed]
+module.eks.aws_eks_cluster.this[0]: Still creating... [05m30s elapsed]
+module.eks.aws_eks_cluster.this[0]: Still creating... [05m40s elapsed]
+module.eks.aws_eks_cluster.this[0]: Still creating... [05m50s elapsed]
+module.eks.aws_eks_cluster.this[0]: Still creating... [06m00s elapsed]
+module.eks.aws_eks_cluster.this[0]: Still creating... [06m10s elapsed]
+module.eks.aws_eks_cluster.this[0]: Still creating... [06m20s elapsed]
+module.eks.aws_eks_cluster.this[0]: Still creating... [06m30s elapsed]
+module.eks.aws_eks_cluster.this[0]: Still creating... [06m40s elapsed]
+module.eks.aws_eks_cluster.this[0]: Still creating... [06m50s elapsed]
+module.eks.aws_eks_cluster.this[0]: Still creating... [07m00s elapsed]
+module.eks.aws_eks_cluster.this[0]: Still creating... [07m10s elapsed]
+module.eks.aws_eks_cluster.this[0]: Still creating... [07m20s elapsed]
+module.eks.aws_eks_cluster.this[0]: Still creating... [07m30s elapsed]
+module.eks.aws_eks_cluster.this[0]: Still creating... [07m40s elapsed]
+module.eks.aws_eks_cluster.this[0]: Still creating... [07m50s elapsed]
+module.eks.aws_eks_cluster.this[0]: Still creating... [08m00s elapsed]
+module.eks.aws_eks_cluster.this[0]: Still creating... [08m10s elapsed]
+module.eks.aws_eks_cluster.this[0]: Still creating... [08m20s elapsed]
+module.eks.aws_eks_cluster.this[0]: Still creating... [08m30s elapsed]
+module.eks.aws_eks_cluster.this[0]: Still creating... [08m40s elapsed]
+module.eks.aws_eks_cluster.this[0]: Still creating... [08m50s elapsed]
+module.eks.aws_eks_cluster.this[0]: Still creating... [09m00s elapsed]
+module.eks.aws_eks_cluster.this[0]: Still creating... [09m10s elapsed]
+module.eks.aws_eks_cluster.this[0]: Still creating... [09m20s elapsed]
+module.eks.aws_eks_cluster.this[0]: Still creating... [09m30s elapsed]
+module.eks.aws_eks_cluster.this[0]: Still creating... [09m40s elapsed]
+module.eks.aws_eks_cluster.this[0]: Creation complete after 9m48s [id=adwc-dev]
+module.eks.data.tls_certificate.this[0]: Reading...
+module.eks.aws_eks_access_entry.this["cluster_creator"]: Creating...
+module.eks.time_sleep.this[0]: Creating...
+module.eks.data.tls_certificate.this[0]: Read complete after 0s [id=f97f646c2cd14cc0db0f757f0fccc96abbbe2af5]
+module.eks.aws_iam_openid_connect_provider.oidc_provider[0]: Creating...
+module.eks.aws_iam_openid_connect_provider.oidc_provider[0]: Creation complete after 1s [id=arn:aws:iam::515966504359:oidc-provider/oidc.eks.us-west-2.amazonaws.com/id/B8A7FD951BA96C4F1D46AB70BF2CF311]
+module.ebs_csi_irsa.data.aws_iam_policy_document.this[0]: Reading...
+module.ebs_csi_irsa.data.aws_iam_policy_document.this[0]: Read complete after 0s [id=3657311351]
+module.eks.aws_eks_access_entry.this["cluster_creator"]: Creation complete after 1s [id=adwc-dev:arn:aws:iam::515966504359:user/nwuser]
+module.ebs_csi_irsa.aws_iam_role.this[0]: Creating...
+module.eks.aws_eks_access_policy_association.this["cluster_creator_admin"]: Creating...
+module.ebs_csi_irsa.aws_iam_role.this[0]: Creation complete after 0s [id=adwc-dev-ebs-csi]
+module.eks.data.aws_eks_addon_version.this["kube-proxy"]: Reading...
+module.ebs_csi_irsa.aws_iam_role_policy_attachment.ebs_csi[0]: Creating...
+module.eks.data.aws_eks_addon_version.this["coredns"]: Reading...
+module.eks.data.aws_eks_addon_version.this["vpc-cni"]: Reading...
+module.eks.data.aws_eks_addon_version.this["aws-ebs-csi-driver"]: Reading...
+module.eks.data.aws_eks_addon_version.this["eks-pod-identity-agent"]: Reading...
+module.ebs_csi_irsa.aws_iam_role_policy_attachment.ebs_csi[0]: Creation complete after 0s [id=adwc-dev-ebs-csi/arn:aws:iam::515966504359:policy/AmazonEKS_EBS_CSI_Policy-20260621142047735100000003]
+module.eks.data.aws_eks_addon_version.this["eks-pod-identity-agent"]: Read complete after 0s [id=eks-pod-identity-agent]
+module.eks.data.aws_eks_addon_version.this["kube-proxy"]: Read complete after 0s [id=kube-proxy]
+module.eks.data.aws_eks_addon_version.this["coredns"]: Read complete after 0s [id=coredns]
+module.eks.data.aws_eks_addon_version.this["vpc-cni"]: Read complete after 0s [id=vpc-cni]
+module.eks.data.aws_eks_addon_version.this["aws-ebs-csi-driver"]: Read complete after 0s [id=aws-ebs-csi-driver]
+module.eks.aws_eks_addon.before_compute["kube-proxy"]: Creating...
+module.eks.aws_eks_addon.before_compute["vpc-cni"]: Creating...
+module.eks.aws_eks_access_policy_association.this["cluster_creator_admin"]: Creation complete after 0s [id=adwc-dev#arn:aws:iam::515966504359:user/nwuser#arn:aws:eks::aws:cluster-access-policy/AmazonEKSClusterAdminPolicy]
+module.eks.time_sleep.this[0]: Still creating... [00m10s elapsed]
+module.eks.aws_eks_addon.before_compute["kube-proxy"]: Still creating... [00m10s elapsed]
+module.eks.aws_eks_addon.before_compute["vpc-cni"]: Still creating... [00m10s elapsed]
+module.eks.time_sleep.this[0]: Still creating... [00m20s elapsed]
+module.eks.aws_eks_addon.before_compute["kube-proxy"]: Still creating... [00m20s elapsed]
+module.eks.aws_eks_addon.before_compute["vpc-cni"]: Still creating... [00m20s elapsed]
+module.eks.time_sleep.this[0]: Still creating... [00m30s elapsed]
+module.eks.time_sleep.this[0]: Creation complete after 30s [id=2026-06-21T14:34:31Z]
+module.eks.module.eks_managed_node_group["default"].module.user_data.null_resource.validate_cluster_service_cidr: Creating...
+module.eks.module.eks_managed_node_group["default"].module.user_data.null_resource.validate_cluster_service_cidr: Creation complete after 0s [id=5695351813635417339]
+module.eks.module.eks_managed_node_group["default"].aws_launch_template.this[0]: Creating...
+module.eks.aws_eks_addon.before_compute["vpc-cni"]: Still creating... [00m30s elapsed]
+module.eks.aws_eks_addon.before_compute["kube-proxy"]: Still creating... [00m30s elapsed]
+module.eks.aws_eks_addon.before_compute["kube-proxy"]: Creation complete after 35s [id=adwc-dev:kube-proxy]
+module.eks.aws_eks_addon.before_compute["vpc-cni"]: Creation complete after 35s [id=adwc-dev:vpc-cni]
+module.eks.module.eks_managed_node_group["default"].aws_launch_template.this[0]: Creation complete after 6s [id=lt-03df6a133d1fe0e55]
+module.eks.module.eks_managed_node_group["default"].aws_eks_node_group.this[0]: Creating...
+module.eks.module.eks_managed_node_group["default"].aws_eks_node_group.this[0]: Still creating... [00m10s elapsed]
+module.eks.module.eks_managed_node_group["default"].aws_eks_node_group.this[0]: Still creating... [00m20s elapsed]
+module.eks.module.eks_managed_node_group["default"].aws_eks_node_group.this[0]: Still creating... [00m30s elapsed]
+module.eks.module.eks_managed_node_group["default"].aws_eks_node_group.this[0]: Still creating... [00m40s elapsed]
+module.eks.module.eks_managed_node_group["default"].aws_eks_node_group.this[0]: Still creating... [00m50s elapsed]
+module.eks.module.eks_managed_node_group["default"].aws_eks_node_group.this[0]: Still creating... [01m00s elapsed]
+module.eks.module.eks_managed_node_group["default"].aws_eks_node_group.this[0]: Still creating... [01m10s elapsed]
+module.eks.module.eks_managed_node_group["default"].aws_eks_node_group.this[0]: Still creating... [01m20s elapsed]
+module.eks.module.eks_managed_node_group["default"].aws_eks_node_group.this[0]: Still creating... [01m30s elapsed]
+module.eks.module.eks_managed_node_group["default"].aws_eks_node_group.this[0]: Still creating... [01m40s elapsed]
+module.eks.module.eks_managed_node_group["default"].aws_eks_node_group.this[0]: Creation complete after 1m49s [id=adwc-dev:default-20260621143438362000000005]
+module.eks.aws_eks_addon.this["eks-pod-identity-agent"]: Creating...
+module.eks.aws_eks_addon.this["aws-ebs-csi-driver"]: Creating...
+module.eks.aws_eks_addon.this["coredns"]: Creating...
+module.eks.aws_eks_addon.this["aws-ebs-csi-driver"]: Still creating... [00m10s elapsed]
+module.eks.aws_eks_addon.this["eks-pod-identity-agent"]: Still creating... [00m10s elapsed]
+module.eks.aws_eks_addon.this["coredns"]: Still creating... [00m10s elapsed]
+module.eks.aws_eks_addon.this["coredns"]: Creation complete after 14s [id=adwc-dev:coredns]
+module.eks.aws_eks_addon.this["eks-pod-identity-agent"]: Still creating... [00m20s elapsed]
+module.eks.aws_eks_addon.this["aws-ebs-csi-driver"]: Still creating... [00m20s elapsed]
+module.eks.aws_eks_addon.this["eks-pod-identity-agent"]: Creation complete after 25s [id=adwc-dev:eks-pod-identity-agent]
+module.eks.aws_eks_addon.this["aws-ebs-csi-driver"]: Still creating... [00m30s elapsed]
+module.eks.aws_eks_addon.this["aws-ebs-csi-driver"]: Still creating... [00m40s elapsed]
+module.eks.aws_eks_addon.this["aws-ebs-csi-driver"]: Creation complete after 45s [id=adwc-dev:aws-ebs-csi-driver]
+
+Warning: Deprecated value used
+
+  on .terraform/modules/ebs_csi_irsa/modules/iam-role-for-service-accounts-eks/main.tf line 9, in locals:
+   9:   region              = data.aws_region.current.name
+
+  The deprecation originates from module.ebs_csi_irsa.data.aws_region.current.name
+
+name is deprecated. Use region instead.
+
+(and 2 more similar warnings elsewhere)
+
+Apply complete! Resources: 16 added, 0 changed, 0 destroyed.
+
+Outputs:
+
+cluster_name = "adwc-dev"
+region = "us-west-2"
+resource_group = "packt-agentic-devops"
+update_kubeconfig = "aws eks update-kubeconfig --name adwc-dev --region us-west-2 --profile accen-dev"

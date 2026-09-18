@@ -1,0 +1,191 @@
+module.eks.module.kms.data.aws_partition.current[0]: Reading...
+module.eks.data.aws_caller_identity.current[0]: Reading...
+module.ebs_csi_irsa.data.aws_partition.current: Reading...
+module.eks.data.aws_iam_policy_document.assume_role_policy[0]: Reading...
+data.aws_availability_zones.available: Reading...
+module.ebs_csi_irsa.data.aws_caller_identity.current: Reading...
+module.ebs_csi_irsa.data.aws_region.current: Reading...
+module.eks.module.eks_managed_node_group["default"].data.aws_iam_policy_document.assume_role_policy[0]: Reading...
+module.vpc.aws_vpc.this[0]: Refreshing state... [id=vpc-09d3369a8fe11c517]
+module.eks.aws_cloudwatch_log_group.this[0]: Refreshing state... [id=/aws/eks/adwc-dev/cluster]
+module.eks.module.kms.data.aws_partition.current[0]: Read complete after 0s [id=aws]
+module.eks.module.eks_managed_node_group["default"].data.aws_iam_policy_document.assume_role_policy[0]: Read complete after 0s [id=2560088296]
+module.ebs_csi_irsa.data.aws_region.current: Read complete after 0s [id=us-west-2]
+module.ebs_csi_irsa.data.aws_partition.current: Read complete after 0s [id=aws]
+module.eks.data.aws_partition.current[0]: Reading...
+module.eks.data.aws_iam_policy_document.assume_role_policy[0]: Read complete after 0s [id=2830595799]
+module.eks.module.kms.data.aws_caller_identity.current[0]: Reading...
+module.eks.data.aws_partition.current[0]: Read complete after 0s [id=aws]
+module.eks.aws_iam_role.this[0]: Refreshing state... [id=adwc-dev-cluster-20260621131759698300000002]
+module.eks.module.eks_managed_node_group["default"].aws_iam_role.this[0]: Refreshing state... [id=default-eks-node-group-20260621131759698300000001]
+module.ebs_csi_irsa.data.aws_iam_policy_document.ebs_csi[0]: Reading...
+module.ebs_csi_irsa.data.aws_iam_policy_document.ebs_csi[0]: Read complete after 0s [id=4189668531]
+module.ebs_csi_irsa.aws_iam_policy.ebs_csi[0]: Refreshing state... [id=arn:aws:iam::515966504359:policy/AmazonEKS_EBS_CSI_Policy-20260621131759699800000003]
+module.eks.data.aws_caller_identity.current[0]: Read complete after 0s [id=515966504359]
+module.eks.data.aws_iam_session_context.current[0]: Reading...
+module.eks.data.aws_iam_session_context.current[0]: Read complete after 0s [id=arn:aws:iam::515966504359:user/nwuser]
+module.ebs_csi_irsa.data.aws_caller_identity.current: Read complete after 0s [id=515966504359]
+module.eks.module.eks_managed_node_group["default"].aws_iam_role_policy_attachment.this["AmazonEKSWorkerNodePolicy"]: Refreshing state... [id=default-eks-node-group-20260621131759698300000001/arn:aws:iam::aws:policy/AmazonEKSWorkerNodePolicy]
+module.eks.module.eks_managed_node_group["default"].aws_iam_role_policy_attachment.this["AmazonEKS_CNI_Policy"]: Refreshing state... [id=default-eks-node-group-20260621131759698300000001/arn:aws:iam::aws:policy/AmazonEKS_CNI_Policy]
+module.eks.module.eks_managed_node_group["default"].aws_iam_role_policy_attachment.this["AmazonEC2ContainerRegistryReadOnly"]: Refreshing state... [id=default-eks-node-group-20260621131759698300000001/arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly]
+module.eks.aws_iam_role_policy_attachment.this["AmazonEKSClusterPolicy"]: Refreshing state... [id=adwc-dev-cluster-20260621131759698300000002/arn:aws:iam::aws:policy/AmazonEKSClusterPolicy]
+module.eks.module.kms.data.aws_caller_identity.current[0]: Read complete after 0s [id=515966504359]
+module.eks.module.kms.data.aws_iam_policy_document.this[0]: Reading...
+module.eks.module.kms.data.aws_iam_policy_document.this[0]: Read complete after 0s [id=1099679203]
+module.eks.module.kms.aws_kms_key.this[0]: Refreshing state... [id=f3c2cfa7-5c93-426e-b60f-3c937aee2bf5]
+data.aws_availability_zones.available: Read complete after 0s [id=us-west-2]
+module.eks.module.kms.aws_kms_alias.this["cluster"]: Refreshing state... [id=alias/eks/adwc-dev]
+module.eks.aws_iam_policy.cluster_encryption[0]: Refreshing state... [id=arn:aws:iam::515966504359:policy/adwc-dev-cluster-ClusterEncryption20260621131822075000000009]
+module.eks.aws_iam_role_policy_attachment.cluster_encryption[0]: Refreshing state... [id=adwc-dev-cluster-20260621131759698300000002/arn:aws:iam::515966504359:policy/adwc-dev-cluster-ClusterEncryption20260621131822075000000009]
+module.eks.aws_security_group.node[0]: Refreshing state... [id=sg-009603fd9086ebe26]
+module.vpc.aws_default_security_group.this[0]: Refreshing state... [id=sg-03f7515fa5692fe4a]
+module.vpc.aws_default_route_table.default[0]: Refreshing state... [id=rtb-0e4c6560579c17756]
+module.vpc.aws_route_table.public[0]: Refreshing state... [id=rtb-095e0712f492034a5]
+module.vpc.aws_internet_gateway.this[0]: Refreshing state... [id=igw-0e1035bf7c07ae6a3]
+module.vpc.aws_subnet.public[0]: Refreshing state... [id=subnet-088831d8fb718df50]
+module.vpc.aws_default_network_acl.this[0]: Refreshing state... [id=acl-03ed235b3676b3d23]
+module.vpc.aws_subnet.private[0]: Refreshing state... [id=subnet-0df044538023e1431]
+module.eks.aws_security_group.cluster[0]: Refreshing state... [id=sg-0d2babd9cc8ab1116]
+module.vpc.aws_subnet.public[1]: Refreshing state... [id=subnet-0d4de483077dbfdd5]
+module.vpc.aws_subnet.private[1]: Refreshing state... [id=subnet-07296ee1aa5b6e6fa]
+module.vpc.aws_route_table.private[0]: Refreshing state... [id=rtb-0dd6c50385f865ff8]
+module.eks.aws_security_group_rule.node["ingress_cluster_8443_webhook"]: Refreshing state... [id=sgrule-3322611039]
+module.eks.aws_security_group_rule.node["ingress_self_coredns_udp"]: Refreshing state... [id=sgrule-4237805753]
+module.eks.aws_security_group_rule.node["ingress_cluster_kubelet"]: Refreshing state... [id=sgrule-769037156]
+module.eks.aws_security_group_rule.node["ingress_cluster_9443_webhook"]: Refreshing state... [id=sgrule-2729064084]
+module.eks.aws_security_group_rule.cluster["ingress_nodes_443"]: Refreshing state... [id=sgrule-520184015]
+module.eks.aws_security_group_rule.node["egress_all"]: Refreshing state... [id=sgrule-2925774680]
+module.eks.aws_security_group_rule.node["ingress_cluster_443"]: Refreshing state... [id=sgrule-1972889751]
+module.eks.aws_security_group_rule.node["ingress_cluster_4443_webhook"]: Refreshing state... [id=sgrule-471162600]
+module.eks.aws_security_group_rule.node["ingress_self_coredns_tcp"]: Refreshing state... [id=sgrule-1489529686]
+module.eks.aws_security_group_rule.node["ingress_cluster_10251_webhook"]: Refreshing state... [id=sgrule-429900575]
+module.eks.aws_security_group_rule.node["ingress_cluster_6443_webhook"]: Refreshing state... [id=sgrule-3579263358]
+module.eks.aws_security_group_rule.node["ingress_nodes_ephemeral"]: Refreshing state... [id=sgrule-10681611]
+module.vpc.aws_route.public_internet_gateway[0]: Refreshing state... [id=r-rtb-095e0712f492034a51080289494]
+module.vpc.aws_eip.nat[0]: Refreshing state... [id=eipalloc-0be5f561aa592f0a0]
+module.vpc.aws_route_table_association.public[0]: Refreshing state... [id=rtbassoc-0bf1f181aca703292]
+module.vpc.aws_route_table_association.public[1]: Refreshing state... [id=rtbassoc-05daa7d6107aa3772]
+module.vpc.aws_route_table_association.private[1]: Refreshing state... [id=rtbassoc-034e2af56d1257c71]
+module.vpc.aws_route_table_association.private[0]: Refreshing state... [id=rtbassoc-021ee1aa1066569ee]
+module.eks.aws_eks_cluster.this[0]: Refreshing state... [id=adwc-dev]
+module.vpc.aws_nat_gateway.this[0]: Refreshing state... [id=nat-09c28d6ad266802a6]
+module.vpc.aws_route.private_nat_gateway[0]: Refreshing state... [id=r-rtb-0dd6c50385f865ff81080289494]
+module.eks.data.tls_certificate.this[0]: Reading...
+module.eks.aws_eks_access_entry.this["cluster_creator"]: Refreshing state... [id=adwc-dev:arn:aws:iam::515966504359:user/nwuser]
+module.eks.time_sleep.this[0]: Refreshing state... [id=2026-06-21T13:29:11Z]
+module.eks.module.eks_managed_node_group["default"].module.user_data.null_resource.validate_cluster_service_cidr: Refreshing state... [id=5247904541521736113]
+module.eks.module.eks_managed_node_group["default"].data.aws_ssm_parameter.ami[0]: Reading...
+module.eks.module.eks_managed_node_group["default"].aws_launch_template.this[0]: Refreshing state... [id=lt-00d7d06a8f8240558]
+module.eks.aws_eks_access_policy_association.this["cluster_creator_admin"]: Refreshing state... [id=adwc-dev#arn:aws:iam::515966504359:user/nwuser#arn:aws:eks::aws:cluster-access-policy/AmazonEKSClusterAdminPolicy]
+module.eks.data.tls_certificate.this[0]: Read complete after 0s [id=f97f646c2cd14cc0db0f757f0fccc96abbbe2af5]
+module.eks.aws_iam_openid_connect_provider.oidc_provider[0]: Refreshing state... [id=arn:aws:iam::515966504359:oidc-provider/oidc.eks.us-west-2.amazonaws.com/id/2654DFBC2DAC0A47CA522CEDCE559C63]
+module.ebs_csi_irsa.data.aws_iam_policy_document.this[0]: Reading...
+module.ebs_csi_irsa.data.aws_iam_policy_document.this[0]: Read complete after 0s [id=3558964942]
+module.ebs_csi_irsa.aws_iam_role.this[0]: Refreshing state... [id=adwc-dev-ebs-csi]
+module.eks.module.eks_managed_node_group["default"].data.aws_ssm_parameter.ami[0]: Read complete after 0s [id=/aws/service/eks/optimized-ami/1.35/amazon-linux-2023/x86_64/standard/recommended/release_version]
+module.eks.module.eks_managed_node_group["default"].aws_eks_node_group.this[0]: Refreshing state... [id=adwc-dev:default-2026062113291790000000000e]
+module.ebs_csi_irsa.aws_iam_role_policy_attachment.ebs_csi[0]: Refreshing state... [id=adwc-dev-ebs-csi/arn:aws:iam::515966504359:policy/AmazonEKS_EBS_CSI_Policy-20260621131759699800000003]
+module.eks.data.aws_eks_addon_version.this["aws-ebs-csi-driver"]: Reading...
+module.eks.data.aws_eks_addon_version.this["coredns"]: Reading...
+module.eks.data.aws_eks_addon_version.this["vpc-cni"]: Reading...
+module.eks.data.aws_eks_addon_version.this["eks-pod-identity-agent"]: Reading...
+module.eks.data.aws_eks_addon_version.this["kube-proxy"]: Reading...
+module.eks.data.aws_eks_addon_version.this["aws-ebs-csi-driver"]: Read complete after 0s [id=aws-ebs-csi-driver]
+module.eks.data.aws_eks_addon_version.this["eks-pod-identity-agent"]: Read complete after 0s [id=eks-pod-identity-agent]
+module.eks.data.aws_eks_addon_version.this["vpc-cni"]: Read complete after 0s [id=vpc-cni]
+module.eks.data.aws_eks_addon_version.this["kube-proxy"]: Read complete after 0s [id=kube-proxy]
+module.eks.data.aws_eks_addon_version.this["coredns"]: Read complete after 1s [id=coredns]
+module.eks.aws_eks_addon.this["coredns"]: Refreshing state... [id=adwc-dev:coredns]
+module.eks.aws_eks_addon.before_compute["vpc-cni"]: Refreshing state... [id=adwc-dev:vpc-cni]
+module.eks.aws_eks_addon.before_compute["kube-proxy"]: Refreshing state... [id=adwc-dev:kube-proxy]
+module.eks.aws_eks_addon.this["eks-pod-identity-agent"]: Refreshing state... [id=adwc-dev:eks-pod-identity-agent]
+module.eks.aws_eks_addon.this["aws-ebs-csi-driver"]: Refreshing state... [id=adwc-dev:aws-ebs-csi-driver]
+
+Note: Objects have changed outside of Terraform
+
+Terraform detected the following changes made outside of Terraform since the
+last "terraform apply" which may have affected this plan:
+
+  # module.eks.module.eks_managed_node_group["default"].aws_eks_node_group.this[0] has changed
+  ~ resource "aws_eks_node_group" "this" {
+        id                     = "adwc-dev:default-2026062113291790000000000e"
+      + labels                 = {}
+        tags                   = {
+            "Name" = "default"
+        }
+        # (16 unchanged attributes hidden)
+
+        # (3 unchanged blocks hidden)
+    }
+
+
+Unless you have made equivalent changes to your configuration, or ignored the
+relevant attributes using ignore_changes, the following plan may include
+actions to undo or respond to these changes.
+
+─────────────────────────────────────────────────────────────────────────────
+
+Terraform used the selected providers to generate the following execution
+plan. Resource actions are indicated with the following symbols:
+  + create
+
+Terraform will perform the following actions:
+
+  # aws_resourcegroups_group.packt will be created
+  + resource "aws_resourcegroups_group" "packt" {
+      + arn         = (known after apply)
+      + description = "All resources for the Packt Agentic DevOps workshop. Tag Workshop is packt."
+      + id          = (known after apply)
+      + name        = "packt-agentic-devops"
+      + region      = "us-west-2"
+      + tags_all    = {
+          + "Ephemeral" = "true"
+          + "ManagedBy" = "terraform"
+          + "Project"   = "packt-agentic-devops"
+          + "Purpose"   = "agentic-devops-validation"
+          + "Workshop"  = "packt"
+        }
+
+      + resource_query {
+          + query = jsonencode(
+                {
+                  + ResourceTypeFilters = [
+                      + "AWS::AllSupported",
+                    ]
+                  + TagFilters          = [
+                      + {
+                          + Key    = "Workshop"
+                          + Values = [
+                              + "packt",
+                            ]
+                        },
+                    ]
+                }
+            )
+          + type  = "TAG_FILTERS_1_0"
+        }
+    }
+
+Plan: 1 to add, 0 to change, 0 to destroy.
+aws_resourcegroups_group.packt: Creating...
+aws_resourcegroups_group.packt: Creation complete after 1s [id=packt-agentic-devops]
+
+Warning: Deprecated value used
+
+  on .terraform/modules/ebs_csi_irsa/modules/iam-role-for-service-accounts-eks/main.tf line 9, in locals:
+   9:   region              = data.aws_region.current.name
+
+  The deprecation originates from module.ebs_csi_irsa.data.aws_region.current.name
+
+name is deprecated. Use region instead.
+
+(and 2 more similar warnings elsewhere)
+
+Apply complete! Resources: 1 added, 0 changed, 0 destroyed.
+
+Outputs:
+
+cluster_name = "adwc-dev"
+region = "us-west-2"
+resource_group = "packt-agentic-devops"
+update_kubeconfig = "aws eks update-kubeconfig --name adwc-dev --region us-west-2 --profile accen-dev"

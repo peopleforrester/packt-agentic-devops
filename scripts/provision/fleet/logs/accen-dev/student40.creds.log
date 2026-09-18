@@ -1,0 +1,22 @@
+cluster=student40 account=515966504359 role=packt-student-student40
+  role created
+  scoped read-only policy attached
+  association created
+Waiting for deployment "web-terminal" rollout to finish: 0 out of 1 new replicas have been updated...
+Waiting for deployment "web-terminal" rollout to finish: 0 out of 1 new replicas have been updated...
+Waiting for deployment "web-terminal" rollout to finish: 0 out of 1 new replicas have been updated...
+Waiting for deployment "web-terminal" rollout to finish: 0 of 1 updated replicas are available...
+deployment "web-terminal" successfully rolled out
+  verifying the AWS identity from inside the terminal...
+kubectl is wired to your cluster (context: workshop-cluster).
+aws is wired to your cluster via EKS Pod Identity (read-only, no keys to manage).
+git remote points at your in-cluster Gitea; commit and push to have ArgoCD apply it.
+
+[38;5;208m▌[0m [1mAgentic DevOps with Claude[0m — your workshop terminal
+  kubectl is wired to your cluster   (try: kubectl get nodes)
+  the workshop repo is at ~/workshop (you start here)
+  build it with Claude Code          (run: claude)
+  then follow the phases in the panel on the left, one prompt at a time.
+
+arn:aws:sts::515966504359:assumed-role/packt-student-student40/eks-student40-web-termin-d2169802-74d9-40c3-8260-1dd9b4f94acb
+done: student AWS access is live via Pod Identity, no static keys

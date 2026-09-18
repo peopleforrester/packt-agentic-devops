@@ -1,0 +1,1917 @@
+
+Warning: Deprecated flag: -state
+
+Use the "path" attribute within the "local" backend to specify a file for
+state storage
+module.eks.module.kms.data.aws_caller_identity.current[0]: Reading...
+module.ebs_csi_pod_identity.data.aws_partition.current: Reading...
+module.aws_lb_controller_pod_identity.data.aws_partition.current: Reading...
+module.eks.data.aws_iam_policy_document.assume_role_policy[0]: Reading...
+module.ebs_csi_pod_identity.data.aws_iam_policy_document.assume[0]: Reading...
+module.eks.data.aws_caller_identity.current[0]: Reading...
+module.eks.aws_security_group.node[0]: Refreshing state... [id=sg-0169865e009201046]
+module.aws_lb_controller_pod_identity.data.aws_iam_policy_document.assume[0]: Reading...
+module.eks.module.eks_managed_node_group["default"].data.aws_iam_policy_document.assume_role_policy[0]: Reading...
+module.eks.aws_security_group.cluster[0]: Refreshing state... [id=sg-0e7e248d6bdaeee84]
+module.ebs_csi_pod_identity.data.aws_partition.current: Read complete after 0s [id=aws]
+module.aws_lb_controller_pod_identity.data.aws_iam_policy_document.assume[0]: Read complete after 0s [id=819195744]
+module.ebs_csi_pod_identity.data.aws_iam_policy_document.assume[0]: Read complete after 0s [id=819195744]
+module.aws_lb_controller_pod_identity.data.aws_partition.current: Read complete after 0s [id=aws]
+module.eks.module.eks_managed_node_group["default"].data.aws_iam_policy_document.assume_role_policy[0]: Read complete after 0s [id=2560088296]
+module.eks.data.aws_iam_policy_document.assume_role_policy[0]: Read complete after 0s [id=2830595799]
+module.ebs_csi_pod_identity.data.aws_iam_policy_document.base[0]: Reading...
+module.aws_lb_controller_pod_identity.aws_iam_role.this[0]: Refreshing state... [id=student32-aws-lbc-20260722163758465600000001]
+module.eks.data.aws_partition.current[0]: Reading...
+module.aws_lb_controller_pod_identity.data.aws_iam_policy_document.base[0]: Reading...
+module.eks.module.kms.data.aws_partition.current[0]: Reading...
+module.ebs_csi_pod_identity.data.aws_iam_policy_document.base[0]: Read complete after 0s [id=1132004489]
+module.ebs_csi_pod_identity.aws_iam_role.this[0]: Refreshing state... [id=student32-ebs-csi-20260722163758470300000004]
+module.eks.data.aws_partition.current[0]: Read complete after 0s [id=aws]
+module.aws_lb_controller_pod_identity.data.aws_iam_policy_document.base[0]: Read complete after 0s [id=1132004489]
+module.eks.module.kms.data.aws_partition.current[0]: Read complete after 0s [id=aws]
+module.eks.module.eks_managed_node_group["default"].aws_iam_role.this[0]: Refreshing state... [id=default-eks-node-group-20260722163758471300000006]
+module.eks.aws_iam_role.this[0]: Refreshing state... [id=student32-cluster-20260722163758472500000008]
+module.ebs_csi_pod_identity.data.aws_iam_policy_document.ebs_csi[0]: Reading...
+module.ebs_csi_pod_identity.data.aws_iam_policy_document.ebs_csi[0]: Read complete after 0s [id=522466792]
+module.aws_lb_controller_pod_identity.data.aws_iam_policy_document.lb_controller[0]: Reading...
+module.ebs_csi_pod_identity.aws_iam_policy.ebs_csi[0]: Refreshing state... [id=arn:aws:iam::515966504359:policy/AmazonEKS_EBS_CSI-20260722163758470500000005]
+module.eks.data.aws_caller_identity.current[0]: Read complete after 0s [id=515966504359]
+module.eks.data.aws_iam_session_context.current[0]: Reading...
+module.eks.data.aws_iam_session_context.current[0]: Read complete after 0s [id=arn:aws:iam::515966504359:user/nwuser]
+module.aws_lb_controller_pod_identity.data.aws_iam_policy_document.lb_controller[0]: Read complete after 0s [id=1541424006]
+module.aws_lb_controller_pod_identity.aws_iam_policy.lb_controller[0]: Refreshing state... [id=arn:aws:iam::515966504359:policy/AmazonEKS_LoadBalancerController-20260722163758466600000002]
+module.eks.module.kms.data.aws_caller_identity.current[0]: Read complete after 0s [id=515966504359]
+module.aws_lb_controller_pod_identity.aws_iam_role_policy_attachment.lb_controller[0]: Refreshing state... [id=student32-aws-lbc-20260722163758465600000001/arn:aws:iam::515966504359:policy/AmazonEKS_LoadBalancerController-20260722163758466600000002]
+module.eks.aws_iam_role_policy_attachment.this["AmazonEKSClusterPolicy"]: Refreshing state... [id=student32-cluster-20260722163758472500000008/arn:aws:iam::aws:policy/AmazonEKSClusterPolicy]
+module.eks.module.kms.data.aws_iam_policy_document.this[0]: Reading...
+module.eks.module.eks_managed_node_group["default"].aws_iam_role_policy_attachment.this["AmazonEKS_CNI_Policy"]: Refreshing state... [id=default-eks-node-group-20260722163758471300000006/arn:aws:iam::aws:policy/AmazonEKS_CNI_Policy]
+module.eks.module.eks_managed_node_group["default"].aws_iam_role_policy_attachment.this["AmazonEC2ContainerRegistryReadOnly"]: Refreshing state... [id=default-eks-node-group-20260722163758471300000006/arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly]
+module.eks.module.eks_managed_node_group["default"].aws_iam_role_policy_attachment.this["AmazonEKSWorkerNodePolicy"]: Refreshing state... [id=default-eks-node-group-20260722163758471300000006/arn:aws:iam::aws:policy/AmazonEKSWorkerNodePolicy]
+module.eks.module.kms.data.aws_iam_policy_document.this[0]: Read complete after 0s [id=3563323675]
+module.ebs_csi_pod_identity.aws_iam_role_policy_attachment.ebs_csi[0]: Refreshing state... [id=student32-ebs-csi-20260722163758470300000004/arn:aws:iam::515966504359:policy/AmazonEKS_EBS_CSI-20260722163758470500000005]
+module.eks.module.kms.aws_kms_key.this[0]: Refreshing state... [id=072d696c-b5e9-474a-87fa-0342518c0bfd]
+module.eks.aws_security_group_rule.node["ingress_cluster_4443_webhook"]: Refreshing state... [id=sgrule-3311380509]
+module.eks.aws_security_group_rule.node["egress_all"]: Refreshing state... [id=sgrule-997885534]
+module.eks.aws_security_group_rule.node["ingress_self_coredns_udp"]: Refreshing state... [id=sgrule-1751847894]
+module.eks.aws_security_group_rule.cluster["ingress_nodes_443"]: Refreshing state... [id=sgrule-403168982]
+module.eks.aws_security_group_rule.node["ingress_cluster_10251_webhook"]: Refreshing state... [id=sgrule-2169215804]
+module.eks.aws_security_group_rule.node["ingress_cluster_443"]: Refreshing state... [id=sgrule-3352822755]
+module.eks.aws_security_group_rule.node["ingress_nodes_ephemeral"]: Refreshing state... [id=sgrule-4266462697]
+module.eks.aws_security_group_rule.node["ingress_cluster_6443_webhook"]: Refreshing state... [id=sgrule-203280267]
+module.eks.aws_security_group_rule.node["ingress_cluster_9443_webhook"]: Refreshing state... [id=sgrule-2078326881]
+module.eks.aws_security_group_rule.node["ingress_cluster_kubelet"]: Refreshing state... [id=sgrule-3036859207]
+module.eks.aws_security_group_rule.node["ingress_cluster_8443_webhook"]: Refreshing state... [id=sgrule-524415914]
+module.eks.aws_security_group_rule.node["ingress_self_coredns_tcp"]: Refreshing state... [id=sgrule-3426005049]
+module.eks.module.kms.aws_kms_alias.this["cluster"]: Refreshing state... [id=alias/eks/student32]
+module.eks.aws_iam_policy.cluster_encryption[0]: Refreshing state... [id=arn:aws:iam::515966504359:policy/student32-cluster-ClusterEncryption20260722163821008900000009]
+module.eks.aws_iam_role_policy_attachment.cluster_encryption[0]: Refreshing state... [id=student32-cluster-20260722163758472500000008/arn:aws:iam::515966504359:policy/student32-cluster-ClusterEncryption20260722163821008900000009]
+module.eks.aws_eks_cluster.this[0]: Refreshing state... [id=student32]
+module.eks.data.aws_eks_addon_version.this["eks-pod-identity-agent"]: Reading...
+module.eks.data.aws_eks_addon_version.this["vpc-cni"]: Reading...
+module.eks.data.aws_eks_addon_version.this["aws-ebs-csi-driver"]: Reading...
+module.eks.data.aws_eks_addon_version.this["coredns"]: Reading...
+module.eks.data.aws_eks_addon_version.this["kube-proxy"]: Reading...
+module.eks.aws_eks_access_entry.this["cluster_creator"]: Refreshing state... [id=student32:arn:aws:iam::515966504359:user/nwuser]
+module.eks.time_sleep.this[0]: Refreshing state... [id=2026-07-22T16:48:49Z]
+module.eks.module.eks_managed_node_group["default"].data.aws_ssm_parameter.ami[0]: Reading...
+module.eks.module.eks_managed_node_group["default"].module.user_data.null_resource.validate_cluster_service_cidr: Refreshing state... [id=2160538267759665868]
+module.eks.module.eks_managed_node_group["default"].module.user_data.data.cloudinit_config.al2023_eks_managed_node_group[0]: Reading...
+module.eks.module.eks_managed_node_group["default"].module.user_data.data.cloudinit_config.al2023_eks_managed_node_group[0]: Read complete after 0s [id=140799688]
+module.eks.data.aws_eks_addon_version.this["aws-ebs-csi-driver"]: Read complete after 0s [id=aws-ebs-csi-driver]
+module.eks.module.eks_managed_node_group["default"].aws_launch_template.this[0]: Refreshing state... [id=lt-028399c76aec3e9be]
+module.eks.data.aws_eks_addon_version.this["coredns"]: Read complete after 0s [id=coredns]
+module.eks.data.aws_eks_addon_version.this["eks-pod-identity-agent"]: Read complete after 0s [id=eks-pod-identity-agent]
+module.eks.data.aws_eks_addon_version.this["vpc-cni"]: Read complete after 0s [id=vpc-cni]
+module.eks.data.aws_eks_addon_version.this["kube-proxy"]: Read complete after 1s [id=kube-proxy]
+module.eks.aws_eks_addon.before_compute["vpc-cni"]: Refreshing state... [id=student32:vpc-cni]
+module.eks.aws_eks_addon.before_compute["kube-proxy"]: Refreshing state... [id=student32:kube-proxy]
+module.eks.aws_eks_access_policy_association.this["cluster_creator_admin"]: Refreshing state... [id=student32#arn:aws:iam::515966504359:user/nwuser#arn:aws:eks::aws:cluster-access-policy/AmazonEKSClusterAdminPolicy]
+module.eks.module.eks_managed_node_group["default"].data.aws_ssm_parameter.ami[0]: Read complete after 1s [id=/aws/service/eks/optimized-ami/1.35/amazon-linux-2023/x86_64/standard/recommended/release_version]
+module.eks.module.eks_managed_node_group["default"].aws_eks_node_group.this[0]: Refreshing state... [id=student32:default-2026072216485605710000000f]
+module.aws_lb_controller_pod_identity.aws_eks_pod_identity_association.this["main"]: Refreshing state... [id=a-caaaj4uftugbh4kvu]
+module.eks.aws_eks_addon.this["aws-ebs-csi-driver"]: Refreshing state... [id=student32:aws-ebs-csi-driver]
+module.eks.aws_eks_addon.this["eks-pod-identity-agent"]: Refreshing state... [id=student32:eks-pod-identity-agent]
+module.eks.aws_eks_addon.this["coredns"]: Refreshing state... [id=student32:coredns]
+
+Terraform used the selected providers to generate the following execution
+plan. Resource actions are indicated with the following symbols:
+  - destroy
+
+Terraform will perform the following actions:
+
+  # module.aws_lb_controller_pod_identity.aws_eks_pod_identity_association.this["main"] will be destroyed
+  - resource "aws_eks_pod_identity_association" "this" {
+      - association_arn      = "arn:aws:eks:us-west-2:515966504359:podidentityassociation/student32/a-caaaj4uftugbh4kvu" -> null
+      - association_id       = "a-caaaj4uftugbh4kvu" -> null
+      - cluster_name         = "student32" -> null
+      - disable_session_tags = false -> null
+      - id                   = "a-caaaj4uftugbh4kvu" -> null
+      - namespace            = "kube-system" -> null
+      - region               = "us-west-2" -> null
+      - role_arn             = "arn:aws:iam::515966504359:role/student32-aws-lbc-20260722163758465600000001" -> null
+      - service_account      = "aws-load-balancer-controller" -> null
+      - tags                 = {} -> null
+      - tags_all             = {
+          - "ManagedBy" = "terraform"
+          - "Project"   = "packt-agentic-devops"
+          - "Purpose"   = "student-cluster"
+          - "Student"   = "student32"
+          - "Workshop"  = "packt"
+        } -> null
+    }
+
+  # module.aws_lb_controller_pod_identity.aws_iam_policy.lb_controller[0] will be destroyed
+  - resource "aws_iam_policy" "lb_controller" {
+      - arn              = "arn:aws:iam::515966504359:policy/AmazonEKS_LoadBalancerController-20260722163758466600000002" -> null
+      - attachment_count = 1 -> null
+      - description      = "Permissions for AWS Load Balancer Controller" -> null
+      - id               = "arn:aws:iam::515966504359:policy/AmazonEKS_LoadBalancerController-20260722163758466600000002" -> null
+      - name             = "AmazonEKS_LoadBalancerController-20260722163758466600000002" -> null
+      - name_prefix      = "AmazonEKS_LoadBalancerController-" -> null
+      - path             = "/" -> null
+      - policy           = jsonencode(
+            {
+              - Statement = [
+                  - {
+                      - Action    = "iam:CreateServiceLinkedRole"
+                      - Condition = {
+                          - StringEquals = {
+                              - "iam:AWSServiceName" = "elasticloadbalancing.amazonaws.com"
+                            }
+                        }
+                      - Effect    = "Allow"
+                      - Resource  = "*"
+                    },
+                  - {
+                      - Action   = [
+                          - "elasticloadbalancing:DescribeTrustStores",
+                          - "elasticloadbalancing:DescribeTargetHealth",
+                          - "elasticloadbalancing:DescribeTargetGroups",
+                          - "elasticloadbalancing:DescribeTargetGroupAttributes",
+                          - "elasticloadbalancing:DescribeTags",
+                          - "elasticloadbalancing:DescribeSSLPolicies",
+                          - "elasticloadbalancing:DescribeRules",
+                          - "elasticloadbalancing:DescribeLoadBalancers",
+                          - "elasticloadbalancing:DescribeLoadBalancerAttributes",
+                          - "elasticloadbalancing:DescribeListeners",
+                          - "elasticloadbalancing:DescribeListenerCertificates",
+                          - "elasticloadbalancing:DescribeListenerAttributes",
+                          - "elasticloadbalancing:DescribeCapacityReservation",
+                          - "ec2:GetSecurityGroupsForVpc",
+                          - "ec2:GetCoipPoolUsage",
+                          - "ec2:DescribeVpcs",
+                          - "ec2:DescribeVpcPeeringConnections",
+                          - "ec2:DescribeTags",
+                          - "ec2:DescribeSubnets",
+                          - "ec2:DescribeSecurityGroups",
+                          - "ec2:DescribeRouteTables",
+                          - "ec2:DescribeNetworkInterfaces",
+                          - "ec2:DescribeIpamPools",
+                          - "ec2:DescribeInternetGateways",
+                          - "ec2:DescribeInstances",
+                          - "ec2:DescribeCoipPools",
+                          - "ec2:DescribeAvailabilityZones",
+                          - "ec2:DescribeAddresses",
+                          - "ec2:DescribeAccountAttributes",
+                        ]
+                      - Effect   = "Allow"
+                      - Resource = "*"
+                    },
+                  - {
+                      - Action   = [
+                          - "wafv2:GetWebACLForResource",
+                          - "wafv2:GetWebACL",
+                          - "wafv2:DisassociateWebACL",
+                          - "wafv2:AssociateWebACL",
+                          - "waf-regional:GetWebACLForResource",
+                          - "waf-regional:GetWebACL",
+                          - "waf-regional:DisassociateWebACL",
+                          - "waf-regional:AssociateWebACL",
+                          - "shield:GetSubscriptionState",
+                          - "shield:DescribeProtection",
+                          - "shield:DeleteProtection",
+                          - "shield:CreateProtection",
+                          - "iam:ListServerCertificates",
+                          - "iam:GetServerCertificate",
+                          - "cognito-idp:DescribeUserPoolClient",
+                          - "acm:ListCertificates",
+                          - "acm:DescribeCertificate",
+                        ]
+                      - Effect   = "Allow"
+                      - Resource = "*"
+                    },
+                  - {
+                      - Action   = [
+                          - "ec2:RevokeSecurityGroupIngress",
+                          - "ec2:AuthorizeSecurityGroupIngress",
+                        ]
+                      - Effect   = "Allow"
+                      - Resource = "*"
+                    },
+                  - {
+                      - Action   = "ec2:CreateSecurityGroup"
+                      - Effect   = "Allow"
+                      - Resource = "*"
+                    },
+                  - {
+                      - Action    = "ec2:CreateTags"
+                      - Condition = {
+                          - Null         = {
+                              - "aws:RequestTag/elbv2.k8s.aws/cluster" = "false"
+                            }
+                          - StringEquals = {
+                              - "ec2:CreateAction" = "CreateSecurityGroup"
+                            }
+                        }
+                      - Effect    = "Allow"
+                      - Resource  = "arn:aws:ec2:*:*:security-group/*"
+                    },
+                  - {
+                      - Action    = [
+                          - "ec2:DeleteTags",
+                          - "ec2:CreateTags",
+                        ]
+                      - Condition = {
+                          - Null = {
+                              - "aws:RequestTag/elbv2.k8s.aws/cluster"  = "true"
+                              - "aws:ResourceTag/elbv2.k8s.aws/cluster" = "false"
+                            }
+                        }
+                      - Effect    = "Allow"
+                      - Resource  = "arn:aws:ec2:*:*:security-group/*"
+                    },
+                  - {
+                      - Action    = [
+                          - "ec2:RevokeSecurityGroupIngress",
+                          - "ec2:DeleteSecurityGroup",
+                          - "ec2:AuthorizeSecurityGroupIngress",
+                        ]
+                      - Condition = {
+                          - Null = {
+                              - "aws:ResourceTag/elbv2.k8s.aws/cluster" = "false"
+                            }
+                        }
+                      - Effect    = "Allow"
+                      - Resource  = "*"
+                    },
+                  - {
+                      - Action    = [
+                          - "elasticloadbalancing:CreateTargetGroup",
+                          - "elasticloadbalancing:CreateLoadBalancer",
+                        ]
+                      - Condition = {
+                          - Null = {
+                              - "aws:RequestTag/elbv2.k8s.aws/cluster" = "false"
+                            }
+                        }
+                      - Effect    = "Allow"
+                      - Resource  = "*"
+                    },
+                  - {
+                      - Action   = [
+                          - "elasticloadbalancing:DeleteRule",
+                          - "elasticloadbalancing:DeleteListener",
+                          - "elasticloadbalancing:CreateRule",
+                          - "elasticloadbalancing:CreateListener",
+                        ]
+                      - Effect   = "Allow"
+                      - Resource = "*"
+                    },
+                  - {
+                      - Action    = [
+                          - "elasticloadbalancing:RemoveTags",
+                          - "elasticloadbalancing:AddTags",
+                        ]
+                      - Condition = {
+                          - Null = {
+                              - "aws:RequestTag/elbv2.k8s.aws/cluster"  = "true"
+                              - "aws:ResourceTag/elbv2.k8s.aws/cluster" = "false"
+                            }
+                        }
+                      - Effect    = "Allow"
+                      - Resource  = [
+                          - "arn:aws:elasticloadbalancing:*:*:targetgroup/*/*",
+                          - "arn:aws:elasticloadbalancing:*:*:loadbalancer/net/*/*",
+                          - "arn:aws:elasticloadbalancing:*:*:loadbalancer/app/*/*",
+                        ]
+                    },
+                  - {
+                      - Action   = [
+                          - "elasticloadbalancing:RemoveTags",
+                          - "elasticloadbalancing:AddTags",
+                        ]
+                      - Effect   = "Allow"
+                      - Resource = [
+                          - "arn:aws:elasticloadbalancing:*:*:listener/net/*/*/*",
+                          - "arn:aws:elasticloadbalancing:*:*:listener/app/*/*/*",
+                          - "arn:aws:elasticloadbalancing:*:*:listener-rule/net/*/*/*",
+                          - "arn:aws:elasticloadbalancing:*:*:listener-rule/app/*/*/*",
+                        ]
+                    },
+                  - {
+                      - Action    = [
+                          - "elasticloadbalancing:SetSubnets",
+                          - "elasticloadbalancing:SetSecurityGroups",
+                          - "elasticloadbalancing:SetIpAddressType",
+                          - "elasticloadbalancing:ModifyTargetGroupAttributes",
+                          - "elasticloadbalancing:ModifyTargetGroup",
+                          - "elasticloadbalancing:ModifyLoadBalancerAttributes",
+                          - "elasticloadbalancing:ModifyListenerAttributes",
+                          - "elasticloadbalancing:ModifyIpPools",
+                          - "elasticloadbalancing:ModifyCapacityReservation",
+                          - "elasticloadbalancing:DeleteTargetGroup",
+                          - "elasticloadbalancing:DeleteLoadBalancer",
+                        ]
+                      - Condition = {
+                          - Null = {
+                              - "aws:ResourceTag/elbv2.k8s.aws/cluster" = "false"
+                            }
+                        }
+                      - Effect    = "Allow"
+                      - Resource  = "*"
+                    },
+                  - {
+                      - Action    = "elasticloadbalancing:AddTags"
+                      - Condition = {
+                          - Null         = {
+                              - "aws:RequestTag/elbv2.k8s.aws/cluster" = "false"
+                            }
+                          - StringEquals = {
+                              - "elasticloadbalancing:CreateAction" = [
+                                  - "CreateTargetGroup",
+                                  - "CreateLoadBalancer",
+                                ]
+                            }
+                        }
+                      - Effect    = "Allow"
+                      - Resource  = [
+                          - "arn:aws:elasticloadbalancing:*:*:targetgroup/*/*",
+                          - "arn:aws:elasticloadbalancing:*:*:loadbalancer/net/*/*",
+                          - "arn:aws:elasticloadbalancing:*:*:loadbalancer/app/*/*",
+                        ]
+                    },
+                  - {
+                      - Action   = [
+                          - "elasticloadbalancing:RegisterTargets",
+                          - "elasticloadbalancing:DeregisterTargets",
+                        ]
+                      - Effect   = "Allow"
+                      - Resource = "arn:aws:elasticloadbalancing:*:*:targetgroup/*/*"
+                    },
+                  - {
+                      - Action   = [
+                          - "elasticloadbalancing:SetWebAcl",
+                          - "elasticloadbalancing:SetRulePriorities",
+                          - "elasticloadbalancing:RemoveListenerCertificates",
+                          - "elasticloadbalancing:ModifyRule",
+                          - "elasticloadbalancing:ModifyListener",
+                          - "elasticloadbalancing:AddListenerCertificates",
+                        ]
+                      - Effect   = "Allow"
+                      - Resource = "*"
+                    },
+                ]
+              - Version   = "2012-10-17"
+            }
+        ) -> null
+      - policy_id        = "ANPAXQIQABWT37HDV6DZW" -> null
+      - tags             = {} -> null
+      - tags_all         = {
+          - "ManagedBy" = "terraform"
+          - "Project"   = "packt-agentic-devops"
+          - "Purpose"   = "student-cluster"
+          - "Student"   = "student32"
+          - "Workshop"  = "packt"
+        } -> null
+    }
+
+  # module.aws_lb_controller_pod_identity.aws_iam_role.this[0] will be destroyed
+  - resource "aws_iam_role" "this" {
+      - arn                   = "arn:aws:iam::515966504359:role/student32-aws-lbc-20260722163758465600000001" -> null
+      - assume_role_policy    = jsonencode(
+            {
+              - Statement = [
+                  - {
+                      - Action    = [
+                          - "sts:TagSession",
+                          - "sts:AssumeRole",
+                        ]
+                      - Effect    = "Allow"
+                      - Principal = {
+                          - Service = "pods.eks.amazonaws.com"
+                        }
+                    },
+                ]
+              - Version   = "2012-10-17"
+            }
+        ) -> null
+      - create_date           = "2026-07-22T16:37:58Z" -> null
+      - force_detach_policies = true -> null
+      - id                    = "student32-aws-lbc-20260722163758465600000001" -> null
+      - managed_policy_arns   = [
+          - "arn:aws:iam::515966504359:policy/AmazonEKS_LoadBalancerController-20260722163758466600000002",
+        ] -> null
+      - max_session_duration  = 3600 -> null
+      - name                  = "student32-aws-lbc-20260722163758465600000001" -> null
+      - name_prefix           = "student32-aws-lbc-" -> null
+      - path                  = "/" -> null
+      - tags                  = {} -> null
+      - tags_all              = {
+          - "ManagedBy" = "terraform"
+          - "Project"   = "packt-agentic-devops"
+          - "Purpose"   = "student-cluster"
+          - "Student"   = "student32"
+          - "Workshop"  = "packt"
+        } -> null
+      - unique_id             = "AROAXQIQABWT4T4CQCZHO" -> null
+        # (2 unchanged attributes hidden)
+    }
+
+  # module.aws_lb_controller_pod_identity.aws_iam_role_policy_attachment.lb_controller[0] will be destroyed
+  - resource "aws_iam_role_policy_attachment" "lb_controller" {
+      - id         = "student32-aws-lbc-20260722163758465600000001/arn:aws:iam::515966504359:policy/AmazonEKS_LoadBalancerController-20260722163758466600000002" -> null
+      - policy_arn = "arn:aws:iam::515966504359:policy/AmazonEKS_LoadBalancerController-20260722163758466600000002" -> null
+      - role       = "student32-aws-lbc-20260722163758465600000001" -> null
+    }
+
+  # module.ebs_csi_pod_identity.aws_iam_policy.ebs_csi[0] will be destroyed
+  - resource "aws_iam_policy" "ebs_csi" {
+      - arn              = "arn:aws:iam::515966504359:policy/AmazonEKS_EBS_CSI-20260722163758470500000005" -> null
+      - attachment_count = 1 -> null
+      - description      = "Permissions to manage EBS volumes via the container storage interface (CSI) driver" -> null
+      - id               = "arn:aws:iam::515966504359:policy/AmazonEKS_EBS_CSI-20260722163758470500000005" -> null
+      - name             = "AmazonEKS_EBS_CSI-20260722163758470500000005" -> null
+      - name_prefix      = "AmazonEKS_EBS_CSI-" -> null
+      - path             = "/" -> null
+      - policy           = jsonencode(
+            {
+              - Statement = [
+                  - {
+                      - Action   = [
+                          - "ec2:ModifyVolume",
+                          - "ec2:EnableFastSnapshotRestores",
+                          - "ec2:DetachVolume",
+                          - "ec2:DescribeVolumesModifications",
+                          - "ec2:DescribeVolumes",
+                          - "ec2:DescribeTags",
+                          - "ec2:DescribeSnapshots",
+                          - "ec2:DescribeInstances",
+                          - "ec2:DescribeAvailabilityZones",
+                          - "ec2:CreateSnapshot",
+                          - "ec2:AttachVolume",
+                        ]
+                      - Effect   = "Allow"
+                      - Resource = "*"
+                    },
+                  - {
+                      - Action    = "ec2:CreateTags"
+                      - Condition = {
+                          - StringEquals = {
+                              - "ec2:CreateAction" = [
+                                  - "CreateVolume",
+                                  - "CreateSnapshot",
+                                ]
+                            }
+                        }
+                      - Effect    = "Allow"
+                      - Resource  = [
+                          - "arn:aws:ec2:*:*:volume/*",
+                          - "arn:aws:ec2:*:*:snapshot/*",
+                        ]
+                    },
+                  - {
+                      - Action   = "ec2:DeleteTags"
+                      - Effect   = "Allow"
+                      - Resource = [
+                          - "arn:aws:ec2:*:*:volume/*",
+                          - "arn:aws:ec2:*:*:snapshot/*",
+                        ]
+                    },
+                  - {
+                      - Action    = "ec2:CreateVolume"
+                      - Condition = {
+                          - StringLike = {
+                              - "aws:RequestTag/ebs.csi.aws.com/cluster" = "true"
+                            }
+                        }
+                      - Effect    = "Allow"
+                      - Resource  = "arn:aws:ec2:*:*:volume/*"
+                    },
+                  - {
+                      - Action    = "ec2:CreateVolume"
+                      - Condition = {
+                          - StringLike = {
+                              - "aws:RequestTag/CSIVolumeName" = "*"
+                            }
+                        }
+                      - Effect    = "Allow"
+                      - Resource  = "arn:aws:ec2:*:*:volume/*"
+                    },
+                  - {
+                      - Action   = "ec2:CreateVolume"
+                      - Effect   = "Allow"
+                      - Resource = "arn:aws:ec2:*:*:snapshot/*"
+                    },
+                  - {
+                      - Action    = "ec2:DeleteVolume"
+                      - Condition = {
+                          - StringLike = {
+                              - "ec2:ResourceTag/ebs.csi.aws.com/cluster" = "true"
+                            }
+                        }
+                      - Effect    = "Allow"
+                      - Resource  = "*"
+                    },
+                  - {
+                      - Action    = "ec2:DeleteVolume"
+                      - Condition = {
+                          - StringLike = {
+                              - "ec2:ResourceTag/CSIVolumeName" = "*"
+                            }
+                        }
+                      - Effect    = "Allow"
+                      - Resource  = "*"
+                    },
+                  - {
+                      - Action    = "ec2:DeleteVolume"
+                      - Condition = {
+                          - StringLike = {
+                              - "ec2:ResourceTag/kubernetes.io/created-for/pvc/name" = "*"
+                            }
+                        }
+                      - Effect    = "Allow"
+                      - Resource  = "*"
+                    },
+                  - {
+                      - Action    = "ec2:DeleteSnapshot"
+                      - Condition = {
+                          - StringLike = {
+                              - "ec2:ResourceTag/CSIVolumeSnapshotName" = "*"
+                            }
+                        }
+                      - Effect    = "Allow"
+                      - Resource  = "*"
+                    },
+                  - {
+                      - Action    = "ec2:DeleteSnapshot"
+                      - Condition = {
+                          - StringLike = {
+                              - "ec2:ResourceTag/ebs.csi.aws.com/cluster" = "true"
+                            }
+                        }
+                      - Effect    = "Allow"
+                      - Resource  = "*"
+                    },
+                ]
+              - Version   = "2012-10-17"
+            }
+        ) -> null
+      - policy_id        = "ANPAXQIQABWT2EK3RDCBQ" -> null
+      - tags             = {} -> null
+      - tags_all         = {
+          - "ManagedBy" = "terraform"
+          - "Project"   = "packt-agentic-devops"
+          - "Purpose"   = "student-cluster"
+          - "Student"   = "student32"
+          - "Workshop"  = "packt"
+        } -> null
+    }
+
+  # module.ebs_csi_pod_identity.aws_iam_role.this[0] will be destroyed
+  - resource "aws_iam_role" "this" {
+      - arn                   = "arn:aws:iam::515966504359:role/student32-ebs-csi-20260722163758470300000004" -> null
+      - assume_role_policy    = jsonencode(
+            {
+              - Statement = [
+                  - {
+                      - Action    = [
+                          - "sts:TagSession",
+                          - "sts:AssumeRole",
+                        ]
+                      - Effect    = "Allow"
+                      - Principal = {
+                          - Service = "pods.eks.amazonaws.com"
+                        }
+                    },
+                ]
+              - Version   = "2012-10-17"
+            }
+        ) -> null
+      - create_date           = "2026-07-22T16:37:58Z" -> null
+      - force_detach_policies = true -> null
+      - id                    = "student32-ebs-csi-20260722163758470300000004" -> null
+      - managed_policy_arns   = [
+          - "arn:aws:iam::515966504359:policy/AmazonEKS_EBS_CSI-20260722163758470500000005",
+        ] -> null
+      - max_session_duration  = 3600 -> null
+      - name                  = "student32-ebs-csi-20260722163758470300000004" -> null
+      - name_prefix           = "student32-ebs-csi-" -> null
+      - path                  = "/" -> null
+      - tags                  = {} -> null
+      - tags_all              = {
+          - "ManagedBy" = "terraform"
+          - "Project"   = "packt-agentic-devops"
+          - "Purpose"   = "student-cluster"
+          - "Student"   = "student32"
+          - "Workshop"  = "packt"
+        } -> null
+      - unique_id             = "AROAXQIQABWT3IXHO4TJT" -> null
+        # (2 unchanged attributes hidden)
+    }
+
+  # module.ebs_csi_pod_identity.aws_iam_role_policy_attachment.ebs_csi[0] will be destroyed
+  - resource "aws_iam_role_policy_attachment" "ebs_csi" {
+      - id         = "student32-ebs-csi-20260722163758470300000004/arn:aws:iam::515966504359:policy/AmazonEKS_EBS_CSI-20260722163758470500000005" -> null
+      - policy_arn = "arn:aws:iam::515966504359:policy/AmazonEKS_EBS_CSI-20260722163758470500000005" -> null
+      - role       = "student32-ebs-csi-20260722163758470300000004" -> null
+    }
+
+  # module.eks.aws_eks_access_entry.this["cluster_creator"] will be destroyed
+  - resource "aws_eks_access_entry" "this" {
+      - access_entry_arn  = "arn:aws:eks:us-west-2:515966504359:access-entry/student32/user/515966504359/nwuser/26cfc55d-3345-2d02-75fa-5ba1a9efc689" -> null
+      - cluster_name      = "student32" -> null
+      - created_at        = "2026-07-22T16:48:19Z" -> null
+      - id                = "student32:arn:aws:iam::515966504359:user/nwuser" -> null
+      - kubernetes_groups = [] -> null
+      - modified_at       = "2026-07-22T16:48:19Z" -> null
+      - principal_arn     = "arn:aws:iam::515966504359:user/nwuser" -> null
+      - region            = "us-west-2" -> null
+      - tags              = {} -> null
+      - tags_all          = {
+          - "ManagedBy" = "terraform"
+          - "Project"   = "packt-agentic-devops"
+          - "Purpose"   = "student-cluster"
+          - "Student"   = "student32"
+          - "Workshop"  = "packt"
+        } -> null
+      - type              = "STANDARD" -> null
+      - user_name         = "arn:aws:iam::515966504359:user/nwuser" -> null
+    }
+
+  # module.eks.aws_eks_access_policy_association.this["cluster_creator_admin"] will be destroyed
+  - resource "aws_eks_access_policy_association" "this" {
+      - associated_at = "2026-07-22 16:48:20.488 +0000 UTC" -> null
+      - cluster_name  = "student32" -> null
+      - id            = "student32#arn:aws:iam::515966504359:user/nwuser#arn:aws:eks::aws:cluster-access-policy/AmazonEKSClusterAdminPolicy" -> null
+      - modified_at   = "2026-07-22 16:48:20.488 +0000 UTC" -> null
+      - policy_arn    = "arn:aws:eks::aws:cluster-access-policy/AmazonEKSClusterAdminPolicy" -> null
+      - principal_arn = "arn:aws:iam::515966504359:user/nwuser" -> null
+      - region        = "us-west-2" -> null
+
+      - access_scope {
+          - namespaces = [] -> null
+          - type       = "cluster" -> null
+        }
+    }
+
+  # module.eks.aws_eks_addon.before_compute["kube-proxy"] will be destroyed
+  - resource "aws_eks_addon" "before_compute" {
+      - addon_name                  = "kube-proxy" -> null
+      - addon_version               = "v1.35.3-eksbuild.17" -> null
+      - arn                         = "arn:aws:eks:us-west-2:515966504359:addon/student32/kube-proxy/42cfc55d-33dc-bfbd-2e64-5013bfc888c2" -> null
+      - cluster_name                = "student32" -> null
+      - created_at                  = "2026-07-22T16:48:20Z" -> null
+      - id                          = "student32:kube-proxy" -> null
+      - modified_at                 = "2026-07-22T16:48:27Z" -> null
+      - preserve                    = true -> null
+      - region                      = "us-west-2" -> null
+      - resolve_conflicts_on_create = "NONE" -> null
+      - resolve_conflicts_on_update = "OVERWRITE" -> null
+      - tags                        = {} -> null
+      - tags_all                    = {
+          - "ManagedBy" = "terraform"
+          - "Project"   = "packt-agentic-devops"
+          - "Purpose"   = "student-cluster"
+          - "Student"   = "student32"
+          - "Workshop"  = "packt"
+        } -> null
+        # (2 unchanged attributes hidden)
+
+      - namespace_config {
+          - namespace = "kube-system" -> null
+        }
+
+      - timeouts {}
+    }
+
+  # module.eks.aws_eks_addon.before_compute["vpc-cni"] will be destroyed
+  - resource "aws_eks_addon" "before_compute" {
+      - addon_name                  = "vpc-cni" -> null
+      - addon_version               = "v1.22.4-eksbuild.3" -> null
+      - arn                         = "arn:aws:eks:us-west-2:515966504359:addon/student32/vpc-cni/1ecfc55d-33de-96dc-597c-c15b4650ef6a" -> null
+      - cluster_name                = "student32" -> null
+      - configuration_values        = jsonencode(
+            {
+              - env = {
+                  - ENABLE_PREFIX_DELEGATION = "true"
+                  - WARM_PREFIX_TARGET       = "1"
+                }
+            }
+        ) -> null
+      - created_at                  = "2026-07-22T16:48:20Z" -> null
+      - id                          = "student32:vpc-cni" -> null
+      - modified_at                 = "2026-07-22T16:48:28Z" -> null
+      - preserve                    = true -> null
+      - region                      = "us-west-2" -> null
+      - resolve_conflicts_on_create = "NONE" -> null
+      - resolve_conflicts_on_update = "OVERWRITE" -> null
+      - tags                        = {} -> null
+      - tags_all                    = {
+          - "ManagedBy" = "terraform"
+          - "Project"   = "packt-agentic-devops"
+          - "Purpose"   = "student-cluster"
+          - "Student"   = "student32"
+          - "Workshop"  = "packt"
+        } -> null
+        # (1 unchanged attribute hidden)
+
+      - namespace_config {
+          - namespace = "kube-system" -> null
+        }
+
+      - timeouts {}
+    }
+
+  # module.eks.aws_eks_addon.this["aws-ebs-csi-driver"] will be destroyed
+  - resource "aws_eks_addon" "this" {
+      - addon_name                  = "aws-ebs-csi-driver" -> null
+      - addon_version               = "v1.62.0-eksbuild.1" -> null
+      - arn                         = "arn:aws:eks:us-west-2:515966504359:addon/student32/aws-ebs-csi-driver/08cfc55e-4e43-a1b8-9391-573ebe02b383" -> null
+      - cluster_name                = "student32" -> null
+      - created_at                  = "2026-07-22T16:50:45Z" -> null
+      - id                          = "student32:aws-ebs-csi-driver" -> null
+      - modified_at                 = "2026-07-22T16:51:27Z" -> null
+      - preserve                    = true -> null
+      - region                      = "us-west-2" -> null
+      - resolve_conflicts_on_create = "NONE" -> null
+      - resolve_conflicts_on_update = "OVERWRITE" -> null
+      - tags                        = {} -> null
+      - tags_all                    = {
+          - "ManagedBy" = "terraform"
+          - "Project"   = "packt-agentic-devops"
+          - "Purpose"   = "student-cluster"
+          - "Student"   = "student32"
+          - "Workshop"  = "packt"
+        } -> null
+        # (2 unchanged attributes hidden)
+
+      - namespace_config {
+          - namespace = "kube-system" -> null
+        }
+
+      - pod_identity_association {
+          - role_arn        = "arn:aws:iam::515966504359:role/student32-ebs-csi-20260722163758470300000004" -> null
+          - service_account = "ebs-csi-controller-sa" -> null
+        }
+
+      - timeouts {}
+    }
+
+  # module.eks.aws_eks_addon.this["coredns"] will be destroyed
+  - resource "aws_eks_addon" "this" {
+      - addon_name                  = "coredns" -> null
+      - addon_version               = "v1.14.3-eksbuild.3" -> null
+      - arn                         = "arn:aws:eks:us-west-2:515966504359:addon/student32/coredns/d6cfc55e-4e41-39fb-2c76-0fd628048595" -> null
+      - cluster_name                = "student32" -> null
+      - created_at                  = "2026-07-22T16:50:44Z" -> null
+      - id                          = "student32:coredns" -> null
+      - modified_at                 = "2026-07-22T16:51:07Z" -> null
+      - preserve                    = true -> null
+      - region                      = "us-west-2" -> null
+      - resolve_conflicts_on_create = "NONE" -> null
+      - resolve_conflicts_on_update = "OVERWRITE" -> null
+      - tags                        = {} -> null
+      - tags_all                    = {
+          - "ManagedBy" = "terraform"
+          - "Project"   = "packt-agentic-devops"
+          - "Purpose"   = "student-cluster"
+          - "Student"   = "student32"
+          - "Workshop"  = "packt"
+        } -> null
+        # (2 unchanged attributes hidden)
+
+      - namespace_config {
+          - namespace = "kube-system" -> null
+        }
+
+      - timeouts {}
+    }
+
+  # module.eks.aws_eks_addon.this["eks-pod-identity-agent"] will be destroyed
+  - resource "aws_eks_addon" "this" {
+      - addon_name                  = "eks-pod-identity-agent" -> null
+      - addon_version               = "v1.3.10-eksbuild.3" -> null
+      - arn                         = "arn:aws:eks:us-west-2:515966504359:addon/student32/eks-pod-identity-agent/6acfc55e-4e42-1bfd-8db6-ddec71365919" -> null
+      - cluster_name                = "student32" -> null
+      - created_at                  = "2026-07-22T16:50:44Z" -> null
+      - id                          = "student32:eks-pod-identity-agent" -> null
+      - modified_at                 = "2026-07-22T16:51:00Z" -> null
+      - preserve                    = true -> null
+      - region                      = "us-west-2" -> null
+      - resolve_conflicts_on_create = "NONE" -> null
+      - resolve_conflicts_on_update = "OVERWRITE" -> null
+      - tags                        = {} -> null
+      - tags_all                    = {
+          - "ManagedBy" = "terraform"
+          - "Project"   = "packt-agentic-devops"
+          - "Purpose"   = "student-cluster"
+          - "Student"   = "student32"
+          - "Workshop"  = "packt"
+        } -> null
+        # (2 unchanged attributes hidden)
+
+      - namespace_config {
+          - namespace = "kube-system" -> null
+        }
+
+      - timeouts {}
+    }
+
+  # module.eks.aws_eks_cluster.this[0] will be destroyed
+  - resource "aws_eks_cluster" "this" {
+      - arn                           = "arn:aws:eks:us-west-2:515966504359:cluster/student32" -> null
+      - bootstrap_self_managed_addons = false -> null
+      - certificate_authority         = [
+          - {
+              - data = "LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSURCVENDQWUyZ0F3SUJBZ0lJR0ZRM1phWTZhSVF3RFFZSktvWklodmNOQVFFTEJRQXdGVEVUTUJFR0ExVUUKQXhNS2EzVmlaWEp1WlhSbGN6QWVGdzB5TmpBM01qSXhOak01TWpGYUZ3MHpOakEzTVRreE5qUTBNakZhTUJVeApFekFSQmdOVkJBTVRDbXQxWW1WeWJtVjBaWE13Z2dFaU1BMEdDU3FHU0liM0RRRUJBUVVBQTRJQkR3QXdnZ0VLCkFvSUJBUUMwdW45dEdZcmZPNnVoSWM0a2w0VTNwUi9FYm5OYyt6R0JLaFNYeVVCejBYQ09XYVVxajEwbzkwNEUKd2JXZHhISS9VNHB2RWRobUkxakZZL29oNEhXUDM3VkRvdnRqMHE4cnpEUlgvalhoOHJXbHgzZk11bndheHBNSAo5U3R5K2JvT1Y0Yzc3SlJaWmVwV05VZ3Y3aFA5eGF2RXBBVXZZcWNzbDNic210RHIwcXNQWmtZaWtib2E5YjhBCm52OXM1dThyNWI4SVk1VWphb3dJQ0pURHJrL0pCdDArSnBNRWhrUXoyZFNSY29JcGdYMUdBZnNkSkNxVzF3R0MKR0o2aU54TUdpQVJUcXJCbTMzd2RuL0JaZXp4ZFdoWjV6UDVUSld5QzMzazVIQUZ4YnBVSmQ4R2MvdDRqRTMvZQplNGhtVmdIY2lBdFkrNkhnM0RWbm9CUzJmZUFmQWdNQkFBR2pXVEJYTUE0R0ExVWREd0VCL3dRRUF3SUNwREFQCkJnTlZIUk1CQWY4RUJUQURBUUgvTUIwR0ExVWREZ1FXQkJUY29PcE5OTHBrY1BydytLL3RaTHZMUmxKckF6QVYKQmdOVkhSRUVEakFNZ2dwcmRXSmxjbTVsZEdWek1BMEdDU3FHU0liM0RRRUJDd1VBQTRJQkFRQ3E5MUhhU3EzdgpWakhlWUJLd0FjcWhKNS80Ti9FemZHOGNPK3owdXl4OGMrSWpBNkd2YmVka3kyVmVIaXorMzZmdE5rZWpSQk8zCmdFQ0Nuc1ExUW0wNE9HQjJ4NVRkbjhZOFBOS21qV3Z3NjZUZFZmNzUxWXp4SUhyS1A0Q0NpekpmYThMTzBMVzAKQ2lmNUFVMXdVSzZ2Uzh5MlI3UGp5YjhZakJ1QzVka1BLOXMrdmwzRHZYYUlnOS8yWjBJYnNpd3dqWitvb01wRQoxeTd1Ykw2WEpxMURidzF6SzFMVWFIeXN2aUc3NE9mNW9XT0s4T1R3ZmRHMDhWWUhwdThUVHVUVzlidklQR0VNCm1TTmZEQXAyUHFXczd2TVN6ZURQb2V2ZElRQzFZSnV5aWJmNnV2RWNBdmZiWjEyQjJYa1V3NjVSL0VYSXZCSnkKSGpuUDA4Y3IxSE0zCi0tLS0tRU5EIENFUlRJRklDQVRFLS0tLS0K"
+            },
+        ] -> null
+      - created_at                    = "2026-07-22T16:38:23Z" -> null
+      - deletion_protection           = false -> null
+      - enabled_cluster_log_types     = [
+          - "api",
+          - "audit",
+          - "authenticator",
+        ] -> null
+      - endpoint                      = "https://BFE33D2DEB73CF0F5AAFD5CCC58B78C2.yl4.us-west-2.eks.amazonaws.com" -> null
+      - id                            = "student32" -> null
+      - identity                      = [
+          - {
+              - oidc = [
+                  - {
+                      - issuer = "https://oidc.eks.us-west-2.amazonaws.com/id/BFE33D2DEB73CF0F5AAFD5CCC58B78C2"
+                    },
+                ]
+            },
+        ] -> null
+      - name                          = "student32" -> null
+      - platform_version              = "eks.19" -> null
+      - region                        = "us-west-2" -> null
+      - role_arn                      = "arn:aws:iam::515966504359:role/student32-cluster-20260722163758472500000008" -> null
+      - status                        = "ACTIVE" -> null
+      - tags                          = {} -> null
+      - tags_all                      = {
+          - "ManagedBy" = "terraform"
+          - "Project"   = "packt-agentic-devops"
+          - "Purpose"   = "student-cluster"
+          - "Student"   = "student32"
+          - "Workshop"  = "packt"
+        } -> null
+      - version                       = "1.35" -> null
+
+      - access_config {
+          - authentication_mode                         = "API_AND_CONFIG_MAP" -> null
+          - bootstrap_cluster_creator_admin_permissions = false -> null
+        }
+
+      - compute_config {
+          - enabled       = false -> null
+          - node_pools    = [] -> null
+            # (1 unchanged attribute hidden)
+        }
+
+      - control_plane_scaling_config {
+          - tier = "standard" -> null
+        }
+
+      - encryption_config {
+          - resources = [
+              - "secrets",
+            ] -> null
+
+          - provider {
+              - key_arn = "arn:aws:kms:us-west-2:515966504359:key/072d696c-b5e9-474a-87fa-0342518c0bfd" -> null
+            }
+        }
+
+      - kubernetes_network_config {
+          - ip_family         = "ipv4" -> null
+          - service_ipv4_cidr = "172.20.0.0/16" -> null
+            # (1 unchanged attribute hidden)
+
+          - elastic_load_balancing {
+              - enabled = false -> null
+            }
+        }
+
+      - storage_config {
+          - block_storage {
+              - enabled = false -> null
+            }
+        }
+
+      - upgrade_policy {
+          - support_type = "EXTENDED" -> null
+        }
+
+      - vpc_config {
+          - cluster_security_group_id = "sg-057ab4c4b51d018f1" -> null
+          - endpoint_private_access   = true -> null
+          - endpoint_public_access    = true -> null
+          - public_access_cidrs       = [
+              - "0.0.0.0/0",
+            ] -> null
+          - security_group_ids        = [
+              - "sg-0e7e248d6bdaeee84",
+            ] -> null
+          - subnet_ids                = [
+              - "subnet-012e89d96e6a0727e",
+              - "subnet-0e756ac56bf3709bc",
+            ] -> null
+          - vpc_id                    = "vpc-043c280bb3a9e9aff" -> null
+        }
+    }
+
+  # module.eks.aws_iam_policy.cluster_encryption[0] will be destroyed
+  - resource "aws_iam_policy" "cluster_encryption" {
+      - arn              = "arn:aws:iam::515966504359:policy/student32-cluster-ClusterEncryption20260722163821008900000009" -> null
+      - attachment_count = 1 -> null
+      - description      = "Cluster encryption policy to allow cluster role to utilize CMK provided" -> null
+      - id               = "arn:aws:iam::515966504359:policy/student32-cluster-ClusterEncryption20260722163821008900000009" -> null
+      - name             = "student32-cluster-ClusterEncryption20260722163821008900000009" -> null
+      - name_prefix      = "student32-cluster-ClusterEncryption" -> null
+      - path             = "/" -> null
+      - policy           = jsonencode(
+            {
+              - Statement = [
+                  - {
+                      - Action   = [
+                          - "kms:Encrypt",
+                          - "kms:Decrypt",
+                          - "kms:ListGrants",
+                          - "kms:DescribeKey",
+                        ]
+                      - Effect   = "Allow"
+                      - Resource = "arn:aws:kms:us-west-2:515966504359:key/072d696c-b5e9-474a-87fa-0342518c0bfd"
+                    },
+                ]
+              - Version   = "2012-10-17"
+            }
+        ) -> null
+      - policy_id        = "ANPAXQIQABWT4SXD5M4K3" -> null
+      - tags             = {} -> null
+      - tags_all         = {
+          - "ManagedBy" = "terraform"
+          - "Project"   = "packt-agentic-devops"
+          - "Purpose"   = "student-cluster"
+          - "Student"   = "student32"
+          - "Workshop"  = "packt"
+        } -> null
+    }
+
+  # module.eks.aws_iam_role.this[0] will be destroyed
+  - resource "aws_iam_role" "this" {
+      - arn                   = "arn:aws:iam::515966504359:role/student32-cluster-20260722163758472500000008" -> null
+      - assume_role_policy    = jsonencode(
+            {
+              - Statement = [
+                  - {
+                      - Action    = [
+                          - "sts:TagSession",
+                          - "sts:AssumeRole",
+                        ]
+                      - Effect    = "Allow"
+                      - Principal = {
+                          - Service = "eks.amazonaws.com"
+                        }
+                      - Sid       = "EKSClusterAssumeRole"
+                    },
+                ]
+              - Version   = "2012-10-17"
+            }
+        ) -> null
+      - create_date           = "2026-07-22T16:37:58Z" -> null
+      - force_detach_policies = true -> null
+      - id                    = "student32-cluster-20260722163758472500000008" -> null
+      - managed_policy_arns   = [
+          - "arn:aws:iam::515966504359:policy/student32-cluster-ClusterEncryption20260722163821008900000009",
+          - "arn:aws:iam::aws:policy/AmazonEKSClusterPolicy",
+        ] -> null
+      - max_session_duration  = 3600 -> null
+      - name                  = "student32-cluster-20260722163758472500000008" -> null
+      - name_prefix           = "student32-cluster-" -> null
+      - path                  = "/" -> null
+      - tags                  = {} -> null
+      - tags_all              = {
+          - "ManagedBy" = "terraform"
+          - "Project"   = "packt-agentic-devops"
+          - "Purpose"   = "student-cluster"
+          - "Student"   = "student32"
+          - "Workshop"  = "packt"
+        } -> null
+      - unique_id             = "AROAXQIQABWT5RFL564S7" -> null
+        # (2 unchanged attributes hidden)
+    }
+
+  # module.eks.aws_iam_role_policy_attachment.cluster_encryption[0] will be destroyed
+  - resource "aws_iam_role_policy_attachment" "cluster_encryption" {
+      - id         = "student32-cluster-20260722163758472500000008/arn:aws:iam::515966504359:policy/student32-cluster-ClusterEncryption20260722163821008900000009" -> null
+      - policy_arn = "arn:aws:iam::515966504359:policy/student32-cluster-ClusterEncryption20260722163821008900000009" -> null
+      - role       = "student32-cluster-20260722163758472500000008" -> null
+    }
+
+  # module.eks.aws_iam_role_policy_attachment.this["AmazonEKSClusterPolicy"] will be destroyed
+  - resource "aws_iam_role_policy_attachment" "this" {
+      - id         = "student32-cluster-20260722163758472500000008/arn:aws:iam::aws:policy/AmazonEKSClusterPolicy" -> null
+      - policy_arn = "arn:aws:iam::aws:policy/AmazonEKSClusterPolicy" -> null
+      - role       = "student32-cluster-20260722163758472500000008" -> null
+    }
+
+  # module.eks.aws_security_group.cluster[0] will be destroyed
+  - resource "aws_security_group" "cluster" {
+      - arn                    = "arn:aws:ec2:us-west-2:515966504359:security-group/sg-0e7e248d6bdaeee84" -> null
+      - description            = "EKS cluster security group" -> null
+      - egress                 = [] -> null
+      - id                     = "sg-0e7e248d6bdaeee84" -> null
+      - ingress                = [
+          - {
+              - cidr_blocks      = []
+              - description      = "Node groups to cluster API"
+              - from_port        = 443
+              - ipv6_cidr_blocks = []
+              - prefix_list_ids  = []
+              - protocol         = "tcp"
+              - security_groups  = [
+                  - "sg-0169865e009201046",
+                ]
+              - self             = false
+              - to_port          = 443
+            },
+        ] -> null
+      - name                   = "student32-cluster-20260722163758468000000003" -> null
+      - name_prefix            = "student32-cluster-" -> null
+      - owner_id               = "515966504359" -> null
+      - region                 = "us-west-2" -> null
+      - revoke_rules_on_delete = false -> null
+      - tags                   = {
+          - "Name" = "student32-cluster"
+        } -> null
+      - tags_all               = {
+          - "ManagedBy" = "terraform"
+          - "Name"      = "student32-cluster"
+          - "Project"   = "packt-agentic-devops"
+          - "Purpose"   = "student-cluster"
+          - "Student"   = "student32"
+          - "Workshop"  = "packt"
+        } -> null
+      - vpc_id                 = "vpc-043c280bb3a9e9aff" -> null
+    }
+
+  # module.eks.aws_security_group.node[0] will be destroyed
+  - resource "aws_security_group" "node" {
+      - arn                    = "arn:aws:ec2:us-west-2:515966504359:security-group/sg-0169865e009201046" -> null
+      - description            = "EKS node shared security group" -> null
+      - egress                 = [
+          - {
+              - cidr_blocks      = [
+                  - "0.0.0.0/0",
+                ]
+              - description      = "Allow all egress"
+              - from_port        = 0
+              - ipv6_cidr_blocks = []
+              - prefix_list_ids  = []
+              - protocol         = "-1"
+              - security_groups  = []
+              - self             = false
+              - to_port          = 0
+            },
+        ] -> null
+      - id                     = "sg-0169865e009201046" -> null
+      - ingress                = [
+          - {
+              - cidr_blocks      = []
+              - description      = "Cluster API to node 10251/tcp webhook"
+              - from_port        = 10251
+              - ipv6_cidr_blocks = []
+              - prefix_list_ids  = []
+              - protocol         = "tcp"
+              - security_groups  = [
+                  - "sg-0e7e248d6bdaeee84",
+                ]
+              - self             = false
+              - to_port          = 10251
+            },
+          - {
+              - cidr_blocks      = []
+              - description      = "Cluster API to node 4443/tcp webhook"
+              - from_port        = 4443
+              - ipv6_cidr_blocks = []
+              - prefix_list_ids  = []
+              - protocol         = "tcp"
+              - security_groups  = [
+                  - "sg-0e7e248d6bdaeee84",
+                ]
+              - self             = false
+              - to_port          = 4443
+            },
+          - {
+              - cidr_blocks      = []
+              - description      = "Cluster API to node 6443/tcp webhook"
+              - from_port        = 6443
+              - ipv6_cidr_blocks = []
+              - prefix_list_ids  = []
+              - protocol         = "tcp"
+              - security_groups  = [
+                  - "sg-0e7e248d6bdaeee84",
+                ]
+              - self             = false
+              - to_port          = 6443
+            },
+          - {
+              - cidr_blocks      = []
+              - description      = "Cluster API to node 8443/tcp webhook"
+              - from_port        = 8443
+              - ipv6_cidr_blocks = []
+              - prefix_list_ids  = []
+              - protocol         = "tcp"
+              - security_groups  = [
+                  - "sg-0e7e248d6bdaeee84",
+                ]
+              - self             = false
+              - to_port          = 8443
+            },
+          - {
+              - cidr_blocks      = []
+              - description      = "Cluster API to node 9443/tcp webhook"
+              - from_port        = 9443
+              - ipv6_cidr_blocks = []
+              - prefix_list_ids  = []
+              - protocol         = "tcp"
+              - security_groups  = [
+                  - "sg-0e7e248d6bdaeee84",
+                ]
+              - self             = false
+              - to_port          = 9443
+            },
+          - {
+              - cidr_blocks      = []
+              - description      = "Cluster API to node groups"
+              - from_port        = 443
+              - ipv6_cidr_blocks = []
+              - prefix_list_ids  = []
+              - protocol         = "tcp"
+              - security_groups  = [
+                  - "sg-0e7e248d6bdaeee84",
+                ]
+              - self             = false
+              - to_port          = 443
+            },
+          - {
+              - cidr_blocks      = []
+              - description      = "Cluster API to node kubelets"
+              - from_port        = 10250
+              - ipv6_cidr_blocks = []
+              - prefix_list_ids  = []
+              - protocol         = "tcp"
+              - security_groups  = [
+                  - "sg-0e7e248d6bdaeee84",
+                ]
+              - self             = false
+              - to_port          = 10250
+            },
+          - {
+              - cidr_blocks      = []
+              - description      = "Node to node CoreDNS UDP"
+              - from_port        = 53
+              - ipv6_cidr_blocks = []
+              - prefix_list_ids  = []
+              - protocol         = "udp"
+              - security_groups  = []
+              - self             = true
+              - to_port          = 53
+            },
+          - {
+              - cidr_blocks      = []
+              - description      = "Node to node CoreDNS"
+              - from_port        = 53
+              - ipv6_cidr_blocks = []
+              - prefix_list_ids  = []
+              - protocol         = "tcp"
+              - security_groups  = []
+              - self             = true
+              - to_port          = 53
+            },
+          - {
+              - cidr_blocks      = []
+              - description      = "Node to node ingress on ephemeral ports"
+              - from_port        = 1025
+              - ipv6_cidr_blocks = []
+              - prefix_list_ids  = []
+              - protocol         = "tcp"
+              - security_groups  = []
+              - self             = true
+              - to_port          = 65535
+            },
+          - {
+              - cidr_blocks      = []
+              - description      = "elbv2.k8s.aws/targetGroupBinding=shared"
+              - from_port        = 8080
+              - ipv6_cidr_blocks = []
+              - prefix_list_ids  = []
+              - protocol         = "tcp"
+              - security_groups  = [
+                  - "sg-0995361bcf31be8f5",
+                ]
+              - self             = false
+              - to_port          = 8080
+            },
+        ] -> null
+      - name                   = "student32-node-20260722163758471500000007" -> null
+      - name_prefix            = "student32-node-" -> null
+      - owner_id               = "515966504359" -> null
+      - region                 = "us-west-2" -> null
+      - revoke_rules_on_delete = false -> null
+      - tags                   = {
+          - "Name"                            = "student32-node"
+          - "kubernetes.io/cluster/student32" = "owned"
+        } -> null
+      - tags_all               = {
+          - "ManagedBy"                       = "terraform"
+          - "Name"                            = "student32-node"
+          - "Project"                         = "packt-agentic-devops"
+          - "Purpose"                         = "student-cluster"
+          - "Student"                         = "student32"
+          - "Workshop"                        = "packt"
+          - "kubernetes.io/cluster/student32" = "owned"
+        } -> null
+      - vpc_id                 = "vpc-043c280bb3a9e9aff" -> null
+    }
+
+  # module.eks.aws_security_group_rule.cluster["ingress_nodes_443"] will be destroyed
+  - resource "aws_security_group_rule" "cluster" {
+      - description              = "Node groups to cluster API" -> null
+      - from_port                = 443 -> null
+      - id                       = "sgrule-403168982" -> null
+      - protocol                 = "tcp" -> null
+      - region                   = "us-west-2" -> null
+      - security_group_id        = "sg-0e7e248d6bdaeee84" -> null
+      - security_group_rule_id   = "sgr-0ca40c9be49f41028" -> null
+      - self                     = false -> null
+      - source_security_group_id = "sg-0169865e009201046" -> null
+      - to_port                  = 443 -> null
+      - type                     = "ingress" -> null
+    }
+
+  # module.eks.aws_security_group_rule.node["egress_all"] will be destroyed
+  - resource "aws_security_group_rule" "node" {
+      - cidr_blocks            = [
+          - "0.0.0.0/0",
+        ] -> null
+      - description            = "Allow all egress" -> null
+      - from_port              = 0 -> null
+      - id                     = "sgrule-997885534" -> null
+      - protocol               = "-1" -> null
+      - region                 = "us-west-2" -> null
+      - security_group_id      = "sg-0169865e009201046" -> null
+      - security_group_rule_id = "sgr-0626c61cf0b763c73" -> null
+      - self                   = false -> null
+      - to_port                = 0 -> null
+      - type                   = "egress" -> null
+    }
+
+  # module.eks.aws_security_group_rule.node["ingress_cluster_10251_webhook"] will be destroyed
+  - resource "aws_security_group_rule" "node" {
+      - description              = "Cluster API to node 10251/tcp webhook" -> null
+      - from_port                = 10251 -> null
+      - id                       = "sgrule-2169215804" -> null
+      - protocol                 = "tcp" -> null
+      - region                   = "us-west-2" -> null
+      - security_group_id        = "sg-0169865e009201046" -> null
+      - security_group_rule_id   = "sgr-0d6d35989c9c908d3" -> null
+      - self                     = false -> null
+      - source_security_group_id = "sg-0e7e248d6bdaeee84" -> null
+      - to_port                  = 10251 -> null
+      - type                     = "ingress" -> null
+    }
+
+  # module.eks.aws_security_group_rule.node["ingress_cluster_443"] will be destroyed
+  - resource "aws_security_group_rule" "node" {
+      - description              = "Cluster API to node groups" -> null
+      - from_port                = 443 -> null
+      - id                       = "sgrule-3352822755" -> null
+      - protocol                 = "tcp" -> null
+      - region                   = "us-west-2" -> null
+      - security_group_id        = "sg-0169865e009201046" -> null
+      - security_group_rule_id   = "sgr-0d46ec36f97b76e18" -> null
+      - self                     = false -> null
+      - source_security_group_id = "sg-0e7e248d6bdaeee84" -> null
+      - to_port                  = 443 -> null
+      - type                     = "ingress" -> null
+    }
+
+  # module.eks.aws_security_group_rule.node["ingress_cluster_4443_webhook"] will be destroyed
+  - resource "aws_security_group_rule" "node" {
+      - description              = "Cluster API to node 4443/tcp webhook" -> null
+      - from_port                = 4443 -> null
+      - id                       = "sgrule-3311380509" -> null
+      - protocol                 = "tcp" -> null
+      - region                   = "us-west-2" -> null
+      - security_group_id        = "sg-0169865e009201046" -> null
+      - security_group_rule_id   = "sgr-039a85e46babd3476" -> null
+      - self                     = false -> null
+      - source_security_group_id = "sg-0e7e248d6bdaeee84" -> null
+      - to_port                  = 4443 -> null
+      - type                     = "ingress" -> null
+    }
+
+  # module.eks.aws_security_group_rule.node["ingress_cluster_6443_webhook"] will be destroyed
+  - resource "aws_security_group_rule" "node" {
+      - description              = "Cluster API to node 6443/tcp webhook" -> null
+      - from_port                = 6443 -> null
+      - id                       = "sgrule-203280267" -> null
+      - protocol                 = "tcp" -> null
+      - region                   = "us-west-2" -> null
+      - security_group_id        = "sg-0169865e009201046" -> null
+      - security_group_rule_id   = "sgr-0c7e81f7543933cee" -> null
+      - self                     = false -> null
+      - source_security_group_id = "sg-0e7e248d6bdaeee84" -> null
+      - to_port                  = 6443 -> null
+      - type                     = "ingress" -> null
+    }
+
+  # module.eks.aws_security_group_rule.node["ingress_cluster_8443_webhook"] will be destroyed
+  - resource "aws_security_group_rule" "node" {
+      - description              = "Cluster API to node 8443/tcp webhook" -> null
+      - from_port                = 8443 -> null
+      - id                       = "sgrule-524415914" -> null
+      - protocol                 = "tcp" -> null
+      - region                   = "us-west-2" -> null
+      - security_group_id        = "sg-0169865e009201046" -> null
+      - security_group_rule_id   = "sgr-023e86137085745a3" -> null
+      - self                     = false -> null
+      - source_security_group_id = "sg-0e7e248d6bdaeee84" -> null
+      - to_port                  = 8443 -> null
+      - type                     = "ingress" -> null
+    }
+
+  # module.eks.aws_security_group_rule.node["ingress_cluster_9443_webhook"] will be destroyed
+  - resource "aws_security_group_rule" "node" {
+      - description              = "Cluster API to node 9443/tcp webhook" -> null
+      - from_port                = 9443 -> null
+      - id                       = "sgrule-2078326881" -> null
+      - protocol                 = "tcp" -> null
+      - region                   = "us-west-2" -> null
+      - security_group_id        = "sg-0169865e009201046" -> null
+      - security_group_rule_id   = "sgr-0cf3b97dfcdfd6e57" -> null
+      - self                     = false -> null
+      - source_security_group_id = "sg-0e7e248d6bdaeee84" -> null
+      - to_port                  = 9443 -> null
+      - type                     = "ingress" -> null
+    }
+
+  # module.eks.aws_security_group_rule.node["ingress_cluster_kubelet"] will be destroyed
+  - resource "aws_security_group_rule" "node" {
+      - description              = "Cluster API to node kubelets" -> null
+      - from_port                = 10250 -> null
+      - id                       = "sgrule-3036859207" -> null
+      - protocol                 = "tcp" -> null
+      - region                   = "us-west-2" -> null
+      - security_group_id        = "sg-0169865e009201046" -> null
+      - security_group_rule_id   = "sgr-0f83e9de204e1e040" -> null
+      - self                     = false -> null
+      - source_security_group_id = "sg-0e7e248d6bdaeee84" -> null
+      - to_port                  = 10250 -> null
+      - type                     = "ingress" -> null
+    }
+
+  # module.eks.aws_security_group_rule.node["ingress_nodes_ephemeral"] will be destroyed
+  - resource "aws_security_group_rule" "node" {
+      - description            = "Node to node ingress on ephemeral ports" -> null
+      - from_port              = 1025 -> null
+      - id                     = "sgrule-4266462697" -> null
+      - protocol               = "tcp" -> null
+      - region                 = "us-west-2" -> null
+      - security_group_id      = "sg-0169865e009201046" -> null
+      - security_group_rule_id = "sgr-0fd9e0675f62d8218" -> null
+      - self                   = true -> null
+      - to_port                = 65535 -> null
+      - type                   = "ingress" -> null
+    }
+
+  # module.eks.aws_security_group_rule.node["ingress_self_coredns_tcp"] will be destroyed
+  - resource "aws_security_group_rule" "node" {
+      - description            = "Node to node CoreDNS" -> null
+      - from_port              = 53 -> null
+      - id                     = "sgrule-3426005049" -> null
+      - protocol               = "tcp" -> null
+      - region                 = "us-west-2" -> null
+      - security_group_id      = "sg-0169865e009201046" -> null
+      - security_group_rule_id = "sgr-07a03653d89953d36" -> null
+      - self                   = true -> null
+      - to_port                = 53 -> null
+      - type                   = "ingress" -> null
+    }
+
+  # module.eks.aws_security_group_rule.node["ingress_self_coredns_udp"] will be destroyed
+  - resource "aws_security_group_rule" "node" {
+      - description            = "Node to node CoreDNS UDP" -> null
+      - from_port              = 53 -> null
+      - id                     = "sgrule-1751847894" -> null
+      - protocol               = "udp" -> null
+      - region                 = "us-west-2" -> null
+      - security_group_id      = "sg-0169865e009201046" -> null
+      - security_group_rule_id = "sgr-0c22e1f2a4c80fc23" -> null
+      - self                   = true -> null
+      - to_port                = 53 -> null
+      - type                   = "ingress" -> null
+    }
+
+  # module.eks.time_sleep.this[0] will be destroyed
+  - resource "time_sleep" "this" {
+      - create_duration = "30s" -> null
+      - id              = "2026-07-22T16:48:49Z" -> null
+      - triggers        = {
+          - "certificate_authority_data" = "LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSURCVENDQWUyZ0F3SUJBZ0lJR0ZRM1phWTZhSVF3RFFZSktvWklodmNOQVFFTEJRQXdGVEVUTUJFR0ExVUUKQXhNS2EzVmlaWEp1WlhSbGN6QWVGdzB5TmpBM01qSXhOak01TWpGYUZ3MHpOakEzTVRreE5qUTBNakZhTUJVeApFekFSQmdOVkJBTVRDbXQxWW1WeWJtVjBaWE13Z2dFaU1BMEdDU3FHU0liM0RRRUJBUVVBQTRJQkR3QXdnZ0VLCkFvSUJBUUMwdW45dEdZcmZPNnVoSWM0a2w0VTNwUi9FYm5OYyt6R0JLaFNYeVVCejBYQ09XYVVxajEwbzkwNEUKd2JXZHhISS9VNHB2RWRobUkxakZZL29oNEhXUDM3VkRvdnRqMHE4cnpEUlgvalhoOHJXbHgzZk11bndheHBNSAo5U3R5K2JvT1Y0Yzc3SlJaWmVwV05VZ3Y3aFA5eGF2RXBBVXZZcWNzbDNic210RHIwcXNQWmtZaWtib2E5YjhBCm52OXM1dThyNWI4SVk1VWphb3dJQ0pURHJrL0pCdDArSnBNRWhrUXoyZFNSY29JcGdYMUdBZnNkSkNxVzF3R0MKR0o2aU54TUdpQVJUcXJCbTMzd2RuL0JaZXp4ZFdoWjV6UDVUSld5QzMzazVIQUZ4YnBVSmQ4R2MvdDRqRTMvZQplNGhtVmdIY2lBdFkrNkhnM0RWbm9CUzJmZUFmQWdNQkFBR2pXVEJYTUE0R0ExVWREd0VCL3dRRUF3SUNwREFQCkJnTlZIUk1CQWY4RUJUQURBUUgvTUIwR0ExVWREZ1FXQkJUY29PcE5OTHBrY1BydytLL3RaTHZMUmxKckF6QVYKQmdOVkhSRUVEakFNZ2dwcmRXSmxjbTVsZEdWek1BMEdDU3FHU0liM0RRRUJDd1VBQTRJQkFRQ3E5MUhhU3EzdgpWakhlWUJLd0FjcWhKNS80Ti9FemZHOGNPK3owdXl4OGMrSWpBNkd2YmVka3kyVmVIaXorMzZmdE5rZWpSQk8zCmdFQ0Nuc1ExUW0wNE9HQjJ4NVRkbjhZOFBOS21qV3Z3NjZUZFZmNzUxWXp4SUhyS1A0Q0NpekpmYThMTzBMVzAKQ2lmNUFVMXdVSzZ2Uzh5MlI3UGp5YjhZakJ1QzVka1BLOXMrdmwzRHZYYUlnOS8yWjBJYnNpd3dqWitvb01wRQoxeTd1Ykw2WEpxMURidzF6SzFMVWFIeXN2aUc3NE9mNW9XT0s4T1R3ZmRHMDhWWUhwdThUVHVUVzlidklQR0VNCm1TTmZEQXAyUHFXczd2TVN6ZURQb2V2ZElRQzFZSnV5aWJmNnV2RWNBdmZiWjEyQjJYa1V3NjVSL0VYSXZCSnkKSGpuUDA4Y3IxSE0zCi0tLS0tRU5EIENFUlRJRklDQVRFLS0tLS0K"
+          - "endpoint"                   = "https://BFE33D2DEB73CF0F5AAFD5CCC58B78C2.yl4.us-west-2.eks.amazonaws.com"
+          - "kubernetes_version"         = "1.35"
+          - "name"                       = "student32"
+          - "service_cidr"               = "172.20.0.0/16"
+        } -> null
+    }
+
+  # module.eks.module.eks_managed_node_group["default"].aws_eks_node_group.this[0] will be destroyed
+  - resource "aws_eks_node_group" "this" {
+      - ami_type               = "AL2023_x86_64_STANDARD" -> null
+      - arn                    = "arn:aws:eks:us-west-2:515966504359:nodegroup/student32/default-2026072216485605710000000f/d0cfc55d-7aa4-8394-dfcb-31216b6ddbc0" -> null
+      - capacity_type          = "ON_DEMAND" -> null
+      - cluster_name           = "student32" -> null
+      - disk_size              = 0 -> null
+      - id                     = "student32:default-2026072216485605710000000f" -> null
+      - instance_types         = [
+          - "t3.2xlarge",
+        ] -> null
+      - labels                 = {} -> null
+      - node_group_name        = "default-2026072216485605710000000f" -> null
+      - node_group_name_prefix = "default-" -> null
+      - node_role_arn          = "arn:aws:iam::515966504359:role/default-eks-node-group-20260722163758471300000006" -> null
+      - region                 = "us-west-2" -> null
+      - release_version        = "1.35.6-20260714" -> null
+      - resources              = [
+          - {
+              - autoscaling_groups              = [
+                  - {
+                      - name = "eks-default-2026072216485605710000000f-d0cfc55d-7aa4-8394-dfcb-31216b6ddbc0"
+                    },
+                ]
+                # (1 unchanged attribute hidden)
+            },
+        ] -> null
+      - status                 = "ACTIVE" -> null
+      - subnet_ids             = [
+          - "subnet-012e89d96e6a0727e",
+          - "subnet-0e756ac56bf3709bc",
+        ] -> null
+      - tags                   = {
+          - "Name" = "default"
+        } -> null
+      - tags_all               = {
+          - "ManagedBy" = "terraform"
+          - "Name"      = "default"
+          - "Project"   = "packt-agentic-devops"
+          - "Purpose"   = "student-cluster"
+          - "Student"   = "student32"
+          - "Workshop"  = "packt"
+        } -> null
+      - version                = "1.35" -> null
+
+      - launch_template {
+          - id      = "lt-028399c76aec3e9be" -> null
+          - name    = "default-2026072216484961220000000d" -> null
+          - version = "1" -> null
+        }
+
+      - scaling_config {
+          - desired_size = 1 -> null
+          - max_size     = 1 -> null
+          - min_size     = 1 -> null
+        }
+
+      - update_config {
+          - max_unavailable            = 0 -> null
+          - max_unavailable_percentage = 33 -> null
+            # (1 unchanged attribute hidden)
+        }
+    }
+
+  # module.eks.module.eks_managed_node_group["default"].aws_iam_role.this[0] will be destroyed
+  - resource "aws_iam_role" "this" {
+      - arn                   = "arn:aws:iam::515966504359:role/default-eks-node-group-20260722163758471300000006" -> null
+      - assume_role_policy    = jsonencode(
+            {
+              - Statement = [
+                  - {
+                      - Action    = "sts:AssumeRole"
+                      - Effect    = "Allow"
+                      - Principal = {
+                          - Service = "ec2.amazonaws.com"
+                        }
+                      - Sid       = "EKSNodeAssumeRole"
+                    },
+                ]
+              - Version   = "2012-10-17"
+            }
+        ) -> null
+      - create_date           = "2026-07-22T16:37:58Z" -> null
+      - description           = "EKS managed node group IAM role" -> null
+      - force_detach_policies = true -> null
+      - id                    = "default-eks-node-group-20260722163758471300000006" -> null
+      - managed_policy_arns   = [
+          - "arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly",
+          - "arn:aws:iam::aws:policy/AmazonEKSWorkerNodePolicy",
+          - "arn:aws:iam::aws:policy/AmazonEKS_CNI_Policy",
+        ] -> null
+      - max_session_duration  = 3600 -> null
+      - name                  = "default-eks-node-group-20260722163758471300000006" -> null
+      - name_prefix           = "default-eks-node-group-" -> null
+      - path                  = "/" -> null
+      - tags                  = {} -> null
+      - tags_all              = {
+          - "ManagedBy" = "terraform"
+          - "Project"   = "packt-agentic-devops"
+          - "Purpose"   = "student-cluster"
+          - "Student"   = "student32"
+          - "Workshop"  = "packt"
+        } -> null
+      - unique_id             = "AROAXQIQABWTUC32ULFJL" -> null
+        # (1 unchanged attribute hidden)
+    }
+
+  # module.eks.module.eks_managed_node_group["default"].aws_iam_role_policy_attachment.this["AmazonEC2ContainerRegistryReadOnly"] will be destroyed
+  - resource "aws_iam_role_policy_attachment" "this" {
+      - id         = "default-eks-node-group-20260722163758471300000006/arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly" -> null
+      - policy_arn = "arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly" -> null
+      - role       = "default-eks-node-group-20260722163758471300000006" -> null
+    }
+
+  # module.eks.module.eks_managed_node_group["default"].aws_iam_role_policy_attachment.this["AmazonEKSWorkerNodePolicy"] will be destroyed
+  - resource "aws_iam_role_policy_attachment" "this" {
+      - id         = "default-eks-node-group-20260722163758471300000006/arn:aws:iam::aws:policy/AmazonEKSWorkerNodePolicy" -> null
+      - policy_arn = "arn:aws:iam::aws:policy/AmazonEKSWorkerNodePolicy" -> null
+      - role       = "default-eks-node-group-20260722163758471300000006" -> null
+    }
+
+  # module.eks.module.eks_managed_node_group["default"].aws_iam_role_policy_attachment.this["AmazonEKS_CNI_Policy"] will be destroyed
+  - resource "aws_iam_role_policy_attachment" "this" {
+      - id         = "default-eks-node-group-20260722163758471300000006/arn:aws:iam::aws:policy/AmazonEKS_CNI_Policy" -> null
+      - policy_arn = "arn:aws:iam::aws:policy/AmazonEKS_CNI_Policy" -> null
+      - role       = "default-eks-node-group-20260722163758471300000006" -> null
+    }
+
+  # module.eks.module.eks_managed_node_group["default"].aws_launch_template.this[0] will be destroyed
+  - resource "aws_launch_template" "this" {
+      - arn                                  = "arn:aws:ec2:us-west-2:515966504359:launch-template/lt-028399c76aec3e9be" -> null
+      - default_version                      = 1 -> null
+      - description                          = "Custom launch template for default EKS managed node group" -> null
+      - disable_api_stop                     = false -> null
+      - disable_api_termination              = false -> null
+      - id                                   = "lt-028399c76aec3e9be" -> null
+      - latest_version                       = 1 -> null
+      - name                                 = "default-2026072216484961220000000d" -> null
+      - name_prefix                          = "default-" -> null
+      - region                               = "us-west-2" -> null
+      - security_group_names                 = [] -> null
+      - tags                                 = {
+          - "ManagedBy" = "terraform"
+          - "Project"   = "packt-agentic-devops"
+          - "Purpose"   = "student-cluster"
+          - "Student"   = "student32"
+          - "Workshop"  = "packt"
+        } -> null
+      - tags_all                             = {
+          - "ManagedBy" = "terraform"
+          - "Project"   = "packt-agentic-devops"
+          - "Purpose"   = "student-cluster"
+          - "Student"   = "student32"
+          - "Workshop"  = "packt"
+        } -> null
+      - update_default_version               = true -> null
+      - user_data                            = "Q29udGVudC1UeXBlOiBtdWx0aXBhcnQvbWl4ZWQ7IGJvdW5kYXJ5PSJNSU1FQk9VTkRBUlkiCk1JTUUtVmVyc2lvbjogMS4wDQoNCi0tTUlNRUJPVU5EQVJZDQpDb250ZW50LVRyYW5zZmVyLUVuY29kaW5nOiA3Yml0DQpDb250ZW50LVR5cGU6IGFwcGxpY2F0aW9uL25vZGUuZWtzLmF3cw0KTWltZS1WZXJzaW9uOiAxLjANCg0KYXBpVmVyc2lvbjogbm9kZS5la3MuYXdzL3YxYWxwaGExCmtpbmQ6IE5vZGVDb25maWcKc3BlYzoKICBrdWJlbGV0OgogICAgY29uZmlnOgogICAgICBtYXhQb2RzOiAxMTAKDQotLU1JTUVCT1VOREFSWS0tDQo=" -> null
+      - vpc_security_group_ids               = [
+          - "sg-0169865e009201046",
+        ] -> null
+        # (7 unchanged attributes hidden)
+
+      - block_device_mappings {
+          - device_name  = "/dev/xvda" -> null
+            # (2 unchanged attributes hidden)
+
+          - ebs {
+              - delete_on_termination      = "true" -> null
+              - encrypted                  = "true" -> null
+              - iops                       = 0 -> null
+              - throughput                 = 0 -> null
+              - volume_initialization_rate = 0 -> null
+              - volume_size                = 50 -> null
+              - volume_type                = "gp3" -> null
+                # (2 unchanged attributes hidden)
+            }
+        }
+
+      - metadata_options {
+          - http_endpoint               = "enabled" -> null
+          - http_put_response_hop_limit = 1 -> null
+          - http_tokens                 = "required" -> null
+            # (2 unchanged attributes hidden)
+        }
+
+      - tag_specifications {
+          - resource_type = "instance" -> null
+          - tags          = {
+              - "ManagedBy" = "terraform"
+              - "Name"      = "default"
+              - "Project"   = "packt-agentic-devops"
+              - "Purpose"   = "student-cluster"
+              - "Student"   = "student32"
+              - "Workshop"  = "packt"
+            } -> null
+        }
+      - tag_specifications {
+          - resource_type = "network-interface" -> null
+          - tags          = {
+              - "ManagedBy" = "terraform"
+              - "Name"      = "default"
+              - "Project"   = "packt-agentic-devops"
+              - "Purpose"   = "student-cluster"
+              - "Student"   = "student32"
+              - "Workshop"  = "packt"
+            } -> null
+        }
+      - tag_specifications {
+          - resource_type = "volume" -> null
+          - tags          = {
+              - "ManagedBy" = "terraform"
+              - "Name"      = "default"
+              - "Project"   = "packt-agentic-devops"
+              - "Purpose"   = "student-cluster"
+              - "Student"   = "student32"
+              - "Workshop"  = "packt"
+            } -> null
+        }
+    }
+
+  # module.eks.module.kms.aws_kms_alias.this["cluster"] will be destroyed
+  - resource "aws_kms_alias" "this" {
+      - arn            = "arn:aws:kms:us-west-2:515966504359:alias/eks/student32" -> null
+      - id             = "alias/eks/student32" -> null
+      - name           = "alias/eks/student32" -> null
+      - region         = "us-west-2" -> null
+      - target_key_arn = "arn:aws:kms:us-west-2:515966504359:key/072d696c-b5e9-474a-87fa-0342518c0bfd" -> null
+      - target_key_id  = "072d696c-b5e9-474a-87fa-0342518c0bfd" -> null
+        # (1 unchanged attribute hidden)
+    }
+
+  # module.eks.module.kms.aws_kms_key.this[0] will be destroyed
+  - resource "aws_kms_key" "this" {
+      - arn                                = "arn:aws:kms:us-west-2:515966504359:key/072d696c-b5e9-474a-87fa-0342518c0bfd" -> null
+      - bypass_policy_lockout_safety_check = false -> null
+      - customer_master_key_spec           = "SYMMETRIC_DEFAULT" -> null
+      - description                        = "student32 cluster encryption key" -> null
+      - enable_key_rotation                = true -> null
+      - id                                 = "072d696c-b5e9-474a-87fa-0342518c0bfd" -> null
+      - is_enabled                         = true -> null
+      - key_id                             = "072d696c-b5e9-474a-87fa-0342518c0bfd" -> null
+      - key_usage                          = "ENCRYPT_DECRYPT" -> null
+      - multi_region                       = false -> null
+      - policy                             = jsonencode(
+            {
+              - Statement = [
+                  - {
+                      - Action    = "kms:*"
+                      - Effect    = "Allow"
+                      - Principal = {
+                          - AWS = "arn:aws:iam::515966504359:root"
+                        }
+                      - Resource  = "*"
+                      - Sid       = "Default"
+                    },
+                  - {
+                      - Action    = [
+                          - "kms:Update*",
+                          - "kms:UntagResource",
+                          - "kms:TagResource",
+                          - "kms:ScheduleKeyDeletion",
+                          - "kms:Revoke*",
+                          - "kms:ReplicateKey",
+                          - "kms:Put*",
+                          - "kms:List*",
+                          - "kms:ImportKeyMaterial",
+                          - "kms:Get*",
+                          - "kms:Enable*",
+                          - "kms:Disable*",
+                          - "kms:Describe*",
+                          - "kms:Delete*",
+                          - "kms:Create*",
+                          - "kms:CancelKeyDeletion",
+                        ]
+                      - Effect    = "Allow"
+                      - Principal = {
+                          - AWS = "arn:aws:iam::515966504359:user/nwuser"
+                        }
+                      - Resource  = "*"
+                      - Sid       = "KeyAdministration"
+                    },
+                  - {
+                      - Action    = [
+                          - "kms:ReEncrypt*",
+                          - "kms:GenerateDataKey*",
+                          - "kms:Encrypt",
+                          - "kms:DescribeKey",
+                          - "kms:Decrypt",
+                        ]
+                      - Effect    = "Allow"
+                      - Principal = {
+                          - AWS = "arn:aws:iam::515966504359:role/student32-cluster-20260722163758472500000008"
+                        }
+                      - Resource  = "*"
+                      - Sid       = "KeyUsage"
+                    },
+                ]
+              - Version   = "2012-10-17"
+            }
+        ) -> null
+      - region                             = "us-west-2" -> null
+      - rotation_period_in_days            = 365 -> null
+      - tags                               = {} -> null
+      - tags_all                           = {
+          - "ManagedBy" = "terraform"
+          - "Project"   = "packt-agentic-devops"
+          - "Purpose"   = "student-cluster"
+          - "Student"   = "student32"
+          - "Workshop"  = "packt"
+        } -> null
+        # (2 unchanged attributes hidden)
+    }
+
+  # module.eks.module.eks_managed_node_group["default"].module.user_data.null_resource.validate_cluster_service_cidr will be destroyed
+  - resource "null_resource" "validate_cluster_service_cidr" {
+      - id = "2160538267759665868" -> null
+    }
+
+Plan: 0 to add, 0 to change, 43 to destroy.
+
+Changes to Outputs:
+  - cluster_name       = "student32" -> null
+  - kubeconfig_command = "aws eks update-kubeconfig --name student32 --region us-west-2 --profile accen-dev --kubeconfig /tmp/student32.kubeconfig" -> null
+module.aws_lb_controller_pod_identity.aws_iam_role_policy_attachment.lb_controller[0]: Destroying... [id=student32-aws-lbc-20260722163758465600000001/arn:aws:iam::515966504359:policy/AmazonEKS_LoadBalancerController-20260722163758466600000002]
+module.eks.aws_eks_addon.this["eks-pod-identity-agent"]: Destroying... [id=student32:eks-pod-identity-agent]
+module.ebs_csi_pod_identity.aws_iam_role_policy_attachment.ebs_csi[0]: Destroying... [id=student32-ebs-csi-20260722163758470300000004/arn:aws:iam::515966504359:policy/AmazonEKS_EBS_CSI-20260722163758470500000005]
+module.eks.aws_iam_role_policy_attachment.cluster_encryption[0]: Destroying... [id=student32-cluster-20260722163758472500000008/arn:aws:iam::515966504359:policy/student32-cluster-ClusterEncryption20260722163821008900000009]
+module.eks.aws_eks_addon.this["aws-ebs-csi-driver"]: Destroying... [id=student32:aws-ebs-csi-driver]
+module.eks.module.kms.aws_kms_alias.this["cluster"]: Destroying... [id=alias/eks/student32]
+module.eks.aws_eks_addon.before_compute["kube-proxy"]: Destroying... [id=student32:kube-proxy]
+module.eks.aws_eks_addon.this["coredns"]: Destroying... [id=student32:coredns]
+module.aws_lb_controller_pod_identity.aws_eks_pod_identity_association.this["main"]: Destroying... [id=a-caaaj4uftugbh4kvu]
+module.eks.aws_eks_addon.before_compute["vpc-cni"]: Destroying... [id=student32:vpc-cni]
+module.ebs_csi_pod_identity.aws_iam_role_policy_attachment.ebs_csi[0]: Destruction complete after 0s
+module.aws_lb_controller_pod_identity.aws_iam_role_policy_attachment.lb_controller[0]: Destruction complete after 1s
+module.ebs_csi_pod_identity.aws_iam_policy.ebs_csi[0]: Destroying... [id=arn:aws:iam::515966504359:policy/AmazonEKS_EBS_CSI-20260722163758470500000005]
+module.eks.aws_iam_role_policy_attachment.cluster_encryption[0]: Destruction complete after 1s
+module.aws_lb_controller_pod_identity.aws_iam_policy.lb_controller[0]: Destroying... [id=arn:aws:iam::515966504359:policy/AmazonEKS_LoadBalancerController-20260722163758466600000002]
+module.eks.aws_iam_policy.cluster_encryption[0]: Destroying... [id=arn:aws:iam::515966504359:policy/student32-cluster-ClusterEncryption20260722163821008900000009]
+module.eks.module.kms.aws_kms_alias.this["cluster"]: Destruction complete after 1s
+module.aws_lb_controller_pod_identity.aws_iam_policy.lb_controller[0]: Destruction complete after 0s
+module.ebs_csi_pod_identity.aws_iam_policy.ebs_csi[0]: Destruction complete after 0s
+module.eks.aws_iam_policy.cluster_encryption[0]: Destruction complete after 0s
+module.aws_lb_controller_pod_identity.aws_eks_pod_identity_association.this["main"]: Destruction complete after 1s
+module.eks.aws_eks_access_policy_association.this["cluster_creator_admin"]: Destroying... [id=student32#arn:aws:iam::515966504359:user/nwuser#arn:aws:eks::aws:cluster-access-policy/AmazonEKSClusterAdminPolicy]
+module.aws_lb_controller_pod_identity.aws_iam_role.this[0]: Destroying... [id=student32-aws-lbc-20260722163758465600000001]
+module.eks.aws_eks_addon.this["eks-pod-identity-agent"]: Destruction complete after 1s
+module.aws_lb_controller_pod_identity.aws_iam_role.this[0]: Destruction complete after 1s
+module.eks.aws_eks_access_policy_association.this["cluster_creator_admin"]: Destruction complete after 1s
+module.eks.aws_eks_access_entry.this["cluster_creator"]: Destroying... [id=student32:arn:aws:iam::515966504359:user/nwuser]
+module.eks.aws_eks_addon.before_compute["kube-proxy"]: Destruction complete after 2s
+module.eks.aws_eks_access_entry.this["cluster_creator"]: Destruction complete after 0s
+module.eks.aws_eks_addon.before_compute["vpc-cni"]: Destruction complete after 3s
+module.eks.aws_eks_addon.this["coredns"]: Destruction complete after 3s
+module.eks.aws_eks_addon.this["aws-ebs-csi-driver"]: Destruction complete after 9s
+module.eks.module.eks_managed_node_group["default"].module.user_data.null_resource.validate_cluster_service_cidr: Destroying... [id=2160538267759665868]
+module.eks.module.eks_managed_node_group["default"].aws_eks_node_group.this[0]: Destroying... [id=student32:default-2026072216485605710000000f]
+module.ebs_csi_pod_identity.aws_iam_role.this[0]: Destroying... [id=student32-ebs-csi-20260722163758470300000004]
+module.eks.module.eks_managed_node_group["default"].module.user_data.null_resource.validate_cluster_service_cidr: Destruction complete after 0s
+module.ebs_csi_pod_identity.aws_iam_role.this[0]: Destruction complete after 0s
+module.eks.module.eks_managed_node_group["default"].aws_eks_node_group.this[0]: Still destroying... [id=student32:default-2026072216485605710000000f, 00m10s elapsed]
+module.eks.module.eks_managed_node_group["default"].aws_eks_node_group.this[0]: Still destroying... [id=student32:default-2026072216485605710000000f, 00m20s elapsed]
+module.eks.module.eks_managed_node_group["default"].aws_eks_node_group.this[0]: Still destroying... [id=student32:default-2026072216485605710000000f, 00m30s elapsed]
+module.eks.module.eks_managed_node_group["default"].aws_eks_node_group.this[0]: Still destroying... [id=student32:default-2026072216485605710000000f, 00m40s elapsed]
+module.eks.module.eks_managed_node_group["default"].aws_eks_node_group.this[0]: Still destroying... [id=student32:default-2026072216485605710000000f, 00m50s elapsed]
+module.eks.module.eks_managed_node_group["default"].aws_eks_node_group.this[0]: Still destroying... [id=student32:default-2026072216485605710000000f, 01m00s elapsed]
+module.eks.module.eks_managed_node_group["default"].aws_eks_node_group.this[0]: Still destroying... [id=student32:default-2026072216485605710000000f, 01m10s elapsed]
+module.eks.module.eks_managed_node_group["default"].aws_eks_node_group.this[0]: Still destroying... [id=student32:default-2026072216485605710000000f, 01m20s elapsed]
+module.eks.module.eks_managed_node_group["default"].aws_eks_node_group.this[0]: Still destroying... [id=student32:default-2026072216485605710000000f, 01m30s elapsed]
+module.eks.module.eks_managed_node_group["default"].aws_eks_node_group.this[0]: Still destroying... [id=student32:default-2026072216485605710000000f, 01m40s elapsed]
+module.eks.module.eks_managed_node_group["default"].aws_eks_node_group.this[0]: Still destroying... [id=student32:default-2026072216485605710000000f, 01m50s elapsed]
+module.eks.module.eks_managed_node_group["default"].aws_eks_node_group.this[0]: Still destroying... [id=student32:default-2026072216485605710000000f, 02m00s elapsed]
+module.eks.module.eks_managed_node_group["default"].aws_eks_node_group.this[0]: Still destroying... [id=student32:default-2026072216485605710000000f, 02m10s elapsed]
+module.eks.module.eks_managed_node_group["default"].aws_eks_node_group.this[0]: Still destroying... [id=student32:default-2026072216485605710000000f, 02m20s elapsed]
+module.eks.module.eks_managed_node_group["default"].aws_eks_node_group.this[0]: Still destroying... [id=student32:default-2026072216485605710000000f, 02m30s elapsed]
+module.eks.module.eks_managed_node_group["default"].aws_eks_node_group.this[0]: Still destroying... [id=student32:default-2026072216485605710000000f, 02m40s elapsed]
+module.eks.module.eks_managed_node_group["default"].aws_eks_node_group.this[0]: Still destroying... [id=student32:default-2026072216485605710000000f, 02m50s elapsed]
+module.eks.module.eks_managed_node_group["default"].aws_eks_node_group.this[0]: Still destroying... [id=student32:default-2026072216485605710000000f, 03m00s elapsed]
+module.eks.module.eks_managed_node_group["default"].aws_eks_node_group.this[0]: Still destroying... [id=student32:default-2026072216485605710000000f, 03m10s elapsed]
+module.eks.module.eks_managed_node_group["default"].aws_eks_node_group.this[0]: Still destroying... [id=student32:default-2026072216485605710000000f, 03m20s elapsed]
+module.eks.module.eks_managed_node_group["default"].aws_eks_node_group.this[0]: Still destroying... [id=student32:default-2026072216485605710000000f, 03m30s elapsed]
+module.eks.module.eks_managed_node_group["default"].aws_eks_node_group.this[0]: Still destroying... [id=student32:default-2026072216485605710000000f, 03m40s elapsed]
+module.eks.module.eks_managed_node_group["default"].aws_eks_node_group.this[0]: Still destroying... [id=student32:default-2026072216485605710000000f, 03m50s elapsed]
+module.eks.module.eks_managed_node_group["default"].aws_eks_node_group.this[0]: Still destroying... [id=student32:default-2026072216485605710000000f, 04m00s elapsed]
+module.eks.module.eks_managed_node_group["default"].aws_eks_node_group.this[0]: Still destroying... [id=student32:default-2026072216485605710000000f, 04m10s elapsed]
+module.eks.module.eks_managed_node_group["default"].aws_eks_node_group.this[0]: Still destroying... [id=student32:default-2026072216485605710000000f, 04m20s elapsed]
+module.eks.module.eks_managed_node_group["default"].aws_eks_node_group.this[0]: Still destroying... [id=student32:default-2026072216485605710000000f, 04m30s elapsed]
+module.eks.module.eks_managed_node_group["default"].aws_eks_node_group.this[0]: Still destroying... [id=student32:default-2026072216485605710000000f, 04m40s elapsed]
+module.eks.module.eks_managed_node_group["default"].aws_eks_node_group.this[0]: Still destroying... [id=student32:default-2026072216485605710000000f, 04m50s elapsed]
+module.eks.module.eks_managed_node_group["default"].aws_eks_node_group.this[0]: Still destroying... [id=student32:default-2026072216485605710000000f, 05m00s elapsed]
+module.eks.module.eks_managed_node_group["default"].aws_eks_node_group.this[0]: Still destroying... [id=student32:default-2026072216485605710000000f, 05m10s elapsed]
+module.eks.module.eks_managed_node_group["default"].aws_eks_node_group.this[0]: Still destroying... [id=student32:default-2026072216485605710000000f, 05m20s elapsed]
+module.eks.module.eks_managed_node_group["default"].aws_eks_node_group.this[0]: Still destroying... [id=student32:default-2026072216485605710000000f, 05m30s elapsed]
+module.eks.module.eks_managed_node_group["default"].aws_eks_node_group.this[0]: Still destroying... [id=student32:default-2026072216485605710000000f, 05m40s elapsed]
+module.eks.module.eks_managed_node_group["default"].aws_eks_node_group.this[0]: Still destroying... [id=student32:default-2026072216485605710000000f, 05m50s elapsed]
+module.eks.module.eks_managed_node_group["default"].aws_eks_node_group.this[0]: Still destroying... [id=student32:default-2026072216485605710000000f, 06m00s elapsed]
+module.eks.module.eks_managed_node_group["default"].aws_eks_node_group.this[0]: Still destroying... [id=student32:default-2026072216485605710000000f, 06m10s elapsed]
+module.eks.module.eks_managed_node_group["default"].aws_eks_node_group.this[0]: Still destroying... [id=student32:default-2026072216485605710000000f, 06m20s elapsed]
+module.eks.module.eks_managed_node_group["default"].aws_eks_node_group.this[0]: Still destroying... [id=student32:default-2026072216485605710000000f, 06m30s elapsed]
+module.eks.module.eks_managed_node_group["default"].aws_eks_node_group.this[0]: Still destroying... [id=student32:default-2026072216485605710000000f, 06m40s elapsed]
+module.eks.module.eks_managed_node_group["default"].aws_eks_node_group.this[0]: Still destroying... [id=student32:default-2026072216485605710000000f, 06m50s elapsed]
+module.eks.module.eks_managed_node_group["default"].aws_eks_node_group.this[0]: Still destroying... [id=student32:default-2026072216485605710000000f, 07m00s elapsed]
+module.eks.module.eks_managed_node_group["default"].aws_eks_node_group.this[0]: Still destroying... [id=student32:default-2026072216485605710000000f, 07m10s elapsed]
+module.eks.module.eks_managed_node_group["default"].aws_eks_node_group.this[0]: Still destroying... [id=student32:default-2026072216485605710000000f, 07m20s elapsed]
+module.eks.module.eks_managed_node_group["default"].aws_eks_node_group.this[0]: Still destroying... [id=student32:default-2026072216485605710000000f, 07m30s elapsed]
+module.eks.module.eks_managed_node_group["default"].aws_eks_node_group.this[0]: Still destroying... [id=student32:default-2026072216485605710000000f, 07m40s elapsed]
+module.eks.module.eks_managed_node_group["default"].aws_eks_node_group.this[0]: Still destroying... [id=student32:default-2026072216485605710000000f, 07m50s elapsed]
+module.eks.module.eks_managed_node_group["default"].aws_eks_node_group.this[0]: Still destroying... [id=student32:default-2026072216485605710000000f, 08m00s elapsed]
+module.eks.module.eks_managed_node_group["default"].aws_eks_node_group.this[0]: Still destroying... [id=student32:default-2026072216485605710000000f, 08m10s elapsed]
+module.eks.module.eks_managed_node_group["default"].aws_eks_node_group.this[0]: Destruction complete after 8m14s
+module.eks.module.eks_managed_node_group["default"].aws_launch_template.this[0]: Destroying... [id=lt-028399c76aec3e9be]
+module.eks.module.eks_managed_node_group["default"].aws_launch_template.this[0]: Destruction complete after 1s
+module.eks.module.eks_managed_node_group["default"].aws_iam_role_policy_attachment.this["AmazonEC2ContainerRegistryReadOnly"]: Destroying... [id=default-eks-node-group-20260722163758471300000006/arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly]
+module.eks.module.eks_managed_node_group["default"].aws_iam_role_policy_attachment.this["AmazonEKSWorkerNodePolicy"]: Destroying... [id=default-eks-node-group-20260722163758471300000006/arn:aws:iam::aws:policy/AmazonEKSWorkerNodePolicy]
+module.eks.module.eks_managed_node_group["default"].aws_iam_role_policy_attachment.this["AmazonEKS_CNI_Policy"]: Destroying... [id=default-eks-node-group-20260722163758471300000006/arn:aws:iam::aws:policy/AmazonEKS_CNI_Policy]
+module.eks.time_sleep.this[0]: Destroying... [id=2026-07-22T16:48:49Z]
+module.eks.time_sleep.this[0]: Destruction complete after 0s
+module.eks.aws_eks_cluster.this[0]: Destroying... [id=student32]
+module.eks.module.eks_managed_node_group["default"].aws_iam_role_policy_attachment.this["AmazonEKS_CNI_Policy"]: Destruction complete after 0s
+module.eks.module.eks_managed_node_group["default"].aws_iam_role_policy_attachment.this["AmazonEC2ContainerRegistryReadOnly"]: Destruction complete after 0s
+module.eks.module.eks_managed_node_group["default"].aws_iam_role_policy_attachment.this["AmazonEKSWorkerNodePolicy"]: Destruction complete after 0s
+module.eks.module.eks_managed_node_group["default"].aws_iam_role.this[0]: Destroying... [id=default-eks-node-group-20260722163758471300000006]
+module.eks.module.eks_managed_node_group["default"].aws_iam_role.this[0]: Destruction complete after 0s
+module.eks.aws_eks_cluster.this[0]: Still destroying... [id=student32, 00m10s elapsed]
+module.eks.aws_eks_cluster.this[0]: Still destroying... [id=student32, 00m20s elapsed]
+module.eks.aws_eks_cluster.this[0]: Still destroying... [id=student32, 00m30s elapsed]
+module.eks.aws_eks_cluster.this[0]: Still destroying... [id=student32, 00m40s elapsed]
+module.eks.aws_eks_cluster.this[0]: Still destroying... [id=student32, 00m50s elapsed]
+module.eks.aws_eks_cluster.this[0]: Still destroying... [id=student32, 01m00s elapsed]
+module.eks.aws_eks_cluster.this[0]: Still destroying... [id=student32, 01m10s elapsed]
+module.eks.aws_eks_cluster.this[0]: Still destroying... [id=student32, 01m20s elapsed]
+module.eks.aws_eks_cluster.this[0]: Still destroying... [id=student32, 01m30s elapsed]
+module.eks.aws_eks_cluster.this[0]: Still destroying... [id=student32, 01m40s elapsed]
+module.eks.aws_eks_cluster.this[0]: Still destroying... [id=student32, 01m50s elapsed]
+module.eks.aws_eks_cluster.this[0]: Still destroying... [id=student32, 02m00s elapsed]
+module.eks.aws_eks_cluster.this[0]: Still destroying... [id=student32, 02m10s elapsed]
+module.eks.aws_eks_cluster.this[0]: Still destroying... [id=student32, 02m20s elapsed]
+module.eks.aws_eks_cluster.this[0]: Still destroying... [id=student32, 02m30s elapsed]
+module.eks.aws_eks_cluster.this[0]: Still destroying... [id=student32, 02m40s elapsed]
+module.eks.aws_eks_cluster.this[0]: Destruction complete after 2m47s
+module.eks.aws_iam_role_policy_attachment.this["AmazonEKSClusterPolicy"]: Destroying... [id=student32-cluster-20260722163758472500000008/arn:aws:iam::aws:policy/AmazonEKSClusterPolicy]
+module.eks.aws_security_group_rule.node["ingress_cluster_443"]: Destroying... [id=sgrule-3352822755]
+module.eks.aws_security_group_rule.node["ingress_cluster_kubelet"]: Destroying... [id=sgrule-3036859207]
+module.eks.aws_security_group_rule.node["ingress_cluster_9443_webhook"]: Destroying... [id=sgrule-2078326881]
+module.eks.aws_security_group_rule.node["ingress_cluster_10251_webhook"]: Destroying... [id=sgrule-2169215804]
+module.eks.aws_security_group_rule.node["ingress_nodes_ephemeral"]: Destroying... [id=sgrule-4266462697]
+module.eks.aws_security_group_rule.node["ingress_self_coredns_tcp"]: Destroying... [id=sgrule-3426005049]
+module.eks.aws_security_group_rule.node["ingress_cluster_8443_webhook"]: Destroying... [id=sgrule-524415914]
+module.eks.aws_security_group_rule.node["ingress_cluster_4443_webhook"]: Destroying... [id=sgrule-3311380509]
+module.eks.module.kms.aws_kms_key.this[0]: Destroying... [id=072d696c-b5e9-474a-87fa-0342518c0bfd]
+module.eks.aws_iam_role_policy_attachment.this["AmazonEKSClusterPolicy"]: Destruction complete after 0s
+module.eks.aws_security_group_rule.node["egress_all"]: Destroying... [id=sgrule-997885534]
+module.eks.module.kms.aws_kms_key.this[0]: Destruction complete after 0s
+module.eks.aws_security_group_rule.cluster["ingress_nodes_443"]: Destroying... [id=sgrule-403168982]
+module.eks.aws_security_group_rule.node["ingress_cluster_443"]: Destruction complete after 1s
+module.eks.aws_security_group_rule.node["ingress_cluster_6443_webhook"]: Destroying... [id=sgrule-203280267]
+module.eks.aws_security_group_rule.cluster["ingress_nodes_443"]: Destruction complete after 1s
+module.eks.aws_security_group_rule.node["ingress_self_coredns_udp"]: Destroying... [id=sgrule-1751847894]
+module.eks.aws_security_group_rule.node["ingress_cluster_10251_webhook"]: Destruction complete after 1s
+module.eks.aws_iam_role.this[0]: Destroying... [id=student32-cluster-20260722163758472500000008]
+module.eks.aws_iam_role.this[0]: Destruction complete after 0s
+module.eks.aws_security_group_rule.node["ingress_cluster_9443_webhook"]: Destruction complete after 2s
+module.eks.aws_security_group_rule.node["ingress_cluster_kubelet"]: Destruction complete after 3s
+module.eks.aws_security_group_rule.node["ingress_nodes_ephemeral"]: Destruction complete after 4s
+module.eks.aws_security_group_rule.node["ingress_cluster_8443_webhook"]: Destruction complete after 4s
+module.eks.aws_security_group_rule.node["ingress_self_coredns_tcp"]: Destruction complete after 5s
+module.eks.aws_security_group_rule.node["ingress_cluster_4443_webhook"]: Destruction complete after 6s
+module.eks.aws_security_group_rule.node["egress_all"]: Destruction complete after 6s
+module.eks.aws_security_group_rule.node["ingress_cluster_6443_webhook"]: Destruction complete after 6s
+module.eks.aws_security_group_rule.node["ingress_self_coredns_udp"]: Destruction complete after 6s
+module.eks.aws_security_group.cluster[0]: Destroying... [id=sg-0e7e248d6bdaeee84]
+module.eks.aws_security_group.node[0]: Destroying... [id=sg-0169865e009201046]
+module.eks.aws_security_group.cluster[0]: Destruction complete after 1s
+module.eks.aws_security_group.node[0]: Destruction complete after 1s
+
+Destroy complete! Resources: 43 destroyed.

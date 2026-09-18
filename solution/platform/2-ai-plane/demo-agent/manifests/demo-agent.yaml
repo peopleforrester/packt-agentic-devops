@@ -1,5 +1,5 @@
 # ABOUTME: The demo kagent Agent and its ModelConfig, routed at the in-cluster vLLM.
-# ABOUTME: No external LLM spend or credentials on attendee clusters (build-spec 6.7).
+# ABOUTME: No external LLM spend and no external credentials in the default path.
 #
 # Confirm the kagent ModelConfig and Agent v1alpha2 field names against the 0.9.9
 # chart before the freeze. Known-correct facts: apiVersion kagent.dev/v1alpha2; the

@@ -1,0 +1,1798 @@
+data.aws_availability_zones.available: Reading...
+module.eks.data.aws_partition.current[0]: Reading...
+module.vpc.aws_vpc.this[0]: Refreshing state... [id=vpc-0d0d3c8b132458fe2]
+module.eks.module.eks_managed_node_group["default"].data.aws_iam_policy_document.assume_role_policy[0]: Reading...
+module.eks.data.aws_iam_policy_document.assume_role_policy[0]: Reading...
+module.eks.aws_cloudwatch_log_group.this[0]: Refreshing state... [id=/aws/eks/adwc-dev/cluster]
+module.eks.module.kms.data.aws_partition.current[0]: Reading...
+module.eks.module.kms.data.aws_caller_identity.current[0]: Reading...
+module.eks.data.aws_caller_identity.current[0]: Reading...
+module.eks.module.kms.data.aws_partition.current[0]: Read complete after 0s [id=aws]
+module.eks.data.aws_partition.current[0]: Read complete after 0s [id=aws]
+module.eks.module.eks_managed_node_group["default"].data.aws_iam_policy_document.assume_role_policy[0]: Read complete after 0s [id=2560088296]
+module.eks.data.aws_iam_policy_document.assume_role_policy[0]: Read complete after 0s [id=2830595799]
+module.eks.module.eks_managed_node_group["default"].aws_iam_role.this[0]: Refreshing state... [id=default-eks-node-group-20260617230943534000000002]
+module.eks.aws_iam_role.this[0]: Refreshing state... [id=adwc-dev-cluster-20260617230943528000000001]
+module.eks.module.kms.data.aws_caller_identity.current[0]: Read complete after 0s [id=515966504359]
+module.eks.data.aws_caller_identity.current[0]: Read complete after 0s [id=515966504359]
+module.eks.data.aws_iam_session_context.current[0]: Reading...
+module.eks.data.aws_iam_session_context.current[0]: Read complete after 0s [id=arn:aws:iam::515966504359:user/nwuser]
+module.eks.aws_iam_role_policy_attachment.this["AmazonEKSClusterPolicy"]: Refreshing state... [id=adwc-dev-cluster-20260617230943528000000001/arn:aws:iam::aws:policy/AmazonEKSClusterPolicy]
+module.eks.module.kms.data.aws_iam_policy_document.this[0]: Reading...
+module.eks.module.kms.data.aws_iam_policy_document.this[0]: Read complete after 0s [id=1754030484]
+module.eks.module.kms.aws_kms_key.this[0]: Refreshing state... [id=7533b18b-c344-46a7-b86d-ca0e95a38097]
+module.eks.module.eks_managed_node_group["default"].aws_iam_role_policy_attachment.this["AmazonEKS_CNI_Policy"]: Refreshing state... [id=default-eks-node-group-20260617230943534000000002/arn:aws:iam::aws:policy/AmazonEKS_CNI_Policy]
+module.eks.module.eks_managed_node_group["default"].aws_iam_role_policy_attachment.this["AmazonEKSWorkerNodePolicy"]: Refreshing state... [id=default-eks-node-group-20260617230943534000000002/arn:aws:iam::aws:policy/AmazonEKSWorkerNodePolicy]
+module.eks.module.eks_managed_node_group["default"].aws_iam_role_policy_attachment.this["AmazonEC2ContainerRegistryReadOnly"]: Refreshing state... [id=default-eks-node-group-20260617230943534000000002/arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly]
+data.aws_availability_zones.available: Read complete after 1s [id=us-west-2]
+module.eks.module.kms.aws_kms_alias.this["cluster"]: Refreshing state... [id=alias/eks/adwc-dev]
+module.eks.aws_iam_policy.cluster_encryption[0]: Refreshing state... [id=arn:aws:iam::515966504359:policy/adwc-dev-cluster-ClusterEncryption20260617231005983200000008]
+module.eks.aws_iam_role_policy_attachment.cluster_encryption[0]: Refreshing state... [id=adwc-dev-cluster-20260617230943528000000001/arn:aws:iam::515966504359:policy/adwc-dev-cluster-ClusterEncryption20260617231005983200000008]
+module.vpc.aws_default_security_group.this[0]: Refreshing state... [id=sg-0e1db81dfff3c3f89]
+module.eks.aws_security_group.cluster[0]: Refreshing state... [id=sg-0e288feb9020ee139]
+module.vpc.aws_default_network_acl.this[0]: Refreshing state... [id=acl-0cae37a6a93f417cf]
+module.vpc.aws_default_route_table.default[0]: Refreshing state... [id=rtb-0ae2cf8e31ffc32fc]
+module.vpc.aws_internet_gateway.this[0]: Refreshing state... [id=igw-0ea2e5f81d338a409]
+module.vpc.aws_subnet.public[1]: Refreshing state... [id=subnet-0ccd20885ff545f6f]
+module.vpc.aws_subnet.public[0]: Refreshing state... [id=subnet-019f3dbedb0479f6c]
+module.eks.aws_security_group.node[0]: Refreshing state... [id=sg-0202f0ccabee416d1]
+module.vpc.aws_route_table.private[0]: Refreshing state... [id=rtb-0b5f7741032a34b27]
+module.vpc.aws_route_table.public[0]: Refreshing state... [id=rtb-0d9db2ff62c80d662]
+module.vpc.aws_subnet.private[0]: Refreshing state... [id=subnet-029fc62ff1558d2e9]
+module.vpc.aws_subnet.private[1]: Refreshing state... [id=subnet-0c1784643603c3db2]
+module.vpc.aws_eip.nat[0]: Refreshing state... [id=eipalloc-081e1375020ce5f52]
+module.vpc.aws_route.public_internet_gateway[0]: Refreshing state... [id=r-rtb-0d9db2ff62c80d6621080289494]
+module.eks.aws_security_group_rule.node["ingress_cluster_4443_webhook"]: Refreshing state... [id=sgrule-2100462564]
+module.eks.aws_security_group_rule.node["ingress_self_coredns_udp"]: Refreshing state... [id=sgrule-3454273791]
+module.eks.aws_security_group_rule.node["ingress_cluster_6443_webhook"]: Refreshing state... [id=sgrule-3027297394]
+module.eks.aws_security_group_rule.node["ingress_cluster_8443_webhook"]: Refreshing state... [id=sgrule-2804734035]
+module.eks.aws_security_group_rule.node["ingress_cluster_kubelet"]: Refreshing state... [id=sgrule-2545201462]
+module.eks.aws_security_group_rule.node["ingress_self_coredns_tcp"]: Refreshing state... [id=sgrule-1773906704]
+module.eks.aws_security_group_rule.node["ingress_nodes_ephemeral"]: Refreshing state... [id=sgrule-1169492931]
+module.eks.aws_security_group_rule.node["egress_all"]: Refreshing state... [id=sgrule-99128491]
+module.eks.aws_security_group_rule.node["ingress_cluster_10251_webhook"]: Refreshing state... [id=sgrule-2751324493]
+module.eks.aws_security_group_rule.node["ingress_cluster_9443_webhook"]: Refreshing state... [id=sgrule-3280858008]
+module.eks.aws_security_group_rule.node["ingress_cluster_443"]: Refreshing state... [id=sgrule-4129515779]
+module.eks.aws_security_group_rule.cluster["ingress_nodes_443"]: Refreshing state... [id=sgrule-1389106628]
+module.vpc.aws_route_table_association.public[0]: Refreshing state... [id=rtbassoc-0daa2f77ccf134616]
+module.vpc.aws_route_table_association.public[1]: Refreshing state... [id=rtbassoc-096a68d6032aecc27]
+module.vpc.aws_route_table_association.private[0]: Refreshing state... [id=rtbassoc-0631cd93c9f1ddc76]
+module.vpc.aws_route_table_association.private[1]: Refreshing state... [id=rtbassoc-0c8b2cffc668e3eca]
+module.vpc.aws_nat_gateway.this[0]: Refreshing state... [id=nat-07bc8088763c8118f]
+module.vpc.aws_route.private_nat_gateway[0]: Refreshing state... [id=r-rtb-0b5f7741032a34b271080289494]
+module.eks.aws_eks_cluster.this[0]: Refreshing state... [id=adwc-dev]
+module.eks.data.aws_eks_addon_version.this["kube-proxy"]: Reading...
+module.eks.data.aws_eks_addon_version.this["coredns"]: Reading...
+module.eks.data.aws_eks_addon_version.this["vpc-cni"]: Reading...
+module.eks.time_sleep.this[0]: Refreshing state... [id=2026-06-17T23:20:45Z]
+module.eks.aws_eks_access_entry.this["cluster_creator"]: Refreshing state... [id=adwc-dev:arn:aws:iam::515966504359:user/nwuser]
+module.eks.data.tls_certificate.this[0]: Reading...
+module.eks.module.eks_managed_node_group["default"].module.user_data.null_resource.validate_cluster_service_cidr: Refreshing state... [id=3128585452740733707]
+module.eks.module.eks_managed_node_group["default"].data.aws_ssm_parameter.ami[0]: Reading...
+module.eks.module.eks_managed_node_group["default"].aws_launch_template.this[0]: Refreshing state... [id=lt-02b1b331fca034251]
+module.eks.data.aws_eks_addon_version.this["kube-proxy"]: Read complete after 1s [id=kube-proxy]
+module.eks.data.aws_eks_addon_version.this["coredns"]: Read complete after 1s [id=coredns]
+module.eks.data.aws_eks_addon_version.this["vpc-cni"]: Read complete after 1s [id=vpc-cni]
+module.eks.aws_eks_addon.before_compute["kube-proxy"]: Refreshing state... [id=adwc-dev:kube-proxy]
+module.eks.aws_eks_addon.before_compute["vpc-cni"]: Refreshing state... [id=adwc-dev:vpc-cni]
+module.eks.aws_eks_access_policy_association.this["cluster_creator_admin"]: Refreshing state... [id=adwc-dev#arn:aws:iam::515966504359:user/nwuser#arn:aws:eks::aws:cluster-access-policy/AmazonEKSClusterAdminPolicy]
+module.eks.data.tls_certificate.this[0]: Read complete after 1s [id=f97f646c2cd14cc0db0f757f0fccc96abbbe2af5]
+module.eks.aws_iam_openid_connect_provider.oidc_provider[0]: Refreshing state... [id=arn:aws:iam::515966504359:oidc-provider/oidc.eks.us-west-2.amazonaws.com/id/749867422718A010E250FD1115E7E097]
+module.eks.module.eks_managed_node_group["default"].data.aws_ssm_parameter.ami[0]: Read complete after 1s [id=/aws/service/eks/optimized-ami/1.34/amazon-linux-2023/x86_64/standard/recommended/release_version]
+module.eks.module.eks_managed_node_group["default"].aws_eks_node_group.this[0]: Refreshing state... [id=adwc-dev:default-20260617235554809400000003]
+module.eks.aws_eks_addon.this["coredns"]: Refreshing state... [id=adwc-dev:coredns]
+
+Terraform used the selected providers to generate the following execution
+plan. Resource actions are indicated with the following symbols:
+  - destroy
+
+Terraform will perform the following actions:
+
+  # module.eks.aws_cloudwatch_log_group.this[0] will be destroyed
+  - resource "aws_cloudwatch_log_group" "this" {
+      - arn                         = "arn:aws:logs:us-west-2:515966504359:log-group:/aws/eks/adwc-dev/cluster" -> null
+      - deletion_protection_enabled = false -> null
+      - id                          = "/aws/eks/adwc-dev/cluster" -> null
+      - log_group_class             = "STANDARD" -> null
+      - name                        = "/aws/eks/adwc-dev/cluster" -> null
+      - region                      = "us-west-2" -> null
+      - retention_in_days           = 90 -> null
+      - skip_destroy                = false -> null
+      - tags                        = {
+          - "Name" = "/aws/eks/adwc-dev/cluster"
+        } -> null
+      - tags_all                    = {
+          - "Ephemeral" = "true"
+          - "ManagedBy" = "terraform"
+          - "Name"      = "/aws/eks/adwc-dev/cluster"
+          - "Project"   = "agentic-devops-with-claude"
+          - "Purpose"   = "phase-2-dev-validation"
+        } -> null
+        # (2 unchanged attributes hidden)
+    }
+
+  # module.eks.aws_eks_access_entry.this["cluster_creator"] will be destroyed
+  - resource "aws_eks_access_entry" "this" {
+      - access_entry_arn  = "arn:aws:eks:us-west-2:515966504359:access-entry/adwc-dev/user/515966504359/nwuser/98cf6bf1-5290-cfd4-8edb-6f3c0cf6e159" -> null
+      - cluster_name      = "adwc-dev" -> null
+      - created_at        = "2026-06-17T23:20:15Z" -> null
+      - id                = "adwc-dev:arn:aws:iam::515966504359:user/nwuser" -> null
+      - kubernetes_groups = [] -> null
+      - modified_at       = "2026-06-17T23:20:15Z" -> null
+      - principal_arn     = "arn:aws:iam::515966504359:user/nwuser" -> null
+      - region            = "us-west-2" -> null
+      - tags              = {} -> null
+      - tags_all          = {
+          - "Ephemeral" = "true"
+          - "ManagedBy" = "terraform"
+          - "Project"   = "agentic-devops-with-claude"
+          - "Purpose"   = "phase-2-dev-validation"
+        } -> null
+      - type              = "STANDARD" -> null
+      - user_name         = "arn:aws:iam::515966504359:user/nwuser" -> null
+    }
+
+  # module.eks.aws_eks_access_policy_association.this["cluster_creator_admin"] will be destroyed
+  - resource "aws_eks_access_policy_association" "this" {
+      - associated_at = "2026-06-17 23:20:16.314 +0000 UTC" -> null
+      - cluster_name  = "adwc-dev" -> null
+      - id            = "adwc-dev#arn:aws:iam::515966504359:user/nwuser#arn:aws:eks::aws:cluster-access-policy/AmazonEKSClusterAdminPolicy" -> null
+      - modified_at   = "2026-06-17 23:20:16.314 +0000 UTC" -> null
+      - policy_arn    = "arn:aws:eks::aws:cluster-access-policy/AmazonEKSClusterAdminPolicy" -> null
+      - principal_arn = "arn:aws:iam::515966504359:user/nwuser" -> null
+      - region        = "us-west-2" -> null
+
+      - access_scope {
+          - namespaces = [] -> null
+          - type       = "cluster" -> null
+        }
+    }
+
+  # module.eks.aws_eks_addon.before_compute["kube-proxy"] will be destroyed
+  - resource "aws_eks_addon" "before_compute" {
+      - addon_name                  = "kube-proxy" -> null
+      - addon_version               = "v1.34.6-eksbuild.13" -> null
+      - arn                         = "arn:aws:eks:us-west-2:515966504359:addon/adwc-dev/kube-proxy/aacf6c01-a5c8-abea-35da-72887830eb3a" -> null
+      - cluster_name                = "adwc-dev" -> null
+      - created_at                  = "2026-06-17T23:55:55Z" -> null
+      - id                          = "adwc-dev:kube-proxy" -> null
+      - modified_at                 = "2026-06-17T23:56:12Z" -> null
+      - preserve                    = true -> null
+      - region                      = "us-west-2" -> null
+      - resolve_conflicts_on_create = "NONE" -> null
+      - resolve_conflicts_on_update = "OVERWRITE" -> null
+      - tags                        = {} -> null
+      - tags_all                    = {
+          - "Ephemeral" = "true"
+          - "ManagedBy" = "terraform"
+          - "Project"   = "agentic-devops-with-claude"
+          - "Purpose"   = "phase-2-dev-validation"
+        } -> null
+        # (2 unchanged attributes hidden)
+
+      - namespace_config {
+          - namespace = "kube-system" -> null
+        }
+
+      - timeouts {}
+    }
+
+  # module.eks.aws_eks_addon.before_compute["vpc-cni"] will be destroyed
+  - resource "aws_eks_addon" "before_compute" {
+      - addon_name                  = "vpc-cni" -> null
+      - addon_version               = "v1.22.2-eksbuild.1" -> null
+      - arn                         = "arn:aws:eks:us-west-2:515966504359:addon/adwc-dev/vpc-cni/4acf6c01-a5c6-fa02-ceeb-c27a61e3ee89" -> null
+      - cluster_name                = "adwc-dev" -> null
+      - created_at                  = "2026-06-17T23:55:55Z" -> null
+      - id                          = "adwc-dev:vpc-cni" -> null
+      - modified_at                 = "2026-06-17T23:56:23Z" -> null
+      - preserve                    = true -> null
+      - region                      = "us-west-2" -> null
+      - resolve_conflicts_on_create = "NONE" -> null
+      - resolve_conflicts_on_update = "OVERWRITE" -> null
+      - tags                        = {} -> null
+      - tags_all                    = {
+          - "Ephemeral" = "true"
+          - "ManagedBy" = "terraform"
+          - "Project"   = "agentic-devops-with-claude"
+          - "Purpose"   = "phase-2-dev-validation"
+        } -> null
+        # (2 unchanged attributes hidden)
+
+      - namespace_config {
+          - namespace = "kube-system" -> null
+        }
+
+      - timeouts {}
+    }
+
+  # module.eks.aws_eks_addon.this["coredns"] will be destroyed
+  - resource "aws_eks_addon" "this" {
+      - addon_name                  = "coredns" -> null
+      - addon_version               = "v1.13.2-eksbuild.11" -> null
+      - arn                         = "arn:aws:eks:us-west-2:515966504359:addon/adwc-dev/coredns/b8cf6c02-7971-ff81-8c5d-4d8708fefead" -> null
+      - cluster_name                = "adwc-dev" -> null
+      - created_at                  = "2026-06-17T23:57:43Z" -> null
+      - id                          = "adwc-dev:coredns" -> null
+      - modified_at                 = "2026-06-17T23:57:57Z" -> null
+      - preserve                    = true -> null
+      - region                      = "us-west-2" -> null
+      - resolve_conflicts_on_create = "NONE" -> null
+      - resolve_conflicts_on_update = "OVERWRITE" -> null
+      - tags                        = {} -> null
+      - tags_all                    = {
+          - "Ephemeral" = "true"
+          - "ManagedBy" = "terraform"
+          - "Project"   = "agentic-devops-with-claude"
+          - "Purpose"   = "phase-2-dev-validation"
+        } -> null
+        # (2 unchanged attributes hidden)
+
+      - namespace_config {
+          - namespace = "kube-system" -> null
+        }
+
+      - timeouts {}
+    }
+
+  # module.eks.aws_eks_cluster.this[0] will be destroyed
+  - resource "aws_eks_cluster" "this" {
+      - arn                           = "arn:aws:eks:us-west-2:515966504359:cluster/adwc-dev" -> null
+      - bootstrap_self_managed_addons = false -> null
+      - certificate_authority         = [
+          - {
+              - data = "LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSURCVENDQWUyZ0F3SUJBZ0lJQ1ZaMVJUZEhORUF3RFFZSktvWklodmNOQVFFTEJRQXdGVEVUTUJFR0ExVUUKQXhNS2EzVmlaWEp1WlhSbGN6QWVGdzB5TmpBMk1UY3lNekV4TURKYUZ3MHpOakEyTVRReU16RTJNREphTUJVeApFekFSQmdOVkJBTVRDbXQxWW1WeWJtVjBaWE13Z2dFaU1BMEdDU3FHU0liM0RRRUJBUVVBQTRJQkR3QXdnZ0VLCkFvSUJBUUMvbTczTGFPTllUTjh3cTA0Vzg0cGFLaEdhL2h2VFdvZEw2eWl2Umw3TUxNUEF1UTlPMG1ibDBQZlQKam5ENS9IaFpqa2tIRVpGOUJPUGRzQUxMVmp3V3BCWGFXWmhCaVlDWEpsWngrNlo4azJjbWRtMUlNUEpxZ0NqNQorT3RsLzZuT1BTRm1OdXVxVjh4UkVuK2RsT01DVEJ2VlpMaWd0R09XYllNWG9yS0JyS2s0WFY3YWpEdkNxS2lhClFnOVVkV013WnU5aVZPWm5nTWpaeUptcXJCRE5kUWxVWnVEZjVyRnkzOUhVSkFVNTlHMU0xeTZXUFZQTUk4cGkKV3BReDZmTVVBKzVBNnpDclpHVjc1QS82eStXVGFhSnI1STNHOE8vWDNFVWFqSUg5UHgvTUdxTVE1NitlUFVMVwpXZ091TGlvOVFUSnAvemM4eVBiNFN3ZGgzOUs3QWdNQkFBR2pXVEJYTUE0R0ExVWREd0VCL3dRRUF3SUNwREFQCkJnTlZIUk1CQWY4RUJUQURBUUgvTUIwR0ExVWREZ1FXQkJRK2NIODFQQjdmTVhJUnpFYkZSS21IKzkxM2RUQVYKQmdOVkhSRUVEakFNZ2dwcmRXSmxjbTVsZEdWek1BMEdDU3FHU0liM0RRRUJDd1VBQTRJQkFRQlhIWVc5OGQ3QgpIaGZTZmVtT3R5QXIzMEZCT3F0OG90Q1hRSmZ0NnE2UHBrYThmd1haeEdzWFg2bVZ2VTBsRWtjWE5GVElCM2VOCng5cmNic0pxUlkxL2F6TlNacG14WnNvN1Q3RWtGY01VRS9SWmsxb2I2enpTdHdnQ2JmV2lzVEFoNlJGQmR6V3IKMUZwbUpGVzZwRXpQVHBTb2I5YVhLVFpTVUUrNTFPelRzeTEwQWpqRDJYaklaOExYMTZiTTAzcUx6OURZTWcveApJV1ZNbmlIbVpZUkxINGM1L1FWY290OFlDOHFxVURrSVlBcUZhTEMrM2EyeFFCSVJVQi8yRmpBL2c4eUhrL1MvCjl0S3VyM0RaR1oxTlBTWjdpb2ZLbTVrOEhPSSs1WUw2TTRUc2RPeVVteGVMdjFnYU82SmdVaDd0Uzk0cmJCMk0KNWRLM1FEQkVaT3g4Ci0tLS0tRU5EIENFUlRJRklDQVRFLS0tLS0K"
+            },
+        ] -> null
+      - created_at                    = "2026-06-17T23:10:08Z" -> null
+      - deletion_protection           = false -> null
+      - enabled_cluster_log_types     = [
+          - "api",
+          - "audit",
+          - "authenticator",
+        ] -> null
+      - endpoint                      = "https://749867422718A010E250FD1115E7E097.gr7.us-west-2.eks.amazonaws.com" -> null
+      - id                            = "adwc-dev" -> null
+      - identity                      = [
+          - {
+              - oidc = [
+                  - {
+                      - issuer = "https://oidc.eks.us-west-2.amazonaws.com/id/749867422718A010E250FD1115E7E097"
+                    },
+                ]
+            },
+        ] -> null
+      - name                          = "adwc-dev" -> null
+      - platform_version              = "eks.25" -> null
+      - region                        = "us-west-2" -> null
+      - role_arn                      = "arn:aws:iam::515966504359:role/adwc-dev-cluster-20260617230943528000000001" -> null
+      - status                        = "ACTIVE" -> null
+      - tags                          = {} -> null
+      - tags_all                      = {
+          - "Ephemeral" = "true"
+          - "ManagedBy" = "terraform"
+          - "Project"   = "agentic-devops-with-claude"
+          - "Purpose"   = "phase-2-dev-validation"
+        } -> null
+      - version                       = "1.34" -> null
+
+      - access_config {
+          - authentication_mode                         = "API_AND_CONFIG_MAP" -> null
+          - bootstrap_cluster_creator_admin_permissions = false -> null
+        }
+
+      - compute_config {
+          - enabled       = false -> null
+          - node_pools    = [] -> null
+            # (1 unchanged attribute hidden)
+        }
+
+      - control_plane_scaling_config {
+          - tier = "standard" -> null
+        }
+
+      - encryption_config {
+          - resources = [
+              - "secrets",
+            ] -> null
+
+          - provider {
+              - key_arn = "arn:aws:kms:us-west-2:515966504359:key/7533b18b-c344-46a7-b86d-ca0e95a38097" -> null
+            }
+        }
+
+      - kubernetes_network_config {
+          - ip_family         = "ipv4" -> null
+          - service_ipv4_cidr = "172.20.0.0/16" -> null
+            # (1 unchanged attribute hidden)
+
+          - elastic_load_balancing {
+              - enabled = false -> null
+            }
+        }
+
+      - storage_config {
+          - block_storage {
+              - enabled = false -> null
+            }
+        }
+
+      - upgrade_policy {
+          - support_type = "EXTENDED" -> null
+        }
+
+      - vpc_config {
+          - cluster_security_group_id = "sg-0b90da13f57109959" -> null
+          - endpoint_private_access   = true -> null
+          - endpoint_public_access    = true -> null
+          - public_access_cidrs       = [
+              - "0.0.0.0/0",
+            ] -> null
+          - security_group_ids        = [
+              - "sg-0e288feb9020ee139",
+            ] -> null
+          - subnet_ids                = [
+              - "subnet-029fc62ff1558d2e9",
+              - "subnet-0c1784643603c3db2",
+            ] -> null
+          - vpc_id                    = "vpc-0d0d3c8b132458fe2" -> null
+        }
+    }
+
+  # module.eks.aws_iam_openid_connect_provider.oidc_provider[0] will be destroyed
+  - resource "aws_iam_openid_connect_provider" "oidc_provider" {
+      - arn             = "arn:aws:iam::515966504359:oidc-provider/oidc.eks.us-west-2.amazonaws.com/id/749867422718A010E250FD1115E7E097" -> null
+      - client_id_list  = [
+          - "sts.amazonaws.com",
+        ] -> null
+      - id              = "arn:aws:iam::515966504359:oidc-provider/oidc.eks.us-west-2.amazonaws.com/id/749867422718A010E250FD1115E7E097" -> null
+      - tags            = {
+          - "Name" = "adwc-dev-eks-irsa"
+        } -> null
+      - tags_all        = {
+          - "Ephemeral" = "true"
+          - "ManagedBy" = "terraform"
+          - "Name"      = "adwc-dev-eks-irsa"
+          - "Project"   = "agentic-devops-with-claude"
+          - "Purpose"   = "phase-2-dev-validation"
+        } -> null
+      - thumbprint_list = [
+          - "06b25927c42a721631c1efd9431e648fa62e1e39",
+        ] -> null
+      - url             = "oidc.eks.us-west-2.amazonaws.com/id/749867422718A010E250FD1115E7E097" -> null
+    }
+
+  # module.eks.aws_iam_policy.cluster_encryption[0] will be destroyed
+  - resource "aws_iam_policy" "cluster_encryption" {
+      - arn              = "arn:aws:iam::515966504359:policy/adwc-dev-cluster-ClusterEncryption20260617231005983200000008" -> null
+      - attachment_count = 1 -> null
+      - description      = "Cluster encryption policy to allow cluster role to utilize CMK provided" -> null
+      - id               = "arn:aws:iam::515966504359:policy/adwc-dev-cluster-ClusterEncryption20260617231005983200000008" -> null
+      - name             = "adwc-dev-cluster-ClusterEncryption20260617231005983200000008" -> null
+      - name_prefix      = "adwc-dev-cluster-ClusterEncryption" -> null
+      - path             = "/" -> null
+      - policy           = jsonencode(
+            {
+              - Statement = [
+                  - {
+                      - Action   = [
+                          - "kms:Encrypt",
+                          - "kms:Decrypt",
+                          - "kms:ListGrants",
+                          - "kms:DescribeKey",
+                        ]
+                      - Effect   = "Allow"
+                      - Resource = "arn:aws:kms:us-west-2:515966504359:key/7533b18b-c344-46a7-b86d-ca0e95a38097"
+                    },
+                ]
+              - Version   = "2012-10-17"
+            }
+        ) -> null
+      - policy_id        = "ANPAXQIQABWTZJWLOPTPI" -> null
+      - tags             = {} -> null
+      - tags_all         = {
+          - "Ephemeral" = "true"
+          - "ManagedBy" = "terraform"
+          - "Project"   = "agentic-devops-with-claude"
+          - "Purpose"   = "phase-2-dev-validation"
+        } -> null
+    }
+
+  # module.eks.aws_iam_role.this[0] will be destroyed
+  - resource "aws_iam_role" "this" {
+      - arn                   = "arn:aws:iam::515966504359:role/adwc-dev-cluster-20260617230943528000000001" -> null
+      - assume_role_policy    = jsonencode(
+            {
+              - Statement = [
+                  - {
+                      - Action    = [
+                          - "sts:TagSession",
+                          - "sts:AssumeRole",
+                        ]
+                      - Effect    = "Allow"
+                      - Principal = {
+                          - Service = "eks.amazonaws.com"
+                        }
+                      - Sid       = "EKSClusterAssumeRole"
+                    },
+                ]
+              - Version   = "2012-10-17"
+            }
+        ) -> null
+      - create_date           = "2026-06-17T23:09:43Z" -> null
+      - force_detach_policies = true -> null
+      - id                    = "adwc-dev-cluster-20260617230943528000000001" -> null
+      - managed_policy_arns   = [
+          - "arn:aws:iam::515966504359:policy/adwc-dev-cluster-ClusterEncryption20260617231005983200000008",
+          - "arn:aws:iam::aws:policy/AmazonEKSClusterPolicy",
+        ] -> null
+      - max_session_duration  = 3600 -> null
+      - name                  = "adwc-dev-cluster-20260617230943528000000001" -> null
+      - name_prefix           = "adwc-dev-cluster-" -> null
+      - path                  = "/" -> null
+      - tags                  = {} -> null
+      - tags_all              = {
+          - "Ephemeral" = "true"
+          - "ManagedBy" = "terraform"
+          - "Project"   = "agentic-devops-with-claude"
+          - "Purpose"   = "phase-2-dev-validation"
+        } -> null
+      - unique_id             = "AROAXQIQABWTV5NT7YZYO" -> null
+        # (2 unchanged attributes hidden)
+    }
+
+  # module.eks.aws_iam_role_policy_attachment.cluster_encryption[0] will be destroyed
+  - resource "aws_iam_role_policy_attachment" "cluster_encryption" {
+      - id         = "adwc-dev-cluster-20260617230943528000000001/arn:aws:iam::515966504359:policy/adwc-dev-cluster-ClusterEncryption20260617231005983200000008" -> null
+      - policy_arn = "arn:aws:iam::515966504359:policy/adwc-dev-cluster-ClusterEncryption20260617231005983200000008" -> null
+      - role       = "adwc-dev-cluster-20260617230943528000000001" -> null
+    }
+
+  # module.eks.aws_iam_role_policy_attachment.this["AmazonEKSClusterPolicy"] will be destroyed
+  - resource "aws_iam_role_policy_attachment" "this" {
+      - id         = "adwc-dev-cluster-20260617230943528000000001/arn:aws:iam::aws:policy/AmazonEKSClusterPolicy" -> null
+      - policy_arn = "arn:aws:iam::aws:policy/AmazonEKSClusterPolicy" -> null
+      - role       = "adwc-dev-cluster-20260617230943528000000001" -> null
+    }
+
+  # module.eks.aws_security_group.cluster[0] will be destroyed
+  - resource "aws_security_group" "cluster" {
+      - arn                    = "arn:aws:ec2:us-west-2:515966504359:security-group/sg-0e288feb9020ee139" -> null
+      - description            = "EKS cluster security group" -> null
+      - egress                 = [] -> null
+      - id                     = "sg-0e288feb9020ee139" -> null
+      - ingress                = [
+          - {
+              - cidr_blocks      = []
+              - description      = "Node groups to cluster API"
+              - from_port        = 443
+              - ipv6_cidr_blocks = []
+              - prefix_list_ids  = []
+              - protocol         = "tcp"
+              - security_groups  = [
+                  - "sg-0202f0ccabee416d1",
+                ]
+              - self             = false
+              - to_port          = 443
+            },
+        ] -> null
+      - name                   = "adwc-dev-cluster-20260617230946135600000003" -> null
+      - name_prefix            = "adwc-dev-cluster-" -> null
+      - owner_id               = "515966504359" -> null
+      - region                 = "us-west-2" -> null
+      - revoke_rules_on_delete = false -> null
+      - tags                   = {
+          - "Name" = "adwc-dev-cluster"
+        } -> null
+      - tags_all               = {
+          - "Ephemeral" = "true"
+          - "ManagedBy" = "terraform"
+          - "Name"      = "adwc-dev-cluster"
+          - "Project"   = "agentic-devops-with-claude"
+          - "Purpose"   = "phase-2-dev-validation"
+        } -> null
+      - vpc_id                 = "vpc-0d0d3c8b132458fe2" -> null
+    }
+
+  # module.eks.aws_security_group.node[0] will be destroyed
+  - resource "aws_security_group" "node" {
+      - arn                    = "arn:aws:ec2:us-west-2:515966504359:security-group/sg-0202f0ccabee416d1" -> null
+      - description            = "EKS node shared security group" -> null
+      - egress                 = [
+          - {
+              - cidr_blocks      = [
+                  - "0.0.0.0/0",
+                ]
+              - description      = "Allow all egress"
+              - from_port        = 0
+              - ipv6_cidr_blocks = []
+              - prefix_list_ids  = []
+              - protocol         = "-1"
+              - security_groups  = []
+              - self             = false
+              - to_port          = 0
+            },
+        ] -> null
+      - id                     = "sg-0202f0ccabee416d1" -> null
+      - ingress                = [
+          - {
+              - cidr_blocks      = []
+              - description      = "Cluster API to node 10251/tcp webhook"
+              - from_port        = 10251
+              - ipv6_cidr_blocks = []
+              - prefix_list_ids  = []
+              - protocol         = "tcp"
+              - security_groups  = [
+                  - "sg-0e288feb9020ee139",
+                ]
+              - self             = false
+              - to_port          = 10251
+            },
+          - {
+              - cidr_blocks      = []
+              - description      = "Cluster API to node 4443/tcp webhook"
+              - from_port        = 4443
+              - ipv6_cidr_blocks = []
+              - prefix_list_ids  = []
+              - protocol         = "tcp"
+              - security_groups  = [
+                  - "sg-0e288feb9020ee139",
+                ]
+              - self             = false
+              - to_port          = 4443
+            },
+          - {
+              - cidr_blocks      = []
+              - description      = "Cluster API to node 6443/tcp webhook"
+              - from_port        = 6443
+              - ipv6_cidr_blocks = []
+              - prefix_list_ids  = []
+              - protocol         = "tcp"
+              - security_groups  = [
+                  - "sg-0e288feb9020ee139",
+                ]
+              - self             = false
+              - to_port          = 6443
+            },
+          - {
+              - cidr_blocks      = []
+              - description      = "Cluster API to node 8443/tcp webhook"
+              - from_port        = 8443
+              - ipv6_cidr_blocks = []
+              - prefix_list_ids  = []
+              - protocol         = "tcp"
+              - security_groups  = [
+                  - "sg-0e288feb9020ee139",
+                ]
+              - self             = false
+              - to_port          = 8443
+            },
+          - {
+              - cidr_blocks      = []
+              - description      = "Cluster API to node 9443/tcp webhook"
+              - from_port        = 9443
+              - ipv6_cidr_blocks = []
+              - prefix_list_ids  = []
+              - protocol         = "tcp"
+              - security_groups  = [
+                  - "sg-0e288feb9020ee139",
+                ]
+              - self             = false
+              - to_port          = 9443
+            },
+          - {
+              - cidr_blocks      = []
+              - description      = "Cluster API to node groups"
+              - from_port        = 443
+              - ipv6_cidr_blocks = []
+              - prefix_list_ids  = []
+              - protocol         = "tcp"
+              - security_groups  = [
+                  - "sg-0e288feb9020ee139",
+                ]
+              - self             = false
+              - to_port          = 443
+            },
+          - {
+              - cidr_blocks      = []
+              - description      = "Cluster API to node kubelets"
+              - from_port        = 10250
+              - ipv6_cidr_blocks = []
+              - prefix_list_ids  = []
+              - protocol         = "tcp"
+              - security_groups  = [
+                  - "sg-0e288feb9020ee139",
+                ]
+              - self             = false
+              - to_port          = 10250
+            },
+          - {
+              - cidr_blocks      = []
+              - description      = "Node to node CoreDNS UDP"
+              - from_port        = 53
+              - ipv6_cidr_blocks = []
+              - prefix_list_ids  = []
+              - protocol         = "udp"
+              - security_groups  = []
+              - self             = true
+              - to_port          = 53
+            },
+          - {
+              - cidr_blocks      = []
+              - description      = "Node to node CoreDNS"
+              - from_port        = 53
+              - ipv6_cidr_blocks = []
+              - prefix_list_ids  = []
+              - protocol         = "tcp"
+              - security_groups  = []
+              - self             = true
+              - to_port          = 53
+            },
+          - {
+              - cidr_blocks      = []
+              - description      = "Node to node ingress on ephemeral ports"
+              - from_port        = 1025
+              - ipv6_cidr_blocks = []
+              - prefix_list_ids  = []
+              - protocol         = "tcp"
+              - security_groups  = []
+              - self             = true
+              - to_port          = 65535
+            },
+        ] -> null
+      - name                   = "adwc-dev-node-20260617230946138300000004" -> null
+      - name_prefix            = "adwc-dev-node-" -> null
+      - owner_id               = "515966504359" -> null
+      - region                 = "us-west-2" -> null
+      - revoke_rules_on_delete = false -> null
+      - tags                   = {
+          - "Name"                           = "adwc-dev-node"
+          - "kubernetes.io/cluster/adwc-dev" = "owned"
+        } -> null
+      - tags_all               = {
+          - "Ephemeral"                      = "true"
+          - "ManagedBy"                      = "terraform"
+          - "Name"                           = "adwc-dev-node"
+          - "Project"                        = "agentic-devops-with-claude"
+          - "Purpose"                        = "phase-2-dev-validation"
+          - "kubernetes.io/cluster/adwc-dev" = "owned"
+        } -> null
+      - vpc_id                 = "vpc-0d0d3c8b132458fe2" -> null
+    }
+
+  # module.eks.aws_security_group_rule.cluster["ingress_nodes_443"] will be destroyed
+  - resource "aws_security_group_rule" "cluster" {
+      - description              = "Node groups to cluster API" -> null
+      - from_port                = 443 -> null
+      - id                       = "sgrule-1389106628" -> null
+      - protocol                 = "tcp" -> null
+      - region                   = "us-west-2" -> null
+      - security_group_id        = "sg-0e288feb9020ee139" -> null
+      - security_group_rule_id   = "sgr-0893af17393cdb643" -> null
+      - self                     = false -> null
+      - source_security_group_id = "sg-0202f0ccabee416d1" -> null
+      - to_port                  = 443 -> null
+      - type                     = "ingress" -> null
+    }
+
+  # module.eks.aws_security_group_rule.node["egress_all"] will be destroyed
+  - resource "aws_security_group_rule" "node" {
+      - cidr_blocks            = [
+          - "0.0.0.0/0",
+        ] -> null
+      - description            = "Allow all egress" -> null
+      - from_port              = 0 -> null
+      - id                     = "sgrule-99128491" -> null
+      - protocol               = "-1" -> null
+      - region                 = "us-west-2" -> null
+      - security_group_id      = "sg-0202f0ccabee416d1" -> null
+      - security_group_rule_id = "sgr-0c901e1351a1b01ca" -> null
+      - self                   = false -> null
+      - to_port                = 0 -> null
+      - type                   = "egress" -> null
+    }
+
+  # module.eks.aws_security_group_rule.node["ingress_cluster_10251_webhook"] will be destroyed
+  - resource "aws_security_group_rule" "node" {
+      - description              = "Cluster API to node 10251/tcp webhook" -> null
+      - from_port                = 10251 -> null
+      - id                       = "sgrule-2751324493" -> null
+      - protocol                 = "tcp" -> null
+      - region                   = "us-west-2" -> null
+      - security_group_id        = "sg-0202f0ccabee416d1" -> null
+      - security_group_rule_id   = "sgr-00ca5245820c61b54" -> null
+      - self                     = false -> null
+      - source_security_group_id = "sg-0e288feb9020ee139" -> null
+      - to_port                  = 10251 -> null
+      - type                     = "ingress" -> null
+    }
+
+  # module.eks.aws_security_group_rule.node["ingress_cluster_443"] will be destroyed
+  - resource "aws_security_group_rule" "node" {
+      - description              = "Cluster API to node groups" -> null
+      - from_port                = 443 -> null
+      - id                       = "sgrule-4129515779" -> null
+      - protocol                 = "tcp" -> null
+      - region                   = "us-west-2" -> null
+      - security_group_id        = "sg-0202f0ccabee416d1" -> null
+      - security_group_rule_id   = "sgr-0a31f3956e207646a" -> null
+      - self                     = false -> null
+      - source_security_group_id = "sg-0e288feb9020ee139" -> null
+      - to_port                  = 443 -> null
+      - type                     = "ingress" -> null
+    }
+
+  # module.eks.aws_security_group_rule.node["ingress_cluster_4443_webhook"] will be destroyed
+  - resource "aws_security_group_rule" "node" {
+      - description              = "Cluster API to node 4443/tcp webhook" -> null
+      - from_port                = 4443 -> null
+      - id                       = "sgrule-2100462564" -> null
+      - protocol                 = "tcp" -> null
+      - region                   = "us-west-2" -> null
+      - security_group_id        = "sg-0202f0ccabee416d1" -> null
+      - security_group_rule_id   = "sgr-03ba5ad7d4caf80c7" -> null
+      - self                     = false -> null
+      - source_security_group_id = "sg-0e288feb9020ee139" -> null
+      - to_port                  = 4443 -> null
+      - type                     = "ingress" -> null
+    }
+
+  # module.eks.aws_security_group_rule.node["ingress_cluster_6443_webhook"] will be destroyed
+  - resource "aws_security_group_rule" "node" {
+      - description              = "Cluster API to node 6443/tcp webhook" -> null
+      - from_port                = 6443 -> null
+      - id                       = "sgrule-3027297394" -> null
+      - protocol                 = "tcp" -> null
+      - region                   = "us-west-2" -> null
+      - security_group_id        = "sg-0202f0ccabee416d1" -> null
+      - security_group_rule_id   = "sgr-0f7052095c83ff9f9" -> null
+      - self                     = false -> null
+      - source_security_group_id = "sg-0e288feb9020ee139" -> null
+      - to_port                  = 6443 -> null
+      - type                     = "ingress" -> null
+    }
+
+  # module.eks.aws_security_group_rule.node["ingress_cluster_8443_webhook"] will be destroyed
+  - resource "aws_security_group_rule" "node" {
+      - description              = "Cluster API to node 8443/tcp webhook" -> null
+      - from_port                = 8443 -> null
+      - id                       = "sgrule-2804734035" -> null
+      - protocol                 = "tcp" -> null
+      - region                   = "us-west-2" -> null
+      - security_group_id        = "sg-0202f0ccabee416d1" -> null
+      - security_group_rule_id   = "sgr-0ab1dd843b0bce759" -> null
+      - self                     = false -> null
+      - source_security_group_id = "sg-0e288feb9020ee139" -> null
+      - to_port                  = 8443 -> null
+      - type                     = "ingress" -> null
+    }
+
+  # module.eks.aws_security_group_rule.node["ingress_cluster_9443_webhook"] will be destroyed
+  - resource "aws_security_group_rule" "node" {
+      - description              = "Cluster API to node 9443/tcp webhook" -> null
+      - from_port                = 9443 -> null
+      - id                       = "sgrule-3280858008" -> null
+      - protocol                 = "tcp" -> null
+      - region                   = "us-west-2" -> null
+      - security_group_id        = "sg-0202f0ccabee416d1" -> null
+      - security_group_rule_id   = "sgr-0e80f218dfe39f189" -> null
+      - self                     = false -> null
+      - source_security_group_id = "sg-0e288feb9020ee139" -> null
+      - to_port                  = 9443 -> null
+      - type                     = "ingress" -> null
+    }
+
+  # module.eks.aws_security_group_rule.node["ingress_cluster_kubelet"] will be destroyed
+  - resource "aws_security_group_rule" "node" {
+      - description              = "Cluster API to node kubelets" -> null
+      - from_port                = 10250 -> null
+      - id                       = "sgrule-2545201462" -> null
+      - protocol                 = "tcp" -> null
+      - region                   = "us-west-2" -> null
+      - security_group_id        = "sg-0202f0ccabee416d1" -> null
+      - security_group_rule_id   = "sgr-02c7fd4adf4e623e5" -> null
+      - self                     = false -> null
+      - source_security_group_id = "sg-0e288feb9020ee139" -> null
+      - to_port                  = 10250 -> null
+      - type                     = "ingress" -> null
+    }
+
+  # module.eks.aws_security_group_rule.node["ingress_nodes_ephemeral"] will be destroyed
+  - resource "aws_security_group_rule" "node" {
+      - description            = "Node to node ingress on ephemeral ports" -> null
+      - from_port              = 1025 -> null
+      - id                     = "sgrule-1169492931" -> null
+      - protocol               = "tcp" -> null
+      - region                 = "us-west-2" -> null
+      - security_group_id      = "sg-0202f0ccabee416d1" -> null
+      - security_group_rule_id = "sgr-0663648956f6fe497" -> null
+      - self                   = true -> null
+      - to_port                = 65535 -> null
+      - type                   = "ingress" -> null
+    }
+
+  # module.eks.aws_security_group_rule.node["ingress_self_coredns_tcp"] will be destroyed
+  - resource "aws_security_group_rule" "node" {
+      - description            = "Node to node CoreDNS" -> null
+      - from_port              = 53 -> null
+      - id                     = "sgrule-1773906704" -> null
+      - protocol               = "tcp" -> null
+      - region                 = "us-west-2" -> null
+      - security_group_id      = "sg-0202f0ccabee416d1" -> null
+      - security_group_rule_id = "sgr-03b4c14a642948063" -> null
+      - self                   = true -> null
+      - to_port                = 53 -> null
+      - type                   = "ingress" -> null
+    }
+
+  # module.eks.aws_security_group_rule.node["ingress_self_coredns_udp"] will be destroyed
+  - resource "aws_security_group_rule" "node" {
+      - description            = "Node to node CoreDNS UDP" -> null
+      - from_port              = 53 -> null
+      - id                     = "sgrule-3454273791" -> null
+      - protocol               = "udp" -> null
+      - region                 = "us-west-2" -> null
+      - security_group_id      = "sg-0202f0ccabee416d1" -> null
+      - security_group_rule_id = "sgr-089f46762e56f23ce" -> null
+      - self                   = true -> null
+      - to_port                = 53 -> null
+      - type                   = "ingress" -> null
+    }
+
+  # module.eks.time_sleep.this[0] will be destroyed
+  - resource "time_sleep" "this" {
+      - create_duration = "30s" -> null
+      - id              = "2026-06-17T23:20:45Z" -> null
+      - triggers        = {
+          - "certificate_authority_data" = "LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSURCVENDQWUyZ0F3SUJBZ0lJQ1ZaMVJUZEhORUF3RFFZSktvWklodmNOQVFFTEJRQXdGVEVUTUJFR0ExVUUKQXhNS2EzVmlaWEp1WlhSbGN6QWVGdzB5TmpBMk1UY3lNekV4TURKYUZ3MHpOakEyTVRReU16RTJNREphTUJVeApFekFSQmdOVkJBTVRDbXQxWW1WeWJtVjBaWE13Z2dFaU1BMEdDU3FHU0liM0RRRUJBUVVBQTRJQkR3QXdnZ0VLCkFvSUJBUUMvbTczTGFPTllUTjh3cTA0Vzg0cGFLaEdhL2h2VFdvZEw2eWl2Umw3TUxNUEF1UTlPMG1ibDBQZlQKam5ENS9IaFpqa2tIRVpGOUJPUGRzQUxMVmp3V3BCWGFXWmhCaVlDWEpsWngrNlo4azJjbWRtMUlNUEpxZ0NqNQorT3RsLzZuT1BTRm1OdXVxVjh4UkVuK2RsT01DVEJ2VlpMaWd0R09XYllNWG9yS0JyS2s0WFY3YWpEdkNxS2lhClFnOVVkV013WnU5aVZPWm5nTWpaeUptcXJCRE5kUWxVWnVEZjVyRnkzOUhVSkFVNTlHMU0xeTZXUFZQTUk4cGkKV3BReDZmTVVBKzVBNnpDclpHVjc1QS82eStXVGFhSnI1STNHOE8vWDNFVWFqSUg5UHgvTUdxTVE1NitlUFVMVwpXZ091TGlvOVFUSnAvemM4eVBiNFN3ZGgzOUs3QWdNQkFBR2pXVEJYTUE0R0ExVWREd0VCL3dRRUF3SUNwREFQCkJnTlZIUk1CQWY4RUJUQURBUUgvTUIwR0ExVWREZ1FXQkJRK2NIODFQQjdmTVhJUnpFYkZSS21IKzkxM2RUQVYKQmdOVkhSRUVEakFNZ2dwcmRXSmxjbTVsZEdWek1BMEdDU3FHU0liM0RRRUJDd1VBQTRJQkFRQlhIWVc5OGQ3QgpIaGZTZmVtT3R5QXIzMEZCT3F0OG90Q1hRSmZ0NnE2UHBrYThmd1haeEdzWFg2bVZ2VTBsRWtjWE5GVElCM2VOCng5cmNic0pxUlkxL2F6TlNacG14WnNvN1Q3RWtGY01VRS9SWmsxb2I2enpTdHdnQ2JmV2lzVEFoNlJGQmR6V3IKMUZwbUpGVzZwRXpQVHBTb2I5YVhLVFpTVUUrNTFPelRzeTEwQWpqRDJYaklaOExYMTZiTTAzcUx6OURZTWcveApJV1ZNbmlIbVpZUkxINGM1L1FWY290OFlDOHFxVURrSVlBcUZhTEMrM2EyeFFCSVJVQi8yRmpBL2c4eUhrL1MvCjl0S3VyM0RaR1oxTlBTWjdpb2ZLbTVrOEhPSSs1WUw2TTRUc2RPeVVteGVMdjFnYU82SmdVaDd0Uzk0cmJCMk0KNWRLM1FEQkVaT3g4Ci0tLS0tRU5EIENFUlRJRklDQVRFLS0tLS0K"
+          - "endpoint"                   = "https://749867422718A010E250FD1115E7E097.gr7.us-west-2.eks.amazonaws.com"
+          - "kubernetes_version"         = "1.34"
+          - "name"                       = "adwc-dev"
+          - "service_cidr"               = "172.20.0.0/16"
+        } -> null
+    }
+
+  # module.vpc.aws_default_network_acl.this[0] will be destroyed
+  - resource "aws_default_network_acl" "this" {
+      - arn                    = "arn:aws:ec2:us-west-2:515966504359:network-acl/acl-0cae37a6a93f417cf" -> null
+      - default_network_acl_id = "acl-0cae37a6a93f417cf" -> null
+      - id                     = "acl-0cae37a6a93f417cf" -> null
+      - owner_id               = "515966504359" -> null
+      - region                 = "us-west-2" -> null
+      - subnet_ids             = [
+          - "subnet-019f3dbedb0479f6c",
+          - "subnet-029fc62ff1558d2e9",
+          - "subnet-0c1784643603c3db2",
+          - "subnet-0ccd20885ff545f6f",
+        ] -> null
+      - tags                   = {
+          - "Name" = "adwc-dev-vpc-default"
+        } -> null
+      - tags_all               = {
+          - "Ephemeral" = "true"
+          - "ManagedBy" = "terraform"
+          - "Name"      = "adwc-dev-vpc-default"
+          - "Project"   = "agentic-devops-with-claude"
+          - "Purpose"   = "phase-2-dev-validation"
+        } -> null
+      - vpc_id                 = "vpc-0d0d3c8b132458fe2" -> null
+
+      - egress {
+          - action          = "allow" -> null
+          - from_port       = 0 -> null
+          - icmp_code       = 0 -> null
+          - icmp_type       = 0 -> null
+          - ipv6_cidr_block = "::/0" -> null
+          - protocol        = "-1" -> null
+          - rule_no         = 101 -> null
+          - to_port         = 0 -> null
+            # (1 unchanged attribute hidden)
+        }
+      - egress {
+          - action          = "allow" -> null
+          - cidr_block      = "0.0.0.0/0" -> null
+          - from_port       = 0 -> null
+          - icmp_code       = 0 -> null
+          - icmp_type       = 0 -> null
+          - protocol        = "-1" -> null
+          - rule_no         = 100 -> null
+          - to_port         = 0 -> null
+            # (1 unchanged attribute hidden)
+        }
+
+      - ingress {
+          - action          = "allow" -> null
+          - from_port       = 0 -> null
+          - icmp_code       = 0 -> null
+          - icmp_type       = 0 -> null
+          - ipv6_cidr_block = "::/0" -> null
+          - protocol        = "-1" -> null
+          - rule_no         = 101 -> null
+          - to_port         = 0 -> null
+            # (1 unchanged attribute hidden)
+        }
+      - ingress {
+          - action          = "allow" -> null
+          - cidr_block      = "0.0.0.0/0" -> null
+          - from_port       = 0 -> null
+          - icmp_code       = 0 -> null
+          - icmp_type       = 0 -> null
+          - protocol        = "-1" -> null
+          - rule_no         = 100 -> null
+          - to_port         = 0 -> null
+            # (1 unchanged attribute hidden)
+        }
+    }
+
+  # module.vpc.aws_default_route_table.default[0] will be destroyed
+  - resource "aws_default_route_table" "default" {
+      - arn                    = "arn:aws:ec2:us-west-2:515966504359:route-table/rtb-0ae2cf8e31ffc32fc" -> null
+      - default_route_table_id = "rtb-0ae2cf8e31ffc32fc" -> null
+      - id                     = "rtb-0ae2cf8e31ffc32fc" -> null
+      - owner_id               = "515966504359" -> null
+      - propagating_vgws       = [] -> null
+      - region                 = "us-west-2" -> null
+      - route                  = [] -> null
+      - tags                   = {
+          - "Name" = "adwc-dev-vpc-default"
+        } -> null
+      - tags_all               = {
+          - "Ephemeral" = "true"
+          - "ManagedBy" = "terraform"
+          - "Name"      = "adwc-dev-vpc-default"
+          - "Project"   = "agentic-devops-with-claude"
+          - "Purpose"   = "phase-2-dev-validation"
+        } -> null
+      - vpc_id                 = "vpc-0d0d3c8b132458fe2" -> null
+
+      - timeouts {
+          - create = "5m" -> null
+          - update = "5m" -> null
+        }
+    }
+
+  # module.vpc.aws_default_security_group.this[0] will be destroyed
+  - resource "aws_default_security_group" "this" {
+      - arn                    = "arn:aws:ec2:us-west-2:515966504359:security-group/sg-0e1db81dfff3c3f89" -> null
+      - description            = "default VPC security group" -> null
+      - egress                 = [] -> null
+      - id                     = "sg-0e1db81dfff3c3f89" -> null
+      - ingress                = [] -> null
+      - name                   = "default" -> null
+      - owner_id               = "515966504359" -> null
+      - region                 = "us-west-2" -> null
+      - revoke_rules_on_delete = false -> null
+      - tags                   = {
+          - "Name" = "adwc-dev-vpc-default"
+        } -> null
+      - tags_all               = {
+          - "Ephemeral" = "true"
+          - "ManagedBy" = "terraform"
+          - "Name"      = "adwc-dev-vpc-default"
+          - "Project"   = "agentic-devops-with-claude"
+          - "Purpose"   = "phase-2-dev-validation"
+        } -> null
+      - vpc_id                 = "vpc-0d0d3c8b132458fe2" -> null
+        # (1 unchanged attribute hidden)
+    }
+
+  # module.vpc.aws_eip.nat[0] will be destroyed
+  - resource "aws_eip" "nat" {
+      - allocation_id            = "eipalloc-081e1375020ce5f52" -> null
+      - arn                      = "arn:aws:ec2:us-west-2:515966504359:elastic-ip/eipalloc-081e1375020ce5f52" -> null
+      - association_id           = "eipassoc-0e6b4f217b55ea750" -> null
+      - domain                   = "vpc" -> null
+      - id                       = "eipalloc-081e1375020ce5f52" -> null
+      - network_border_group     = "us-west-2" -> null
+      - network_interface        = "eni-0bed8964c44e8cf0c" -> null
+      - private_dns              = "ip-10-0-101-122.us-west-2.compute.internal" -> null
+      - private_ip               = "10.0.101.122" -> null
+      - public_dns               = "ec2-54-201-63-60.us-west-2.compute.amazonaws.com" -> null
+      - public_ip                = "54.201.63.60" -> null
+      - public_ipv4_pool         = "amazon" -> null
+      - region                   = "us-west-2" -> null
+      - tags                     = {
+          - "Name" = "adwc-dev-vpc-us-west-2a"
+        } -> null
+      - tags_all                 = {
+          - "Ephemeral" = "true"
+          - "ManagedBy" = "terraform"
+          - "Name"      = "adwc-dev-vpc-us-west-2a"
+          - "Project"   = "agentic-devops-with-claude"
+          - "Purpose"   = "phase-2-dev-validation"
+        } -> null
+        # (6 unchanged attributes hidden)
+    }
+
+  # module.vpc.aws_internet_gateway.this[0] will be destroyed
+  - resource "aws_internet_gateway" "this" {
+      - arn      = "arn:aws:ec2:us-west-2:515966504359:internet-gateway/igw-0ea2e5f81d338a409" -> null
+      - id       = "igw-0ea2e5f81d338a409" -> null
+      - owner_id = "515966504359" -> null
+      - region   = "us-west-2" -> null
+      - tags     = {
+          - "Name" = "adwc-dev-vpc"
+        } -> null
+      - tags_all = {
+          - "Ephemeral" = "true"
+          - "ManagedBy" = "terraform"
+          - "Name"      = "adwc-dev-vpc"
+          - "Project"   = "agentic-devops-with-claude"
+          - "Purpose"   = "phase-2-dev-validation"
+        } -> null
+      - vpc_id   = "vpc-0d0d3c8b132458fe2" -> null
+    }
+
+  # module.vpc.aws_nat_gateway.this[0] will be destroyed
+  - resource "aws_nat_gateway" "this" {
+      - allocation_id                      = "eipalloc-081e1375020ce5f52" -> null
+      - association_id                     = "eipassoc-0e6b4f217b55ea750" -> null
+      - availability_mode                  = "zonal" -> null
+      - connectivity_type                  = "public" -> null
+      - id                                 = "nat-07bc8088763c8118f" -> null
+      - network_interface_id               = "eni-0bed8964c44e8cf0c" -> null
+      - private_ip                         = "10.0.101.122" -> null
+      - public_ip                          = "54.201.63.60" -> null
+      - region                             = "us-west-2" -> null
+      - regional_nat_gateway_address       = [] -> null
+      - secondary_allocation_ids           = [] -> null
+      - secondary_private_ip_address_count = 0 -> null
+      - secondary_private_ip_addresses     = [] -> null
+      - subnet_id                          = "subnet-019f3dbedb0479f6c" -> null
+      - tags                               = {
+          - "Name" = "adwc-dev-vpc-us-west-2a"
+        } -> null
+      - tags_all                           = {
+          - "Ephemeral" = "true"
+          - "ManagedBy" = "terraform"
+          - "Name"      = "adwc-dev-vpc-us-west-2a"
+          - "Project"   = "agentic-devops-with-claude"
+          - "Purpose"   = "phase-2-dev-validation"
+        } -> null
+      - vpc_id                             = "vpc-0d0d3c8b132458fe2" -> null
+    }
+
+  # module.vpc.aws_route.private_nat_gateway[0] will be destroyed
+  - resource "aws_route" "private_nat_gateway" {
+      - destination_cidr_block      = "0.0.0.0/0" -> null
+      - id                          = "r-rtb-0b5f7741032a34b271080289494" -> null
+      - nat_gateway_id              = "nat-07bc8088763c8118f" -> null
+      - origin                      = "CreateRoute" -> null
+      - region                      = "us-west-2" -> null
+      - route_table_id              = "rtb-0b5f7741032a34b27" -> null
+      - state                       = "active" -> null
+        # (14 unchanged attributes hidden)
+
+      - timeouts {
+          - create = "5m" -> null
+        }
+    }
+
+  # module.vpc.aws_route.public_internet_gateway[0] will be destroyed
+  - resource "aws_route" "public_internet_gateway" {
+      - destination_cidr_block      = "0.0.0.0/0" -> null
+      - gateway_id                  = "igw-0ea2e5f81d338a409" -> null
+      - id                          = "r-rtb-0d9db2ff62c80d6621080289494" -> null
+      - origin                      = "CreateRoute" -> null
+      - region                      = "us-west-2" -> null
+      - route_table_id              = "rtb-0d9db2ff62c80d662" -> null
+      - state                       = "active" -> null
+        # (14 unchanged attributes hidden)
+
+      - timeouts {
+          - create = "5m" -> null
+        }
+    }
+
+  # module.vpc.aws_route_table.private[0] will be destroyed
+  - resource "aws_route_table" "private" {
+      - arn              = "arn:aws:ec2:us-west-2:515966504359:route-table/rtb-0b5f7741032a34b27" -> null
+      - id               = "rtb-0b5f7741032a34b27" -> null
+      - owner_id         = "515966504359" -> null
+      - propagating_vgws = [] -> null
+      - region           = "us-west-2" -> null
+      - route            = [
+          - {
+              - cidr_block                 = "0.0.0.0/0"
+              - nat_gateway_id             = "nat-07bc8088763c8118f"
+                # (12 unchanged attributes hidden)
+            },
+        ] -> null
+      - tags             = {
+          - "Name" = "adwc-dev-vpc-private"
+        } -> null
+      - tags_all         = {
+          - "Ephemeral" = "true"
+          - "ManagedBy" = "terraform"
+          - "Name"      = "adwc-dev-vpc-private"
+          - "Project"   = "agentic-devops-with-claude"
+          - "Purpose"   = "phase-2-dev-validation"
+        } -> null
+      - vpc_id           = "vpc-0d0d3c8b132458fe2" -> null
+    }
+
+  # module.vpc.aws_route_table.public[0] will be destroyed
+  - resource "aws_route_table" "public" {
+      - arn              = "arn:aws:ec2:us-west-2:515966504359:route-table/rtb-0d9db2ff62c80d662" -> null
+      - id               = "rtb-0d9db2ff62c80d662" -> null
+      - owner_id         = "515966504359" -> null
+      - propagating_vgws = [] -> null
+      - region           = "us-west-2" -> null
+      - route            = [
+          - {
+              - cidr_block                 = "0.0.0.0/0"
+              - gateway_id                 = "igw-0ea2e5f81d338a409"
+                # (12 unchanged attributes hidden)
+            },
+        ] -> null
+      - tags             = {
+          - "Name" = "adwc-dev-vpc-public"
+        } -> null
+      - tags_all         = {
+          - "Ephemeral" = "true"
+          - "ManagedBy" = "terraform"
+          - "Name"      = "adwc-dev-vpc-public"
+          - "Project"   = "agentic-devops-with-claude"
+          - "Purpose"   = "phase-2-dev-validation"
+        } -> null
+      - vpc_id           = "vpc-0d0d3c8b132458fe2" -> null
+    }
+
+  # module.vpc.aws_route_table_association.private[0] will be destroyed
+  - resource "aws_route_table_association" "private" {
+      - id             = "rtbassoc-0631cd93c9f1ddc76" -> null
+      - region         = "us-west-2" -> null
+      - route_table_id = "rtb-0b5f7741032a34b27" -> null
+      - subnet_id      = "subnet-029fc62ff1558d2e9" -> null
+        # (1 unchanged attribute hidden)
+    }
+
+  # module.vpc.aws_route_table_association.private[1] will be destroyed
+  - resource "aws_route_table_association" "private" {
+      - id             = "rtbassoc-0c8b2cffc668e3eca" -> null
+      - region         = "us-west-2" -> null
+      - route_table_id = "rtb-0b5f7741032a34b27" -> null
+      - subnet_id      = "subnet-0c1784643603c3db2" -> null
+        # (1 unchanged attribute hidden)
+    }
+
+  # module.vpc.aws_route_table_association.public[0] will be destroyed
+  - resource "aws_route_table_association" "public" {
+      - id             = "rtbassoc-0daa2f77ccf134616" -> null
+      - region         = "us-west-2" -> null
+      - route_table_id = "rtb-0d9db2ff62c80d662" -> null
+      - subnet_id      = "subnet-019f3dbedb0479f6c" -> null
+        # (1 unchanged attribute hidden)
+    }
+
+  # module.vpc.aws_route_table_association.public[1] will be destroyed
+  - resource "aws_route_table_association" "public" {
+      - id             = "rtbassoc-096a68d6032aecc27" -> null
+      - region         = "us-west-2" -> null
+      - route_table_id = "rtb-0d9db2ff62c80d662" -> null
+      - subnet_id      = "subnet-0ccd20885ff545f6f" -> null
+        # (1 unchanged attribute hidden)
+    }
+
+  # module.vpc.aws_subnet.private[0] will be destroyed
+  - resource "aws_subnet" "private" {
+      - arn                                            = "arn:aws:ec2:us-west-2:515966504359:subnet/subnet-029fc62ff1558d2e9" -> null
+      - assign_ipv6_address_on_creation                = false -> null
+      - availability_zone                              = "us-west-2a" -> null
+      - availability_zone_id                           = "usw2-az1" -> null
+      - cidr_block                                     = "10.0.1.0/24" -> null
+      - enable_dns64                                   = false -> null
+      - enable_lni_at_device_index                     = 0 -> null
+      - enable_resource_name_dns_a_record_on_launch    = false -> null
+      - enable_resource_name_dns_aaaa_record_on_launch = false -> null
+      - id                                             = "subnet-029fc62ff1558d2e9" -> null
+      - ipv6_native                                    = false -> null
+      - map_customer_owned_ip_on_launch                = false -> null
+      - map_public_ip_on_launch                        = false -> null
+      - owner_id                                       = "515966504359" -> null
+      - private_dns_hostname_type_on_launch            = "ip-name" -> null
+      - region                                         = "us-west-2" -> null
+      - tags                                           = {
+          - "Name"                            = "adwc-dev-vpc-private-us-west-2a"
+          - "kubernetes.io/role/internal-elb" = "1"
+        } -> null
+      - tags_all                                       = {
+          - "Ephemeral"                       = "true"
+          - "ManagedBy"                       = "terraform"
+          - "Name"                            = "adwc-dev-vpc-private-us-west-2a"
+          - "Project"                         = "agentic-devops-with-claude"
+          - "Purpose"                         = "phase-2-dev-validation"
+          - "kubernetes.io/role/internal-elb" = "1"
+        } -> null
+      - vpc_id                                         = "vpc-0d0d3c8b132458fe2" -> null
+        # (4 unchanged attributes hidden)
+    }
+
+  # module.vpc.aws_subnet.private[1] will be destroyed
+  - resource "aws_subnet" "private" {
+      - arn                                            = "arn:aws:ec2:us-west-2:515966504359:subnet/subnet-0c1784643603c3db2" -> null
+      - assign_ipv6_address_on_creation                = false -> null
+      - availability_zone                              = "us-west-2b" -> null
+      - availability_zone_id                           = "usw2-az2" -> null
+      - cidr_block                                     = "10.0.2.0/24" -> null
+      - enable_dns64                                   = false -> null
+      - enable_lni_at_device_index                     = 0 -> null
+      - enable_resource_name_dns_a_record_on_launch    = false -> null
+      - enable_resource_name_dns_aaaa_record_on_launch = false -> null
+      - id                                             = "subnet-0c1784643603c3db2" -> null
+      - ipv6_native                                    = false -> null
+      - map_customer_owned_ip_on_launch                = false -> null
+      - map_public_ip_on_launch                        = false -> null
+      - owner_id                                       = "515966504359" -> null
+      - private_dns_hostname_type_on_launch            = "ip-name" -> null
+      - region                                         = "us-west-2" -> null
+      - tags                                           = {
+          - "Name"                            = "adwc-dev-vpc-private-us-west-2b"
+          - "kubernetes.io/role/internal-elb" = "1"
+        } -> null
+      - tags_all                                       = {
+          - "Ephemeral"                       = "true"
+          - "ManagedBy"                       = "terraform"
+          - "Name"                            = "adwc-dev-vpc-private-us-west-2b"
+          - "Project"                         = "agentic-devops-with-claude"
+          - "Purpose"                         = "phase-2-dev-validation"
+          - "kubernetes.io/role/internal-elb" = "1"
+        } -> null
+      - vpc_id                                         = "vpc-0d0d3c8b132458fe2" -> null
+        # (4 unchanged attributes hidden)
+    }
+
+  # module.vpc.aws_subnet.public[0] will be destroyed
+  - resource "aws_subnet" "public" {
+      - arn                                            = "arn:aws:ec2:us-west-2:515966504359:subnet/subnet-019f3dbedb0479f6c" -> null
+      - assign_ipv6_address_on_creation                = false -> null
+      - availability_zone                              = "us-west-2a" -> null
+      - availability_zone_id                           = "usw2-az1" -> null
+      - cidr_block                                     = "10.0.101.0/24" -> null
+      - enable_dns64                                   = false -> null
+      - enable_lni_at_device_index                     = 0 -> null
+      - enable_resource_name_dns_a_record_on_launch    = false -> null
+      - enable_resource_name_dns_aaaa_record_on_launch = false -> null
+      - id                                             = "subnet-019f3dbedb0479f6c" -> null
+      - ipv6_native                                    = false -> null
+      - map_customer_owned_ip_on_launch                = false -> null
+      - map_public_ip_on_launch                        = false -> null
+      - owner_id                                       = "515966504359" -> null
+      - private_dns_hostname_type_on_launch            = "ip-name" -> null
+      - region                                         = "us-west-2" -> null
+      - tags                                           = {
+          - "Name"                   = "adwc-dev-vpc-public-us-west-2a"
+          - "kubernetes.io/role/elb" = "1"
+        } -> null
+      - tags_all                                       = {
+          - "Ephemeral"              = "true"
+          - "ManagedBy"              = "terraform"
+          - "Name"                   = "adwc-dev-vpc-public-us-west-2a"
+          - "Project"                = "agentic-devops-with-claude"
+          - "Purpose"                = "phase-2-dev-validation"
+          - "kubernetes.io/role/elb" = "1"
+        } -> null
+      - vpc_id                                         = "vpc-0d0d3c8b132458fe2" -> null
+        # (4 unchanged attributes hidden)
+    }
+
+  # module.vpc.aws_subnet.public[1] will be destroyed
+  - resource "aws_subnet" "public" {
+      - arn                                            = "arn:aws:ec2:us-west-2:515966504359:subnet/subnet-0ccd20885ff545f6f" -> null
+      - assign_ipv6_address_on_creation                = false -> null
+      - availability_zone                              = "us-west-2b" -> null
+      - availability_zone_id                           = "usw2-az2" -> null
+      - cidr_block                                     = "10.0.102.0/24" -> null
+      - enable_dns64                                   = false -> null
+      - enable_lni_at_device_index                     = 0 -> null
+      - enable_resource_name_dns_a_record_on_launch    = false -> null
+      - enable_resource_name_dns_aaaa_record_on_launch = false -> null
+      - id                                             = "subnet-0ccd20885ff545f6f" -> null
+      - ipv6_native                                    = false -> null
+      - map_customer_owned_ip_on_launch                = false -> null
+      - map_public_ip_on_launch                        = false -> null
+      - owner_id                                       = "515966504359" -> null
+      - private_dns_hostname_type_on_launch            = "ip-name" -> null
+      - region                                         = "us-west-2" -> null
+      - tags                                           = {
+          - "Name"                   = "adwc-dev-vpc-public-us-west-2b"
+          - "kubernetes.io/role/elb" = "1"
+        } -> null
+      - tags_all                                       = {
+          - "Ephemeral"              = "true"
+          - "ManagedBy"              = "terraform"
+          - "Name"                   = "adwc-dev-vpc-public-us-west-2b"
+          - "Project"                = "agentic-devops-with-claude"
+          - "Purpose"                = "phase-2-dev-validation"
+          - "kubernetes.io/role/elb" = "1"
+        } -> null
+      - vpc_id                                         = "vpc-0d0d3c8b132458fe2" -> null
+        # (4 unchanged attributes hidden)
+    }
+
+  # module.vpc.aws_vpc.this[0] will be destroyed
+  - resource "aws_vpc" "this" {
+      - arn                                  = "arn:aws:ec2:us-west-2:515966504359:vpc/vpc-0d0d3c8b132458fe2" -> null
+      - assign_generated_ipv6_cidr_block     = false -> null
+      - cidr_block                           = "10.0.0.0/16" -> null
+      - default_network_acl_id               = "acl-0cae37a6a93f417cf" -> null
+      - default_route_table_id               = "rtb-0ae2cf8e31ffc32fc" -> null
+      - default_security_group_id            = "sg-0e1db81dfff3c3f89" -> null
+      - dhcp_options_id                      = "dopt-0554e832e6feef53c" -> null
+      - enable_dns_hostnames                 = true -> null
+      - enable_dns_support                   = true -> null
+      - enable_network_address_usage_metrics = false -> null
+      - id                                   = "vpc-0d0d3c8b132458fe2" -> null
+      - instance_tenancy                     = "default" -> null
+      - ipv6_netmask_length                  = 0 -> null
+      - main_route_table_id                  = "rtb-0ae2cf8e31ffc32fc" -> null
+      - owner_id                             = "515966504359" -> null
+      - region                               = "us-west-2" -> null
+      - tags                                 = {
+          - "Name" = "adwc-dev-vpc"
+        } -> null
+      - tags_all                             = {
+          - "Ephemeral" = "true"
+          - "ManagedBy" = "terraform"
+          - "Name"      = "adwc-dev-vpc"
+          - "Project"   = "agentic-devops-with-claude"
+          - "Purpose"   = "phase-2-dev-validation"
+        } -> null
+        # (4 unchanged attributes hidden)
+    }
+
+  # module.eks.module.eks_managed_node_group["default"].aws_eks_node_group.this[0] will be destroyed
+  - resource "aws_eks_node_group" "this" {
+      - ami_type               = "AL2023_x86_64_STANDARD" -> null
+      - arn                    = "arn:aws:eks:us-west-2:515966504359:nodegroup/adwc-dev/default-20260617235554809400000003/facf6c01-a5d6-8248-f14a-e658d9f1cff5" -> null
+      - capacity_type          = "ON_DEMAND" -> null
+      - cluster_name           = "adwc-dev" -> null
+      - disk_size              = 0 -> null
+      - id                     = "adwc-dev:default-20260617235554809400000003" -> null
+      - instance_types         = [
+          - "t3.large",
+        ] -> null
+      - labels                 = {} -> null
+      - node_group_name        = "default-20260617235554809400000003" -> null
+      - node_group_name_prefix = "default-" -> null
+      - node_role_arn          = "arn:aws:iam::515966504359:role/default-eks-node-group-20260617230943534000000002" -> null
+      - region                 = "us-west-2" -> null
+      - release_version        = "1.34.8-20260610" -> null
+      - resources              = [
+          - {
+              - autoscaling_groups              = [
+                  - {
+                      - name = "eks-default-20260617235554809400000003-facf6c01-a5d6-8248-f14a-e658d9f1cff5"
+                    },
+                ]
+                # (1 unchanged attribute hidden)
+            },
+        ] -> null
+      - status                 = "ACTIVE" -> null
+      - subnet_ids             = [
+          - "subnet-029fc62ff1558d2e9",
+          - "subnet-0c1784643603c3db2",
+        ] -> null
+      - tags                   = {
+          - "Name" = "default"
+        } -> null
+      - tags_all               = {
+          - "Ephemeral" = "true"
+          - "ManagedBy" = "terraform"
+          - "Name"      = "default"
+          - "Project"   = "agentic-devops-with-claude"
+          - "Purpose"   = "phase-2-dev-validation"
+        } -> null
+      - version                = "1.34" -> null
+
+      - launch_template {
+          - id      = "lt-02b1b331fca034251" -> null
+          - name    = "default-20260617232045371000000009" -> null
+          - version = "1" -> null
+        }
+
+      - scaling_config {
+          - desired_size = 2 -> null
+          - max_size     = 3 -> null
+          - min_size     = 2 -> null
+        }
+
+      - update_config {
+          - max_unavailable            = 0 -> null
+          - max_unavailable_percentage = 33 -> null
+            # (1 unchanged attribute hidden)
+        }
+    }
+
+  # module.eks.module.eks_managed_node_group["default"].aws_iam_role.this[0] will be destroyed
+  - resource "aws_iam_role" "this" {
+      - arn                   = "arn:aws:iam::515966504359:role/default-eks-node-group-20260617230943534000000002" -> null
+      - assume_role_policy    = jsonencode(
+            {
+              - Statement = [
+                  - {
+                      - Action    = "sts:AssumeRole"
+                      - Effect    = "Allow"
+                      - Principal = {
+                          - Service = "ec2.amazonaws.com"
+                        }
+                      - Sid       = "EKSNodeAssumeRole"
+                    },
+                ]
+              - Version   = "2012-10-17"
+            }
+        ) -> null
+      - create_date           = "2026-06-17T23:09:43Z" -> null
+      - description           = "EKS managed node group IAM role" -> null
+      - force_detach_policies = true -> null
+      - id                    = "default-eks-node-group-20260617230943534000000002" -> null
+      - managed_policy_arns   = [
+          - "arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly",
+          - "arn:aws:iam::aws:policy/AmazonEKSWorkerNodePolicy",
+          - "arn:aws:iam::aws:policy/AmazonEKS_CNI_Policy",
+        ] -> null
+      - max_session_duration  = 3600 -> null
+      - name                  = "default-eks-node-group-20260617230943534000000002" -> null
+      - name_prefix           = "default-eks-node-group-" -> null
+      - path                  = "/" -> null
+      - tags                  = {} -> null
+      - tags_all              = {
+          - "Ephemeral" = "true"
+          - "ManagedBy" = "terraform"
+          - "Project"   = "agentic-devops-with-claude"
+          - "Purpose"   = "phase-2-dev-validation"
+        } -> null
+      - unique_id             = "AROAXQIQABWTR5HIPKZDU" -> null
+        # (1 unchanged attribute hidden)
+    }
+
+  # module.eks.module.eks_managed_node_group["default"].aws_iam_role_policy_attachment.this["AmazonEC2ContainerRegistryReadOnly"] will be destroyed
+  - resource "aws_iam_role_policy_attachment" "this" {
+      - id         = "default-eks-node-group-20260617230943534000000002/arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly" -> null
+      - policy_arn = "arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly" -> null
+      - role       = "default-eks-node-group-20260617230943534000000002" -> null
+    }
+
+  # module.eks.module.eks_managed_node_group["default"].aws_iam_role_policy_attachment.this["AmazonEKSWorkerNodePolicy"] will be destroyed
+  - resource "aws_iam_role_policy_attachment" "this" {
+      - id         = "default-eks-node-group-20260617230943534000000002/arn:aws:iam::aws:policy/AmazonEKSWorkerNodePolicy" -> null
+      - policy_arn = "arn:aws:iam::aws:policy/AmazonEKSWorkerNodePolicy" -> null
+      - role       = "default-eks-node-group-20260617230943534000000002" -> null
+    }
+
+  # module.eks.module.eks_managed_node_group["default"].aws_iam_role_policy_attachment.this["AmazonEKS_CNI_Policy"] will be destroyed
+  - resource "aws_iam_role_policy_attachment" "this" {
+      - id         = "default-eks-node-group-20260617230943534000000002/arn:aws:iam::aws:policy/AmazonEKS_CNI_Policy" -> null
+      - policy_arn = "arn:aws:iam::aws:policy/AmazonEKS_CNI_Policy" -> null
+      - role       = "default-eks-node-group-20260617230943534000000002" -> null
+    }
+
+  # module.eks.module.eks_managed_node_group["default"].aws_launch_template.this[0] will be destroyed
+  - resource "aws_launch_template" "this" {
+      - arn                                  = "arn:aws:ec2:us-west-2:515966504359:launch-template/lt-02b1b331fca034251" -> null
+      - default_version                      = 1 -> null
+      - description                          = "Custom launch template for default EKS managed node group" -> null
+      - disable_api_stop                     = false -> null
+      - disable_api_termination              = false -> null
+      - id                                   = "lt-02b1b331fca034251" -> null
+      - latest_version                       = 1 -> null
+      - name                                 = "default-20260617232045371000000009" -> null
+      - name_prefix                          = "default-" -> null
+      - region                               = "us-west-2" -> null
+      - security_group_names                 = [] -> null
+      - tags                                 = {} -> null
+      - tags_all                             = {
+          - "Ephemeral" = "true"
+          - "ManagedBy" = "terraform"
+          - "Project"   = "agentic-devops-with-claude"
+          - "Purpose"   = "phase-2-dev-validation"
+        } -> null
+      - update_default_version               = true -> null
+      - vpc_security_group_ids               = [
+          - "sg-0202f0ccabee416d1",
+        ] -> null
+        # (8 unchanged attributes hidden)
+
+      - metadata_options {
+          - http_endpoint               = "enabled" -> null
+          - http_put_response_hop_limit = 1 -> null
+          - http_tokens                 = "required" -> null
+            # (2 unchanged attributes hidden)
+        }
+
+      - tag_specifications {
+          - resource_type = "instance" -> null
+          - tags          = {
+              - "Name" = "default"
+            } -> null
+        }
+      - tag_specifications {
+          - resource_type = "network-interface" -> null
+          - tags          = {
+              - "Name" = "default"
+            } -> null
+        }
+      - tag_specifications {
+          - resource_type = "volume" -> null
+          - tags          = {
+              - "Name" = "default"
+            } -> null
+        }
+    }
+
+  # module.eks.module.kms.aws_kms_alias.this["cluster"] will be destroyed
+  - resource "aws_kms_alias" "this" {
+      - arn            = "arn:aws:kms:us-west-2:515966504359:alias/eks/adwc-dev" -> null
+      - id             = "alias/eks/adwc-dev" -> null
+      - name           = "alias/eks/adwc-dev" -> null
+      - region         = "us-west-2" -> null
+      - target_key_arn = "arn:aws:kms:us-west-2:515966504359:key/7533b18b-c344-46a7-b86d-ca0e95a38097" -> null
+      - target_key_id  = "7533b18b-c344-46a7-b86d-ca0e95a38097" -> null
+        # (1 unchanged attribute hidden)
+    }
+
+  # module.eks.module.kms.aws_kms_key.this[0] will be destroyed
+  - resource "aws_kms_key" "this" {
+      - arn                                = "arn:aws:kms:us-west-2:515966504359:key/7533b18b-c344-46a7-b86d-ca0e95a38097" -> null
+      - bypass_policy_lockout_safety_check = false -> null
+      - customer_master_key_spec           = "SYMMETRIC_DEFAULT" -> null
+      - description                        = "adwc-dev cluster encryption key" -> null
+      - enable_key_rotation                = true -> null
+      - id                                 = "7533b18b-c344-46a7-b86d-ca0e95a38097" -> null
+      - is_enabled                         = true -> null
+      - key_id                             = "7533b18b-c344-46a7-b86d-ca0e95a38097" -> null
+      - key_usage                          = "ENCRYPT_DECRYPT" -> null
+      - multi_region                       = false -> null
+      - policy                             = jsonencode(
+            {
+              - Statement = [
+                  - {
+                      - Action    = "kms:*"
+                      - Effect    = "Allow"
+                      - Principal = {
+                          - AWS = "arn:aws:iam::515966504359:root"
+                        }
+                      - Resource  = "*"
+                      - Sid       = "Default"
+                    },
+                  - {
+                      - Action    = [
+                          - "kms:Update*",
+                          - "kms:UntagResource",
+                          - "kms:TagResource",
+                          - "kms:ScheduleKeyDeletion",
+                          - "kms:Revoke*",
+                          - "kms:ReplicateKey",
+                          - "kms:Put*",
+                          - "kms:List*",
+                          - "kms:ImportKeyMaterial",
+                          - "kms:Get*",
+                          - "kms:Enable*",
+                          - "kms:Disable*",
+                          - "kms:Describe*",
+                          - "kms:Delete*",
+                          - "kms:Create*",
+                          - "kms:CancelKeyDeletion",
+                        ]
+                      - Effect    = "Allow"
+                      - Principal = {
+                          - AWS = "arn:aws:iam::515966504359:user/nwuser"
+                        }
+                      - Resource  = "*"
+                      - Sid       = "KeyAdministration"
+                    },
+                  - {
+                      - Action    = [
+                          - "kms:ReEncrypt*",
+                          - "kms:GenerateDataKey*",
+                          - "kms:Encrypt",
+                          - "kms:DescribeKey",
+                          - "kms:Decrypt",
+                        ]
+                      - Effect    = "Allow"
+                      - Principal = {
+                          - AWS = "arn:aws:iam::515966504359:role/adwc-dev-cluster-20260617230943528000000001"
+                        }
+                      - Resource  = "*"
+                      - Sid       = "KeyUsage"
+                    },
+                ]
+              - Version   = "2012-10-17"
+            }
+        ) -> null
+      - region                             = "us-west-2" -> null
+      - rotation_period_in_days            = 365 -> null
+      - tags                               = {} -> null
+      - tags_all                           = {
+          - "Ephemeral" = "true"
+          - "ManagedBy" = "terraform"
+          - "Project"   = "agentic-devops-with-claude"
+          - "Purpose"   = "phase-2-dev-validation"
+        } -> null
+        # (2 unchanged attributes hidden)
+    }
+
+  # module.eks.module.eks_managed_node_group["default"].module.user_data.null_resource.validate_cluster_service_cidr will be destroyed
+  - resource "null_resource" "validate_cluster_service_cidr" {
+      - id = "3128585452740733707" -> null
+    }
+
+Plan: 0 to add, 0 to change, 55 to destroy.
+
+Changes to Outputs:
+  - cluster_name      = "adwc-dev" -> null
+  - region            = "us-west-2" -> null
+  - update_kubeconfig = "aws eks update-kubeconfig --name adwc-dev --region us-west-2 --profile accen-dev" -> null
+module.vpc.aws_route_table_association.public[1]: Destroying... [id=rtbassoc-096a68d6032aecc27]
+module.eks.aws_iam_role_policy_attachment.cluster_encryption[0]: Destroying... [id=adwc-dev-cluster-20260617230943528000000001/arn:aws:iam::515966504359:policy/adwc-dev-cluster-ClusterEncryption20260617231005983200000008]
+module.eks.module.kms.aws_kms_alias.this["cluster"]: Destroying... [id=alias/eks/adwc-dev]
+module.vpc.aws_route.private_nat_gateway[0]: Destroying... [id=r-rtb-0b5f7741032a34b271080289494]
+module.eks.aws_eks_addon.before_compute["vpc-cni"]: Destroying... [id=adwc-dev:vpc-cni]
+module.vpc.aws_route_table_association.private[0]: Destroying... [id=rtbassoc-0631cd93c9f1ddc76]
+module.eks.aws_eks_addon.before_compute["kube-proxy"]: Destroying... [id=adwc-dev:kube-proxy]
+module.eks.aws_eks_addon.this["coredns"]: Destroying... [id=adwc-dev:coredns]
+module.vpc.aws_default_network_acl.this[0]: Destroying... [id=acl-0cae37a6a93f417cf]
+module.eks.aws_eks_access_policy_association.this["cluster_creator_admin"]: Destroying... [id=adwc-dev#arn:aws:iam::515966504359:user/nwuser#arn:aws:eks::aws:cluster-access-policy/AmazonEKSClusterAdminPolicy]
+module.vpc.aws_default_network_acl.this[0]: Destruction complete after 0s
+module.vpc.aws_default_security_group.this[0]: Destroying... [id=sg-0e1db81dfff3c3f89]
+module.vpc.aws_default_security_group.this[0]: Destruction complete after 0s
+module.vpc.aws_route_table_association.private[1]: Destroying... [id=rtbassoc-0c8b2cffc668e3eca]
+module.eks.aws_iam_role_policy_attachment.cluster_encryption[0]: Destruction complete after 0s
+module.eks.aws_iam_openid_connect_provider.oidc_provider[0]: Destroying... [id=arn:aws:iam::515966504359:oidc-provider/oidc.eks.us-west-2.amazonaws.com/id/749867422718A010E250FD1115E7E097]
+module.eks.aws_iam_openid_connect_provider.oidc_provider[0]: Destruction complete after 0s
+module.vpc.aws_route.public_internet_gateway[0]: Destroying... [id=r-rtb-0d9db2ff62c80d6621080289494]
+module.eks.module.kms.aws_kms_alias.this["cluster"]: Destruction complete after 0s
+module.vpc.aws_route_table_association.public[0]: Destroying... [id=rtbassoc-0daa2f77ccf134616]
+module.eks.aws_eks_access_policy_association.this["cluster_creator_admin"]: Destruction complete after 0s
+module.vpc.aws_default_route_table.default[0]: Destroying... [id=rtb-0ae2cf8e31ffc32fc]
+module.vpc.aws_default_route_table.default[0]: Destruction complete after 0s
+module.eks.aws_iam_policy.cluster_encryption[0]: Destroying... [id=arn:aws:iam::515966504359:policy/adwc-dev-cluster-ClusterEncryption20260617231005983200000008]
+module.vpc.aws_route_table_association.private[1]: Destruction complete after 0s
+module.eks.aws_eks_access_entry.this["cluster_creator"]: Destroying... [id=adwc-dev:arn:aws:iam::515966504359:user/nwuser]
+module.vpc.aws_route_table_association.public[1]: Destruction complete after 0s
+module.vpc.aws_route_table_association.private[0]: Destruction complete after 0s
+module.eks.aws_iam_policy.cluster_encryption[0]: Destruction complete after 0s
+module.vpc.aws_route_table_association.public[0]: Destruction complete after 0s
+module.vpc.aws_route.private_nat_gateway[0]: Destruction complete after 1s
+module.vpc.aws_nat_gateway.this[0]: Destroying... [id=nat-07bc8088763c8118f]
+module.vpc.aws_route_table.private[0]: Destroying... [id=rtb-0b5f7741032a34b27]
+module.vpc.aws_route.public_internet_gateway[0]: Destruction complete after 1s
+module.vpc.aws_route_table.public[0]: Destroying... [id=rtb-0d9db2ff62c80d662]
+module.eks.aws_eks_access_entry.this["cluster_creator"]: Destruction complete after 1s
+module.eks.aws_eks_addon.before_compute["kube-proxy"]: Destruction complete after 1s
+module.vpc.aws_route_table.private[0]: Destruction complete after 0s
+module.vpc.aws_route_table.public[0]: Destruction complete after 1s
+module.eks.aws_eks_addon.this["coredns"]: Destruction complete after 2s
+module.eks.module.eks_managed_node_group["default"].module.user_data.null_resource.validate_cluster_service_cidr: Destroying... [id=3128585452740733707]
+module.eks.module.eks_managed_node_group["default"].aws_eks_node_group.this[0]: Destroying... [id=adwc-dev:default-20260617235554809400000003]
+module.eks.module.eks_managed_node_group["default"].module.user_data.null_resource.validate_cluster_service_cidr: Destruction complete after 0s
+module.eks.aws_eks_addon.before_compute["vpc-cni"]: Destruction complete after 2s
+module.vpc.aws_nat_gateway.this[0]: Still destroying... [id=nat-07bc8088763c8118f, 00m10s elapsed]
+module.eks.module.eks_managed_node_group["default"].aws_eks_node_group.this[0]: Still destroying... [id=adwc-dev:default-20260617235554809400000003, 00m10s elapsed]
+module.vpc.aws_nat_gateway.this[0]: Still destroying... [id=nat-07bc8088763c8118f, 00m20s elapsed]
+module.eks.module.eks_managed_node_group["default"].aws_eks_node_group.this[0]: Still destroying... [id=adwc-dev:default-20260617235554809400000003, 00m20s elapsed]
+module.vpc.aws_nat_gateway.this[0]: Still destroying... [id=nat-07bc8088763c8118f, 00m30s elapsed]
+module.eks.module.eks_managed_node_group["default"].aws_eks_node_group.this[0]: Still destroying... [id=adwc-dev:default-20260617235554809400000003, 00m30s elapsed]
+module.vpc.aws_nat_gateway.this[0]: Still destroying... [id=nat-07bc8088763c8118f, 00m40s elapsed]
+module.eks.module.eks_managed_node_group["default"].aws_eks_node_group.this[0]: Still destroying... [id=adwc-dev:default-20260617235554809400000003, 00m40s elapsed]
+module.vpc.aws_nat_gateway.this[0]: Still destroying... [id=nat-07bc8088763c8118f, 00m50s elapsed]
+module.vpc.aws_nat_gateway.this[0]: Destruction complete after 50s
+module.vpc.aws_eip.nat[0]: Destroying... [id=eipalloc-081e1375020ce5f52]
+module.vpc.aws_subnet.public[1]: Destroying... [id=subnet-0ccd20885ff545f6f]
+module.vpc.aws_subnet.public[0]: Destroying... [id=subnet-019f3dbedb0479f6c]
+module.vpc.aws_subnet.public[1]: Destruction complete after 1s
+module.vpc.aws_subnet.public[0]: Destruction complete after 1s
+module.eks.module.eks_managed_node_group["default"].aws_eks_node_group.this[0]: Still destroying... [id=adwc-dev:default-20260617235554809400000003, 00m50s elapsed]
+module.vpc.aws_eip.nat[0]: Destruction complete after 1s
+module.vpc.aws_internet_gateway.this[0]: Destroying... [id=igw-0ea2e5f81d338a409]
+module.vpc.aws_internet_gateway.this[0]: Destruction complete after 1s
+module.eks.module.eks_managed_node_group["default"].aws_eks_node_group.this[0]: Still destroying... [id=adwc-dev:default-20260617235554809400000003, 01m00s elapsed]
+module.eks.module.eks_managed_node_group["default"].aws_eks_node_group.this[0]: Still destroying... [id=adwc-dev:default-20260617235554809400000003, 01m10s elapsed]
+module.eks.module.eks_managed_node_group["default"].aws_eks_node_group.this[0]: Still destroying... [id=adwc-dev:default-20260617235554809400000003, 01m20s elapsed]
+module.eks.module.eks_managed_node_group["default"].aws_eks_node_group.this[0]: Still destroying... [id=adwc-dev:default-20260617235554809400000003, 01m30s elapsed]
+module.eks.module.eks_managed_node_group["default"].aws_eks_node_group.this[0]: Still destroying... [id=adwc-dev:default-20260617235554809400000003, 01m40s elapsed]
+module.eks.module.eks_managed_node_group["default"].aws_eks_node_group.this[0]: Still destroying... [id=adwc-dev:default-20260617235554809400000003, 01m50s elapsed]
+module.eks.module.eks_managed_node_group["default"].aws_eks_node_group.this[0]: Still destroying... [id=adwc-dev:default-20260617235554809400000003, 02m00s elapsed]
+module.eks.module.eks_managed_node_group["default"].aws_eks_node_group.this[0]: Still destroying... [id=adwc-dev:default-20260617235554809400000003, 02m10s elapsed]
+module.eks.module.eks_managed_node_group["default"].aws_eks_node_group.this[0]: Still destroying... [id=adwc-dev:default-20260617235554809400000003, 02m20s elapsed]
+module.eks.module.eks_managed_node_group["default"].aws_eks_node_group.this[0]: Still destroying... [id=adwc-dev:default-20260617235554809400000003, 02m30s elapsed]
+module.eks.module.eks_managed_node_group["default"].aws_eks_node_group.this[0]: Still destroying... [id=adwc-dev:default-20260617235554809400000003, 02m40s elapsed]
+module.eks.module.eks_managed_node_group["default"].aws_eks_node_group.this[0]: Still destroying... [id=adwc-dev:default-20260617235554809400000003, 02m50s elapsed]
+module.eks.module.eks_managed_node_group["default"].aws_eks_node_group.this[0]: Still destroying... [id=adwc-dev:default-20260617235554809400000003, 03m00s elapsed]
+module.eks.module.eks_managed_node_group["default"].aws_eks_node_group.this[0]: Still destroying... [id=adwc-dev:default-20260617235554809400000003, 03m10s elapsed]
+module.eks.module.eks_managed_node_group["default"].aws_eks_node_group.this[0]: Still destroying... [id=adwc-dev:default-20260617235554809400000003, 03m20s elapsed]
+module.eks.module.eks_managed_node_group["default"].aws_eks_node_group.this[0]: Still destroying... [id=adwc-dev:default-20260617235554809400000003, 03m30s elapsed]
+module.eks.module.eks_managed_node_group["default"].aws_eks_node_group.this[0]: Still destroying... [id=adwc-dev:default-20260617235554809400000003, 03m40s elapsed]
+module.eks.module.eks_managed_node_group["default"].aws_eks_node_group.this[0]: Still destroying... [id=adwc-dev:default-20260617235554809400000003, 03m50s elapsed]
+module.eks.module.eks_managed_node_group["default"].aws_eks_node_group.this[0]: Still destroying... [id=adwc-dev:default-20260617235554809400000003, 04m00s elapsed]
+module.eks.module.eks_managed_node_group["default"].aws_eks_node_group.this[0]: Still destroying... [id=adwc-dev:default-20260617235554809400000003, 04m10s elapsed]
+module.eks.module.eks_managed_node_group["default"].aws_eks_node_group.this[0]: Still destroying... [id=adwc-dev:default-20260617235554809400000003, 04m20s elapsed]
+module.eks.module.eks_managed_node_group["default"].aws_eks_node_group.this[0]: Still destroying... [id=adwc-dev:default-20260617235554809400000003, 04m30s elapsed]
+module.eks.module.eks_managed_node_group["default"].aws_eks_node_group.this[0]: Still destroying... [id=adwc-dev:default-20260617235554809400000003, 04m40s elapsed]
+module.eks.module.eks_managed_node_group["default"].aws_eks_node_group.this[0]: Still destroying... [id=adwc-dev:default-20260617235554809400000003, 04m50s elapsed]
+module.eks.module.eks_managed_node_group["default"].aws_eks_node_group.this[0]: Still destroying... [id=adwc-dev:default-20260617235554809400000003, 05m00s elapsed]
+module.eks.module.eks_managed_node_group["default"].aws_eks_node_group.this[0]: Still destroying... [id=adwc-dev:default-20260617235554809400000003, 05m10s elapsed]
+module.eks.module.eks_managed_node_group["default"].aws_eks_node_group.this[0]: Still destroying... [id=adwc-dev:default-20260617235554809400000003, 05m20s elapsed]
+module.eks.module.eks_managed_node_group["default"].aws_eks_node_group.this[0]: Still destroying... [id=adwc-dev:default-20260617235554809400000003, 05m30s elapsed]
+module.eks.module.eks_managed_node_group["default"].aws_eks_node_group.this[0]: Still destroying... [id=adwc-dev:default-20260617235554809400000003, 05m40s elapsed]
+module.eks.module.eks_managed_node_group["default"].aws_eks_node_group.this[0]: Still destroying... [id=adwc-dev:default-20260617235554809400000003, 05m50s elapsed]
+module.eks.module.eks_managed_node_group["default"].aws_eks_node_group.this[0]: Still destroying... [id=adwc-dev:default-20260617235554809400000003, 06m00s elapsed]
+module.eks.module.eks_managed_node_group["default"].aws_eks_node_group.this[0]: Still destroying... [id=adwc-dev:default-20260617235554809400000003, 06m10s elapsed]
+module.eks.module.eks_managed_node_group["default"].aws_eks_node_group.this[0]: Destruction complete after 6m12s
+module.eks.module.eks_managed_node_group["default"].aws_launch_template.this[0]: Destroying... [id=lt-02b1b331fca034251]
+module.eks.module.eks_managed_node_group["default"].aws_launch_template.this[0]: Destruction complete after 1s
+module.eks.module.eks_managed_node_group["default"].aws_iam_role_policy_attachment.this["AmazonEC2ContainerRegistryReadOnly"]: Destroying... [id=default-eks-node-group-20260617230943534000000002/arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly]
+module.eks.module.eks_managed_node_group["default"].aws_iam_role_policy_attachment.this["AmazonEKSWorkerNodePolicy"]: Destroying... [id=default-eks-node-group-20260617230943534000000002/arn:aws:iam::aws:policy/AmazonEKSWorkerNodePolicy]
+module.eks.module.eks_managed_node_group["default"].aws_iam_role_policy_attachment.this["AmazonEKS_CNI_Policy"]: Destroying... [id=default-eks-node-group-20260617230943534000000002/arn:aws:iam::aws:policy/AmazonEKS_CNI_Policy]
+module.eks.time_sleep.this[0]: Destroying... [id=2026-06-17T23:20:45Z]
+module.eks.time_sleep.this[0]: Destruction complete after 0s
+module.eks.aws_eks_cluster.this[0]: Destroying... [id=adwc-dev]
+module.eks.module.eks_managed_node_group["default"].aws_iam_role_policy_attachment.this["AmazonEKSWorkerNodePolicy"]: Destruction complete after 0s
+module.eks.module.eks_managed_node_group["default"].aws_iam_role_policy_attachment.this["AmazonEC2ContainerRegistryReadOnly"]: Destruction complete after 0s
+module.eks.module.eks_managed_node_group["default"].aws_iam_role_policy_attachment.this["AmazonEKS_CNI_Policy"]: Destruction complete after 0s
+module.eks.module.eks_managed_node_group["default"].aws_iam_role.this[0]: Destroying... [id=default-eks-node-group-20260617230943534000000002]
+module.eks.module.eks_managed_node_group["default"].aws_iam_role.this[0]: Destruction complete after 0s
+module.eks.aws_eks_cluster.this[0]: Still destroying... [id=adwc-dev, 00m10s elapsed]
+module.eks.aws_eks_cluster.this[0]: Still destroying... [id=adwc-dev, 00m20s elapsed]
+module.eks.aws_eks_cluster.this[0]: Still destroying... [id=adwc-dev, 00m30s elapsed]
+module.eks.aws_eks_cluster.this[0]: Still destroying... [id=adwc-dev, 00m40s elapsed]
+module.eks.aws_eks_cluster.this[0]: Still destroying... [id=adwc-dev, 00m50s elapsed]
+module.eks.aws_eks_cluster.this[0]: Still destroying... [id=adwc-dev, 01m00s elapsed]
+module.eks.aws_eks_cluster.this[0]: Still destroying... [id=adwc-dev, 01m10s elapsed]
+module.eks.aws_eks_cluster.this[0]: Still destroying... [id=adwc-dev, 01m20s elapsed]
+module.eks.aws_eks_cluster.this[0]: Still destroying... [id=adwc-dev, 01m30s elapsed]
+module.eks.aws_eks_cluster.this[0]: Still destroying... [id=adwc-dev, 01m40s elapsed]
+module.eks.aws_eks_cluster.this[0]: Still destroying... [id=adwc-dev, 01m50s elapsed]
+module.eks.aws_eks_cluster.this[0]: Still destroying... [id=adwc-dev, 02m00s elapsed]
+module.eks.aws_eks_cluster.this[0]: Still destroying... [id=adwc-dev, 02m10s elapsed]
+module.eks.aws_eks_cluster.this[0]: Still destroying... [id=adwc-dev, 02m20s elapsed]
+module.eks.aws_eks_cluster.this[0]: Still destroying... [id=adwc-dev, 02m30s elapsed]
+module.eks.aws_eks_cluster.this[0]: Still destroying... [id=adwc-dev, 02m40s elapsed]
+module.eks.aws_eks_cluster.this[0]: Still destroying... [id=adwc-dev, 02m50s elapsed]
+module.eks.aws_eks_cluster.this[0]: Still destroying... [id=adwc-dev, 03m00s elapsed]
+module.eks.aws_eks_cluster.this[0]: Still destroying... [id=adwc-dev, 03m10s elapsed]
+module.eks.aws_eks_cluster.this[0]: Destruction complete after 3m19s
+module.eks.aws_iam_role_policy_attachment.this["AmazonEKSClusterPolicy"]: Destroying... [id=adwc-dev-cluster-20260617230943528000000001/arn:aws:iam::aws:policy/AmazonEKSClusterPolicy]
+module.eks.aws_security_group_rule.node["ingress_cluster_6443_webhook"]: Destroying... [id=sgrule-3027297394]
+module.eks.aws_security_group_rule.node["ingress_cluster_9443_webhook"]: Destroying... [id=sgrule-3280858008]
+module.eks.aws_security_group_rule.node["egress_all"]: Destroying... [id=sgrule-99128491]
+module.eks.aws_security_group_rule.node["ingress_nodes_ephemeral"]: Destroying... [id=sgrule-1169492931]
+module.eks.module.kms.aws_kms_key.this[0]: Destroying... [id=7533b18b-c344-46a7-b86d-ca0e95a38097]
+module.eks.aws_security_group_rule.node["ingress_cluster_8443_webhook"]: Destroying... [id=sgrule-2804734035]
+module.eks.aws_security_group_rule.cluster["ingress_nodes_443"]: Destroying... [id=sgrule-1389106628]
+module.eks.aws_security_group_rule.node["ingress_self_coredns_udp"]: Destroying... [id=sgrule-3454273791]
+module.vpc.aws_subnet.private[1]: Destroying... [id=subnet-0c1784643603c3db2]
+module.eks.aws_iam_role_policy_attachment.this["AmazonEKSClusterPolicy"]: Destruction complete after 0s
+module.eks.aws_security_group_rule.node["ingress_cluster_10251_webhook"]: Destroying... [id=sgrule-2751324493]
+module.eks.module.kms.aws_kms_key.this[0]: Destruction complete after 1s
+module.eks.aws_security_group_rule.node["ingress_self_coredns_tcp"]: Destroying... [id=sgrule-1773906704]
+module.eks.aws_security_group_rule.node["egress_all"]: Destruction complete after 1s
+module.eks.aws_security_group_rule.node["ingress_cluster_kubelet"]: Destroying... [id=sgrule-2545201462]
+module.eks.aws_security_group_rule.cluster["ingress_nodes_443"]: Destruction complete after 1s
+module.vpc.aws_subnet.private[0]: Destroying... [id=subnet-029fc62ff1558d2e9]
+module.vpc.aws_subnet.private[1]: Destruction complete after 1s
+module.eks.aws_cloudwatch_log_group.this[0]: Destroying... [id=/aws/eks/adwc-dev/cluster]
+module.eks.aws_security_group_rule.node["ingress_cluster_9443_webhook"]: Destruction complete after 2s
+module.eks.aws_security_group_rule.node["ingress_cluster_4443_webhook"]: Destroying... [id=sgrule-2100462564]
+module.vpc.aws_subnet.private[0]: Destruction complete after 1s
+module.eks.aws_security_group_rule.node["ingress_cluster_443"]: Destroying... [id=sgrule-4129515779]
+module.eks.aws_cloudwatch_log_group.this[0]: Destruction complete after 1s
+module.eks.aws_iam_role.this[0]: Destroying... [id=adwc-dev-cluster-20260617230943528000000001]
+module.eks.aws_iam_role.this[0]: Destruction complete after 0s
+module.eks.aws_security_group_rule.node["ingress_nodes_ephemeral"]: Destruction complete after 2s
+module.eks.aws_security_group_rule.node["ingress_cluster_6443_webhook"]: Destruction complete after 3s
+module.eks.aws_security_group_rule.node["ingress_cluster_8443_webhook"]: Destruction complete after 4s
+module.eks.aws_security_group_rule.node["ingress_self_coredns_udp"]: Destruction complete after 4s
+module.eks.aws_security_group_rule.node["ingress_cluster_10251_webhook"]: Destruction complete after 5s
+module.eks.aws_security_group_rule.node["ingress_self_coredns_tcp"]: Destruction complete after 5s
+module.eks.aws_security_group_rule.node["ingress_cluster_kubelet"]: Destruction complete after 5s
+module.eks.aws_security_group_rule.node["ingress_cluster_4443_webhook"]: Destruction complete after 5s
+module.eks.aws_security_group_rule.node["ingress_cluster_443"]: Destruction complete after 5s
+module.eks.aws_security_group.cluster[0]: Destroying... [id=sg-0e288feb9020ee139]
+module.eks.aws_security_group.node[0]: Destroying... [id=sg-0202f0ccabee416d1]
+module.eks.aws_security_group.cluster[0]: Destruction complete after 1s
+module.eks.aws_security_group.node[0]: Destruction complete after 1s
+module.vpc.aws_vpc.this[0]: Destroying... [id=vpc-0d0d3c8b132458fe2]
+module.vpc.aws_vpc.this[0]: Destruction complete after 1s
+
+Destroy complete! Resources: 55 destroyed.

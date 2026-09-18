@@ -1,0 +1,61 @@
+Current context: arn:aws:eks:us-west-2:891472436879:cluster/student135
+Installing AWS Load Balancer Controller (cluster=student135 vpc=vpc-0035c740d3efc1f41)...
+Release "aws-load-balancer-controller" does not exist. Installing it now.
+NAME: aws-load-balancer-controller
+LAST DEPLOYED: Wed Jul 22 21:08:27 2026
+NAMESPACE: kube-system
+STATUS: deployed
+REVISION: 1
+DESCRIPTION: Install complete
+TEST SUITE: None
+NOTES:
+AWS Load Balancer controller installed!
+Applying the default gp3 StorageClass...
+storageclass.storage.k8s.io/gp3 created
+Installing in-cluster Gitea...
+Release "gitea" does not exist. Installing it now.
+NAME: gitea
+LAST DEPLOYED: Wed Jul 22 21:08:54 2026
+NAMESPACE: gitea
+STATUS: deployed
+REVISION: 1
+DESCRIPTION: Install complete
+NOTES:
+1. Get the application URL by running these commands:
+  echo "Visit http://127.0.0.1:3000 to use your application"
+  kubectl --namespace gitea port-forward svc/gitea-http 3000:3000
+2. Review these warnings:
+  - Gitea uses 'memory' for caching which is not recommended for production use. See https://docs.gitea.com/next/administration/config-cheat-sheet#cache-cache for available options.
+  - Gitea uses 'leveldb' for queue actions which is not recommended for production use. See https://docs.gitea.com/next/administration/config-cheat-sheet#queue-queue-and-queue for available options.
+  - Gitea uses 'memory' for sessions which is not recommended for production use. See https://docs.gitea.com/next/administration/config-cheat-sheet#session-session for available options.
+Seeding Gitea with the platform manifests...
+job.batch/gitea-seed-platform created
+job.batch/gitea-seed-platform condition met
+building a clean tree from the manifests
+pushing to Gitea
+remote: . Processing 1 references        
+remote: Processed 1 references in total        
+verifying the push is readable anonymously (ArgoCD reads it with no credential)
+seed complete: http://gitea-http.gitea.svc:3000/platform/packt-agentic-devops.git @ main
+Applying VTT manifest...
+namespace/workshop configured
+serviceaccount/web-terminal created
+persistentvolumeclaim/student-claude created
+clusterrolebinding.rbac.authorization.k8s.io/console-terminal created
+deployment.apps/web-terminal created
+service/web-terminal created
+ConfigMap console-src <- web/lab.html, web/diagram.html
+configmap/console-src created
+ConfigMap console-conf <- default.conf=/home/michael/repos/events/Packt-agentic-devops/scripts/provision/vtt/web/console.conf
+configmap/console-conf created
+ConfigMap status-src <- status-loop.sh=/home/michael/repos/events/Packt-agentic-devops/scripts/provision/vtt/web/status-loop.sh
+configmap/status-src created
+Rolling the deployment to pick up the ConfigMaps...
+deployment.apps/web-terminal restarted
+Waiting for deployment "web-terminal" rollout to finish: 0 out of 1 new replicas have been updated...
+Waiting for deployment "web-terminal" rollout to finish: 0 out of 1 new replicas have been updated...
+Waiting for deployment "web-terminal" rollout to finish: 0 out of 1 new replicas have been updated...
+Waiting for deployment "web-terminal" rollout to finish: 0 of 1 updated replicas are available...
+deployment "web-terminal" successfully rolled out
+
+VTT is live: http://k8s-workshop-webtermi-93bdd599fa-968b8b6271ca4f7d.elb.us-west-2.amazonaws.com/

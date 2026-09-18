@@ -8,7 +8,7 @@
 - The AI-plane Kyverno policies flipped from Audit to Enforce
 - A live denial: an attempt to apply a violating agent manifest (for example an agent with no LLM Guard policy reference, or an image outside the allowlist) is blocked by Kyverno, shown on screen
 - A Loki query showing every action attributed to a named agent identity, including the building agent's own session via the audit hook
-- The commitment mechanic: each attendee posts one specific change they will make in their platform within 30 days
+- One specific change you intend to make in your own platform within 30 days, written down
 
 **Test criteria (tests/test_phase_8_governance.py):**
 - The AI-plane policies are in Enforce mode
@@ -23,4 +23,4 @@
 - The denial is deterministic: the violating fixture lives in the repo, and the reset script restores known-good policy state.
 - Attribution covers the building agent itself, the point of the beat: the agent that built the platform appears in the platform's own audit trail.
 
-**Stop here.** This is the final phase. Output both promises only when every phase test passes. The presenter runs the commitment mechanic.
+**Stop here.** This is the final phase. Output both promises only when every phase test passes.

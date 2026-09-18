@@ -3,17 +3,19 @@
 
 # Reference material
 
-These three documents were written while the platform was being built, and they are published
-because the claims elsewhere in this repo lean on them. A version pin or an architectural assertion
+These documents were written while the platform was being built, and they are published because
+the claims elsewhere in this repo lean on them. A version pin or an architectural assertion
 with no traceable source is a guess, and the point of keeping these is that you can check the
 working rather than take the conclusion.
 
 | File | What it is |
 |---|---|
-| [`build-spec.md`](build-spec.md) | The full build specification the agent worked from, phase by phase |
 | [`research-findings-june-2026.md`](research-findings-june-2026.md) | Verification of every pinned version against upstream, with the gotchas found along the way |
 | [`decisions.md`](decisions.md) | Locked architectural decisions and the reasoning, including the ones later reversed |
-| [`research-student-aws-scope-july-2026.md`](research-student-aws-scope-july-2026.md) | How the per-attendee AWS permission scope was derived, with sources |
+
+The build specification these were written alongside is not published: it is written end to end for
+a live event, in its own terms, and what a reader needs from it is in
+[`../architecture.md`](../architecture.md). See [`../what-is-not-included.md`](../what-is-not-included.md).
 
 Two things to read them with in mind.
 

@@ -76,5 +76,5 @@ spec:
         maxDuration: 3m
 # Built with the new backend system and the New Frontend System (default since
 # v1.49.0). Scaffolder templates use scaffolder.backstage.io/v1beta3 (Nunjucks).
-# Presenter cluster runs real GitHub OAuth; attendee clusters run guest auth with
-# the OAuth wiring present but commented (see build-spec 6.5).
+# Guest auth is the default, with the GitHub OAuth wiring present but commented out.
+# Switch it on if you have an OAuth app; the catalog and scaffolder work either way.
