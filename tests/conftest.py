@@ -4,6 +4,7 @@ import json
 import os
 import re
 import subprocess
+import time
 
 import pytest
 
@@ -114,3 +115,61 @@ def incluster_curl(url, *curl_args, ns="default", timeout=120):
         check=False, timeout=timeout,
     )
     return _clean_curl_output(res.stdout)
+
+# The A2A endpoint of the reference agent. kagent creates one Service per Agent, named after the
+# agent, on 8080.
+AGENT_A2A_URL = "http://platform-helper.kagent.svc:8080/"
+
+
+def _a2a_message(text, message_id):
+    return json.dumps({
+        "jsonrpc": "2.0",
+        "id": message_id,
+        "method": "message/send",
+        "params": {
+            "message": {
+                "role": "user",
+                "messageId": message_id,
+                "kind": "message",
+                "parts": [{"kind": "text", "text": text}],
+            }
+        },
+    })
+
+
+@pytest.fixture(scope="session")
+def agent_traffic():
+    """Drive one real agent turn, then wait for its spans to reach Tempo.
+
+    Trace assertions used to read whatever happened to be in Tempo already, so they passed or
+    failed on how recently somebody had poked the agent. On 2026-09-17 the same assertions passed
+    at 22:40 and failed at 23:20 with nothing about the platform having changed. A reader running
+    the suite on a freshly built cluster would have seen a red trace test and concluded the
+    observability plane was broken.
+
+    A test that asserts on telemetry has to produce the telemetry. This asks the agent to use a
+    tool, so the turn generates the agent span, the model span and the tool span together.
+    """
+    incluster_curl(
+        AGENT_A2A_URL,
+        "-X", "POST", "-H", "Content-Type: application/json",
+        "--data", _a2a_message("Call the echo tool with text TRACE-PROBE.", "m-trace-probe"),
+        ns="kagent", timeout=300,
+    )
+
+    deadline = time.time() + 120
+    while time.time() < deadline:
+        found = incluster_curl(
+            "http://tempo.observability.svc:3200/api/search",
+            "--get", "--data-urlencode", 'q={ span.gen_ai.operation.name != "" }',
+            ns="observability",
+        )
+        if "traceID" in found:
+            return
+        time.sleep(10)
+
+    pytest.fail(
+        "drove an agent turn but no gen_ai span reached Tempo within 120s. Agent tracing is off by "
+        "default in the kagent chart; check OTEL_TRACING_ENABLED on the agent pod before "
+        "suspecting the collector or Tempo."
+    )

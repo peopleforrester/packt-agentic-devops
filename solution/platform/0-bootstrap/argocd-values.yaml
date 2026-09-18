@@ -16,6 +16,21 @@
 # condition that matters, and it is what the workshop depends on.
 configs:
   cm:
+    # A local ArgoCD account for Backstage's argo-cd plugin, with apiKey capability.
+    #
+    # The seed job used to authenticate Backstage with a SESSION token from POST /api/v1/session.
+    # Those expire (24h by default) and nothing re-mints them, so the portal's ArgoCD tab silently
+    # starts returning `invalid session: token has invalid claims: token is expired` about a day
+    # after the cluster is built. Found on a 36-hour-old cluster; a four-hour workshop never sees
+    # it, and a reader working through the book over a weekend sees nothing else.
+    #
+    # An account token from POST /api/v1/account/backstage/token carries no `exp` claim at all.
+    # Verified by decoding one: {"iss":"argocd","sub":"backstage:apiKey","nbf":...,"iat":...,
+    # "jti":...} and the applications API answers 200 with it.
+    #
+    # It is also the smaller grant. Backstage was holding an admin session to read a list of
+    # Applications; this account can do nothing else, which is what the RBAC below says.
+    accounts.backstage: apiKey
     resource.customizations.health.serving.kserve.io_InferenceService: |
       hs = {}
       if obj.status ~= nil and obj.status.conditions ~= nil then
@@ -75,3 +90,9 @@ configs:
       hs.status = "Progressing"
       hs.message = "Waiting for the agent to report Ready"
       return hs
+  rbac:
+    # Read-only, and only the two resources the plugin reads. `g,` binds the account to the role.
+    policy.csv: |
+      p, role:backstage-readonly, applications, get, */*, allow
+      p, role:backstage-readonly, projects, get, *, allow
+      g, backstage, role:backstage-readonly

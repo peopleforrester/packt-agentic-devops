@@ -38,7 +38,7 @@ def test_injection_fixture_blocked_by_llm_guard():
 
 
 @pytest.mark.integration
-def test_gen_ai_spans_reach_collector():
+def test_gen_ai_spans_reach_collector(agent_traffic):
     """Agent spans must reach Tempo, matched on the gen_ai ATTRIBUTE, not the span name.
 
     This queried `{ name =~ "gen_ai.*" }` and could never have passed, on any cluster, however
@@ -63,7 +63,7 @@ def test_gen_ai_spans_reach_collector():
 
 
 @pytest.mark.integration
-def test_agent_and_tool_calls_are_separately_traced():
+def test_agent_and_tool_calls_are_separately_traced(agent_traffic):
     """The agent turn and the tool call must be distinguishable spans.
 
     A single span covering the whole turn would satisfy the check above while telling an operator
