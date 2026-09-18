@@ -31,6 +31,7 @@ components:
 
   # --- Foundation: developer portal ---
   - name: backstage
+    display_name: "Backstage"
     plane: foundation
     project_url: https://backstage.io
     install_method: helm
@@ -59,6 +60,7 @@ components:
 
   # --- Foundation: GitOps and the Argo stack ---
   - name: argo-cd
+    display_name: "Argo CD"
     plane: foundation
     project_url: https://argo-cd.readthedocs.io
     install_method: helm
@@ -73,6 +75,7 @@ components:
       since 3.0. Bootstrap with kubectl apply --server-side --force-conflicts.
 
   - name: argo-workflows
+    display_name: "Argo Workflows"
     plane: foundation
     project_url: https://argo-workflows.readthedocs.io
     install_method: helm
@@ -85,6 +88,7 @@ components:
     notes: v4.0 removed the Python SDK and singular sync primitives. Full-validation CRDs are large; install server-side.
 
   - name: argo-events
+    display_name: "Argo Events"
     plane: foundation
     project_url: https://argoproj.github.io/argo-events
     install_method: helm
@@ -97,6 +101,7 @@ components:
     notes: Confirm the bundled appVersion before the freeze; the chart can lag the upstream tag.
 
   - name: argo-rollouts
+    display_name: "Argo Rollouts"
     plane: foundation
     project_url: https://argo-rollouts.readthedocs.io
     install_method: helm
@@ -110,6 +115,7 @@ components:
 
   # --- Foundation: secrets, policy, scaling ---
   - name: openbao
+    display_name: "OpenBao"
     plane: foundation
     project_url: https://openbao.org
     install_method: helm
@@ -127,6 +133,7 @@ components:
       ClusterSecretStore (vault provider) and a seed Job live in openbao-config.
 
   - name: external-secrets
+    display_name: "External Secrets Operator"
     plane: foundation
     project_url: https://external-secrets.io
     install_method: helm
@@ -141,6 +148,7 @@ components:
       to v1 or Argo CD will show drift from auto-converted objects.
 
   - name: cert-manager
+    display_name: "cert-manager"
     plane: foundation
     project_url: https://cert-manager.io
     install_method: helm-oci
@@ -153,6 +161,7 @@ components:
     notes: CNCF Graduated. v1.20 dropped K8s < 1.31.
 
   - name: kyverno
+    display_name: "Kyverno"
     plane: foundation
     project_url: https://kyverno.io
     install_method: helm
@@ -168,6 +177,7 @@ components:
       wrap module for AI-plane policies (B16).
 
   - name: keda
+    display_name: "KEDA"
     plane: foundation
     project_url: https://keda.sh
     install_method: helm
@@ -180,6 +190,7 @@ components:
     notes: CNCF Graduated.
 
   - name: score
+    display_name: "Score (CLI)"
     plane: foundation
     project_url: https://score.dev
     install_method: cli
@@ -195,6 +206,7 @@ components:
 
   # --- Foundation: EKS-native ingress, load balancing, storage ---
   - name: aws-load-balancer-controller
+    display_name: "AWS Load Balancer Controller"
     plane: foundation
     project_url: https://kubernetes-sigs.github.io/aws-load-balancer-controller
     install_method: helm
@@ -211,6 +223,7 @@ components:
       the 3.x line before the freeze.
 
   - name: aws-ebs-csi-driver
+    display_name: "AWS EBS CSI driver"
     plane: foundation
     project_url: https://kubernetes-sigs.github.io/aws-ebs-csi-driver
     install_method: helm
@@ -224,6 +237,7 @@ components:
 
   # --- Foundation: observability ---
   - name: kube-prometheus-stack
+    display_name: "kube-prometheus-stack"
     plane: foundation
     project_url: https://github.com/prometheus-community/helm-charts
     install_method: helm
@@ -249,6 +263,7 @@ components:
         version: "4.55.0"
 
   - name: loki
+    display_name: "Loki"
     plane: foundation
     project_url: https://grafana.com/oss/loki
     install_method: helm
@@ -264,6 +279,7 @@ components:
       per-agent attribution beat (B17).
 
   - name: tempo
+    display_name: "Tempo"
     plane: foundation
     project_url: https://grafana.com/oss/tempo
     install_method: helm
@@ -296,6 +312,7 @@ components:
       paid to find.
 
   - name: opentelemetry-collector
+    display_name: "OTel Collector"
     plane: foundation
     project_url: https://opentelemetry.io
     install_method: helm
@@ -308,6 +325,7 @@ components:
     notes: CNCF Graduated (May 2026).
 
   - name: opentelemetry-operator
+    display_name: "OTel Operator"
     plane: foundation
     project_url: https://opentelemetry.io
     install_method: helm
@@ -321,6 +339,7 @@ components:
 
   # --- Foundation: Gateway API prerequisite ---
   - name: gateway-api
+    display_name: "Gateway API"
     plane: foundation
     project_url: https://gateway-api.sigs.k8s.io
     install_method: kubectl
@@ -336,6 +355,7 @@ components:
 
   # --- AI plane ---
   - name: kgateway
+    display_name: "kgateway"
     plane: ai
     project_url: https://kgateway.dev
     install_method: helm-oci
@@ -350,6 +370,7 @@ components:
       gateway.kgateway.dev/v1alpha1. Can also serve as the platform Gateway API ingress.
 
   - name: agentgateway
+    display_name: "agentgateway"
     plane: ai
     project_url: https://agentgateway.dev
     install_method: helm-oci
@@ -367,6 +388,7 @@ components:
       exact CRD Kind names against live docs before the freeze.
 
   - name: kagent
+    display_name: "kagent"
     plane: ai
     project_url: https://kagent.dev
     install_method: helm-oci
@@ -382,6 +404,7 @@ components:
       Demo agent ModelConfig points at in-cluster vLLM (see build-spec 6.7).
 
   - name: llm-guard
+    display_name: "LLM Guard"
     plane: ai
     project_url: https://github.com/protectai/llm-guard
     install_method: library
@@ -405,6 +428,7 @@ components:
       known-good config, treat as a fixed dependency. Powers the injection block (B09).
 
   - name: openllmetry
+    display_name: "OpenLLMetry"
     plane: ai
     project_url: https://github.com/traceloop/openllmetry
     install_method: library
@@ -419,6 +443,7 @@ components:
       semantic conventions (Development grade) to the OTel collector.
 
   - name: kserve
+    display_name: "KServe"
     plane: ai
     project_url: https://kserve.github.io/website
     install_method: helm-oci
@@ -434,6 +459,7 @@ components:
       LLMInferenceService (v1alpha1) path.
 
   - name: vllm
+    display_name: "vLLM"
     plane: ai
     project_url: https://docs.vllm.ai
     install_method: kubectl
@@ -451,6 +477,7 @@ components:
       qwen3-1.7b. Served via KServe.
 
   - name: llm-d
+    display_name: "llm-d"
     plane: ai
     project_url: https://llm-d.ai
     install_method: kustomize
@@ -466,6 +493,7 @@ components:
       scheduling layer (B12), architecture on screen rather than a deep demo.
 
   - name: mcp-server
+    display_name: "MCP demo server"
     plane: ai
     project_url: https://modelcontextprotocol.io
     install_method: kubectl
@@ -483,6 +511,7 @@ components:
 
   # --- Self-service ---
   - name: gitea
+    display_name: "Gitea"
     plane: self-service
     project_url: https://gitea.com
     install_method: helm
@@ -499,6 +528,7 @@ components:
       an API token (gitea-scm-token in argocd) for the ApplicationSet and Backstage.
 
   - name: self-service-templates
+    display_name: "Self-service templates"
     plane: self-service
     project_url: https://backstage.io/docs/features/software-templates
     install_method: kubectl

@@ -51,10 +51,14 @@ def test_chat_completions_answers_with_served_model():
 
 
 @pytest.mark.integration
-def test_inference_trace_has_model_and_tokens():
+def test_inference_trace_has_model_and_tokens(agent_traffic):
     found = incluster_curl(
         "http://tempo.observability.svc:3200/api/search",
         "--get", "--data-urlencode", 'q={ span.gen_ai.request.model != "" }',
         ns="observability",
     )
-    assert "traceID" in found, "no trace with gen_ai.request.model found in Tempo"
+    assert "traceID" in found, (
+        "no trace with gen_ai.request.model in Tempo, despite the agent_traffic fixture having "
+        "driven a turn and confirmed a gen_ai span landed. That points at the model span "
+        "specifically rather than at the tracing pipeline."
+    )

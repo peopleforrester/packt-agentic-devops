@@ -33,7 +33,11 @@ spec:
       promptGuard:
         request:
           - webhook:
+              # Reject is the default, and it is the whole point of the policy: a guardrail
+              # whose behaviour on a detection is implicit is a guardrail nobody can audit.
+              action: Reject
               backendRef:
+                group: ""
                 kind: Service
                 name: llm-guard-adapter
                 namespace: kagent
@@ -41,7 +45,11 @@ spec:
               failureMode: FailClosed
         response:
           - webhook:
+              # Reject is the default, and it is the whole point of the policy: a guardrail
+              # whose behaviour on a detection is implicit is a guardrail nobody can audit.
+              action: Reject
               backendRef:
+                group: ""
                 kind: Service
                 name: llm-guard-adapter
                 namespace: kagent

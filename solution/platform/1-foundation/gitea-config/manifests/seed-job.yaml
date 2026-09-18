@@ -92,8 +92,24 @@ spec:
 
               # Assemble the backstage-integrations Secret Backstage reads: the Gitea creds
               # (username + the admin password, used as the integration password) and a fresh
-              # ArgoCD API token for the argo-cd plugin. The ArgoCD admin password is read from
-              # its initial-admin Secret; the token is a session token (re-minted each provision).
+              # ArgoCD API token for the argo-cd plugin.
+              #
+              # THIS MUST BE AN ACCOUNT TOKEN, NOT A SESSION TOKEN. POST /api/v1/session returns a
+              # JWT that expires (24h by default), and nothing here re-mints it, so Backstage's
+              # ArgoCD tab starts answering
+              #   invalid session: token has invalid claims: token is expired
+              # roughly a day after the cluster is built. A four-hour workshop never reaches that
+              # point; a reader working through the book over a weekend sees nothing else. Found on
+              # a 36-hour-old cluster.
+              #
+              # POST /api/v1/account/<name>/token with no expiresIn returns a token carrying no
+              # `exp` claim at all. Verified by decoding one:
+              #   {"iss":"argocd","sub":"backstage:apiKey","nbf":...,"iat":...,"jti":...}
+              #
+              # The admin session below is still needed, but only to authorise the mint. What
+              # Backstage ends up holding is the `backstage` account's read-only token, not an
+              # admin session, which is also the smaller grant: see accounts.backstage and the
+              # policy.csv in 0-bootstrap/argocd-values.yaml.
               echo "minting an ArgoCD token for Backstage"
               until curl -fsSk "${ARGOCD_SERVER}/api/version" >/dev/null 2>&1; do echo "waiting for ArgoCD API..."; sleep 5; done
               # The k8s API returns pretty-printed JSON, so compact the whitespace before the
@@ -103,12 +119,36 @@ spec:
                 "${api}/api/v1/namespaces/argocd/secrets/argocd-initial-admin-secret" \
                 | tr -d '\n\r\t ' | grep -o '"password":"[^"]*"' | head -1 \
                 | sed 's/"password":"//;s/"$//' | base64 -d)"
-              atoken="$(curl -sSk -X POST "${ARGOCD_SERVER}/api/v1/session" \
+              asession="$(curl -sSk -X POST "${ARGOCD_SERVER}/api/v1/session" \
                 -H 'Content-Type: application/json' \
                 -d "{\"username\":\"admin\",\"password\":\"${apw}\"}" \
                 | tr -d '\n\r\t ' | grep -o '"token":"[^"]*"' | head -1 \
                 | sed 's/"token":"//;s/"$//')"
-              [ -n "${atoken}" ] || { echo "ERROR: no ArgoCD token returned" >&2; exit 1; }
+              [ -n "${asession}" ] || { echo "ERROR: ArgoCD admin login failed" >&2; exit 1; }
+
+              # The non-expiring account token. An empty body means no expiresIn, which is what
+              # leaves the `exp` claim off.
+              atoken="$(curl -sSk -X POST "${ARGOCD_SERVER}/api/v1/account/backstage/token" \
+                -H "Authorization: Bearer ${asession}" \
+                -H 'Content-Type: application/json' -d '{}' \
+                | tr -d '\n\r\t ' | grep -o '"token":"[^"]*"' | head -1 \
+                | sed 's/"token":"//;s/"$//')"
+              [ -n "${atoken}" ] || {
+                echo "ERROR: could not mint a backstage account token." >&2
+                echo "  accounts.backstage: apiKey must be set in argocd-cm, and argocd-server" >&2
+                echo "  must have restarted since. See 0-bootstrap/argocd-values.yaml." >&2
+                exit 1
+              }
+
+              # Refuse to ship a token that will expire. Silently writing one puts the portal on a
+              # 24-hour timer that nothing reports, which is the failure this whole block exists to
+              # prevent.
+              claims="$(echo "${atoken}" | cut -d. -f2)"
+              case $(( ${#claims} % 4 )) in 2) claims="${claims}==" ;; 3) claims="${claims}=" ;; esac
+              if echo "${claims}" | base64 -d 2>/dev/null | grep -q '"exp"'; then
+                echo "ERROR: the ArgoCD token carries an exp claim and will expire." >&2
+                exit 1
+              fi
 
               echo "writing backstage-integrations into backstage"
               curl -sS --cacert "${ca}" -H "Authorization: Bearer ${ka}" -X DELETE \

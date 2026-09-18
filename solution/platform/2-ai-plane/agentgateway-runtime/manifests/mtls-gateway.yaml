@@ -55,9 +55,24 @@ spec:
       default:
         validation:
           mode: AllowValidOnly
+          # The CA cert-manager mints in mtls-certs.yaml. Gateway API requires implementations to
+          # support ConfigMap here and leaves Secret optional, so this is an agentgateway-specific
+          # choice, not a portable one. It is taken because cert-manager writes its CA to a Secret
+          # and nothing else has to exist to copy it into a ConfigMap: no trust-manager, no seed
+          # Job, nothing to drift.
+          #
+          # Verified on agentgateway v1.5.0 on 2026-09-17, with a negative control rather than
+          # from the status alone. Pointed at a name that does not exist, the listener reports
+          # `invalid CA certificate reference, secret agentgateway/does-not-exist not found`;
+          # pointed back at the real Secret it returns to Accepted=True with an empty message. So
+          # the reference is genuinely resolved and the earlier Accepted was not stale status.
+          #
+          # If this ever moves to a different Gateway implementation, check that it reads Secrets
+          # here before assuming this keeps working, and fall back to a ConfigMap plus a mechanism
+          # to fill it.
           caCertificateRefs:
-            - name: agentgateway-client-ca
-              kind: ConfigMap
+            - name: agentgateway-ca-tls
+              kind: Secret
               group: ""
   listeners:
     - name: https
@@ -66,8 +81,11 @@ spec:
       tls:
         mode: Terminate
         certificateRefs:
-          - name: agentgateway-server-tls
+          # group "" is the core API group and is a CRD default; written out for the same
+          # reason as the parentRef fields in the routes.
+          - group: ""
             kind: Secret
+            name: agentgateway-server-tls
       allowedRoutes:
         namespaces:
           # Selector, matching the plaintext Gateway: the generated agent routes live in kagent, and

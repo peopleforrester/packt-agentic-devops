@@ -39,6 +39,35 @@ spec:
         cilium-manager-agent: { enabled: false }
         cilium-debug-agent: { enabled: false }
         querydoc: { enabled: false }
+        # AGENT TRACING IS OFF BY DEFAULT IN THIS CHART, AND NOTHING ELSE TURNS IT ON.
+        #
+        # The AI plane's observability story is that agent calls produce gen_ai.* spans in Tempo.
+        # They did not, and the reason was not subtle once measured: the agent pod carried
+        # OTEL_TRACING_ENABLED=false and OTEL_LOGGING_ENABLED=false, which are the chart defaults.
+        #
+        # The repo was relying on `instrumentation.opentelemetry.io/inject-python` on the Agent CR
+        # instead, and that annotation cannot work here on three separate counts. The agent runs
+        # ghcr.io/kagent-dev/kagent/golang-adk, a Go binary, so the Python instrumentation would
+        # not attach to it. The kagent controller does not copy the Agent CR's annotations onto the
+        # Deployment it generates, so the OTel Operator never sees it. And no Instrumentation
+        # resource exists in the cluster for the operator to act on even if it did.
+        #
+        # kagent exports natively, so this is the path that works. The annotation stays because a
+        # Kyverno policy requires it, but it is not what produces the traces.
+        otel:
+          tracing:
+            enabled: true
+            exporter:
+              otlp:
+                endpoint: opentelemetry-collector.observability.svc.cluster.local:4317
+                protocol: grpc
+                insecure: true
+          logging:
+            enabled: true
+            exporter:
+              otlp:
+                endpoint: opentelemetry-collector.observability.svc.cluster.local:4317
+                insecure: true
   destination:
     server: https://kubernetes.default.svc
     namespace: kagent

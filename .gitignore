@@ -46,3 +46,5 @@ defects/.close/
 # declares no runtime dependencies, so the lock is noise.
 pool.db
 uv.lock
+.claude/settings.local.json
+.claude/settings.local.json.tmp.*
