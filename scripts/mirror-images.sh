@@ -15,7 +15,7 @@ DRY_RUN=0
 # "<upstream source>  <ghcr repo:tag under the org>". Keep this in sync with the image:
 # lines in platform/2-ai-plane/{vllm,llm-guard,mcp-server} and the seed Jobs. Chart images
 # are NOT here: charts pull their own images from upstream, and re-hosting those needs a
-# node-level pull-through cache or per-chart image overrides (build-spec 6.4), not this.
+# node-level pull-through cache or per-chart image overrides, not this.
 readonly SOURCES=(
     "docker.io/vllm/vllm-openai-cpu:v0.23.0-x86_64  vllm-openai-cpu:v0.23.0-x86_64"
     "docker.io/laiyer/llm-guard-api:0.3.16          llm-guard-api:0.3.16"

@@ -1,5 +1,5 @@
 # ABOUTME: Demonstrates the ESO pull: reads secret/demo from OpenBao and projects it
-# ABOUTME: into a Kubernetes Secret. This is the pattern attendees reuse for their apps.
+# ABOUTME: into a Kubernetes Secret. This is the pattern to reuse for your own apps.
 apiVersion: external-secrets.io/v1
 kind: ExternalSecret
 metadata:

@@ -62,7 +62,7 @@ component flaps Progressing before Healthy.
 **Recovery move:** Sync waves are tuned; give it the budgeted time. If a non-Backstage app
 hangs past budget, it is a candidate for the recorded backup.
 
-*(B04, Backstage opening in the browser, is a presenter action, not a Claude prompt.)*
+*(Opening Backstage in a browser is something you do yourself, not a prompt.)*
 
 ---
 
@@ -140,7 +140,7 @@ lags, the trace lands in B10 anyway; do not stall.
 
 **Expected behavior:** Fires the repo's injection fixture; LLM Guard blocks deterministically;
 the block shows in the audit log. The exact injection string is a committed fixture so
-attendees can reproduce it.
+you can reproduce it.
 **Known failure modes:** LLM Guard config drift changes the verdict. The block is silent (no
 visible audit line).
 **Recovery move:** The verdict is deterministic against the pinned v0.3.16 config; if it drifts,
@@ -206,7 +206,7 @@ server-side apply (annotation size).
 **Recovery move:** Apply server-side. The Gitea org/host are the templated values.
 
 ### P15 (B15) — Fire the golden path
-**Prompt (presenter plays developer; Claude assists if needed):**
+**Prompt (you act as the developer requesting a service; the agent assists if needed):**
 > Through the Backstage portal, request a new agent: fill the form and submit. Then watch the
 > chain on screen: scaffolder generates the repo, the ApplicationSet creates the Application,
 > ArgoCD syncs it, the agent runs, and the first trace lands in Tempo.

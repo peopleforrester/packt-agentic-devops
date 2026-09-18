@@ -6,7 +6,7 @@
 Two reasons this reports what it reports.
 
 **Percentiles, not a mean.** Latency here is not normally distributed. A mean over a handful of
-requests hides the tail completely, and the tail is what an attendee experiences as "it hung".
+requests hides the tail completely, and the tail is what a user experiences as "it hung".
 
 **The first request is excluded by default.** On a cold predictor the first completion pays for
 model residency and can be an order of magnitude slower than the rest. Averaging it in produces a

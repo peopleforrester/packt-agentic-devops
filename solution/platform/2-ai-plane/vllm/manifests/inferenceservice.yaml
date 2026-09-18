@@ -2,7 +2,7 @@
 # ABOUTME: RawDeployment mode turns this into a Deployment plus Service in kserve.
 #
 # OpenAI-compatible endpoint at :8000/v1. The demo agent's ModelConfig points here,
-# so attendee clusters spend nothing on external LLM APIs (build-spec 6.7). Image is
+# so the platform spends nothing on external LLM APIs. Image is
 # the mirrored CPU build of vllm/vllm-openai-cpu:v0.23.0-x86_64.
 #
 # KVCACHE_SPACE resolved to 2 (RESOLVES the phase-6 "2 to 4" vs components.yaml "8 to 16"

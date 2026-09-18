@@ -24,4 +24,4 @@
 - KServe RawDeployment, not Knative (Knative mode is phasing out). InferenceService is `v1beta1`; treat LLMInferenceService (v1alpha1, built on llm-d) as preview.
 - vLLM is PyTorch Foundation, not CNCF. llm-d is CNCF Sandbox, pre-1.0; do not call it production-ready.
 
-**Stop here.** Output the completion promise and wait. The presenter reveals the inference and walks the trace.
+**Stop here.** Output the completion promise and wait. Run one inference and follow its trace end to end; the span carries the model name and the token counts.

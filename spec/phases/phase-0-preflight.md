@@ -25,4 +25,4 @@
 - Cloning the repo is allowed and expected; it is how the spec and manifests reach your environment.
 - If `kubectl` cannot reach the cluster, stop and resolve credentials before going further. Do not proceed on a cluster you cannot read.
 
-**Stop here.** Output the completion promise and wait for the user. The presenter sets the frame during this stop: the cluster is bare, and from the next phase on your agent builds the platform.
+**Stop here.** Output the completion promise and wait for the user. The frame for everything that follows: the cluster is bare, and from the next phase on your agent builds the platform.

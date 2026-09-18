@@ -26,4 +26,4 @@
 - The OpenTelemetry Collector chart has no default mode or image repository; set both explicitly. OpenTelemetry is CNCF Graduated (May 2026).
 - Loki monolithic for the demo; Simple Scalable is deprecated. Object storage (S3), not the bundled MinIO.
 
-**Stop here.** Output the completion promise and wait. The presenter walks the trace landing in Tempo.
+**Stop here.** Output the completion promise and wait. Find the trace in Tempo before moving on; a signal you have not seen arrive is a signal you cannot trust later.

@@ -14,7 +14,7 @@ Every query keys on two things:
 - The stream label `job="claude-audit"`, applied by the shipper when it pushes
   lines to Loki.
 - A JSON field `agent_identity` on every line, written by the audit hook at
-  `.claude/hooks/audit.sh`. Its default value is `claude-code-presenter`; set
+  `.claude/hooks/audit.sh`. Its default value is `claude-code-operator`; set
   `CLAUDE_AGENT_IDENTITY` before a session to attribute actions to a different
   identity.
 
@@ -38,7 +38,7 @@ attribution demo, or leave it tailing during the session.
 2. **Actions per agent identity (5m)**: the attribution metric. This is the
    exact query the `Actions per agent identity` panel on the AI Plane dashboard
    runs.
-3. **Single identity**: filters to `claude-code-presenter` to show one actor in
+3. **Single identity**: filters to `claude-code-operator` to show one actor in
    isolation.
 4. **Audit gaps**: surfaces lines where the hook recorded an `audit_error`
    (missing jq, unparseable payload) so a gap is visible rather than silent.

@@ -7,7 +7,7 @@
 **Outputs:**
 - A Backstage scaffolder template (`scaffolder.backstage.io/v1beta3`, Nunjucks) for an agent-service: a form takes agent name, purpose, model route, and allowed MCP tools, and generates a repo with a kagent Agent CRD, agentgateway route, LLM Guard policy reference, and OTel instrumentation defaults
 - An ArgoCD ApplicationSet that watches for the generated repos and auto-creates Applications
-- The golden path executed: presenter plays developer, requests an agent through the portal, and the chain runs (scaffolder, repo, ApplicationSet, ArgoCD sync, running agent, first trace in Tempo)
+- The golden path executed: acting as a developer, request an agent through the portal and watch the chain run (scaffolder, repo, ApplicationSet, ArgoCD sync, running agent, first trace in Tempo)
 
 **Test criteria (tests/test_phase_7_self_service.py):**
 - The scaffolder template is registered and renders without error
@@ -22,4 +22,4 @@
 - The template output must satisfy the Phase 4 audit policies, so the golden path is governed by construction.
 - Target: form to trace under 6 minutes. Rehearse as one continuous take.
 
-**Stop here.** Output the completion promise and wait. The presenter narrates the golden path closing the loop on the whole platform.
+**Stop here.** Output the completion promise and wait. This is the loop closing: a request through the portal became a running, governed, traced agent without anyone touching the cluster.

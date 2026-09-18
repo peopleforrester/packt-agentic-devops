@@ -1,6 +1,6 @@
 # Research Findings and Version Pins (June 15, 2026)
 
-This document records the verified current state of every technical source of truth in the build spec, resolved against official sources during the week of June 15, 2026. It is the basis for `versions.lock.md` and for the spec corrections applied to `build-spec.md`.
+This document records the verified current state of every technical source of truth behind this platform, resolved against official sources during the week of June 15, 2026. It is the basis for `versions.lock.md` and for the corrections applied to the specification.
 
 Method: web research against GitHub releases, ArtifactHub, official project docs, the CNCF landscape, AWS docs, Hugging Face model cards, and the Claude Code docs. Training data was not trusted for any version number or maturity claim. Re-resolve once during the week of July 13, 2026, then freeze per the spec.
 
@@ -216,9 +216,9 @@ Precedence broadest to most specific: managed policy, user (`~/.claude/CLAUDE.md
 
 ## 7. Demo agent model routing and credentials (verified June 2026)
 
-kagent ModelConfig (`kagent.dev/v1alpha2`) supports three relevant providers. The decision is in-cluster vLLM for attendee clusters, a real cloud route on the presenter cluster only.
+kagent ModelConfig (`kagent.dev/v1alpha2`) supports three relevant providers. The decision is in-cluster vLLM by default, with a real cloud route available for anyone who wants to route outward deliberately.
 
-### In-cluster vLLM (attendee clusters, the default)
+### In-cluster vLLM (the default)
 ```yaml
 apiVersion: kagent.dev/v1alpha2
 kind: ModelConfig
@@ -235,7 +235,7 @@ spec:
 ```
 vLLM exposes an OpenAI-compatible `/v1/chat/completions`. Set `--served-model-name qwen3-1.7b` so the client model string is clean. No external spend, no external credential.
 
-### Amazon Bedrock via Pod Identity (presenter cluster option)
+### Amazon Bedrock via Pod Identity (optional)
 ```yaml
 apiVersion: kagent.dev/v1alpha2
 kind: ModelConfig
@@ -252,7 +252,7 @@ spec:
 ```
 Scope the role to `bedrock:InvokeModel` and `bedrock:InvokeModelWithResponseStream` on specific cheap model ARNs only. AWS Budgets is a soft alert with an 8 to 24 hour data lag, not a real-time hard cap. The preventive IAM model-id allowlist is the actual spend control. Budget Actions can auto-attach a deny policy on threshold, but the lag means spend can accrue first.
 
-### Anthropic API direct, with hard caps (presenter cluster option)
+### Anthropic API direct, with hard caps (optional)
 ```yaml
 apiVersion: kagent.dev/v1alpha2
 kind: ModelConfig
@@ -269,9 +269,9 @@ spec:
 Anthropic Console workspace monthly spend limits are a genuine hard stop (the API returns 429 when exceeded). The Usage and Cost Admin API is read-only reporting, not enforcement. For a per-key hard budget, front the key with a LiteLLM proxy virtual key carrying `max_budget` and `budget_duration`; exceeding it is a hard stop (`BudgetExceededError`). Pin and test a known-good LiteLLM version: there are open budget-enforcement bugs, so do not run latest unverified.
 
 ### Recommendation
-- Attendee clusters: in-cluster vLLM only. No external credentials, scales to 300 with one config.
-- Presenter cluster: one real cloud route (Bedrock via Pod Identity, or Anthropic behind LiteLLM), scoped and capped, to teach the governance lesson where the blast radius is one cluster.
-- Do not create 300 IAM users or 300 static-key secrets. If attendee clusters ever need Bedrock, use one scoped IAM role reused across clusters via Pod Identity, never per-cluster users.
+- Default: in-cluster vLLM only. No external credentials, and it scales to any number of clusters with one config.
+- Optional: one real cloud route (Bedrock via Pod Identity, or Anthropic behind LiteLLM), scoped and capped. Worth doing deliberately, because the governance lesson lands better when the blast radius is one cluster you own.
+- At any scale, do not create one IAM user or one static-key secret per cluster. Use a single scoped IAM role reused across clusters via Pod Identity.
 
 Re-verify at the freeze: kagent v0.9.9 exact field names against the tagged API reference, whether kagent documents the Pod Identity association vs the IRSA annotation, the current Anthropic model id for the demo, and a LiteLLM version that passes a live budget-enforcement test.
 

@@ -26,4 +26,4 @@
 - This is the most-rehearsed beat. The agent calls only the in-cluster vLLM.
 - MCP wiring: the agent references the MCP server via `spec.tools[]` `type: McpServer` with `mcpServer.kind: RemoteMCPServer` (`kagent.dev/v1alpha2`, points at the agentgateway URL, `protocol: STREAMABLE_HTTP`, path `/mcp`). Note the kmcp split: a server kmcp deploys in-cluster is `MCPServer` (`kagent.dev/v1alpha1`); a server reached by URL is `RemoteMCPServer` (`kagent.dev/v1alpha2`). The agentgateway-in-front URL mapping is the thinnest-documented area; validate it live before the demo. MCP spec revision is 2025-11-25; do not use the deprecated HTTP+SSE transport.
 
-**Stop here.** Output the completion promise and wait. The presenter walks the audit log: the MCP call, then the blocked injection.
+**Stop here.** Output the completion promise and wait. Read the audit log for both: the MCP call that succeeded, and the injection that was refused.

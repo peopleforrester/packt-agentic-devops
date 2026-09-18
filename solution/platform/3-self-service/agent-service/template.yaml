@@ -3,7 +3,7 @@
 #
 # Publish target depends on the workshop's Git host. This uses publish:github with a
 # parameterized repoUrl (the documented default). Swap the publish step for an
-# in-cluster Gitea action if attendees do not each have a GitHub org.
+# in-cluster Gitea action, so the golden path works without a GitHub org.
 apiVersion: scaffolder.backstage.io/v1beta3
 kind: Template
 metadata:

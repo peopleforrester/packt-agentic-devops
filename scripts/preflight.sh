@@ -12,7 +12,7 @@ KUBECONFIG_FILE="${KUBECONFIG_FILE:-}"
 EXPECTED_CONTEXT="${EXPECTED_CONTEXT:-}"
 GHCR_ORG="${GHCR_ORG:-}"
 BACKUP_VIDEO_DIR="${BACKUP_VIDEO_DIR:-}"
-# Space-separated names of presenter env vars to confirm exist (values never printed).
+# Space-separated names of env vars to confirm exist (values never printed).
 REQUIRED_ENV_VARS="${REQUIRED_ENV_VARS:-}"
 
 FAILURES=0
@@ -110,7 +110,7 @@ check_env_vars() {
         # Existence only. Never print the value.
         [[ -n "${!v:-}" ]] || { fail "env var not set: ${v}"; miss=1; }
     done
-    [[ "${miss}" -eq 0 ]] && pass "all required presenter env vars present"
+    [[ "${miss}" -eq 0 ]] && pass "all required env vars present"
 }
 
 check_backup_videos() {

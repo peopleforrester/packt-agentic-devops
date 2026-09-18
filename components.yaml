@@ -401,7 +401,7 @@ components:
     notes: >
       CNCF Sandbox. Install kagent-crds first. Agent CRD is kagent.dev/v1alpha2, field
       systemMessage, nested under spec.type and spec.declarative. Runs on Google ADK.
-      Demo agent ModelConfig points at in-cluster vLLM (see build-spec 6.7).
+      Demo agent ModelConfig points at in-cluster vLLM through agentgateway, so the guardrail and audit policies apply to it.
 
   - name: llm-guard
     display_name: "LLM Guard"

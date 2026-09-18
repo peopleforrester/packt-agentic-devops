@@ -1,6 +1,10 @@
 # Decisions
 
-Locked decisions for the Packt workshop. Newest at the bottom. These are the source of truth when the build spec and reality disagree.
+Locked decisions, newest at the bottom. These are the source of truth when a document and reality disagree.
+
+**This is a dated log, and its language is of its time.** The platform was first built to be delivered live, so entries talk about attendees, presenters, per-student clusters and a fleet of 250. Those words are left exactly as they were written. A decision log that gets tidied up after the fact stops being evidence, and the reasoning is what makes an entry worth keeping: "one scoped IAM role reused across clusters rather than 300 per-cluster OIDC trust policies" is a useful argument whether you are running three hundred clusters or one.
+
+For the current shape of the platform rather than how it was reached, read [`../architecture.md`](../architecture.md). Entries that name files no longer in this repository are history, not instructions; [`../what-is-not-included.md`](../what-is-not-included.md) says what was removed and why.
 
 Change control: the architecture is locked. Before changing any decision here or in `docs/architecture.md`, read the current state first and understand why it is what it is. A change lands as a new numbered entry that names and supersedes the prior one, with the date and the reason. Never silently overwrite a settled decision.
 
