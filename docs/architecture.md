@@ -1,10 +1,12 @@
 # Architecture
 
-This file records the settled architectural decisions, stated honestly. The diagram source is an Excalidraw export kept alongside this file.
+The settled architectural decisions, stated honestly. `reference/decisions.md` carries the dated log of how they were reached; this file is the current shape.
+
+The diagram source is an Excalidraw export kept alongside this file.
 
 ## Platform
 
-Amazon EKS, one cluster per student, managed control plane plus a T3 managed node group (2 to 3 t3.xlarge or t3.2xlarge workers). Kubernetes 1.35 or 1.36. vcluster is not used.
+Amazon EKS, one cluster, managed control plane plus a T3 managed node group (2 to 3 t3.xlarge or t3.2xlarge workers). Kubernetes 1.35 or 1.36. vcluster is not used.
 
 ## Load balancing and ingress
 
@@ -26,11 +28,15 @@ Every in-cluster workload that needs AWS permissions authenticates with EKS Pod 
 
 ArgoCD reconciles everything from Git. Sync waves order the foundation so dependencies do not race: cert-manager and the AWS controllers first, then ingress and secrets tooling, then observability, then the Argo extensions, then Backstage last.
 
-ArgoCD shards by cluster, not by app. With this component count on one cluster, all apps live in one shard, so controller sharding buys nothing. The repo server is the manifest-generation bottleneck; the HA default of two replicas is enough. The default kubectl parallelism limit of 20 is adequate. Bootstrap with server-side apply: the ApplicationSet and Argo Workflows CRDs exceed the client-side apply annotation limit. This tuning is itself teachable content.
+ArgoCD shards by cluster, not by app. With this component count on one cluster, all apps live in one shard, so controller sharding buys nothing. The repo server is the manifest-generation bottleneck; the HA default of two replicas is enough. The default kubectl parallelism limit of 20 is adequate. Bootstrap with server-side apply: the ApplicationSet and Argo Workflows CRDs exceed the client-side apply annotation limit.
 
 ## Demo agent model routing
 
-Attendee clusters route the kagent demo agent to the in-cluster vLLM over an OpenAI-compatible endpoint: no external API spend, no external credentials. The presenter cluster shows one real cloud route (Bedrock via Pod Identity, or Anthropic behind a LiteLLM proxy), scoped and capped. See `reference/build-spec.md` section 6.7.
+The kagent demo agent reaches the in-cluster vLLM over an OpenAI-compatible endpoint, and it reaches it through agentgateway rather than directly, so the prompt-guard and audit policies on the gateway apply to it. There is no external API spend and no external credential in the default path.
+
+Routing the agent through the gateway is the point rather than an implementation detail. An agent that calls the model directly bypasses every control the AI plane installs, and the platform then certifies guardrails nothing traverses. The `ModelConfig` `baseUrl` therefore names the gateway Service, and a test asserts it.
+
+Swapping in a hosted model is a `ModelConfig` change: point `baseUrl` at the provider and supply the credential through External Secrets. Nothing else changes, because the agent only ever talks to the gateway.
 
 ## Observability and the AI plane
 

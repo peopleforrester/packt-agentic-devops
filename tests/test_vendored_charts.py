@@ -52,7 +52,7 @@ def _charts_argocd_syncs():
 
     This is the set that must be on disk. Two pinned charts are deliberately not in it and must
     not be: argo-cd is installed by the bootstrap before GitOps exists, and aws-ebs-csi-driver is
-    an EKS managed add-on wired by Terraform (scripts/provision/cluster/main.tf), not a Helm
+    an EKS managed add-on wired by Terraform in the cluster module, not a Helm
     release in the cluster. Checking components.yaml instead of the Applications would report both
     as defects forever, and a test that always fails gets deleted rather than fixed.
     """

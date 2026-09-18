@@ -20,7 +20,8 @@ spec:
         # clusterName and vpcId are per-cluster and CANNOT be hardcoded (every cluster is a
         # different EKS name in a different VPC). Both are placeholders substituted at provisioning
         # by the Gitea seed job, which reads the real values from the platform-cluster-facts
-        # ConfigMap that apply.sh writes. See scripts/provision/vtt/gitea/seed-platform-job.yaml.
+        # ConfigMap the provisioning step writes before the platform syncs. The seed job that performs
+        # the substitution is not part of this distribution; see docs/what-is-not-included.md.
         #
         # vpcId is templated rather than left to IMDS on purpose: the controller pod's IMDS fetch
         # times out under prefix delegation ("failed to fetch VPC ID from instance metadata:
