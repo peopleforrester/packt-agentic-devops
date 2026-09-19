@@ -862,3 +862,59 @@ def test_gateway_tls_material_is_something_the_repo_creates():
                 )
 
     assert not missing, "\n".join(missing)
+
+
+def _undeclared_fields(instance, schema, path=""):
+    """Yield paths present in `instance` that the CRD's structural schema does not declare.
+
+    jsonschema accepts undeclared properties unless a schema sets additionalProperties: false, and
+    CRD schemas almost never do. The API server does not: a structural schema prunes or rejects
+    anything it does not declare. So validating with jsonschema alone passes manifests the cluster
+    will refuse, which is the worst kind of green.
+
+    Caught on a live cluster 2026-09-19. `webhook.action` exists on agentgateway v1.5.0 and not on
+    v1.3.0, and the sync failed with `field not declared in schema`. The AgentgatewayPolicy was
+    never created, so the prompt-injection guardrail did not exist while the Application reported
+    Healthy and the schema suite reported 29 passing.
+    """
+    if schema.get("x-kubernetes-preserve-unknown-fields"):
+        return
+    if isinstance(instance, dict):
+        props = schema.get("properties") or {}
+        allows_extra = schema.get("additionalProperties")
+        for key, value in instance.items():
+            if key in props:
+                yield from _undeclared_fields(value, props[key], f"{path}.{key}")
+            elif props and not allows_extra:
+                yield f"{path}.{key}"
+    elif isinstance(instance, list):
+        items = schema.get("items")
+        if isinstance(items, dict):
+            for i, value in enumerate(instance):
+                yield from _undeclared_fields(value, items, f"{path}[{i}]")
+
+
+def test_no_manifest_carries_a_field_the_crd_does_not_declare(crd_schemas):
+    """Every field must exist in the pinned CRD, not merely validate loosely against it.
+
+    This is the assertion that distinguishes "the manifest is well formed" from "the API server
+    will accept it". A field from a newer version of a CRD passes ordinary validation and is
+    rejected at sync time, and the resource is then simply absent.
+    """
+    problems = []
+    for path, doc in _manifest_docs():
+        api_version = doc.get("apiVersion", "")
+        if "/" not in api_version:
+            continue
+        group, version = api_version.split("/", 1)
+        schema = crd_schemas.get((group, version, doc.get("kind")))
+        if schema is None:
+            continue
+        for field in _undeclared_fields(doc, schema):
+            problems.append(
+                f"{os.path.relpath(path, REPO_ROOT)}: {doc['kind']}/{doc['metadata']['name']} "
+                f"sets {field.lstrip('.')}, which the pinned {group}/{version} CRD does not "
+                f"declare. The API server rejects this with `field not declared in schema` and the "
+                f"resource is never created."
+            )
+    assert not problems, "\n".join(problems)
