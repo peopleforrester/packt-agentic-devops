@@ -33,9 +33,13 @@ spec:
       promptGuard:
         request:
           - webhook:
-              # Reject is the default, and it is the whole point of the policy: a guardrail
-              # whose behaviour on a detection is implicit is a guardrail nobody can audit.
-              action: Reject
+              # NO `action` FIELD HERE. It does not exist on agentgateway v1.3.0: the webhook
+              # schema carries only backendRef, failureMode and forwardHeaderMatches. Adding it
+              # fails the sync outright with `field not declared in schema`, and the policy is
+              # never created at all, so the guardrail silently does not exist.
+              #
+              # `failureMode: FailClosed` below is the control that matters at this version: if
+              # the scanner cannot be reached, the request is refused rather than waved through.
               backendRef:
                 group: ""
                 kind: Service
@@ -45,9 +49,13 @@ spec:
               failureMode: FailClosed
         response:
           - webhook:
-              # Reject is the default, and it is the whole point of the policy: a guardrail
-              # whose behaviour on a detection is implicit is a guardrail nobody can audit.
-              action: Reject
+              # NO `action` FIELD HERE. It does not exist on agentgateway v1.3.0: the webhook
+              # schema carries only backendRef, failureMode and forwardHeaderMatches. Adding it
+              # fails the sync outright with `field not declared in schema`, and the policy is
+              # never created at all, so the guardrail silently does not exist.
+              #
+              # `failureMode: FailClosed` below is the control that matters at this version: if
+              # the scanner cannot be reached, the request is refused rather than waved through.
               backendRef:
                 group: ""
                 kind: Service
