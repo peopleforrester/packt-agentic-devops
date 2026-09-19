@@ -29,10 +29,18 @@ Not referenced by the book, present here, and worth citing:
 
 | Repo file | Covers |
 |---|---|
+| `tests/test_phase_0_preflight.py` | The cluster is bare and the version floor is met, before anything is installed |
+| `tests/test_phase_1_foundation.py` | The foundation plane converged from the App-of-Apps |
+| `tests/test_phase_3_portal.py` | Backstage serves, the catalog has entities, the ArgoCD plugin returns Applications |
 | `tests/test_phase_8_governance.py` | Policies flipped to Enforce, violating agent denied, good agent admitted, Loki has agent tool invocations |
-| `tests/test_fleet_contract.py` | Static manifest defect classes, no cluster required |
-| `tests/test_version_gate.py` | The Kubernetes version floor, no cluster required |
-| `tests/test_vtt_provisioning.py` | Workshop distribution machinery |
+| `tests/test_platform_contract.py` | The manifest defect classes that recur here, no cluster required |
+| `tests/test_version_gate.py` | The Kubernetes version floor is a floor and not an allow-list, no cluster required |
+| `tests/test_agentgateway_manifests.py` | Every agentgateway custom resource against the vendored CRDs, plus the Gateway naming, TLS material and route-admission invariants |
+| `tests/test_argocd_health_checks.py` | Every custom resource kind is either health-checked or explicitly exempt, so ArgoCD cannot report green over a dead component |
+| `tests/test_vendored_charts.py` | Every vendored chart tarball matches the version `components.yaml` pins |
+| `tests/test_versions_lock.py` | `versions.lock.md` has not drifted from `components.yaml` |
+| `tests/test_agent_permissions.py` | The agent permission policy gates mutating verbs rather than allowing them |
+| `tests/test_conftest_helpers.py` | The shared test helpers, so a mangled helper cannot fail a working platform |
 
 ## Scripts
 
