@@ -1,0 +1,48 @@
+# Claude Code audit logs (generated at runtime by .claude/hooks/audit.sh)
+.claude/audit/
+
+# Python
+__pycache__/
+*.pyc
+.pytest_cache/
+
+# Secrets and local env (never committed; the repo holds zero real credentials)
+.env
+*.env
+!.env.example
+
+# OS noise
+.DS_Store
+
+# Terraform (state can hold sensitive values; the dev cluster is ephemeral)
+.terraform/
+*.tfstate
+*.tfstate.*
+*.tfplan
+crash.log
+crash.*.log
+*.tfvars
+!*.tfvars.example
+PROJECT_STATE.md
+
+# Internal-only material: build spec, decisions log, research findings, brand
+# assets, prds. Kept local for authoring, never committed to the public repo.
+# History was scrubbed of these paths when the repo was made public.
+internal/
+prds/
+
+# Repo-local scratch dir (working-directory-boundary rule)
+/tmp/
+tmp/
+transcripts/
+pool.db.bak-*
+*.db.bak-*
+
+# Runtime artifacts, not source. pool.db is the distribution app's SQLite state; running its tests
+# from the repo root drops an empty one here. uv.lock appears because the root pyproject.toml (which
+# exists only to scope pytest collection) makes uv treat this directory as a project; the repo
+# declares no runtime dependencies, so the lock is noise.
+pool.db
+uv.lock
+.claude/settings.local.json
+.claude/settings.local.json.tmp.*
