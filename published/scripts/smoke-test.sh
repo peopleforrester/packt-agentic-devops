@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # ABOUTME: Validates the full final platform state. Also the gate script for
-# ABOUTME: rehearsals: components healthy plus one run of each key path.
+# ABOUTME: Post-build smoke test: components healthy plus one run of each key path.
 set -euo pipefail
 
 KUBECONFIG_FILE="${KUBECONFIG_FILE:-}"

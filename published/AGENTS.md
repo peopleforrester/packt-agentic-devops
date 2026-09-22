@@ -1,144 +1,205 @@
-# CLAUDE.md
+# AGENTS.md
 
-Project memory for the Agentic DevOps with Claude workshop repo. This is the platform Claude Code builds live on Amazon EKS during the Packt workshop on July 23, 2026. Read `docs/reference/build-spec.md` for the full build spec and `docs/reference/research-findings-june-2026.md` for verified versions.
+Project memory for this repository, written for two readers: someone working through the book, and
+the coding agent they point at this tree.
 
-## Fleet provisioning and validation (read before touching provisioning or platform manifests)
+An agent builds an AI-native Internal Developer Platform on Amazon EKS from the spec in `spec/`, one
+phase at a time, and `tests/` proves each phase landed. `solution/` is the finished build, for when
+you want to compare rather than debug.
 
-The 250-cluster fleet, its driver, and the full from-cold validation are documented in
-`docs/fleet/`. Read these before changing provisioning or debugging a platform sync:
+Start with `docs/prerequisites.md`, then `provision/README.md` for the cluster, then
+`spec/BUILD-SPEC.md`. Chapter N of the book is phase N minus 2: chapter 3 is
+`spec/phases/phase-1-foundation.md`, chapter 10 is `spec/phases/phase-8-governance.md`.
 
-- `docs/fleet/08-progressive-rollout-run.md` is the rollout plan (5 to 54 to 250, the gates).
-- `docs/fleet/09-lessons-learned.md` is the running record of every defect found and fixed.
-- The driver is `scripts/provision/fleet/fleet.sh` (+ `lib.sh`); `tag-audit.sh` finds and
-  repairs untagged resources; `sweep.sh` is the orphan cleanup.
+`docs/architecture.md` holds the settled decisions, `docs/reference/decisions.md` the dated log of
+how they were reached, and `docs/what-is-not-included.md` explains what was left out, so a reference
+that looks broken has an answer.
 
-**Validated (2026-07-23):** 250 clusters provisioned and torn down cleanly across five accounts;
-the foundation and AI plane both converge from a cold provision with zero manual steps (foundation
-to 19/21 in ~7 min, the two exceptions being the intentional P03 fault and, until fixed, the
-Backstage image). vLLM serves real in-cluster completions. The filming build had masked most
-foundation bugs because its Applications were suspended and hand-patched; the only faithful test is
-a clean cluster syncing from an untouched repo.
+## Manifest defect classes that recur here. Check for each before believing a build is healthy.
 
-**Defect classes that recur in these manifests. Grep for each before a run:**
+Every one of these produces a component that reports Synced, reports Healthy, and does not work.
 
-1. **Unsubstituted `REPLACE_WITH_*` placeholders.** `grep -rn REPLACE_WITH platform/` must return
-   only tokens a provisioning step is proven to substitute (currently the LB controller
-   clusterName/vpcId, done by the Gitea seed job from the `platform-cluster-facts` ConfigMap). An
-   unsubstituted placeholder leaves an Application Degraded forever.
-2. **`runAsNonRoot: true` with no numeric `runAsUser`** on an image whose USER is non-numeric →
-   `CreateContainerConfigError`. Pin the image's actual uid (verify with `id` in the image). Hit on
-   vLLM, llm-guard (D18), and the openbao and gitea seed jobs.
-3. **Image `repository` that repeats the registry host** (`registry: ghcr.io` +
-   `repository: ghcr.io/...`) → a doubled path. Repository must not include the host.
+1. **An unsubstituted `REPLACE_WITH_*` placeholder.** `grep -rn REPLACE_WITH platform/` must return
+   nothing once `provision/cluster-facts.sh` has run. The reference under `solution/` keeps its
+   placeholders on purpose. Anything unsubstituted in your working copy leaves an Application
+   Degraded forever.
+2. **`runAsNonRoot: true` with no numeric `runAsUser`** on an image whose USER is root or
+   non-numeric, which the kubelet refuses with `CreateContainerConfigError` before the container
+   starts. Pin the uid the image actually uses; verify with `id` inside it rather than guessing. Hit
+   on vLLM, llm-guard, the openbao and gitea seed jobs, and the MCP server. On a pod with an
+   injected init container the uid has to go on the **pod**, because the init container writes into
+   an emptyDir that needs `fsGroup`.
+3. **An image `repository` that repeats the registry host** (`registry: ghcr.io` plus
+   `repository: ghcr.io/...`), producing a doubled path. Repository must not include the host.
 4. **A directory the container cannot traverse.** `Cannot find module '/app/...'` for a path that
-   demonstrably contains the module is a permission/ownership problem (container runs as a uid that
-   cannot read the tree), not a missing build. Backstage `/app` shipped 0700 root under `USER node`.
-5. **Hardcoded credentials that drift.** Read shared creds from one Secret (e.g. `gitea-seed-creds`),
-   never a second copy in a Job manifest.
+   demonstrably holds the module is a permission problem, not a missing build.
+5. **Hardcoded credentials that drift.** Read shared credentials from one Secret, never a second
+   copy in a Job manifest.
+6. **A custom resource ArgoCD cannot assess.** ArgoCD reports Healthy for anything it has no health
+   check for, so a broken `MCPServer` or `Agent` shows green. `solution/platform/0-bootstrap/argocd-values.yaml`
+   carries the checks and `tests/test_argocd_health_checks.py` fails if a new kind arrives unassessed.
 
-Contract tests in `tests/test_fleet_contract.py` assert all of the above; run
-`uv run --with pytest --with pyyaml python -m pytest tests/test_fleet_contract.py -q` after any
-manifest or provisioning change.
+`tests/test_platform_contract.py` asserts 1 through 5. Run the cluster-free suite after any manifest
+change:
 
-## GO-LIVE BLOCKER: web terminals have no authentication
-
-Confirmed live on 2026-07-23: a student reached the instructor's admin cluster through its terminal
-URL. Every VTT terminal is served at a predictable, unauthenticated public URL (`studentN` is
-sequential and enumerable; plus `admin1`/`admin2`), and each is a `sudo`-capable cluster-admin shell
-with the cluster's EKS Pod Identity AWS reach. Anyone with a URL can open another student's or the
-admin's terminal and destroy it. **Do not run this workshop again until terminals require
-authentication.** IP allow-listing at the NLB cannot allow-list *students* (it blocks the Caddy router,
-the only thing the NLB sees); the browser's real IP is visible only at the router via
-`X-Forwarded-For`. It does work as an emergency lockdown allow-listing your own address.
-
-**Verified 2026-07-25:** the cluster NLB answers on its **bare IP** with no hostname sent
-(`/terminal/token` returns `{"token": ""}`, meaning ttyd runs with no credential). So neither a
-non-enumerable hostname nor router-level auth meets the bar; only enforcement at the terminal itself,
-or removing the public Service, does. Note also that `scripts/provision/router/routes.static` commits
-NLB hostnames to this **public** repository, so the hostname is not a secret either.
-
-**Ownership (2026-07-27):** authentication and authorization are being handled by a separate project,
-not in this repo. This finding stands and the terminals here stay unauthenticated until that project
-lands; the fix is not scheduled in this repo. Design options are retained in
-`prds/3-terminal-authentication.md`.
-
-Fix directions and full write-up: `docs/fleet/09-lessons-learned.md` (final section, including the
-2026-07-25 addendum).
-
-## Railway and the claim portal (read before any `railway` command)
-
-Full detail in `scripts/provision/distribution/RAILWAY-OPS.md`. The critical facts:
-
-- **The LIVE claim/provisioning app is the `packt-provisioning` service**, serving
-  `https://packt.ai-enhanced-devops.com/`. It owns the persistent volume and the claim DB
-  (`/data/pool.db`). Deploy the claim app ONLY here. `packt-router` (Caddy) serves the
-  `studentN.packt.ai-enhanced-devops.com` terminals; its routes are updated by `routes-reload.sh`
-  (live reload, no redeploy). `router-image-deploy.sh` is only for image changes.
-  `ai-enhanced-devops-website` is a STALE/failed sibling that serves nothing live: do not deploy
-  to it. The tell you are on the wrong service is `railway ssh -s <svc> -- echo ok` returning the
-  Railway meta-gateway JSON instead of `ok`.
-- **`railway ssh` exec: pipe the script over STDIN** (`railway ssh -s packt-provisioning -- python3
-  < script.py`); inline `python3 -c "..."` breaks because the CLI re-parses through a remote shell.
-  **`railway variables` truncates in the table view**: use `--kv`/`--json` for full tokens.
-  **`Failed to stream build logs` on `railway up` is transient**: verify the deploy via URLs or
-  `railway status`, not the CLI exit code.
-- **The claim pool DB only adds rows on restart, never removes.** Editing `pool.csv` + restart does
-  NOT shrink it. Prune by editing the DB directly via `railway ssh`, or use a fresh `DATABASE_PATH`.
-  The pool must contain the real banded cluster names (student1-20, 51-70, 101-120, 151-170,
-  201-220), not sequential `student1-N`, or students past the first band claim clusters that were
-  never built. Regenerate with `scripts/provision/gen-pool.sh`; run `routes-reload.sh` after every
-  scale change or the URLs 404.
+```bash
+uv run --with pytest --with pyyaml --with jsonschema python -m pytest -q
+```
 
 ## What this repo is
 
-A GitOps-driven, AI-native Internal Developer Platform. ArgoCD reconciles everything from Git. The foundation plane is cloud-native (Backstage, the Argo stack, the observability plane, policy and secrets tooling). The AI plane adds agent infrastructure (kgateway, agentgateway, kagent, LLM Guard, OpenLLMetry, KServe with vLLM, llm-d).
+A GitOps-driven, AI-native Internal Developer Platform. ArgoCD reconciles everything from Git. The
+foundation plane is cloud-native (Backstage, the Argo stack, the observability plane, policy and
+secrets tooling). The AI plane adds agent infrastructure (kgateway, agentgateway, kagent, LLM Guard,
+OpenLLMetry, KServe with vLLM, llm-d).
 
 ## Repo map
 
-- `components.yaml` is the single source of truth for the component set. Every entry carries a pinned version. CI fails if any entry is unpinned.
-- `versions.lock.md` records the pinned chart and image versions with the resolution date.
-- `platform/0-bootstrap/` holds the ArgoCD install and the root App-of-Apps.
-- `platform/1-foundation/` holds one directory per foundation component.
-- `platform/2-ai-plane/` holds one directory per AI-plane component.
-- `platform/3-self-service/` holds Backstage templates and ApplicationSets.
-- `charts-vendor/` holds vendored Helm charts. Nothing waits on the network live.
-- `scripts/` holds provisioning, reset, preflight, smoke-test, and image-mirror scripts.
-- `prompts/prompt-library.md` holds every live prompt, rehearsed verbatim.
-- `docs/runbook/` holds the run-of-show, preflight checklist, and failure-recovery docs.
+- `provision/` holds the Terraform that creates the cluster, plus the bootstrap and teardown
+  scripts. Start at `provision/README.md`; it opens with what the cluster costs to run.
+- `components.yaml` is the single source of truth for the component set. Every entry carries a
+  pinned version. CI fails if any entry is unpinned.
+- `versions.lock.md` records the pinned chart and image versions with the resolution date. It is
+  generated from `components.yaml` by `scripts/gen-versions-lock.py`.
+- `solution/platform/0-bootstrap/` holds the ArgoCD install, its values, and one App-of-Apps per plane.
+- `solution/platform/1-foundation/` holds one directory per foundation component.
+- `solution/platform/2-ai-plane/` holds one directory per AI-plane component.
+- `solution/platform/3-self-service/` holds Backstage templates and the ApplicationSet.
+- `platform/` is **your** working copy, the tree your agent builds and the one ArgoCD reads once you
+  push it to the in-cluster Git host. It does not exist until you create it.
+- `charts-vendor/` holds vendored Helm charts, so nothing waits on the network mid-build. Every
+  tarball is asserted to match its pin.
+- `scripts/` holds chart vendoring, image mirroring, smoke tests, and the probes the phase tests use.
+- `prompts/` holds the prompts that drive each phase.
+- `spec/` holds the build spec and one file per phase.
+
+## Getting to a running platform
+
+```bash
+terraform -chdir=provision apply          # the cluster
+$(terraform -chdir=provision output -raw update_kubeconfig)
+cp -a solution/platform/. platform/       # or let the agent generate platform/
+./provision/cluster-facts.sh              # fills in cluster name, VPC id, region
+helm install argo-cd ...                  # see solution/platform/0-bootstrap/README.md
+./provision/seed-gitea.sh                 # installs the Git host, seeds it, starts ArgoCD
+```
+
+Afterwards, `./provision/push-to-cluster.sh` sends each commit to the cluster. Tear down with
+`./provision/destroy.sh`, which releases the load balancers and volumes before destroying, because
+`terraform destroy` alone leaks them.
 
 ## GitOps rules
 
-- Cluster context safety (this machine is shared, other systems use kubectl): every kubectl/helm command sets an explicit `KUBECONFIG` (a dedicated throwaway file) and `AWS_PROFILE` inline, never a global export. Never write to `~/.kube/config`: pull creds with `aws eks update-kubeconfig --kubeconfig /tmp/<cluster>.kubeconfig`. Verify `kubectl config current-context` matches the cluster you provisioned before any mutating command. Only touch clusters you created this session.
+- Cluster context safety: every kubectl and helm command sets an explicit `KUBECONFIG` and never
+  writes to `~/.kube/config` on a machine that has other clusters in it. Verify
+  `kubectl config current-context` matches the cluster you created before any mutating command.
+  Only touch clusters you created.
 - All cluster changes flow through Git. ArgoCD applies them.
-- Install first, enforce last. Every Kyverno policy (foundation `policy-baseline` and AI-plane `ai-policies`) ships with `failureAction: Audit`, not `Enforce`. Audit reports violations without blocking admission. An admission guardrail set to Enforce before the software meant to satisfy it is installed rejects that software's own pods and stalls the build. So the whole platform lands under Audit, then enforcement is turned on only after the platform is healthy. The single sanctioned flip to Enforce is the B16/P16 governance demo on the AI-plane set; the foundation baseline stays Audit through the workshop. Do not set any policy to Enforce during the build, and do not add a namespace-wide enforcing admission webhook that fires before its backing workload exists.
-- Never run mutating `kubectl` directly against the cluster, except for the bootstrap (installing ArgoCD) and the scripted Kyverno denial demo (B16).
-- Bootstrap and ApplicationSet CRDs require server-side apply: use `kubectl apply --server-side --force-conflicts`. The ApplicationSet and Argo Workflows CRDs exceed the client-side apply annotation limit.
-- ArgoCD is on the 3.x line. Server-side apply and server-side diff are the modern default. RBAC changed in 3.0: `update` and `delete` no longer cascade to managed sub-resources, and logs need explicit `logs, get` permission.
+- Install first, enforce last. Every Kyverno policy (foundation `policy-baseline` and AI-plane
+  `ai-policies`) ships with `failureAction: Audit`, not `Enforce`. Audit reports violations without
+  blocking admission. An admission guardrail set to Enforce before the software meant to satisfy it
+  is installed rejects that software's own pods and stalls the build. So the whole platform lands
+  under Audit, then enforcement is turned on only after the platform is healthy. The single
+  sanctioned flip to Enforce is the governance demonstration on the AI-plane set; the foundation
+  baseline stays Audit. Do not add a namespace-wide enforcing admission webhook that fires before
+  its backing workload exists.
+- Never run mutating `kubectl` directly against the cluster, except for the bootstrap (installing
+  ArgoCD and seeding the Git host) and the scripted Kyverno denial demonstration.
+- Bootstrap and ApplicationSet CRDs require server-side apply: use
+  `kubectl apply --server-side --force-conflicts`. The ApplicationSet and Argo Workflows CRDs exceed
+  the client-side apply annotation limit.
+- ArgoCD is on the 3.x line. Server-side apply and server-side diff are the modern default. RBAC
+  changed in 3.0: `update` and `delete` no longer cascade to managed sub-resources, and logs need
+  explicit `logs, get` permission.
 
 ## Naming and namespaces
 
-- Descriptive kebab-case everywhere. No UUIDs, no `final-v2` suffixes. No `improved`, `new`, or `enhanced` in names.
-- One namespace per logical area: `argocd`, `backstage`, `observability`, `cert-manager`, `kyverno`, `external-secrets`, `openbao`, `kgateway-system`, `agentgateway`, `kagent`, `kserve`.
-- Checkpoints are annotated git tags: `checkpoint/module-0-start`, `checkpoint/module-1-end`, `checkpoint/module-2-end`, `checkpoint/module-3-end`. Reset scripts target these tags.
+- Descriptive kebab-case everywhere. No UUIDs, no `final-v2` suffixes. No `improved`, `new`, or
+  `enhanced` in names.
+- One namespace per logical area: `argocd`, `backstage`, `observability`, `cert-manager`, `kyverno`,
+  `external-secrets`, `openbao`, `kgateway-system`, `agentgateway`, `kagent`, `kserve`.
 
 ## Platform facts that are easy to get wrong (verified June 2026)
 
-- ingress-nginx is end of life and MetalLB is decorative on EKS. The ingress and LB path is the AWS Load Balancer Controller. Storage is the AWS EBS CSI driver.
-- Workload identity is EKS Pod Identity, not IRSA. Both the AWS Load Balancer Controller and the EBS CSI driver use it; the cluster sets `enable_irsa = false` so no OIDC provider is created. Pod Identity is the AWS-suggested default over IRSA as of July 2026 and avoids 300 per-cluster OIDC trust policies. The EBS CSI association is wired through the add-on's `pod_identity_association` (EKS owns the ordering); the LB controller uses a standalone association. This is a locked decision (D16). Read `docs/architecture.md` and `docs/reference/decisions.md` before changing it, and record a superseding entry; do not silently revert to IRSA.
-- The kagent Agent CRD is `kagent.dev/v1alpha2`. The field is `systemMessage`, nested under `spec.type` and `spec.declarative`. Agents run on Google ADK. Do not write v1alpha1 or `systemPrompt`.
-- agentgateway is a Linux Foundation (Agentic AI Foundation) project, not CNCF. It is a sibling of kgateway, not its data plane.
-- The demo agent on attendee clusters routes to the in-cluster vLLM via an OpenAI-compatible endpoint. No external API spend, no external credentials. See `docs/reference/build-spec.md` section 6.7.
-- OpenTelemetry GenAI semantic conventions are Development grade. Present `gen_ai.*` attributes as current but unstable.
+- ingress-nginx is end of life and MetalLB is decorative on EKS. The ingress and LB path is the AWS
+  Load Balancer Controller. Storage is the AWS EBS CSI driver.
+- Workload identity is EKS Pod Identity, not IRSA. Both the AWS Load Balancer Controller and the EBS
+  CSI driver use it; the cluster sets `enable_irsa = false` so no OIDC provider is created. The EBS
+  CSI association is wired through the add-on's `pod_identity_association` so EKS owns the ordering;
+  the LB controller uses a standalone association. This is a locked decision (D16). Read
+  `docs/architecture.md` and `docs/reference/decisions.md` before changing it, and record a
+  superseding entry; do not silently revert to IRSA.
+- The kagent Agent CRD is `kagent.dev/v1alpha2`. The field is `systemMessage`, nested under
+  `spec.type` and `spec.declarative`. Agents run on Google ADK. Do not write v1alpha1 or
+  `systemPrompt`.
+- agentgateway is a Linux Foundation (Agentic AI Foundation) project, not CNCF. It is a sibling of
+  kgateway, not its data plane.
+- The demo agent routes to the in-cluster vLLM **through agentgateway**, not directly, so the
+  prompt-guard and audit policies apply to it. An agent that calls the model directly bypasses every
+  control the AI plane installs, and the platform then certifies guardrails nothing traverses. No
+  external API spend, no external credentials.
+- The Gateway must not be named after the chart that installs its controller. The controller creates
+  one Deployment per Gateway named after the Gateway; the agentgateway chart's own Deployment carries
+  the release name; `spec.selector` is immutable, so naming both `agentgateway` fails permanently
+  while ArgoCD reports the sync succeeded. It is `agentgateway-proxy`.
+- Agent tracing is **off** by default in the kagent chart. `otel.tracing.enabled` is the switch that
+  works. The `instrumentation.opentelemetry.io/inject-python` annotation does not: the agent is a Go
+  binary, kagent does not copy Agent annotations onto the Deployment it generates, and no
+  `Instrumentation` resource exists. The annotation stays because a policy requires it; it is not
+  what produces the traces.
+- OTel GenAI spans are named for their **operation and target** (`invoke_agent platform_helper`,
+  `execute_tool echo`, `generate_content qwen3-1.7b`), with `gen_ai.*` in the **attributes**. Do not
+  match spans by a `gen_ai.*` name; nothing is named that way.
+- OpenTelemetry GenAI semantic conventions are Development grade. Present `gen_ai.*` attributes as
+  current but unstable.
+
+## Testing
+
+Cluster-free tests run anywhere. Cluster-bound tests skip themselves unless `KUBECONFIG_FILE` and
+`EXPECTED_CONTEXT` are set, so a bare `pytest` is safe with no cluster and reports them as skipped.
+Nothing reads the default kubeconfig, on purpose.
+
+```bash
+uv run --group test pytest          # everything the suite needs
+pytest                              # whatever your environment already has
+```
+
+## Container images
+
+Six manifests pull from `ghcr.io/peopleforrester/*`. These are public mirrors of upstream images,
+re-hosted so a build does not depend on Docker Hub rate limits, plus two images with no upstream
+(`backstage` and `vllm-qwen3`). They pull anonymously. If you would rather host them yourself,
+`scripts/mirror-images.sh` copies them into a namespace you control.
 
 ## Writing standards for any doc generated here
 
 - No em-dashes, no en-dashes. Commas, colons, periods.
-- Banned words: delve, leverage, robust, seamless, comprehensive, under the hood, navigate complexities, genuinely, in today's landscape.
+- Banned words: delve, leverage, robust, seamless, comprehensive, under the hood, navigate
+  complexities, genuinely, in today's landscape.
 - No "it's not X, it's Y" inversions. No triadic lists as a default. No mirrored closing sentences.
 - Direct and declarative. State things plainly. No hedging filler.
-- Claims about maturity stay evidence-grounded. Sandbox projects are described as Sandbox. If evidence for a number does not exist, say so.
-- "Tools don't transform organizations. People do." is preserved verbatim if quoted.
+- Claims about maturity stay evidence-grounded. Sandbox projects are described as Sandbox. If
+  evidence for a number does not exist, say so.
 
 ## Secrets
 
-The repo contains zero real credentials. Presenter keys live in environment variables loaded before OBS starts. OpenBao (the LF/MPL-2.0 Vault fork, dev mode) is the in-cluster secret backend and External Secrets Operator pulls from it over the Vault-compatible API. Sealed Secrets was dropped (redundant with ESO, and Bitnami retired its chart repo). No manifest references docker.io directly: images are mirrored to a GHCR namespace.
+The repo contains zero real credentials, and no AWS account id. Both are verifiable rather than
+asserted; `docs/what-is-not-included.md` gives the two commands and `tests/test_no_account_ids.py`
+runs them. OpenBao (the LF/MPL-2.0 Vault fork, dev mode) is the in-cluster secret backend and
+External Secrets Operator pulls from it over the Vault-compatible API. Sealed Secrets was dropped
+(redundant with ESO, and Bitnami retired its chart repo). The two passwords that do appear, for the
+in-cluster Gitea and OpenBao dev instances, are ephemeral and local to your own cluster.
+
+## What must never be added here
+
+This is a public companion repository for a book. Keep out of it:
+
+- Anything that identifies a person, employer, client, or third-party event.
+- Cloud resource identifiers: account ids, volume and instance ids, ARNs, load balancer hostnames.
+- Links to private shares, and personal domains.
+- Internal identifier schemes that have no key in this repository.
+- Delivery material: run-of-show notes, recording checklists, anything addressed to a presenter
+  rather than a reader.
+
+`tests/test_no_account_ids.py` enforces the credential and account-id part of this, and CI runs it
+on every push.

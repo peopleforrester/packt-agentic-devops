@@ -9,7 +9,7 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-FA7040.svg)](LICENSE)
 [![Components](https://img.shields.io/badge/components-30%20pinned-2e9e5b.svg)](components.yaml)
 [![GitOps](https://img.shields.io/badge/GitOps-ArgoCD-blue.svg)](solution/platform/0-bootstrap)
-[![tests](https://github.com/peopleforrester/packt-agentic-devops/actions/workflows/tests.yml/badge.svg)](https://github.com/peopleforrester/packt-agentic-devops/actions/workflows/tests.yml)
+[![tests](https://github.com/PacktPublishing/Agentic-DevOps-with-Claude-Code/actions/workflows/tests.yml/badge.svg)](https://github.com/PacktPublishing/Agentic-DevOps-with-Claude-Code/actions/workflows/tests.yml)
 
 A complete, reproducible platform you can build on your own cluster, one phase at a time, at
 whatever pace suits you. Every component is here, version-pinned, with a test that proves each phase
@@ -114,7 +114,7 @@ If you are skimming this as a portfolio piece, these are the parts with real dec
 
 You need an EKS cluster, an agentic CLI on your own plan, and the prerequisites in
 [`docs/prerequisites.md`](docs/prerequisites.md). Point your agent at
-[`spec/WORKSHOP-SPEC.md`](spec/WORKSHOP-SPEC.md) and let it build, one phase at a time.
+[`spec/BUILD-SPEC.md`](spec/BUILD-SPEC.md) and let it build, one phase at a time.
 
 Each phase has a test that tells you whether it actually landed, in [`tests/`](tests), named for the
 phase it gates. Run `pytest` for the checks that need no cluster; set `KUBECONFIG_FILE` and

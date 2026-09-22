@@ -1,4 +1,4 @@
-# Per-agent attribution over the Claude Code audit stream (B17).
+# Per-agent attribution over the Claude Code audit stream.
 # Stream label contract: job="claude-audit", every line JSON with an agent_identity field.
 # The audit hook (.claude/hooks/audit.sh) writes those lines; scripts/ship-audit-to-loki.sh
 # pushes them to Loki with the job label. Run in Grafana Explore against the Loki datasource,

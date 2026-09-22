@@ -19,7 +19,7 @@
 **Completion promise:** `<promise>PHASE8_DONE</promise>` and, when all phases pass, `<promise>ALL_PHASES_COMPLETE</promise>`
 
 **Key decisions:**
-- Policies are CEL-based Kyverno types; the ValidatingPolicy converts to a native ValidatingAdmissionPolicy. The denial demo is the one sanctioned mutating-kubectl beat, and it is rehearsed.
+- Policies are CEL-based Kyverno types; the ValidatingPolicy converts to a native ValidatingAdmissionPolicy. The denial demonstration is the one sanctioned use of mutating kubectl.
 - The denial is deterministic: the violating fixture lives in the repo, and the reset script restores known-good policy state.
 - Attribution covers the building agent itself, the point of the beat: the agent that built the platform appears in the platform's own audit trail.
 

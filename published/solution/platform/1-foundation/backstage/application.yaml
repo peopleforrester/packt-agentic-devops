@@ -38,7 +38,7 @@ spec:
           # catalog 401'd (this was the root of D15/D19). app-config.production.yaml is a
           # complete config, so load it alone: loading the scaffold config too pulls in its
           # example file locations, which are absent from the image and leave the catalog
-          # empty. Full write-up in prds/4-backstage-config-wiring.md.
+          # empty.
           args:
             - "--config"
             - "app-config.production.yaml"

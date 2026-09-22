@@ -5,7 +5,7 @@ already debugged, that the workshop's build produces. It is the **reference**,
 not your starting point.
 
 The workshop asks you to build the platform yourself, from the spec in
-`spec/WORKSHOP-SPEC.md` and the per-phase files in `spec/phases/`. Your agent
+`spec/BUILD-SPEC.md` and the per-phase files in `spec/phases/`. Your agent
 generates the manifests into `platform/` and deploys them through Git. That is
 the point of the workshop: watch the agent build a real platform.
 

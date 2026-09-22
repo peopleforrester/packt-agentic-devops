@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # ABOUTME: Claude Code audit hook. Logs every tool invocation as one structured
-# ABOUTME: JSON line with an agent identity label, for per-agent attribution (B17).
+# ABOUTME: JSON line with an agent identity label, for per-agent attribution.
 set -euo pipefail
 
 # This hook runs on PreToolUse and PostToolUse. It must never break the session,

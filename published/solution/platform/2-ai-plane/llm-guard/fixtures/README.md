@@ -1,12 +1,12 @@
 <!-- ABOUTME: How to run the B09 prompt-injection block demo against agentgateway. -->
 <!-- ABOUTME: The payload is in injection-fixture.yaml; this file is the exact command. -->
 
-# Prompt-injection block demo (B09)
+# Prompt-injection block demo
 
 The demo sends one hostile prompt and one benign prompt to the same agent
 through agentgateway. LLM Guard blocks the hostile one and passes the benign
 one. Both prompts are pinned in `injection-fixture.yaml` so the demo is
-deterministic every rehearsal.
+deterministic every run.
 
 ## What is wired
 

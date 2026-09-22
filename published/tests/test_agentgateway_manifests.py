@@ -440,8 +440,8 @@ def test_stated_component_counts_match_components_yaml():
             os.path.join(root, "**", "*.md"), recursive=True)
         for path in paths:
             for lineno, line in enumerate(open(path, errors="replace"), 1):
-                # Historical statements about a different event are not claims about this platform.
-                if "kcd" in line.lower() or "predecessor" in line.lower():
+                # Statements about a predecessor build are not claims about this platform.
+                if "predecessor" in line.lower():
                     continue
                 found = []
                 for m in digit_re.finditer(line):

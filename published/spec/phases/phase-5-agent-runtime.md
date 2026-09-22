@@ -23,7 +23,7 @@
 - The Agent CRD is `kagent.dev/v1alpha2`, field `systemMessage` under `spec.declarative`, runtime Google ADK. Never write v1alpha1 or `systemPrompt`. Preflight that the live CRD shows v1alpha2.
 - LLM Guard is effectively frozen (0.3.16, no releases since mid-2025 post-acquisition); pin it, vendor the config, mirror the multi-GB image to GHCR and pre-pull. The injection block is deterministic and reset-restorable.
 - OpenLLMetry is Apache-2.0 (not MIT); it emits GenAI conventions that are Development grade. Set `OTEL_SEMCONV_STABILITY_OPT_IN=gen_ai_latest_experimental`.
-- This is the most-rehearsed beat. The agent calls only the in-cluster vLLM.
+- The agent calls only the in-cluster vLLM.
 - MCP wiring: the agent references the MCP server via `spec.tools[]` `type: McpServer` with `mcpServer.kind: RemoteMCPServer` (`kagent.dev/v1alpha2`, points at the agentgateway URL, `protocol: STREAMABLE_HTTP`, path `/mcp`). Note the kmcp split: a server kmcp deploys in-cluster is `MCPServer` (`kagent.dev/v1alpha1`); a server reached by URL is `RemoteMCPServer` (`kagent.dev/v1alpha2`). The agentgateway-in-front URL mapping is the thinnest-documented area; validate it live before the demo. MCP spec revision is 2025-11-25; do not use the deprecated HTTP+SSE transport.
 
 **Stop here.** Output the completion promise and wait. Read the audit log for both: the MCP call that succeeded, and the injection that was refused.

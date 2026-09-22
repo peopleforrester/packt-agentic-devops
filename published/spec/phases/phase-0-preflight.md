@@ -7,7 +7,7 @@
 **Outputs:**
 - Confirmation that `kubectl` reaches the cluster and the nodes are Ready
 - Confirmation of the Kubernetes version (expect 1.35)
-- A read of this spec (`spec/WORKSHOP-SPEC.md`) and `components.yaml`
+- A read of this spec (`spec/BUILD-SPEC.md`) and `components.yaml`
 - The repo cloned into your working environment so the spec and manifests are available
 - A short written note of what is and is not present on the cluster (it should be close to empty)
 

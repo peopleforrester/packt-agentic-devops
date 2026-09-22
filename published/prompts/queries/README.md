@@ -1,4 +1,4 @@
-<!-- ABOUTME: LogQL queries for the per-agent attribution demo (B17) and their label contract. -->
+<!-- ABOUTME: LogQL queries for the per-agent attribution demo and their label contract. -->
 <!-- ABOUTME: The queries only return data once the audit stream is shipped to Loki. -->
 
 # Attribution queries

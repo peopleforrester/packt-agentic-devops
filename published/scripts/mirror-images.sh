@@ -46,7 +46,7 @@ main() {
 
     local total="${#SOURCES[@]}" i=0 failed=0 src name dst
     log "Mirroring ${total} images to ghcr.io/${GHCR_ORG} (dry-run=${DRY_RUN})"
-    # Truncate the map on a real run only. preflight.sh check_mirror reads this file
+    # Truncate the map on a real run only. The map records what was mirrored where
     # (column 2 = GHCR dst) and verifies each dst resolves; a dry run pushes nothing,
     # so it must not leave a map that falsely claims images are mirrored.
     [[ "${DRY_RUN}" -eq 1 ]] || : >"${IMAGE_MAP}"

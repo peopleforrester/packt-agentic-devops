@@ -174,7 +174,7 @@ components:
     notes: >
       CNCF Graduated. CEL-based policy types (ValidatingPolicy, etc.) are GA as of 1.17.
       Legacy JMESPath ClusterPolicy deprecated, removal planned v1.20. Also used in the
-      wrap module for AI-plane policies (B16).
+      wrap module for AI-plane policies.
 
   - name: keda
     display_name: "KEDA"
@@ -276,7 +276,7 @@ components:
     notes: >
       Use the grafana-community repo; the old grafana repo OSS charts are frozen.
       Use monolithic mode for the demo; Simple Scalable is deprecated. Powers the
-      per-agent attribution beat (B17).
+      per-agent attribution query.
 
   - name: tempo
     display_name: "Tempo"
@@ -292,7 +292,7 @@ components:
     notes: >
       Single-binary tempo chart, lighter than tempo-distributed for a per-student
       demo cluster (tempo-distributed 2.25.4 is the production alternative).
-      Default Tempo port is 3200, not 3100. Lands the AI-plane traces (B10).
+      Default Tempo port is 3200, not 3100. Lands the AI-plane traces.
       Pinned to app 2.9.0 (chart 1.25.0), NOT 2.10.x. Verified empirically on
       2026-07-23: on 2.10 a trace written then queried came back empty in
       standalone mode and test_trace_reaches_tempo failed; the downgrade makes it
@@ -425,7 +425,7 @@ components:
       this is the prompt-injection scanner: the component whose job is to be
       attacked. Treat a disclosed vulnerability in it as unpatchable and plan the
       swap now rather than at disclosure. Pin and vendor the
-      known-good config, treat as a fixed dependency. Powers the injection block (B09).
+      known-good config, treat as a fixed dependency. Powers the injection block.
 
   - name: openllmetry
     display_name: "OpenLLMetry"
@@ -490,7 +490,7 @@ components:
     notes: >
       CNCF Sandbox since March 2026. Kustomize install. Backed by Red Hat, Google, IBM,
       CoreWeave, NVIDIA. Pre-1.0, not production-ready. Shown as the distributed-inference
-      scheduling layer (B12), architecture on screen rather than a deep demo.
+      scheduling layer, included as an architecture reference rather than a running install.
 
   - name: mcp-server
     display_name: "MCP demo server"

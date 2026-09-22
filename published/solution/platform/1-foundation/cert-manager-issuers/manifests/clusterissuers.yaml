@@ -18,10 +18,10 @@ spec:
     # A real, parseable email. The placeholder REPLACE_WITH_EMAIL made ACME account registration
     # fail ("invalidContact: unable to parse email address") and left this ClusterIssuer, and so
     # the cert-manager-issuers Application, permanently Degraded. This issuer is a demonstration:
-    # workshop TLS terminates at the Railway edge, so nothing on-cluster requests a cert from it,
-    # but it must register cleanly to read Healthy. A static workshop address is correct here;
-    # there is no per-cluster email to template.
-    email: workshop@ai-enhanced-devops.com
+    # nothing on-cluster requests a certificate from it, but it must register cleanly to read
+    # Healthy. A static address is correct here; there is no per-cluster email to template.
+    # Change it to your own if you intend to issue real certificates.
+    email: platform-admin@example.com
     privateKeySecretRef:
       name: letsencrypt-staging
     solvers:

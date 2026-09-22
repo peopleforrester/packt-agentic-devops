@@ -1,4 +1,4 @@
-# ABOUTME: The AI-plane Grafana dashboard as a sidecar-loaded ConfigMap (B10/P10).
+# ABOUTME: The AI-plane Grafana dashboard as a sidecar-loaded ConfigMap.
 # ABOUTME: Datasource template variables bind at load, so it works on any provisioned Grafana.
 #
 # The Grafana in kube-prometheus-stack runs its dashboard sidecar against the

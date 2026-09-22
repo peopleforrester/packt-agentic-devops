@@ -2,7 +2,12 @@
 
 Locked decisions, newest at the bottom. These are the source of truth when a document and reality disagree.
 
-**This is a dated log, and its language is of its time.** The platform was first built to be delivered live, so entries talk about attendees, presenters, per-student clusters and a fleet of 250. Those words are left exactly as they were written. A decision log that gets tidied up after the fact stops being evidence, and the reasoning is what makes an entry worth keeping: "one scoped IAM role reused across clusters rather than 300 per-cluster OIDC trust policies" is a useful argument whether you are running three hundred clusters or one.
+**This is a dated log, and its language is of its time.** The platform was first built to be delivered
+to a room of people at once, so entries reason about many clusters where you will run one. That framing
+is left in place where it carries the argument, because the reasoning is what makes an entry worth
+keeping: "one scoped IAM role reused across clusters rather than a per-cluster OIDC trust policy each"
+is a useful argument whether you are running three hundred clusters or one. Entries that recorded only
+the logistics of that delivery have been dropped, because they say nothing about the platform.
 
 For the current shape of the platform rather than how it was reached, read [`../architecture.md`](../architecture.md). Entries that name files no longer in this repository are history, not instructions; [`../what-is-not-included.md`](../what-is-not-included.md) says what was removed and why.
 
@@ -30,19 +35,22 @@ Attendee clusters route the in-cluster agents to the in-cluster vLLM over an Ope
 
 ## D6. Live build scope: bare cluster, students build everything
 
-The only thing pre-staged is a bare cluster, up, with credentials handed to the student at the start. ArgoCD is not installed, the repo is not cloned, nothing is synced. The student's own agentic CLI, driven by the spec document, builds everything from Phase 0, including installing ArgoCD and cloning the repo. Precedent: at KCD Texas, students completed the full build in about 20 minutes of a 90-minute session. Nothing is compiled from source live; the build deploys pre-built images via GitOps, which is why it is fast. (June 19, 2026)
+The only thing pre-staged is a bare cluster, up, with credentials handed to the student at the start. ArgoCD is not installed, the repo is not cloned, nothing is synced. Your own agentic CLI, driven by the spec document, builds everything from Phase 0, including installing ArgoCD and cloning the repo. Nothing is compiled from source live; the build deploys pre-built images via GitOps, which is why it is fast. (June 19, 2026)
 
 ## D7. Pacing: the spec forces stops between phases
 
-The spec document forces a stop between each phase. The presenter presents during the stops, and everyone resumes together. This is the sync mechanism; it does not depend on lockstep enforcement beyond the spec gates. Holds at the workshop's audience scale. (June 19, 2026)
+The spec document forces a stop between each phase, so you review what the agent did before it moves on. The gates are in the spec itself rather than in any external enforcement. (June 19, 2026)
 
 ## D8. Phase structure
 
-Roughly nine phases, Phase 0 through Phase 8, mapping the abstract's three modules plus the wrap onto phases. The presenter proposes the breakdown in the attendee spec; Michael signs off. (June 19, 2026)
+Roughly nine phases, Phase 0 through Phase 8. The breakdown is proposed in the spec and settled there. (June 19, 2026)
 
-## D9. Cluster provisioning is Michael's
+## D9. Cluster provisioning sits outside the in-cluster build
 
-Michael provisions all 300 clusters, including the t3.2xlarge sizing and the per-cluster in-cluster vLLM. This is out of the build scope here. Each cluster runs its own small in-cluster vLLM, which is the simulated inference; no student gets access to a large external LLM. (June 19, 2026)
+The cluster, its t3.2xlarge sizing and its add-ons are created before Phase 0 and are not part of what
+the agent builds. See [`../../provision/README.md`](../../provision/README.md). Each cluster runs its
+own small in-cluster vLLM rather than reaching a large external model, so there is no external API
+spend and no external credential anywhere in the build. (June 19, 2026)
 
 ## D10. Prerequisite: bring your own agentic CLI
 
@@ -71,7 +79,7 @@ Two LLM roles, not to be confused: the agentic CLI is the builder and runs on th
 
 ## D14. RESOLVED: per-agent attribution works across the modern agentic CLIs
 
-The earlier claim that the B17 attribution beat works cleanly only on Claude Code and Codex was wrong, corrected by the per-vendor spikes. Every CLI in the D13 working set now ships lifecycle hooks suitable for a per-action audit trail: Claude Code (PreToolUse/PostToolUse), Codex (GA hooks), GitHub Copilot CLI (preToolUse/postToolUse), Antigravity (Inspect hooks), Kiro (pre/post hooks), opencode (tool.execute.before/after), Goose (PreToolUse/PostToolUse engine), Cursor (six CLI events as of April 2026). The config differs per CLI, but each can ship a structured line per tool invocation to Loki. B17 is achievable across the accepted set; the presenter demonstrates it on Claude Code, and the repo can document the hook config for the others. No narrowing needed. (June 19, 2026)
+The earlier claim that per-agent attribution works cleanly only on Claude Code and Codex was wrong, corrected by the per-vendor spikes. Every CLI in the D13 working set now ships lifecycle hooks suitable for a per-action audit trail: Claude Code (PreToolUse/PostToolUse), Codex (GA hooks), GitHub Copilot CLI (preToolUse/postToolUse), Antigravity (Inspect hooks), Kiro (pre/post hooks), opencode (tool.execute.before/after), Goose (PreToolUse/PostToolUse engine), Cursor (six CLI events as of April 2026). The config differs per CLI, but each can ship a structured line per tool invocation to Loki. Per-agent attribution is achievable across the accepted set. The repo wires it for Claude Code and documents the label contract, which the others can meet with their own hook config. No narrowing needed. (June 19, 2026)
 
 ## D12. Tempo over Jaeger; KEDA is not Karpenter
 
@@ -95,56 +103,42 @@ Supersedes the earlier split ("EBS CSI via IRSA, Pod Identity for the LB control
 
 ## D16-validation. D16 proven on a live cluster (Pod Identity delivers working creds)
 
-On 2026-07-18 a throwaway single-node cluster (`packt-podid-val`) was stood up from `scripts/provision/cluster/main.tf` on the shared lab VPC to prove D16 end to end, not just that the HCL validates. Results:
+On 2026-07-18 a throwaway single-node cluster was stood up to prove D16 end to end, not just that the HCL validates. Results:
 
 - No IAM OIDC provider was created in the account (`enable_irsa = false` holds): IRSA is off.
 - The `eks-pod-identity-agent` add-on came up ACTIVE, and both associations exist: `kube-system/ebs-csi-controller-sa` and `kube-system/aws-load-balancer-controller`.
-- Credential proof, EBS CSI: a pod running as `ebs-csi-controller-sa` called `sts get-caller-identity` and assumed `packt-podid-val-ebs-csi-*`. A `gp3` PVC (`ebs.csi.aws.com`) then bound in seconds; the consumer pod mounted the real EBS volume (`vol-05fad9f010caa7f93`), wrote, and read back. Provisioning an EBS volume requires `ec2:CreateVolume`, so this proves the add-on-native association gives the driver working credentials with EKS owning the ordering.
-- Credential proof, LB controller: a pod running as the `aws-load-balancer-controller` SA assumed `packt-podid-val-aws-lbc-*` via the standalone association. The controller itself was not installed; the association delivers credentials to that SA regardless.
+- Credential proof, EBS CSI: a pod running as `ebs-csi-controller-sa` called `sts get-caller-identity` and assumed its EBS CSI role. A `gp3` PVC (`ebs.csi.aws.com`) then bound in seconds; the consumer pod mounted the real EBS volume, wrote, and read back. Provisioning an EBS volume requires `ec2:CreateVolume`, so this proves the add-on-native association gives the driver working credentials with EKS owning the ordering.
+- Credential proof, LB controller: a pod running as the `aws-load-balancer-controller` SA assumed its load balancer controller role via the standalone association. The controller itself was not installed; the association delivers credentials to that SA regardless.
 
 Teardown was clean: the CSI-provisioned EBS volume was deleted first (via PVC deletion) so it could not leak past `terraform destroy`, confirmed `available` then gone, then the cluster was destroyed (43 resources, destroy-only plan). D16 stands as written. (July 18, 2026)
 
 ## D17. RESOLVED: node root disk is 50 GB via block_device_mappings, not disk_size
 
-The dev-cluster node group sized its root volume with `disk_size = 80`, which never took effect. terraform-aws-modules/eks manages a launch template for the node group by default, and `disk_size` is silently ignored whenever a launch template exists, so the node booted at the AL2023 AMI default of 20 GB. The image-heavy platform (the baked vLLM image alone is several GB) overflowed 20 GB, DiskPressure went True, and kubelet evicted the platform on a loop. This would have failed identically on every one of the 300 student clusters.
+The dev-cluster node group sized its root volume with `disk_size = 80`, which never took effect. terraform-aws-modules/eks manages a launch template for the node group by default, and `disk_size` is silently ignored whenever a launch template exists, so the node booted at the AL2023 AMI default of 20 GB. The image-heavy platform (the baked vLLM image alone is several GB) overflowed 20 GB, DiskPressure went True, and kubelet evicted the platform on a loop.
 
-Fix: size the root volume through `block_device_mappings` (the launch-template path that actually applies), and set it to a measured value. On a live full-platform build the node rootfs used 34.4 GB, of which container images were 29.8 GB and pod writable layers were a few hundred MB. 50 GB is the resolved size: it holds ~35 GB used at ~69% of imagefs, which stays below kubelet's default 85% image-GC high threshold (so the baked vLLM image is never garbage-collected mid-workshop) and far above the 10% hard-eviction floor. 40 GB would sit at 86%, above the GC threshold, so sub-50 is unsafe; 80 and 100 were unjustified over-provisioning. `disk_size` is left out with a comment so it is not re-added. (July 19, 2026)
+Fix: size the root volume through `block_device_mappings` (the launch-template path that actually applies), and set it to a measured value. On a live full-platform build the node rootfs used 34.4 GB, of which container images were 29.8 GB and pod writable layers were a few hundred MB. 50 GB is the resolved size: it holds ~35 GB used at ~69% of imagefs, which stays below kubelet's default 85% image-GC high threshold (so the baked vLLM image is never garbage-collected mid-build) and far above the 10% hard-eviction floor. 40 GB would sit at 86%, above the GC threshold, so sub-50 is unsafe; 80 and 100 were unjustified over-provisioning. `disk_size` is left out with a comment so it is not re-added. (July 19, 2026)
 
-## D18. Manifest fixes found during the promo-demo build (v1alpha2 field, non-root UID)
+## D18. Manifest fixes found while building the AI plane (v1alpha2 field, non-root UID)
 
-Building the AI plane live on `adwc-dev` to film the promo clips surfaced three manifest defects that would have broken the workshop the same way:
+Building the AI plane on a development cluster surfaced three manifest defects, every one of which
+would have broken any build the same way:
 
-- demo-agent ModelConfig used `spec.apiKeySecretRef`; the installed `kagent.dev/v1alpha2` ModelConfig CRD names the field `apiKeySecret` (verified against the cluster's CRD schema). Corrected in `platform/2-ai-plane/demo-agent/manifests/demo-agent.yaml`.
+- demo-agent ModelConfig used `spec.apiKeySecretRef`; the installed `kagent.dev/v1alpha2` ModelConfig CRD names the field `apiKeySecret` (verified against the cluster's CRD schema). Corrected in `solution/platform/2-ai-plane/demo-agent/manifests/demo-agent.yaml`.
 - vLLM (KServe `qwen3`) and llm-guard both set `runAsNonRoot: true` on images whose declared USER is non-numeric (vLLM base runs as root; llm-guard declares `user`), which kubelet refuses to start because it cannot verify non-root from a non-numeric user. Fixed by pinning an explicit numeric `runAsUser`: llm-guard to 1000 (matching the image's `user`, which owns the baked scanner-model cache), and vLLM to 1001 plus `HOME=/tmp` (writable cache) and `USER=vllm` (so torch's `getpass.getuser()` does not hit `pwd.getpwuid()` for a uid with no `/etc/passwd` entry).
 
-These are committed manifest changes, not just live patches, so student clusters get the working versions. (July 19, 2026)
+These are committed manifest changes, not live patches, so a fresh build gets the working versions. (July 19, 2026)
 
-## D19. Repo made public; internal/ and prds/ scrubbed from history (July 19, 2026)
+## D19. ArgoCD reads from a Git host it can reach without a credential
 
-The platform tier's ArgoCD Applications all hardcode
-`repoURL: https://github.com/peopleforrester/packt-agentic-devops.git`. While the repo
-was private with no registered ArgoCD credential, every git-sourced Application failed
-with `authentication required: Repository not found`, silently dark-firing every
-student cluster's AI plane, Kyverno policies, and demo agent (Helm-sourced apps masked
-it). Reading the two archived precedents this session settled the fix: both KCD Texas
-(`KCD_Texas_2026_Workshop`) and Unleashed point their cluster ArgoCD at a PUBLIC GitHub
-repo, anonymous read, zero per-cluster credentials. Neither gave a per-cluster writable
-repo; Packt's in-cluster Gitea self-service tier is the writable piece both prior events
-lacked. So the decision is: make this repo public, matching the proven model.
+Every git-sourced Application resolves its manifests from a repository ArgoCD must be able to read.
+With no registered credential, each one fails with `authentication required: Repository not found`
+and does so quietly: the Application reports a sync failure while the Helm-sourced components around
+it stay green, so the platform looks mostly healthy with its whole AI plane dark.
 
-Before flipping public, `internal/` and `prds/` were scrubbed from all history with
-git-filter-repo (`--path internal --path prds --invert-paths`), rewriting staging, main,
-and the four `checkpoint/module-*` tags. Force-pushed with `--force-with-lease`. A fresh
-anonymous clone including tags confirms 0 occurrences of either path across every ref.
-The full-history security audit earlier this session found no real credentials ever
-committed, so the scrub is a tidiness and surface-reduction choice, not a breach
-response. Both directories are preserved on disk (untracked, gitignored) and backed up
-(bundle + tarball in `~/repos/private/repo-backups/events/`). Residual GitHub-side:
-force-orphaned objects remain reachable only by exact SHA until GitHub gc; a Support
-request would purge them, not required for the stated concern.
-
-Deferred to a pre-workshop "clean it public" pass: merge the verified manifest fixes to
-main, switch the default branch to main, and add a student-facing README.
+The resolution is the in-cluster Gitea. Each cluster hosts its own Git remote, the repository is
+public within the cluster so ArgoCD needs no credential at all, and you get a remote you can push to,
+which a read-only external repository would not give you. Nothing in the reconcile path leaves the
+cluster. (July 19, 2026)
 
 ## D20. Foundation Kyverno policies ship in Audit, not Enforce (install first, enforce last)
 
@@ -168,7 +162,7 @@ stays Audit through the event (report-only is the correct posture for operationa
 best-practice rules a live-built platform is still converging toward). The install-first,
 enforce-last principle is now a locked GitOps rule in the repo CLAUDE.md so a student's
 Claude Code will not re-introduce an enforcing guardrail ahead of its backing workload.
-This also closes a live/spec drift: the `adwc-dev` promo-build cluster already had these
+This also closes a live/spec drift: the development cluster already had these
 policies patched to Audit live; the manifest now matches. (July 20, 2026)
 
 ## D21. The student terminal gets AWS access via EKS Pod Identity, not an IAM user and access key
@@ -193,7 +187,7 @@ shell, and deleting the cluster deletes the association. The script verifies the
 by calling `sts:GetCallerIdentity` from inside the pod, because at fleet scale an
 unverified provisioning step is 250 unverified steps.
 
-Verified on adwc-dev: the terminal assumes `packt-student-adwc-dev`, `eks:DescribeCluster`
+Verified on a live cluster: the terminal assumes its own scoped role, `eks:DescribeCluster`
 on its own cluster succeeds, and `ec2:DescribeInstances`, `iam:ListUsers`,
 `s3:ListBuckets`, and describe against another cluster in the same account are all denied.
 
@@ -201,7 +195,7 @@ Known and accepted: the student is cluster-admin on their own cluster by design 
 workshop's task is to install a platform, which requires CRDs and ClusterRoles). Pod
 Identity resolves credentials by (namespace, ServiceAccount), so a cluster-admin can
 schedule a pod using the `aws-load-balancer-controller` ServiceAccount and receive that
-role. This was confirmed empirically on adwc-dev. The student's effective AWS reach is
+role. This was confirmed empirically on a live cluster. The effective AWS reach is
 therefore the union of the Pod Identity roles present on their cluster, and tightening the
 terminal's own role does not change that. What the union does NOT contain is the ability
 to launch compute: no role on a student cluster holds `ec2:RunInstances` or `iam:PassRole`,

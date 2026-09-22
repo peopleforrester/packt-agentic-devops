@@ -1,4 +1,4 @@
-# ABOUTME: Reference resource for the llm-d architecture beat (B12). Not a running llm-d.
+# ABOUTME: Reference resource for the llm-d architecture beat. Not a running llm-d.
 # ABOUTME: A reference ConfigMap describing the distributed-inference layer, not a running install.
 apiVersion: v1
 kind: ConfigMap

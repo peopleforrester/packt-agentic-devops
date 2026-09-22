@@ -3,7 +3,7 @@
 #
 # Image is the mirrored copy under the workshop GHCR namespace (no docker.io in any
 # manifest). The mirror script re-hosts laiyer/llm-guard-api:0.3.16. Powers the
-# prompt-injection block demo (B09). agentgateway calls this as a guardrail backend.
+# prompt-injection block demo. agentgateway calls this as a guardrail backend.
 apiVersion: apps/v1
 kind: Deployment
 metadata:

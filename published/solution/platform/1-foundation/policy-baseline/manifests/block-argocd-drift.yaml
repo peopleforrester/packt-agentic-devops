@@ -4,9 +4,8 @@
 # This is the first GitOps rule in this repo's own guidance, and until now nothing checked it. A
 # rule that lives only in a document is a rule that holds until someone is in a hurry.
 #
-# Ported from the sibling Unleash_an_Agent_Watch_It_Burn repo, which found four things the hard way
-# on live clusters. Each is load-bearing and each is the kind of mistake that makes the policy look
-# like it works while doing nothing:
+# Four things here were found the hard way on live clusters. Each is load-bearing, and each is the
+# kind of mistake that makes the policy look like it works while doing nothing:
 #
 # 1. MATCH ON THE ANNOTATION, NOT A LABEL. ArgoCD here uses annotation tracking
 #    (argocd.argoproj.io/tracking-id), not label tracking. An earlier version selected on
