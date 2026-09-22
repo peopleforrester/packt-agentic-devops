@@ -1,7 +1,7 @@
 # ABOUTME: B16/P16 primary fixture. A kagent Agent with NO llm-guard-policy annotation.
 # ABOUTME: Trips ai-require-llm-guard-reference. In enforce mode Kyverno denies it.
 #
-# This is the fixture the denial demo applies on screen. It is the demo-agent's Agent minus the
+# This is the fixture the denial exercise applies. It is the demo-agent's Agent minus the
 # agentic-platform.io/llm-guard-policy annotation and nothing else, so the only reason it is denied
 # is the missing guardrail reference. It keeps the OTel annotation deliberately: if it were missing
 # both, a denial would not tell you which rule fired, and the demo would prove less than it appears

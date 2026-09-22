@@ -25,13 +25,13 @@ Build the right set of IDP components. The count is whatever it adds up to. CI c
 
 The in-cluster model runs on t3.2xlarge with the model pre-warmed and a pre-warmed-request fallback. T3 is the last Intel x86 burstable family; the vLLM CPU image is x86. No dedicated compute node. (June 17, 2026)
 
-## D4. Attendee cluster TTL
+## D4. Cluster lifetime
 
 Warm before 11:00 AM EDT, torn down about 2 hours after close. No take-home persistence; the repo is the take-home. (June 17, 2026)
 
 ## D5. Demo agent model routing
 
-Attendee clusters route the in-cluster agents to the in-cluster vLLM over an OpenAI-compatible endpoint. No external API spend, no external credentials. (June 18, 2026)
+Clusters route the in-cluster agents to the in-cluster vLLM over an OpenAI-compatible endpoint. No external API spend, no external credentials. (June 18, 2026)
 
 ## D6. Live build scope: bare cluster, students build everything
 

@@ -1,4 +1,4 @@
-# Phase 1: GitOps bootstrap and core foundation (Module 1, budget 25 min)
+# Phase 1: GitOps bootstrap and core foundation (chapter 3)
 
 **Goal:** ArgoCD installed and reconciling the App-of-Apps, with the core foundation (cert-manager, OpenBao, External Secrets Operator, Kyverno) synced and healthy.
 

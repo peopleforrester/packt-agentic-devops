@@ -1,4 +1,4 @@
-# Phase 2: Observability plane (Module 1, budget 20 min)
+# Phase 2: Observability plane (chapter 4)
 
 **Goal:** The observability stack synced and collecting: metrics, logs, traces, and the OpenTelemetry pipeline.
 

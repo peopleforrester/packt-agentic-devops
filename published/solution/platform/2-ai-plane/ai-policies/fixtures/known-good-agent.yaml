@@ -4,7 +4,7 @@
 # Why a positive control is not optional. A policy that denies everything also denies
 # violating-agent.yaml, so the denial demo passes just as convincingly against a broken rule as
 # against a working one. Applying this immediately afterwards is what shows the rule is specific
-# rather than merely strict, and it takes about five seconds on screen.
+# rather than merely strict, and it takes about five seconds to check.
 #
 # Differs from violating-agent.yaml in exactly one line: the llm-guard-policy annotation.
 apiVersion: kagent.dev/v1alpha2

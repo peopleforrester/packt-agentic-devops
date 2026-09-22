@@ -1,4 +1,4 @@
-# Phase 0: Preflight (Opening, budget 15 min)
+# Phase 0: Preflight (chapter 2)
 
 **Goal:** Confirm the starting conditions before building anything. Install nothing in this phase.
 

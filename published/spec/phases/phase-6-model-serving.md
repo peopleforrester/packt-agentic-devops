@@ -1,6 +1,6 @@
-# Phase 6: Model serving (Module 2, budget 20 min)
+# Phase 6: Model serving (chapter 8)
 
-**Goal:** KServe serving the small in-cluster model via vLLM on CPU, one inference answered on screen, the agent trace landed in Tempo, and llm-d shown as the scheduling-layer topology. End of Module 2: AI-native.
+**Goal:** KServe serving the small in-cluster model via vLLM on CPU, one inference answered, the agent trace landed in Tempo, and llm-d shown as the scheduling-layer topology.
 
 **Inputs:** Phase 5 complete (kagent, agentgateway). cert-manager (for KServe webhooks). The vLLM CPU image pre-pulled.
 
@@ -9,7 +9,7 @@
 - An InferenceService (`serving.kserve.io/v1beta1`) serving Qwen3-1.7B (backup Qwen3-0.6B) via the vLLM CPU image `vllm/vllm-openai-cpu:v0.23.0-x86_64`, exposing an OpenAI-compatible endpoint
 - The kagent demo agent's ModelConfig from Phase 5 resolves against this endpoint; one inference request answered
 - The agent call's OTel trace walked in Tempo with `gen_ai.*` attributes; the AI-plane Grafana dashboard loads
-- llm-d (v0.7.0) shown as the distributed-inference scheduling topology, architecture on screen, with honest CNCF Sandbox framing (not a deep live demo)
+- llm-d (v0.7.0) shown as the distributed-inference scheduling topology, included as an architecture reference, with honest CNCF Sandbox framing rather than a running install
 
 **Test criteria (tests/test_phase_6_model_serving.py):**
 - The InferenceService is Ready and answers `/v1/chat/completions`

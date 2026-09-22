@@ -1,6 +1,6 @@
-# Phase 3: Developer portal (Module 1, budget 15 min)
+# Phase 3: Developer portal (chapter 5)
 
-**Goal:** Backstage up with a populated catalog, plus the scaling and delivery extensions. End of Module 1: a working IDP.
+**Goal:** Backstage up with a populated catalog, plus the scaling and delivery extensions.
 
 **Inputs:** Phases 1 and 2 complete. A pre-built Backstage image (Backstage is never built from source live).
 

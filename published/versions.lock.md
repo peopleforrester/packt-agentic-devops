@@ -12,7 +12,7 @@ different goals and they now have different homes:
 | Tag [`v1.0.0`](../../releases/tag/v1.0.0) | The frozen state. Reproduces the build exactly as delivered. Never re-pinned. |
 | `main` | Maintained. Versions move on the cadence in [`docs/version-maintenance.md`](docs/version-maintenance.md). |
 
-So if you want what was on screen, check out the tag. If you want a platform that installs against a
+So if you want exactly what the book prints, check out the tag. If you want a platform that installs against a
 current cluster, use `main` and expect these numbers to change.
 
 `components.yaml` is the machine-readable source of truth; this file is the quick lookup.

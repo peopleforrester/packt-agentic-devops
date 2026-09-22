@@ -77,19 +77,19 @@ A phase is done when its test passes and you have committed the phase's files. O
 
 ## Phases
 
-The build maps to the four-hour run of show: an opening, three modules, and a wrap. Nine phases, 0 through 8.
+Nine phases, 0 through 8. Each maps to a chapter of the book: chapter = phase + 2.
 
-| Phase | Name | Module | What it delivers |
+| Phase | Name | Chapter | What it delivers |
 |---|---|---|---|
-| 0 | Preflight | Opening | Confirm the bare cluster, credentials, agent registration, and tooling. Read this spec and `components.yaml`. Install nothing. |
-| 1 | GitOps bootstrap and core foundation | Module 1 | Install ArgoCD (server-side), clone and point at the repo, then the App-of-Apps brings up cert-manager, OpenBao, External Secrets Operator, and Kyverno. |
-| 2 | Observability plane | Module 1 | kube-prometheus-stack, Loki, Tempo, the OpenTelemetry Collector and Operator. |
-| 3 | Developer portal | Module 1 | Backstage (catalog, TechDocs, scaffolder, ArgoCD plugin), KEDA, and the Argo extensions (Workflows, Events, Rollouts). End of Module 1: a working IDP. |
-| 4 | AI gateway plane | Module 2 | Gateway API CRDs, kgateway, agentgateway with client-certificate mTLS, the prompt guardrail, and audit access logging. The AI-plane Kyverno policies are defined here in audit mode, so the AI plane is governed from birth. |
-| 5 | Agent runtime and safety | Module 2 | kagent and an Agent CRD, LLM Guard, OpenLLMetry wiring. The agent calls an MCP server through agentgateway; a prompt-injection attempt is blocked. |
-| 6 | Model serving | Module 2 | KServe with a small in-cluster vLLM model, and llm-d shown as the scheduling layer. The agent trace lands in Tempo. End of Module 2: AI-native. |
-| 7 | Self-service | Module 3 | A Backstage scaffolder template for an agent-service and the ArgoCD ApplicationSet that watches for it. The golden path fires end to end. |
-| 8 | Governance and attribution | Wrap | Flip the AI-plane Kyverno policies from audit to enforce, with the live denial demo. Per-agent attribution in Loki, and your 30-day commitment. |
+| 0 | Preflight | 2 | Confirm the bare cluster, credentials, agent registration, and tooling. Read this spec and `components.yaml`. Install nothing. |
+| 1 | GitOps bootstrap and core foundation | 3 | Install ArgoCD (server-side), clone and point at the repo, then the App-of-Apps brings up cert-manager, OpenBao, External Secrets Operator, and Kyverno. |
+| 2 | Observability plane | 4 | kube-prometheus-stack, Loki, Tempo, the OpenTelemetry Collector and Operator. |
+| 3 | Developer portal | 5 | Backstage (catalog, TechDocs, scaffolder, ArgoCD plugin), KEDA, and the Argo extensions (Workflows, Events, Rollouts). That completes the foundation: a working IDP. |
+| 4 | AI gateway plane | 6 | Gateway API CRDs, kgateway, agentgateway with client-certificate mTLS, the prompt guardrail, and audit access logging. The AI-plane Kyverno policies are defined here in audit mode, so the AI plane is governed from birth. |
+| 5 | Agent runtime and safety | 7 | kagent and an Agent CRD, LLM Guard, OpenLLMetry wiring. The agent calls an MCP server through agentgateway; a prompt-injection attempt is blocked. |
+| 6 | Model serving | 8 | KServe with a small in-cluster vLLM model, and llm-d shown as the scheduling layer. The agent trace lands in Tempo. That completes the AI plane. |
+| 7 | Self-service | 9 | A Backstage scaffolder template for an agent-service and the ArgoCD ApplicationSet that watches for it. The golden path fires end to end. |
+| 8 | Governance and attribution | 10 | Flip the AI-plane Kyverno policies from audit to enforce, with the live denial demo. Per-agent attribution in Loki. |
 
 Each phase has a detailed file in `spec/phases/phase-N-*.md` with its goal, outputs, test criteria, completion promise, and pinned versions.
 

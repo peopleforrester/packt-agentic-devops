@@ -1,4 +1,4 @@
-# Phase 7: Self-service (Module 3, budget 35 min)
+# Phase 7: Self-service (chapter 9)
 
 **Goal:** A Backstage scaffolder template for an agent-service and the ArgoCD ApplicationSet that watches for it, then the golden path fired end to end.
 

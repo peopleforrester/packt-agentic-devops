@@ -1,8 +1,8 @@
-# Phase 4: AI gateway plane (Module 2, budget 25 min)
+# Phase 4: AI gateway plane (chapter 6)
 
 **Goal:** The AI gateway plane installed and the AI-plane policies defined in audit mode, so the AI plane is governed from birth.
 
-**Inputs:** Module 1 complete (a working IDP). Gateway API CRDs are a prerequisite for the gateways.
+**Inputs:** The foundation complete (a working IDP). Gateway API CRDs are a prerequisite for the gateways.
 
 **Outputs:**
 - Gateway API standard CRDs (v1.5.1) applied with server-side apply

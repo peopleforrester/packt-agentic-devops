@@ -1,4 +1,4 @@
-# Phase 5: Agent runtime and safety (Module 2, budget 25 min)
+# Phase 5: Agent runtime and safety (chapter 7)
 
 **Goal:** kagent running, a demo Agent declared and reconciled by GitOps, calling an MCP server through agentgateway, with LLM Guard blocking a prompt-injection attempt and OpenLLMetry wired.
 

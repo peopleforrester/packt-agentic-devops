@@ -1,4 +1,4 @@
-# Phase 8: Governance and attribution (Wrap, budget 25 min)
+# Phase 8: Governance and attribution (chapter 10)
 
 **Goal:** Flip the AI-plane policies from audit to enforce with a live denial, show per-agent attribution in Loki, and close with the 30-day commitment.
 
@@ -6,7 +6,7 @@
 
 **Outputs:**
 - The AI-plane Kyverno policies flipped from Audit to Enforce
-- A live denial: an attempt to apply a violating agent manifest (for example an agent with no LLM Guard policy reference, or an image outside the allowlist) is blocked by Kyverno, shown on screen
+- A live denial: an attempt to apply a violating agent manifest (for example an agent with no LLM Guard policy reference, or an image outside the allowlist) is blocked by Kyverno at admission
 - A Loki query showing every action attributed to a named agent identity, including the building agent's own session via the audit hook
 - One specific change you intend to make in your own platform within 30 days, written down
 

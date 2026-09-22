@@ -27,7 +27,7 @@ demoed from a slide.
 ## What actually happened
 
 The workshop was not a scripted demo. Attendees got a bare EKS cluster and an agent, and built the
-platform themselves from the same spec the presenter used. What that took to support:
+platform themselves from the same spec in this repository. What that took to support:
 
 | | |
 |---|---|

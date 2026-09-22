@@ -1,100 +1,123 @@
 # Prompt Library
 
-Every live Claude Code prompt, rehearsed verbatim. Improvised prompting during delivery is
-limited to Q&A. Each prompt maps to a beat ID from the build spec (section 7) and a backup
-recording slot.
+The prompts that drive each phase of the build, in the order you reach them. Use them as written
+or as a starting point. Each one says what a good response looks like, what commonly goes wrong,
+and what to do about it.
 
-GitOps rule the prompts assume: Claude Code writes and commits manifests to the platform
-repo, then ArgoCD syncs. It does not run mutating `kubectl` directly, with two sanctioned
-exceptions: the bootstrap (installing ArgoCD and applying the first App-of-Apps) and the
-B16 Kyverno denial demo. The `.claude/settings.json` allowlist enforces this; a mutating
-`kubectl` verb triggers an approval prompt on screen, which is itself a teaching beat.
+Chapter numbers map to phases as chapter = phase + 2. The spec for each phase is in
+`spec/phases/`, and the test that proves it landed is named in the spec.
 
-Cluster-access ground rule the prompts assume: the terminal's kubeconfig is already
-cluster-admin on this cluster, so the agent never needs to grant itself Kubernetes or AWS
-access. Do NOT call `eks:CreateAccessEntry`, `aws eks create-access-entry`, or any IAM
-access-entry / RBAC-grant step to "get permission" before installing the platform. Those
-are denied by design (the workshop IAM role cannot mutate EKS access entries) and they are
-unnecessary. A run that opens with an access-entry attempt stalls at the very first phase;
-this was the single most common way the July 23 run got stuck. If a step appears to need
-more access, it does not: reconcile through ArgoCD as above.
+## Two rules the prompts assume
 
-The "Known failure modes" lines below are the anticipated ones, grounded in the build and
-the validation runs. Rehearsal (Phase 7) adds the observed ones and confirms the recovery
-moves. Re-verify the kagent CRD shape against the pinned chart at the July freeze.
+**GitOps.** Your agent writes and commits manifests to `platform/`, pushes to the in-cluster Git
+host, and ArgoCD syncs them. It does not run mutating `kubectl` directly. There are two sanctioned
+exceptions: the bootstrap, which installs ArgoCD and seeds the Git host before there is anything to
+sync from, and the Kyverno denial in chapter 10, which is the point of that exercise.
+`.claude/settings.json` enforces this. When your agent reaches for a mutating verb, it stops and
+asks you to approve. That pause is the permission policy working, not an obstacle.
 
-## Format for each entry
+**Cluster access.** Your kubeconfig is already cluster-admin, because
+`enable_cluster_creator_admin_permissions` in `provision/main.tf` gives an access entry to whoever
+ran `terraform apply`. So the agent never needs to grant itself Kubernetes or AWS access.
 
-- ID, Beat, Prompt (exact text), Expected behavior, Known failure modes, Recovery move.
+If a run opens with `eks:CreateAccessEntry`, `aws eks create-access-entry`, or any other attempt to
+obtain permission before installing anything, stop it. Nothing in the build needs it, and an agent
+that starts by reasoning about its own IAM will stall before it has installed a single component.
+It is the most common way a run gets stuck at the first phase. If a step appears to need more
+access, it does not; reconcile through ArgoCD as above.
+
+## Format
+
+Each entry gives the prompt, what a good response looks like, what commonly goes wrong, and what to
+do about it.
 
 ---
 
-## Module 1: Cloud-native foundation
+## Chapter 3: the GitOps foundation
 
-### P01 (B01) — Read the component manifest and explain the build
+### Read the component manifest and explain the build
+
 **Prompt:**
 > Read `components.yaml` and `platform/0-bootstrap/root-app.yaml`. In a few sentences, explain
 > how the App-of-Apps pattern is going to deploy this platform: what the root Application
 > points at, how the per-component Applications are discovered, and how sync waves order the
 > rollout. Do not apply anything yet.
 
-**Expected behavior:** Reads both files, explains that `platform-foundation` points ArgoCD at
+**A good response** reads both files and explains that `platform-foundation` points ArgoCD at
 `platform/1-foundation` and recurses for `*/application.yaml`, that each component Application is
-Helm- or manifest-sourced with a pinned version, and that sync-wave annotations order the
-rollout (cert-manager first, Backstage last). Read-only, no tool that mutates the cluster.
-**Known failure modes:** Claude offers to apply immediately. It pads the explanation past the
-time budget.
-**Recovery move:** The prompt says "do not apply yet" and "a few sentences"; if it overruns,
-cut it off and move to P02.
+Helm- or manifest-sourced with a pinned version, and that sync-wave annotations order the rollout,
+cert-manager first and Backstage last. Read-only. No tool that mutates the cluster.
 
-### P02 (B02) — Apply the foundation App-of-Apps
+**What usually goes wrong:** the agent offers to apply immediately, or pads the explanation.
+
+**What to do:** the prompt says "do not apply yet" and "a few sentences" for a reason. If the answer
+runs long, that is a prompt to tighten rather than a problem with the platform.
+
+### Apply the foundation App-of-Apps
+
 **Prompt:**
 > Apply the foundation App-of-Apps at `platform/0-bootstrap/root-app.yaml` into the `argocd`
 > namespace. This is the bootstrap exception to the GitOps rule. Then watch the ArgoCD UI as
 > the sync waves cascade and tell me when the foundation plane is all green.
 
-**Expected behavior:** Runs `kubectl apply -n argocd -f platform/0-bootstrap/root-app.yaml`
-(approval prompt appears and is approved on screen), then watches sync status. ArgoCD UI is
-the visual centerpiece; waves cascade cert-manager -> secrets/policy -> observability ->
-Argo extensions -> Backstage.
-**Known failure modes:** Image pull pressure delays a wave. Backstage is last and slowest. A
-component flaps Progressing before Healthy.
-**Recovery move:** Sync waves are tuned; give it the budgeted time. If a non-Backstage app
-hangs past budget, it is a candidate for the recorded backup.
+**A good response** runs `kubectl apply -n argocd -f platform/0-bootstrap/root-app.yaml`, which
+triggers an approval prompt because it is a mutating verb, then watches sync status. The waves
+cascade: cert-manager, then secrets and policy, then observability, then the Argo extensions, then
+Backstage.
 
-*(Opening Backstage in a browser is something you do yourself, not a prompt.)*
+**What usually goes wrong:** image pulls delay a wave. Backstage is last and slowest. A component
+flaps Progressing before it settles Healthy.
+
+**What to do:** give it time. The sync waves are ordered deliberately, and a component that is
+Progressing is not a component that is broken. Open Backstage in a browser yourself once it is
+Healthy; that is not something to ask the agent for.
 
 ---
 
-## Module 2: The AI plane (the centerpiece)
+## Chapter 6: the AI gateway
 
-### P05 (B05) — Apply the AI plane and review the gateway
+### Apply the AI plane and review the gateway
+
 **Prompt:**
-> Apply the AI-plane App-of-Apps at `platform/0-bootstrap/ai-plane-app.yaml`. Once kgateway is
-> Healthy, show me the Gateway API resources it created and explain what the Gateway and
-> GatewayClass represent here.
+> Apply the AI plane App-of-Apps and, once it syncs, explain what the Gateway and its routes
+> are doing: which backends exist, and what traffic each route carries.
 
-**Expected behavior:** Applies `platform-ai-plane`; ArgoCD syncs the AI plane (CRDs first via
-server-side apply, then controllers). Reviews the kgateway Gateway/GatewayClass and explains
-the Gateway API role.
-**Known failure modes:** CRDs not established before a dependent Application syncs. Client-side
-apply hits the CRD annotation size limit.
-**Recovery move:** Sync waves + ServerSideApply handle ordering; if a CRD race appears, a
-refresh resolves it once CRDs are established. Budget for the CRD wave.
+**A good response** applies the plane, waits for the Gateway to report `Programmed=True`, and
+explains that routes attach to `agentgateway-proxy` and carry traffic to the model and the MCP
+server.
 
-### P06 (B06) — Review the agentgateway data plane
+**What usually goes wrong:** the Gateway sits `Programmed=False`, or routes report
+`Accepted=False` with "no parent found", which reads like a route defect and is not one.
+
+**What to do:** check the Gateway first. Routes cannot attach to a Gateway that has not programmed,
+and the listener admits routes by namespace label, so a route in an unlabelled namespace is refused
+with a message about hostnames.
+
+### Review the agentgateway data plane
+
 **Prompt:**
-> agentgateway is deployed as the agentic data plane. Show me its routing configuration: how
-> it mediates LLM, MCP, and A2A traffic, and show the mTLS, guardrail, and audit-logging configuration applied to the Gateway.
+> Show me how a request from an agent reaches the model: the Gateway, the route, the backend,
+> and where the guardrail and audit policies attach.
 
-**Expected behavior:** Reads the agentgateway config, explains it sits as a sibling of
-kgateway mediating agent traffic, and points at the mTLS listener + prompt-guard + audit policies.
-**Known failure modes:** Claude conflates agentgateway with kgateway's data plane (it is a
-sibling, not kgateway's data plane). It overclaims maturity.
-**Recovery move:** Correct the framing live if needed: agentgateway is a Linux Foundation
-(Agentic AI Foundation) project, a sibling of kgateway. Honest maturity labels.
+**A good response** traces the path and names where the prompt-guard and audit policies sit. The
+point is that the agent's traffic passes through the gateway rather than around it.
 
-### P07 (B07) — Write the kagent Agent CRD  *(the workshop; most rehearsal time)*
+**What usually goes wrong:** the agent describes a direct call from the agent to the model, because
+that is the more common pattern in its training data.
+
+**What to do:** an agent that calls the model directly bypasses every control this plane installs,
+and the platform would then certify guardrails nothing traverses. If the explanation skips the
+gateway, ask where the guardrail policy applies and it will find the gap itself.
+
+---
+
+## Chapter 7: the agent runtime
+
+### Write the kagent Agent CRD
+
+This is the one worth taking slowly. It is the prompt most likely to be answered from stale
+training data.
+
 **Prompt:**
 > Write a kagent Agent that acts as a platform helper: it answers questions about this
 > platform's components and golden paths, keeps answers short and concrete, and says so when
@@ -102,149 +125,188 @@ sibling, not kgateway's data plane). It overclaims maturity.
 > provider. Put it in the `kagent` namespace, commit it under
 > `platform/2-ai-plane/demo-agent/manifests/`, and let ArgoCD reconcile it.
 
-**Expected behavior:** Produces the Agent plus its ModelConfig (and the dummy key Secret) with
-the exact known-good shape:
-- `apiVersion: kagent.dev/v1alpha2`, `kind: Agent`, `spec.type: Declarative`.
-- `spec.declarative.systemMessage` (NOT `systemPrompt`), `spec.declarative.modelConfig: vllm-qwen3`.
-- ModelConfig `provider: OpenAI`, `model: qwen3-1.7b`, `openAI.baseUrl:
-  http://qwen3-predictor.kserve.svc.cluster.local/v1`, key from a Secret (vLLM ignores it).
-- The `agentic-platform.io/llm-guard-policy` annotation so it satisfies the Kyverno
-  require-llm-guard-reference policy.
-Commits to Git; ArgoCD syncs; the agent reconciles like any other resource. An agent,
-declared as a Kubernetes resource, deployed by GitOps, written by an agent.
-**Known failure modes:** The big ones, all from stale training data: `v1alpha1` instead of
-`v1alpha2`; `systemPrompt` instead of `systemMessage`; field not nested under
-`spec.declarative`; a real external provider instead of the vLLM ModelConfig; baseUrl pointed
-at the wrong Service name.
-**Recovery move:** The known-good artifact already lives at
-`platform/2-ai-plane/demo-agent/manifests/demo-agent.yaml`. If Claude drifts on the CRD shape,
-the prompt is tightened in rehearsal until the output matches; worst case, reveal the
-committed file. This prompt gets the most rehearsal of any.
+**A good response** produces the Agent plus its ModelConfig and the dummy key Secret, in this exact
+shape:
 
-### P08 (B08) — Agent calls an MCP server through agentgateway
+- `apiVersion: kagent.dev/v1alpha2`, `kind: Agent`, `spec.type: Declarative`
+- `spec.declarative.systemMessage` (not `systemPrompt`), `spec.declarative.modelConfig: vllm-qwen3`
+- ModelConfig `provider: OpenAI`, `model: qwen3-1.7b`, `openAI.baseUrl` pointed at the in-cluster
+  gateway, key from a Secret, which vLLM ignores
+- the `agentic-platform.io/llm-guard-policy` annotation, so it satisfies the Kyverno
+  require-llm-guard-reference policy
+
+It commits to Git and ArgoCD reconciles it. An agent, declared as a Kubernetes resource, deployed by
+GitOps, written by an agent.
+
+**What usually goes wrong:** all of it from stale training data. `v1alpha1` instead of `v1alpha2`.
+`systemPrompt` instead of `systemMessage`. The field not nested under `spec.declarative`. A real
+external provider instead of the vLLM ModelConfig. `baseUrl` pointed at the wrong Service.
+
+**What to do:** the known-good artifact is at
+`solution/platform/2-ai-plane/demo-agent/manifests/demo-agent.yaml`. Diff against it rather than
+arguing with the agent. If it drifts on the CRD shape, tell it the apiVersion and field name
+explicitly; the rest usually follows.
+
+### Have the agent call an MCP server through the gateway
+
 **Prompt:**
 > Have the platform-helper agent call the MCP server through agentgateway, then show me the
 > audit log entry for that call.
 
-**Expected behavior:** Triggers the agent-to-MCP call routed via agentgateway; the audit log
-entry appears on screen (the routing and audit are the point).
-**Known failure modes:** The MCP server is deployed but not routed. The audit log lag hides the
-entry within the time budget.
-**Recovery move:** The MCP server is pre-deployed; confirm the route exists. If the audit entry
-lags, the trace lands in B10 anyway; do not stall.
+**A good response** triggers the agent-to-MCP call routed via agentgateway, and the audit entry
+appears. The routing and the audit are the point, not the tool's output.
 
-### P09 (B09) — Prompt injection blocked by LLM Guard
+**What usually goes wrong:** the MCP server is deployed but its route is not attached, or the audit
+entry lags behind the call.
+
+**What to do:** if the call returns an error about extracting tools from the tool set, the gateway
+is reporting honestly and its upstream is refusing connections. Check that the MCP server pod
+actually started: it needs a numeric `runAsUser` on the pod and an explicit `cmd`, and it fails in a
+way that looks like a gateway fault.
+
+### Block a prompt injection
+
 **Prompt:**
 > Send the prompt-injection test fixture at the agent. Show me LLM Guard intercepting and
 > blocking it, and the blocked request in the audit log.
 
-**Expected behavior:** Fires the repo's injection fixture; LLM Guard blocks deterministically;
-the block shows in the audit log. The exact injection string is a committed fixture so
-you can reproduce it.
-**Known failure modes:** LLM Guard config drift changes the verdict. The block is silent (no
-visible audit line).
-**Recovery move:** The verdict is deterministic against the pinned v0.3.16 config; if it drifts,
-the reset script restores known-good config before the beat.
+**A good response** fires the repo's injection fixture, LLM Guard blocks it deterministically, and
+the block appears in the audit log. The exact injection string is a committed fixture so the result
+is reproducible rather than a lucky demonstration.
 
-### P10 (B10) — The trace lands in Tempo
+**What usually goes wrong:** config drift changes the verdict, or the block happens with no visible
+audit line.
+
+**What to do:** the verdict is deterministic against the pinned config. If it drifts, reset to the
+committed fixture rather than tuning until it passes.
+
+### Find the trace
+
 **Prompt:**
 > Open the trace from the agent's MCP call in Tempo. Walk the spans and point out the GenAI
 > semantic-convention attributes: model, token counts, tool calls. Then load the AI-plane
 > Grafana dashboard.
 
-**Expected behavior:** Opens the trace, walks spans, highlights `gen_ai.*` attributes (framed
-as current but unstable, Development grade), loads the pre-built dashboard.
-**Known failure modes:** The trace has not propagated to Tempo yet. `gen_ai.*` attributes
-overclaimed as stable.
-**Recovery move:** Fire the call slightly ahead so the trace is present; present GenAI
-conventions honestly as unstable. This beat shortens to a single trace under time pressure.
+**A good response** opens the trace, walks the spans, and highlights the `gen_ai.*` attributes,
+described as current but unstable, because the conventions are Development grade.
 
-### P11 (B11) — vLLM serves an inference
+**What usually goes wrong:** there is no trace, because agent tracing is off by default in the
+kagent chart. Or the agent searches for spans named `gen_ai.*` and finds none.
+
+**What to do:** `otel.tracing.enabled` is the switch that works. The annotation that looks like it
+should enable tracing does not, because the agent is a Go binary and no `Instrumentation` resource
+exists. Spans are named for their operation and target, like `invoke_agent platform_helper` and
+`execute_tool echo`, with `gen_ai.*` in the attributes. Nothing is named `gen_ai.*`.
+
+---
+
+## Chapter 8: model serving
+
+### Serve an inference
+
 **Prompt:**
 > Send one inference request to the vLLM model through its OpenAI-compatible endpoint and show
 > me the response.
 
-**Expected behavior:** One request to `qwen3-predictor.kserve.svc`, response on screen. Model
-is pre-warmed. Validated latency: warm ~6s, cold ~11s; under the 30s gate.
-**Known failure modes:** Cold model (slow first token). KV-cache/memory pressure (do not raise
-KVCACHE on screen).
-**Recovery move:** The model is pre-warmed and the request is fired during the preceding beat,
-revealed on cue (the pre-warmed-request fallback). Never let a cold inference die on screen.
+**A good response** sends one request and shows the answer. Warm, expect a few seconds; cold, rather
+longer while the model loads.
 
-*(B12, llm-d, is architecture-on-screen, not a Claude prompt: show where distributed inference
-sits in the topology, honest Sandbox framing. First to go to recording if Module 2 overruns.)*
+**What usually goes wrong:** the InferenceService sits `Ready=False` with "Predictor ingress not
+created" while the predictor is running and serving perfectly well.
+
+**What to do:** that message is about an Istio ingress this platform does not run.
+`kserve.controller.gateway.disableIngressCreation` settles it. Check whether the predictor pod is
+serving before believing the readiness condition.
 
 ---
 
-## Module 3: Self-service
+## Chapter 9: the golden path
 
-### P13 (B13) — Write the agent-service scaffolder template
+### Write the scaffolder template
+
 **Prompt:**
 > Write a Backstage scaffolder template for an `agent-service`. The form takes an agent name,
 > purpose, model route, and the MCP tools it is allowed. On submit it generates a repo
 > containing a kagent Agent CRD, an agentgateway route, an LLM Guard policy reference, and
 > OTel instrumentation defaults. Commit it under `platform/3-self-service/agent-service/`.
 
-**Expected behavior:** Completes the template skeleton: parameters for name/purpose/model/tools,
-`fetch:template` over the skeleton, output including `catalog-info.yaml` and the agent
-manifests. Commits to Git.
-**Known failure modes:** Legacy scaffolder action names. Hardcodes choices the form should
-parameterize. Skeleton placeholders (Gitea host/org) left literal.
-**Recovery move:** The skeleton exists at `platform/3-self-service/agent-service/`; Claude
-completes and wires it. Gitea host/org are templated and filled at provision time.
+**A good response** completes the template skeleton: parameters for name, purpose, model and tools,
+`fetch:template` over the skeleton, and output including `catalog-info.yaml` and the agent
+manifests.
 
-### P14 (B14) — Write the ApplicationSet
+**What usually goes wrong:** legacy scaffolder action names, choices hardcoded that the form should
+take as parameters, or skeleton placeholders left literal.
+
+**What to do:** the skeleton exists under `solution/platform/3-self-service/agent-service/`. The
+Gitea host and org are templated values, not literals to fill in by hand.
+
+### Write the ApplicationSet
+
 **Prompt:**
 > Write the ApplicationSet that watches the in-cluster Gitea for repos generated by this
 > template and auto-creates an ArgoCD Application for each. Commit it at
 > `platform/3-self-service/applicationset.yaml`.
 
-**Expected behavior:** Produces a Git-generator (or SCM-provider) ApplicationSet pointed at the
-in-cluster Gitea org, templating one Application per generated repo.
-**Known failure modes:** Generator points at the wrong Gitea URL. ApplicationSet CRD needs
-server-side apply (annotation size).
-**Recovery move:** Apply server-side. The Gitea org/host are the templated values.
+**A good response** produces an SCM-provider ApplicationSet pointed at the in-cluster Gitea org,
+templating one Application per generated repo.
 
-### P15 (B15) — Fire the golden path
-**Prompt (you act as the developer requesting a service; the agent assists if needed):**
+**What usually goes wrong:** the generator points at the wrong Gitea URL, or the apply fails on
+annotation size.
+
+**What to do:** the ApplicationSet CRD exceeds the client-side apply annotation limit, so it needs
+`kubectl apply --server-side --force-conflicts`.
+
+### Fire the golden path
+
+You act as the developer requesting a service here. The agent assists if needed.
+
+**Prompt:**
 > Through the Backstage portal, request a new agent: fill the form and submit. Then watch the
-> chain on screen: scaffolder generates the repo, the ApplicationSet creates the Application,
+> chain: scaffolder generates the repo, the ApplicationSet creates the Application,
 > ArgoCD syncs it, the agent runs, and the first trace lands in Tempo.
 
-**Expected behavior:** Form-to-trace in one continuous take, target under 6 minutes. Closes the
-loop on the whole workshop.
-**Known failure modes:** Any link in the chain stalls (scaffold, AppSet detection, sync, trace).
-**Recovery move:** Rehearsed as one take three times; if a link stalls past budget, cut to the
-recorded golden-path take.
+**A good response** is the whole chain completing, form to trace. This is the loop the platform
+exists to close.
+
+**What usually goes wrong:** any link stalls. Scaffold, ApplicationSet detection, sync, or trace.
+
+**What to do:** work backwards from the last thing that did happen. Each link leaves a visible
+artifact: a repo in Gitea, an Application in ArgoCD, a pod, a span.
 
 ---
 
-## Wrap
+## Chapter 10: governance and attribution
 
-### P16 (B16) — Kyverno denies a violating agent  *(sanctioned mutating kubectl)*
+### Have Kyverno deny a violating agent
+
+This is the second sanctioned use of mutating `kubectl`.
+
 **Prompt:**
 > Flip the AI-plane Kyverno policies from audit to enforce. Then try to apply the violating
 > agent fixture (no LLM Guard reference) and show Kyverno denying it.
 
-**Expected behavior:** Enforce mode on; `kubectl apply` of the violating fixture triggers the
-on-screen approval prompt (agent-level control), Claude approves, then Kyverno denies the
-resource (infrastructure-level control). Two layers of governance, shown not told.
-**Known failure modes:** Policy in audit not enforce (admits the resource). Wrong fixture
-(passes policy).
-**Recovery move:** Each policy ships a violating fixture; confirm enforce mode first. The denial
-is deterministic.
+**A good response** turns on enforce mode, then applies the violating fixture. Two controls fire in
+sequence: your agent stops and asks you to approve a mutating verb, and then Kyverno denies the
+resource at admission. One control is at the agent, the other is in the cluster.
 
-### P17 (B17) — Per-agent attribution in Loki
+**What usually goes wrong:** the policy is still in audit, so the resource is admitted, or the
+fixture used does not actually violate anything.
+
+**What to do:** confirm enforce mode before concluding the policy does not work. Each policy ships a
+violating fixture next to it. The denial is deterministic.
+
+### Attribute every action to an agent
+
 **Prompt:**
 > Run the Loki query that shows every action in this cluster attributed to a named agent
 > identity, including this Claude Code session's own actions from the audit hook.
 
-**Expected behavior:** The query returns per-agent attributed actions, including Claude Code's
-own tool invocations shipped by the PreToolUse/PostToolUse audit hook. The agent that built the
-platform shows up in the platform's own audit trail.
-**Known failure modes:** The audit hook did not ship lines (Loki label missing). Query filters
-to the wrong label.
-**Recovery move:** Verify the hook shipped during preflight; the query is pre-written and fixed.
+**A good response** returns per-agent attributed actions, including your own agent's tool
+invocations, shipped by the audit hook in `.claude/hooks/audit.sh`. The agent that built the
+platform appears in the platform's own audit trail.
 
-*(B18, the commitment mechanic, is a chat prompt to the audience with three seeded examples in
-the runbook, not a Claude prompt.)*
+**What usually goes wrong:** the hook shipped nothing, so the Loki label is missing, or the query
+filters on the wrong label.
+
+**What to do:** the query and its label contract are in `prompts/queries/`. Check the hook is
+actually running before debugging the query.

@@ -99,7 +99,7 @@ OpenTelemetry GenAI semantic conventions: status is Development, not stable. The
 | KServe | v0.19.0 | OCI Helm `ghcr.io/kserve/charts/{kserve-crd,kserve-resources}` | CNCF Incubating (entered directly at Incubating from LF AI and Data, Nov 2025). | `serving.kserve.io/v1beta1` (InferenceService); `serving.kserve.io/v1alpha1` (LLMInferenceService, built on the llm-d framework). |
 | vLLM | v0.23.0 | CPU image `vllm/vllm-openai-cpu:v0.23.0-x86_64` | PyTorch Foundation, under the Linux Foundation. Apache-2.0. | n/a. Not a standalone KServe ServingRuntime; it backs the Hugging Face runtime and the LLMInferenceService path. |
 | llm-d | v0.7.0 | Kustomize (moved off Helm at v0.7) | CNCF Sandbox since March 2026. Backed by Red Hat, Google, IBM, CoreWeave, NVIDIA. Apache-2.0. | Pre-1.0, breaking changes between minors. Do not call it production-ready. |
-| LLM Guard | v0.3.16 (May 2025, no newer) | Python library `pip install llm-guard`, optional API image `laiyer/llm-guard-api` | MIT. Protect AI, acquired by Palo Alto Networks (closed July 2025). | n/a. Library, not a deployed service. No Helm chart. Dormant since Sept 2025: reliability risk, flag on screen. |
+| LLM Guard | v0.3.16 (May 2025, no newer) | Python library `pip install llm-guard`, optional API image `laiyer/llm-guard-api` | MIT. Protect AI, acquired by Palo Alto Networks (closed July 2025). | n/a. Library, not a deployed service. No Helm chart. Dormant since Sept 2025: a reliability risk worth stating plainly. |
 | OpenLLMetry | traceloop-sdk 0.61.0 | Python SDK `pip install traceloop-sdk` (also a JS SDK) | Apache-2.0, NOT MIT. Traceloop. | n/a. Library you add to app code. Emits OTel GenAI conventions. |
 
 ### CPU-mode model recommendation
