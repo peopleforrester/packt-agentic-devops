@@ -166,10 +166,18 @@ pytest                              # whatever your environment already has
 
 ## Container images
 
-Six manifests pull from `ghcr.io/peopleforrester/*`. These are public mirrors of upstream images,
-re-hosted so a build does not depend on Docker Hub rate limits, plus two images with no upstream
-(`backstage` and `vllm-qwen3`). They pull anonymously. If you would rather host them yourself,
-`scripts/mirror-images.sh` copies them into a namespace you control.
+Six manifests pull from `ghcr.io/peopleforrester/*`. They pull anonymously and you do not have to
+do anything about them.
+
+Four are mirrors of upstream images, re-hosted so a build cannot be stopped by a Docker Hub rate
+limit. Two have no upstream and are built here: `images/backstage/` scaffolds a Backstage app and
+builds it, and `images/vllm-qwen3/` bakes the Qwen3-1.7B weights into the upstream vLLM CPU image so
+pods load from disk instead of downloading at startup.
+
+To host all six yourself, run `scripts/mirror-images.sh` for the mirrors and the two
+`build-and-push.sh` scripts for the built ones, all with the same `GHCR_ORG`. One manual step
+follows: the MCP server manifest pins its image by digest, and a copy into another namespace gets a
+new digest, which the mirror script prints.
 
 ## Writing standards for any doc generated here
 

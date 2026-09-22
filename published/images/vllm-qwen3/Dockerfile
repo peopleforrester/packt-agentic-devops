@@ -1,5 +1,5 @@
 # ABOUTME: vLLM CPU image with Qwen3-1.7B weights baked in, so pods load from disk and
-# ABOUTME: never hit HuggingFace at runtime (no ~14-min download x 300 clusters).
+# ABOUTME: never hit HuggingFace at runtime, which otherwise costs a ~14-minute download per pod.
 FROM vllm/vllm-openai-cpu:v0.23.0-x86_64
 
 ARG MODEL=Qwen/Qwen3-1.7B
