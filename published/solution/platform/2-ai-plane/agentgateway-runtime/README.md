@@ -7,7 +7,7 @@ The `agentgateway` Application installs the **controller**. This one creates the
 
 Keeping them apart matters because the failure they produce together is misleading. A controller
 with no Gateway reconciles nothing, every Application still reports Synced and Healthy, and routes
-sit `Accepted=False` with "no parent found" — which reads as a route defect rather than a missing
+sit `Accepted=False` with "no parent found", which reads as a route defect rather than a missing
 Gateway.
 
 | File | What it does |

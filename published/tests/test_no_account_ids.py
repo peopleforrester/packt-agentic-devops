@@ -26,7 +26,10 @@ CREDENTIAL_PATTERN_ALLOWED = {
 }
 
 ACCESS_KEY = re.compile(r"AKIA[0-9A-Z]{16}|aws_secret" + r"_access_key")
-TWELVE_DIGITS = re.compile(r"[0-9]{12}")
+# A 12-digit run is only an account id when it stands alone. In an ARN it is delimited by
+# colons, in an ECR host by a dot. Buried inside a longer token it is a SHA256 digest or a
+# base64 blob, which is how provision/.terraform.lock.hcl produced six false positives.
+TWELVE_DIGITS = re.compile(r"(?<![0-9A-Za-z])[0-9]{12}(?![0-9A-Za-z])")
 
 
 def _tracked_text_files():

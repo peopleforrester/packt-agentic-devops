@@ -1,4 +1,4 @@
-# solution/ — the reference build
+# solution/: the reference build
 
 This is the finished, battle-hardened platform: the manifests, all pinned and
 already debugged, that the workshop's build produces. It is the **reference**,
@@ -20,10 +20,16 @@ git add -A && git commit -m "reference build"
 
 `solution/platform/` mirrors the `platform/` layout exactly (`0-bootstrap`,
 `1-foundation`, `2-ai-plane`, `3-self-service`), and the ArgoCD Applications
-inside point at `platform/…`, so a copy into your `platform/` works as-is. The
-AWS Load Balancer Controller manifest here already has this cluster's name and
-VPC substituted by provisioning, so the reference is ready to apply.
+inside point at `platform/…`, so a copy into your `platform/` works as-is.
+
+One step is not optional. The AWS Load Balancer Controller manifest ships with
+`REPLACE_WITH_CLUSTER_NAME`, `REPLACE_WITH_VPC_ID` and `REPLACE_WITH_REGION`,
+because none of the three can be hardcoded in a reference build. Run
+`./provision/cluster-facts.sh` after copying. It fills all three into
+`platform/` from your Terraform outputs and leaves `solution/` alone. A
+placeholder that survives leaves the Application Degraded forever while ArgoCD
+reports the sync succeeded, so the script re-checks and fails loudly instead.
 
 If you copy the whole thing and never build, you will still end up with a
-working platform. But the build is the workshop. Reach for `solution/` when you
+working platform. But the build is the point. Reach for `solution/` when you
 need it, not before.

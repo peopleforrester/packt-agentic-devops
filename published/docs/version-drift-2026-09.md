@@ -32,7 +32,7 @@ an unverified one, which is the opposite of what pinning is for.
 | opentelemetry-operator | 0.115.0 | 0.122.0 | 0.158.0 |
 | gitea | 12.6.0 | 12.7.0 | 1.27.0 |
 | loki | 17.4.7 | **18.12.1** | 3.7.7 |
-| tempo | 1.25.0 | 2.3.0 | 2.10.8 — **do not take**, see below |
+| tempo | 1.25.0 | 2.3.0 | 2.10.8. **Do not take**, see below |
 
 ## AI plane and the rest
 

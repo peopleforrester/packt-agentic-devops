@@ -61,7 +61,7 @@ real AWS account. Both are checked rather than asserted:
 # Tracked files only. A plain `grep -r` also walks gitignored build output and local scratch,
 # which is not what ships, and it will give you a misleading answer.
 git ls-files -z | xargs -0 grep -lE "AKIA[0-9A-Z]{16}|aws_secret_access_key"   # no access keys
-git ls-files -z | xargs -0 grep -hEo "[0-9]{12}" | sort -u                     # no account ids
+git ls-files -z | xargs -0 grep -hPo "(?<![0-9A-Za-z])[0-9]{12}(?![0-9A-Za-z])" | sort -u   # no account ids
 ```
 
 The second returns one match, `000000000000`, which is a fabricated trace id in

@@ -31,22 +31,39 @@ module, so each module shows GitOps doing the work.
 - `self-service-app.yaml` (`platform-self-service`): the self-service ApplicationSet, applied in Module 3.
 
 Each points ArgoCD at its plane directory and recurses for the per-component Application
-manifests. All require the repo reachable by ArgoCD over Git (the `repoURL`, set to the
-public repo). Until the repo is public, use the dev path below.
+manifests. They read from a Git host running inside the cluster, so that host has to exist and
+hold your tree before any of them will sync.
 
-Two paths.
+## The supported path
 
-Production path (App-of-Apps from Git): apply the plane app for the module, e.g.
-`kubectl apply -n argocd -f platform/0-bootstrap/root-app.yaml` for Module 1.
+`./provision/seed-gitea.sh` does the whole bootstrap. It installs Gitea, creates the
+`platform/packt-agentic-devops` repository, pushes your working tree into it, and applies
+`root-app.yaml`.
 
-Dev validation path (no Git remote needed): the per-component Applications under `platform/1-foundation/<name>/application.yaml` are Helm-sourced, so each pulls its chart straight from the upstream Helm repo. Apply them directly into the `argocd` namespace:
+It works because of one asymmetry: Gitea's own Application pulls its chart from
+`dl.gitea.com`, not from Gitea, so it is the one Application that can be applied before a Git
+host exists. Everything else follows from it.
+
+Afterwards, `./provision/push-to-cluster.sh` sends each new commit to the in-cluster host. That
+is the loop the platform is built around: commit locally, push to the cluster, watch ArgoCD
+reconcile. Your local clone stays the source of truth, because the in-cluster copy dies with
+the cluster.
+
+## The direct-apply path, for debugging only
+
+The per-component Applications under `platform/1-foundation/<name>/application.yaml` that are
+Helm-sourced pull their charts straight from upstream, so they can be applied without any Git
+host at all:
 
 ```bash
-kubectl apply -n argocd -f platform/1-foundation/cert-manager/application.yaml
-# ...and the rest, or: kubectl apply -n argocd --recursive -f platform/1-foundation/
+kubectl apply -n argocd --recursive -f platform/1-foundation/
 ```
 
-ArgoCD then syncs each component from its pinned Helm chart. Sync waves order the rollout.
+**This is a debugging aid, not a way to build the platform.** Twenty-two Applications in this
+repository carry raw manifests rather than upstream charts, and every one of them is sourced
+from the in-cluster Git host. Skipping the seed skips all of them: `cert-manager-issuers`,
+`gitea-config`, `openbao-config`, `policy-baseline`, and the entire AI plane. Use it to
+inspect one component in isolation, not to get to a working platform.
 
 ## Sync waves
 
