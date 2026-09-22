@@ -90,10 +90,15 @@ def _tracked_text_files():
         yield name, raw.decode("utf-8", errors="ignore")
 
 
+# This file necessarily contains every pattern it forbids, so it never scans itself. It became
+# tracked at its first commit, which is the moment it started matching its own definitions.
+_SELF = "tests/test_no_leaked_context.py"
+
+
 def _offenders(pattern, exempt):
     found = {}
     for name, text in _tracked_text_files():
-        if name in exempt:
+        if name == _SELF or name in exempt:
             continue
         for lineno, line in enumerate(text.split("\n"), 1):
             m = pattern.search(line)

@@ -137,14 +137,17 @@ def test_every_path_a_tracked_file_cites_exists():
             # A glob resolves when anything matches it. N is a placeholder this repo uses for a
             # phase number, as in spec/phases/phase-N-*.md, so it counts as a wildcard too.
             if any(ch in norm for ch in "*?") or re.search(r"-N-|<[a-z]+>", norm):
+                # Build the pattern from the literal segments, so nothing has to be un-escaped.
                 pat = re.escape(norm)
-                pat = pat.replace(r"\*\*", ".*").replace(r"\*", "[^/]*").replace(r"\?", ".")
-                pat = pat.replace("\-N\-", "-[0-9]-").replace(r"<[a-z]+>", "[^/]+")
-                pat = re.sub(r"<\\?[a-z]+\\?>", "[^/]+", pat)
-                try:
-                    if any(re.match("^" + pat + "$", t) for t in tracked):
-                        continue
-                except re.error:
+                for literal, expansion in (
+                    (re.escape("**"), ".*"),
+                    (re.escape("*"), "[^/]*"),
+                    (re.escape("?"), "."),
+                    (re.escape("-N-"), "-[0-9]-"),
+                ):
+                    pat = pat.replace(literal, expansion)
+                pat = re.sub(r"<[\\w\\-]+?>", "[^/]+", pat)
+                if any(re.fullmatch(pat, t) for t in tracked):
                     continue
             offenders[f"{name}:{lineno} -> {norm}"] = norm
     assert not offenders, (

@@ -2,7 +2,56 @@
 
 The settled architectural decisions, stated honestly. `reference/decisions.md` carries the dated log of how they were reached; this file is the current shape.
 
-The diagram source is an Excalidraw export kept alongside this file.
+## The two paths that matter
+
+Everything below is detail on these. The left path is how change reaches the cluster. The right
+path is how an agent reaches a model, and it is the one most often drawn wrong.
+
+```mermaid
+flowchart TB
+    subgraph you[" "]
+        dev["You<br/><i>commit locally</i>"]
+    end
+
+    subgraph cluster["EKS cluster"]
+        direction TB
+
+        subgraph gitops["Change reaches the cluster"]
+            gitea["Gitea<br/><i>in-cluster Git host</i>"]
+            argo["Argo CD<br/><i>reconciles, in sync waves</i>"]
+            gitea --> argo
+        end
+
+        subgraph aiplane["An agent reaches a model"]
+            agent["kagent Agent"]
+            gw["agentgateway-proxy"]
+            guard["LLM Guard<br/><i>prompt guardrail</i>"]
+            vllm["vLLM on KServe<br/><i>Qwen3-1.7B, in-cluster</i>"]
+            mcp["MCP server<br/><i>tools</i>"]
+            agent -->|"every call"| gw
+            gw --> guard
+            gw --> vllm
+            gw --> mcp
+        end
+
+        otel["OpenTelemetry Collector"]
+        tempo["Tempo and Grafana"]
+    end
+
+    dev -->|"push"| gitea
+    argo -->|"applies"| aiplane
+    aiplane -.->|"traces"| otel --> tempo
+
+    classDef emph stroke-width:3px
+    class gw emph
+```
+
+The thick node is load-bearing. The agent talks only to the gateway, never to the model directly.
+An agent that calls the model directly bypasses the guardrail and the audit policy, and the platform
+then certifies controls that nothing traverses.
+`tests/test_agentgateway_manifests.py::test_shipped_agents_route_inference_through_the_gateway`
+asserts the `ModelConfig` `baseUrl` names the gateway.
+
 
 ## Platform
 
