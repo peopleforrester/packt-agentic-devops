@@ -85,11 +85,18 @@ The earlier claim that per-agent attribution works cleanly only on Claude Code a
 
 Tracing backend is Grafana Tempo, not Jaeger, to keep traces, logs, metrics, and dashboards under one Grafana pane. Jaeger is documented as an alternative path. KEDA (event-driven pod autoscaling) is a platform capability students learn; it is not a Karpenter substitute. Node provisioning is the fixed managed node group, and self-managed Karpenter is not used (see D9). (June 19, 2026)
 
-## D15. RESOLVED: fleet provisioning is a shared lab VPC plus a per-cluster module
+## D15. RESOLVED: the cluster shape is one t3.2xlarge with prefix delegation
 
-The student cluster shape is resolved by the end-to-end validation: one t3.2xlarge with VPC CNI prefix delegation and an explicit maxPods=110. Prefix delegation is required (the full platform needs ~75 pods; the default t3.2xlarge caps at 58), and it consumes ~112 IPs per node, which drives the network design.
+Resolved by end-to-end validation: one t3.2xlarge with VPC CNI prefix delegation and an explicit
+maxPods=110. Prefix delegation is required, because the full platform needs roughly 75 pods and the
+default t3.2xlarge caps at 58. It consumes about 112 IPs per node, which is what drives the subnet
+sizing in `provision/main.tf`.
 
-The fleet is one shared lab VPC, not one VPC per cluster. A single `/16` with `/18` private subnets and one shared NAT gateway holds roughly 60 concurrent single-node clusters with headroom, instead of 60 VPCs and 60 NAT gateways. This is a lab network: isolation between students is in-cluster (NetworkPolicy), not at the VPC; we do not build production multi-tenancy. Provisioning is split into `scripts/provision/lab-vpc/` (applied once), a parameterized `scripts/provision/cluster/` module that takes `vpc_id` and `private_subnet_ids` (the validated shape, no VPC of its own), and `scripts/provision/fleet/fleet.sh`, which stamps out N clusters each with its own state file, concurrency-capped and parallel. Per-cluster state keeps the blast radius at one student. EKS owns the control-plane log group (`create_cloudwatch_log_group = false`) so reused names reprovision idempotently. Every resource is tagged `Workshop=packt` plus `Student=<name>`. The design ceiling is ~60 concurrent; for more, widen the subnets to `/17`. (June 21, 2026)
+Two details from the same work are worth keeping. EKS owns the control-plane log group
+(`create_cloudwatch_log_group = false`), so a cluster name can be reused without colliding on a log
+group that survived the previous destroy. And every resource carries a `Workshop=packt` tag, which
+is what makes teardown able to find the load balancers and volumes Terraform does not own.
+(June 21, 2026)
 
 ## D16. RESOLVED: workload identity is EKS Pod Identity, not IRSA
 
@@ -97,7 +104,7 @@ Every in-cluster workload that needs AWS permissions uses EKS Pod Identity. This
 
 Why: Pod Identity is the AWS-suggested default over IRSA as of 2026-07 (verified live against the official EKS EBS CSI docs; IRSA is still supported, not deprecated). At fleet scale IRSA would mean one OIDC provider plus a per-cluster trust policy for all 300 clusters; Pod Identity uses a reusable scoped role plus a simple per-cluster association. Being on the legacy path invites an avoidable "why not the modern default" ding on a repo students copy.
 
-Wiring: the LB controller (a Helm chart deployed by ArgoCD) uses a standalone Pod Identity association (`module.aws_lb_controller_pod_identity`, `associations` populated). The EBS CSI driver (an EKS add-on) wires its association through the add-on's `pod_identity_association`, so `module.ebs_csi_pod_identity` creates role and policy only (`associations = {}`) and EKS owns the association ordering: no window where the controller starts without credentials. The `eks-pod-identity-agent` add-on is installed on every cluster. Terraform in `scripts/provision/cluster/main.tf`; validated (fmt, init, validate) and committed (7a49282).
+Wiring: the LB controller (a Helm chart deployed by ArgoCD) uses a standalone Pod Identity association (`module.aws_lb_controller_pod_identity`, `associations` populated). The EBS CSI driver (an EKS add-on) wires its association through the add-on's `pod_identity_association`, so `module.ebs_csi_pod_identity` creates role and policy only (`associations = {}`) and EKS owns the association ordering: no window where the controller starts without credentials. The `eks-pod-identity-agent` add-on is installed on every cluster. Terraform in `provision/main.tf`; validated (fmt, init, validate) and committed (7a49282).
 
 Supersedes the earlier split ("EBS CSI via IRSA, Pod Identity for the LB controller") recorded in the build spec §6.3 and the cluster module comments before this date. (July 18, 2026)
 

@@ -20,6 +20,6 @@
 **Key decisions:**
 - The ApplicationSet CRD requires server-side apply (it exceeds the client-side annotation limit).
 - The template output must satisfy the Phase 4 audit policies, so the golden path is governed by construction.
-- Target: form to trace under 6 minutes. Rehearse as one continuous take.
+- Target: form to trace in a single unbroken chain, with no manual step between the scaffold and the running agent.
 
 **Stop here.** Output the completion promise and wait. This is the loop closing: a request through the portal became a running, governed, traced agent without anyone touching the cluster.
