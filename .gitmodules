@@ -1,0 +1,3 @@
+[submodule "published"]
+	path = published
+	url = https://github.com/PacktPublishing/Agentic-DevOps-with-Claude-Code.git
