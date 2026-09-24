@@ -6,6 +6,10 @@
 # including the build spec it told a reader to start from and the test file it told an agent to run.
 # Each one was found by hand. This finds them all.
 #
+# This is a tip-only check. Documentation ships early and legitimately cites files that later
+# chapters add, so at any chapter tag before the last one it reports forward references that do
+# resolve at the tip. CI runs it against the full tree. Do not weaken it to pass at a chapter tag.
+#
 # Only three syntaxes are considered, because a bare token scan reports hundreds of Kubernetes API
 # groups and label keys as if they were paths:
 #   1. backtick spans, which is how this repo cites files everywhere, including inside YAML comments
