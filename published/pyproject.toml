@@ -19,6 +19,10 @@ norecursedirs = [
     ".git",
     "*.egg-info",
 ]
+# The chapter 2 lab test is meant to be red until you do the lab, so a bare `pytest` leaves it
+# alone and every other run stays meaningful. Naming it explicitly still runs it, which is exactly
+# what the chapter prints: python -m pytest tests/test_inventory_summary.py -q
+addopts = "--ignore=tests/test_inventory_summary.py"
 markers = [
     "integration: needs a fully built cluster and in-cluster traffic",
 ]
