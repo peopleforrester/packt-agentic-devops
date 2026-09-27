@@ -7,8 +7,34 @@ This repo has two audiences with opposite needs, so it has two policies.
 
 | Where | Policy | For |
 |---|---|---|
-| Tag `v1.0.0` | Frozen. Never re-pinned. | Reproducing the 23 July 2026 build exactly as delivered |
-| `main` | Maintained on the cadence below | Installing against a current cluster |
+| Tag `v1.0.0` **here** | Frozen. Never re-pinned, never moved. | Reproducing the 23 July 2026 build exactly as delivered |
+| `main` **here** | Maintained on the cadence below | Installing against a current cluster |
+| [The publisher's repository](https://github.com/PacktPublishing/Agentic-DevOps-with-Claude-Code) | Its own `v1.0.0` is the book's frozen baseline; its `main` is maintained | Readers of the book |
+
+**If you are looking for the book's code, it is the third row.** This repository is where the
+platform was built and where the event ran; the publisher's is what the chapters describe. They are
+different trees with different tags that happen to share a version number.
+
+## Why `v1.0.0` here was not moved to the book's content
+
+Decided 2026-09-18, executed 2026-09-24.
+
+The obvious tidy-up was to repoint this tag at whatever the book describes, so the one `v1.0.0` in
+existence meant one thing. It was rejected, for two reasons.
+
+A tag that moves is exactly the drift this document exists to prevent, and anyone who already
+cloned or pinned it gets a silent divergence with no error to notice. Teaching that in a repository
+about reproducible builds would be self-refuting.
+
+More importantly, the content would have been wrong. A cold-cluster run on 2026-09-17 established
+that the AI plane had never worked end to end at any commit on this line, including this tag. At
+`v1.0.0` there is no Gateway resource at all, so the agentgateway controller reconciles nothing and
+the demo agent talks straight to the model, bypassing the prompt guardrail and the audit policy.
+Those controls were installed and inert. Moving working content behind a tag whose release notes
+describe the delivered event would have made the record less true, not more.
+
+So this tag stays where it is and keeps meaning one thing: the state delivered on 23 July 2026.
+The book's baseline is a separate tag in a separate repository, built as its own history.
 
 The freeze in `versions.lock.md` was written for a four-hour live event, where a version moving
 under you mid-build is the worst thing that can happen. It was never meant to govern a repo people
