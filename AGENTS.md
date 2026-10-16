@@ -77,3 +77,6 @@ A GitOps-driven, AI-native Internal Developer Platform. ArgoCD reconciles everyt
 ## Secrets
 
 The repo contains zero real credentials, and no AWS account id. Both are verifiable rather than asserted; `docs/what-is-not-included.md` gives the two commands. OpenBao (the LF/MPL-2.0 Vault fork, dev mode) is the in-cluster secret backend and External Secrets Operator pulls from it over the Vault-compatible API. Sealed Secrets was dropped (redundant with ESO, and Bitnami retired its chart repo). No manifest references docker.io directly: images are mirrored to a GHCR namespace.
+
+Test command: `uv run --with pytest --with pyyaml --with jsonschema --with requests python -m pytest -q && uv run --directory scripts/provision/distribution --frozen pytest`
+E2E command: `test -n "$KUBECONFIG_FILE" && test -n "$EXPECTED_CONTEXT" && uv run --with pytest --with pyyaml --with jsonschema --with requests python -m pytest -q tests/`
